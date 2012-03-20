@@ -1,0 +1,6 @@
+.DS_Store
+*.pyc
+frontend/data
+.tm_properties
+supervisord.pid
+supervisord.log
