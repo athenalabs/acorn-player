@@ -111,6 +111,9 @@
     if (parent == child.__super__)
       return true;
 
+    if (!child.__super__.derives)
+      return false;
+
     return child.__super__.derives(parent);
   }
   acorn.util.derives = derives;
@@ -353,8 +356,8 @@
     this.options = extend(this.defaults || {}, options || {});
 
     // track the shell element.
-    this.el = this.options.el || document.createElement('div');
-    this.$ = $(this.el);
+    this.shellEl = this.options.shellEl || document.createElement('div');
+    this.thumbEl = this.options.thumbEl || document.createElement('div');
 
     this.initialize.apply(this, arguments);
   };
@@ -387,29 +390,51 @@
     initialize: function() {},
 
 
-    // **template** is the html template for shells.
-    template: '\
+    // **shellTemplate** is the html template for shells.
+    shellTemplate: '\
       <div class="acorn-shell" shell="{{ shell }}">\
-        <div class="acorn-content">{{ content }}</div>\
+        <div class="acorn-shell-content">{{ content }}</div>\
         <div class="acorn-overlay">acorn</div>\
       </div>\
     ',
 
-    // **render** is the core function that your media shell should override,
-    // in order to populate its element (`this.el`), with the appropriate HTML.
-    // The convention is for **render** to always return `this`.
-    render: function() {
 
-      var vars = this.renderVars;
-      vars.shell = this.shell;
-      vars.type = this.type;
+    // **thumbTemplate** is the html template for thumbnails.
+    thumbTemplate: '\
+      <div class="acorn-thumb" shell="{{ shell }}">\
+        <div class="acorn-thumb-content">{{ thumb }}</div>\
+        <div class="acorn-overlay">\
+          <img class="acorn-type acorn-icon" src="/static/img/icons/{{ type }}.png" />\
+          <img class="acorn-mark acorn-icon" src="/static/img/acorn.png" />\
+        </div>\
+      </div>\
+    ',
 
-      var html = this.template;
+    // **renderVars**  is the core function that your media shell should
+    // override, in order to populate the appropriate content HTML.
+    renderVars: function() {
+      return {};
+    },
+
+    // **render** populates the element with the correct html.
+
+    renderTemplate: function(template, vars) {
+      var html = template;
       for (var arg in vars) {
         html = html.replace(RegExp('{{ '+arg+' }}', 'i'), vars[arg]);
       }
+      return html;
+    },
 
-      this.$.html( html );
+    render: function(template) {
+      var vars = this.renderVars() || {};
+      vars.shell = this.shell;
+      vars.type = this.type;
+      vars.content = vars.content || '';
+      vars.thumb = vars.thumb || vars.content;
+
+      $(this.shellEl).html( this.renderTemplate(this.shellTemplate, vars) );
+      $(this.thumbEl).html( this.renderTemplate(this.thumbTemplate, vars) );
       return this;
     },
 
@@ -424,20 +449,30 @@
 
     shell: 'acorn.LinkShell',
 
+    // The cannonical type of this media. One of `acorn.types`.
+    type: 'link',
+
     initialize: function() {
 
       if (!this.options.link)
         throw new Error('No link provided to LinkShell.');
 
-      this.location = parseUrl(this.options.link);
+      this.location = this.options.location || parseUrl(this.options.link);
 
-      if (!this.urlMatches(this.location))
+      if (!this.constructor.urlMatches(this.location))
         throw new Error('Link provided does not match LinkShell.');
     },
 
     link: function() {
       return this.options.link;
     },
+
+    // **renderVars** returns the variables for the render template.
+    renderVars: function() {
+      var link = this.link();
+      return { content: '<a href="' +link+ '">' +link+ '</a>' };
+    },
+
 
   }, {
 
@@ -448,35 +483,35 @@
       return false;
     },
 
-    classify: function(url) {
-      if (typeof url == 'string')
-        url = parseUrl(url);
+    classify: function(link, options) {
+
+      var location = parseUrl(link);
 
       var bestShell = undefined;
       for (var sidx in acorn.shells) {
         var shell = acorn.shells[sidx];
 
         // skip shells that do not derive from LinkShell
-        if (shell.urlMatches === undefined)
-          continue;
-
-        // Skip LinkShell itself. It is the default.
-        if (shell == acorn.shells.LinkShell)
+        if (!shell.derives || !shell.derives(acorn.shells.LinkShell))
           continue;
 
         // Skip parents of the bestShell so far (already more specific)
         if (bestShell && bestShell.derives(shell))
           continue;
 
-        if (shell.urlMatches(url))
+        if (shell.urlMatches(location))
           bestShell = shell;
       }
 
-      return bestShell || acorn.shells.LinkShell;
+      options = options || {};
+      options.link = link;
+      options.location = location;
+      return new (bestShell || acorn.shells.LinkShell)(options);
     },
 
 
   });
+  acorn.link = acorn.shells.LinkShell.classify;
 
   // acorn.shells.ImageLinkShell
   // ----------------------
@@ -485,6 +520,15 @@
   acorn.shells.ImageLinkShell = acorn.shells.LinkShell.extend({
 
     shell: 'acorn.ImageLinkShell',
+
+    // The cannonical type of this media. One of `acorn.types`.
+    type: 'image',
+
+    // **renderVars** returns the variables for the render template.
+    renderVars: function() {
+      var link = this.link();
+      return { content: '<img src="' +link+ '" />' };
+    },
 
   }, {
 
@@ -511,6 +555,15 @@
   acorn.shells.VideoLinkShell = acorn.shells.LinkShell.extend({
 
     shell: 'acorn.VideoLinkShell',
+
+    // The cannonical type of this media. One of `acorn.types`.
+    type: 'video',
+
+    // // **renderVars** returns the variables for the render template.
+    // renderVars: function() {
+    //   var link = this.link();
+    //   return { content: '<img src="' +link+ '" />' };
+    // },
 
   }, {
 
@@ -539,16 +592,19 @@
 
     shell: 'acorn.YouTubeShell',
 
+    // The cannonical type of this media. One of `acorn.types`.
+    type: 'video',
+
     // **youtubeId** returns the youtube video id of this link.
     youtubeId: function() {
       var link = this.link();
 
-      for (var reidx in this.validRegexes) {
-        var re = this.validRegexes[reidx];
+      for (var reidx in this.constructor.validRegexes) {
+        var re = this.constructor.validRegexes[reidx];
         if (!re.test(link))
           continue;
 
-        var videoid = re.exec(link)[2];
+        var videoid = re.exec(link)[3];
         return videoid;
       }
 
@@ -559,17 +615,18 @@
       return 'https://www.youtube.com/embed/' + this.youtubeId();
     },
 
-
-    renderVars: function() {
-
-      var src = this.embeddableLink();
-      var content = '<iframe frameborder="0" src="' +src+ '"></iframe>';
-
-      return {
-        'content': content
-      };
+    thumbnailLink: function() {
+      return "http://img.youtube.com/vi/" +this.youtubeId()+ "/0.jpg";
     },
 
+    renderVars: function() {
+      var vsrc = this.embeddableLink();
+      var tsrc = this.thumbnailLink();
+      return {
+        content: '<iframe frameborder="0" src="' +vsrc+ '"></iframe>',
+        thumb: '<img src="' +tsrc+ '" />',
+      };
+    },
 
   }, {
 
