@@ -7,13 +7,18 @@
 
 }
 
+/* abspos */
+
 .acorn-overlay {
-  pointer-events:none;
   position: absolute;
   bottom: 0px;
   right: 0px;
   left: 0px;
   top: 0px;
+}
+
+.acorn-overlay {
+  pointer-events:none;
 }
 
 .acorn-thumb {
@@ -30,22 +35,29 @@
 }
 
 .acorn-icon {
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 7px;
   padding: 5%;
 }
 
-.acorn-type.acorn-icon {
+img.acorn-icon  {
+  height: 20%;
+}
+
+.acorn-icon.acorn-type {
+/*  width: 25%;*/
+/*  margin: 40% 30% 40% 30%;*/
+
   position: absolute;
   bottom: 10px;
   left: 10px;
-  width: 25%;
 }
 
-.acorn-mark.acorn-icon {
+.acorn-icon.acorn-mark {
+/*  width: 100%;*/
+/*  height: 100%;*/
   position: absolute;
   bottom: 10px;
   right: 10px;
-  width: 25%;
 }
 

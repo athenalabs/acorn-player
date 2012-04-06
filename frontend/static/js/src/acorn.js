@@ -404,8 +404,8 @@
       <div class="acorn-thumb" shell="{{ shell }}">\
         <div class="acorn-thumb-content">{{ thumb }}</div>\
         <div class="acorn-overlay">\
-          <img class="acorn-type acorn-icon" src="/static/img/icons/{{ type }}.png" />\
           <img class="acorn-mark acorn-icon" src="/static/img/acorn.png" />\
+          <img class="acorn-type acorn-icon" src="/static/img/icons/{{ type }}.png" />\
         </div>\
       </div>\
     ',
