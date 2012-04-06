@@ -1,0 +1,51 @@
+
+.acorn-shell {
+  position: relative;
+}
+
+.acorn-shell-content {
+
+}
+
+.acorn-overlay {
+  pointer-events:none;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  top: 0px;
+}
+
+.acorn-thumb {
+  position: relative;
+  border: 1px solid #cc0000;
+  width: 200px;
+  height: 150px;
+}
+
+.acorn-thumb-content,
+.acorn-thumb-content img {
+  width: 100%;
+  height: 100%;
+}
+
+.acorn-icon {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 5px;
+  padding: 5%;
+}
+
+.acorn-type.acorn-icon {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 25%;
+}
+
+.acorn-mark.acorn-icon {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 25%;
+}
+
