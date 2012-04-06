@@ -480,7 +480,7 @@
     // For instance, an ImageShell could return true for links ending in
     // .jpg, .png, .gif, etc.
     urlMatches: function(url) {
-      return false;
+      return true;
     },
 
     classify: function(link, options) {
