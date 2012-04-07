@@ -294,6 +294,11 @@
     // Unique identifier for this acorn.
     acornid: 'new', // new is the sentinel for new objects.
 
+    initialize: function() {
+      this._data = {};
+      this.set({ shells: []});
+    },
+
     // Retrieve data
     get: function(key) {
       return this._data[key];
@@ -343,6 +348,21 @@
 
     isNew: function() {
       return this.get('acornid') == 'new';
+    },
+
+    // Shells access
+    shells: function(shells) {
+      if (shells && typeof shells === object) {
+        this.set({'shells': shells});
+      }
+      return this.get('shells');
+    },
+
+    addShell: function(shell) {
+      if (!shell.constructor.derives(acorn.shells.Shell))
+        throw new Error('Invalid, does not derive from acorn.shells.Shell!');
+
+      this._data['shells'].push(shell);
     },
 
   });
@@ -476,11 +496,18 @@
 
   }, {
 
+    // from the web.
+    validLinkRegex: /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i,
+
+    isValidLink: function(link) {
+      return this.validLinkRegex.test(link);
+    },
+
     // **urlMatches** returns whether a given url matches this Shell.
     // For instance, an ImageShell could return true for links ending in
     // .jpg, .png, .gif, etc.
     urlMatches: function(url) {
-      return true;
+      return this.isValidLink(url.href);
     },
 
     classify: function(link, options) {
