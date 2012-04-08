@@ -365,6 +365,16 @@
       this._data['shells'].push(shell);
     },
 
+    removeShell: function(shell) {
+      var idx = this._data['shells'].indexOf(shell);
+      this._data['shells'].splice(idx, 1);
+    },
+
+    swapShell: function(oldShell, newShell) {
+      var idx = this._data['shells'].indexOf(oldShell);
+      this._data['shells'].splice(idx, 1, newShell);
+    },
+
   });
 
 

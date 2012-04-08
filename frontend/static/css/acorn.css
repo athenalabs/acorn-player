@@ -64,7 +64,7 @@ img.acorn-icon  {
 .acorn-shell {
   width: 560px;
   height: 340px;
-  margin: 10px;
+/*  margin: 10px;*/
 }
 
 .acorn-shell iframe {
