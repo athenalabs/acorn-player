@@ -38,6 +38,9 @@
   // Acorn service domain
   acorn.domain = 'acorn.tirith';
 
+  // Acorn Url
+  acorn.url = 'https://' + acorn.domain;
+
   // Acorn API Url
   acorn.apiurl = 'https://' + acorn.domain + '/api/v' + acorn.APIVERSION;
 
@@ -138,7 +141,14 @@
   acorn.util.derives = derives;
 
 
+  // **acorn.util.url** returns a url pointing to given path in acorn website.
   acorn.util.url = function() {
+    var path = Array.prototype.slice.call(arguments);
+    return acorn.url +'/'+ path.join('/');
+  };
+
+  // **acorn.util.apiurl** returns an acorn api url
+  acorn.util.apiurl = function() {
     var path = Array.prototype.slice.call(arguments);
     return acorn.apiurl +'/'+ path.join('/');
   };
@@ -155,6 +165,11 @@
   var isObject = function(obj) {
     return obj === Object(obj);
   };
+
+  var code = function(code) {
+    return escape(code);
+  };
+  acorn.util.code = code;
 
   // Extend a given object with all the properties in passed-in object(s).
   var extend = function(obj) {
@@ -260,7 +275,7 @@
 
     // Ensure that we have a URL.
     if (!options.url) {
-      params.url = getValue(model, 'url') || UrlError();
+      params.url = getValue(model, 'apiurl') || UrlError();
     }
 
     // Ensure that we have the appropriate request data.
@@ -346,8 +361,16 @@
       this._data.acornid = this.options.acornid || 'new'; // sentinel.
     },
 
+    apiurl: function() {
+      return acorn.util.apiurl(this.acornid());
+    },
+
     url: function() {
       return acorn.util.url(this.acornid());
+    },
+
+    embedurl: function() {
+      return acorn.util.url('embed', this.acornid());
     },
 
     // Retrieve data
@@ -554,16 +577,24 @@
       $(this.thumbEl).html( this.renderTemplate(this.thumbTemplate, vars) );
 
       // adjust shell size
-      var size = this.options.shellSize || this.constructor.sizes[0];
-      if (!this.options.resize && size) {
-        this.resize(size);
-      }
+      this.resize();
 
       return this;
     },
 
+    // **size** the default size index (for .sizes) for this shell.
+    size: 0,
+
     // set the dimension of the shell
     resize: function(size) {
+      size = size || this.options.shellSize || this.size;
+
+      if (typeof size === 'number')
+        size = this.constructor.sizes[size];
+
+      if (typeof size !== 'string')
+        return;
+
       var w = size.split('x')[0];
       var h = size.split('x')[1];
       $(this.shellEl).css('width', parseInt(w));
