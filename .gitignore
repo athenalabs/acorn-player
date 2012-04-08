@@ -4,3 +4,4 @@ frontend/data
 .tm_properties
 supervisord.pid
 supervisord.log
+data/
