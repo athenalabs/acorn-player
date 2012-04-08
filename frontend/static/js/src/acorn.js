@@ -135,6 +135,14 @@
 
   // Originally from underscore.js 1.3.1:
 
+  var isArray = function (arr) {
+    return Object.prototype.toString.call(arr) === '[object Array]';
+  };
+
+  var isObject = function(obj) {
+    return obj === Object(obj);
+  };
+
   // Extend a given object with all the properties in passed-in object(s).
   var extend = function(obj) {
     for (var arg in arguments) {
@@ -150,9 +158,10 @@
   };
   acorn.util.extend = extend;
 
+  // Copy an object.
   var clone = function(obj) {
-    if (!_.isObject(obj)) return obj;
-    return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
+    if (!isObject(obj)) return obj;
+    return isArray(obj) ? obj.slice() : extend({}, obj);
   };
   acorn.util.clone;
 
