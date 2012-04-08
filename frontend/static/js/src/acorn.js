@@ -355,7 +355,7 @@
 
     // **fromJSON** set properties on this object from JSON representation
     fromJSON: function(data, options) {
-      data = JSON.parse(data);
+      // var parsed = JSON.parse(data);
       return this.set(data.data.acorn);
     },
 
