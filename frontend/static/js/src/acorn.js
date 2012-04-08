@@ -32,8 +32,14 @@
   // Current version.
   acorn.VERSION = '0.0.0';
 
+  // API Version
+  acorn.APIVERSION = '0.0.1';
+
   // Acorn service domain
   acorn.domain = 'acorn.tirith';
+
+  // Acorn API Url
+  acorn.apiurl = 'https://' + acorn.domain + '/api/v' + acorn.APIVERSION;
 
   // Initialize collections
   acorn.options = {};
@@ -127,7 +133,8 @@
 
 
   acorn.util.url = function() {
-    return 'https://' + acorn.domain + '/' + arguments.join('/');
+    var path = Array.prototype.slice.call(arguments);
+    return acorn.apiurl +'/'+ path.join('/');
   };
 
   // The following functions are originally from other open-source projects.
