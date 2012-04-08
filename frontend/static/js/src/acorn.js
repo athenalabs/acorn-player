@@ -403,6 +403,9 @@
     // Setup extend for inheritance.
     extend: extendPrototype,
 
+    // recommended shell sizes
+    sizes: [],
+
   });
 
   // Set up all inheritable **acorn.shells.Shell** properties and methods.
@@ -465,7 +468,22 @@
 
       $(this.shellEl).html( this.renderTemplate(this.shellTemplate, vars) );
       $(this.thumbEl).html( this.renderTemplate(this.thumbTemplate, vars) );
+
+      // adjust shell size
+      var size = this.options.shellSize || this.constructor.sizes[0];
+      if (!this.options.resize && size) {
+        this.resize(size);
+      }
+
       return this;
+    },
+
+    // set the dimension of the shell
+    resize: function(size) {
+      var w = size.split('x')[0];
+      var h = size.split('x')[1];
+      $(this.shellEl).css('width', parseInt(w));
+      $(this.shellEl).css('height', parseInt(h));
     },
 
   });
@@ -668,6 +686,15 @@
   }, {
 
     // **validRegexes** list of valid LinkRegexes
+
+    sizes: [
+      '480x295',
+      '560x340',
+      '640x385',
+      '853x505',
+      '1280x745',
+      '1920x1105',
+    ],
 
     validRegexes: [
       UrlRegExp('(www\.)?youtube\.com\/v\/([A-Za-z0-9\-_]+).*'),
