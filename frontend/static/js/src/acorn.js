@@ -32,15 +32,18 @@
   // Current version.
   acorn.VERSION = '0.0.0';
 
+  // Acorn service domain
+  acorn.domain = 'acorn.tirith';
+
   // Initialize collections
   acorn.options = {};
   acorn.errors = {};
+  acorn.util = {};
   // acorn.templates = {};
   // acorn.views = {};
   // acorn.plugins = {};
   acorn.shells = {};
   acorn.types = {};
-  acorn.util = {};
 
   // Errors
   // ------
@@ -121,6 +124,11 @@
     return child.__super__.derives(parent);
   }
   acorn.util.derives = derives;
+
+
+  var acorn.util.url = function() {
+    return 'https://' + acorn.domain + '/' + arguments.join('/');
+  }
 
   // The following functions are originally from other open-source projects.
   // They are replicated here to avoid dependencies for minimal things.
@@ -301,6 +309,10 @@
     initialize: function() {
       this._data = {};
       this._data.shells = [];
+    },
+
+    url: function() {
+      return acorn.util.url('api', this.acornid);
     },
 
     // Retrieve data
