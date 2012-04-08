@@ -78,11 +78,17 @@
     throw new Error('Attempt to construct undefined shell ' + shell);
   };
 
+  var APIError = function(description) {
+    throw new Error('Acorn API Error: ' + description);
+  };
+
   acorn.errors.NotImplementedError = NotImplementedError;
   acorn.errors.NotSupportedError = NotSupportedError;
   acorn.errors.ParameterError = ParameterError;
   acorn.errors.GetKeyOrSetObjError = GetKeyOrSetObjError;
   acorn.errors.UrlError = UrlError;
+  acorn.errors.UndefinedShellError = UndefinedShellError;
+  acorn.errors.APIError = APIError;
 
   // acorn.types
   // -----------
@@ -268,6 +274,14 @@
       params.processData = false;
     }
 
+    options.timeout = options.timeout || 5000;
+
+    var error = options.error;
+    options.error = function(xhr, type) {
+      console.log('sync error: ' + type);
+      error && error(xhr, type);
+    }
+
     // Make the request, allowing the user to override any Ajax options.
     return $.ajax(extend(params, options));
   };
@@ -320,7 +334,9 @@
   extend(acorn.Model.prototype, {
 
     // Unique identifier for this acorn.
-    acornid: function() {
+    acornid: function(acornid) {
+      if (acornid !== undefined)
+        this._data.acornid = acornid;
       return this._data.acornid;
     },
 
@@ -382,8 +398,16 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        if (!model.set(resp))
+
+        if (typeof resp === 'object' && !model.fromJSON(resp, options))
           return false;
+
+        else if (typeof resp === 'string')
+          model.acornid(resp);
+
+        else
+          APIError('invalid response');
+
         if (success)
           success(model, resp);
       };
