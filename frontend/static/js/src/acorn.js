@@ -153,6 +153,12 @@
     return acorn.apiurl +'/'+ path.join('/');
   };
 
+  var iframe = function(src) {
+    return '<iframe frameborder="0"'
+         + ' webkitAllowFullScreen mozallowfullscreen allowFullScreen '
+         + ' src="' +src+ '"></iframe>'
+  };
+
   // The following functions are originally from other open-source projects.
   // They are replicated here to avoid dependencies for minimal things.
 
@@ -783,21 +789,24 @@
     },
 
     embeddableLink: function() {
-      return 'https://www.youtube.com/embed/' + this.youtubeId();
+      return 'https://www.youtube.com/embed/' + this.youtubeId()
+        + '?fs=1&modestbranding=1&iv_load_policy=3&rel=0&showsearch=0&hd=1&wmode=transparent';
     },
 
     thumbnailLink: function() {
-      return "http://img.youtube.com/vi/" +this.youtubeId()+ "/0.jpg";
+      return "https://img.youtube.com/vi/" +this.youtubeId()+ "/0.jpg";
     },
 
     renderVars: function() {
       var vsrc = this.embeddableLink();
       var tsrc = this.thumbnailLink();
       return {
-        content: '<iframe frameborder="0" src="' +vsrc+ '"></iframe>',
+        content: iframe(vsrc),
         thumb: '<img src="' +tsrc+ '" />',
       };
     },
+
+    size: 1,
 
   }, {
 
@@ -817,6 +826,82 @@
       UrlRegExp('(www\.)?youtube\.com\/embed\/([A-Za-z0-9\-_]+).*'),
       UrlRegExp('(www\.)?youtube\.com\/watch\?.*v=([A-Za-z0-9\-_]+).*'),
       UrlRegExp('(www\.)?y2u.be\/([A-Za-z0-9\-_]+)'),
+    ],
+
+    // **urlMatches** returns whether a given link points to a youtbe video
+
+    urlMatches: function(url) {
+
+      for (var reidx in this.validRegexes) {
+        var re = this.validRegexes[reidx];
+        if (re.test(url.href))
+          return true;
+      }
+
+      return false;
+    },
+
+  });
+
+  // acorn.shells.VimeoShell
+  // ----------------------
+
+  // A shell that links to media and embeds it.
+  acorn.shells.VimeoShell = acorn.shells.LinkShell.extend({
+
+    shell: 'acorn.VimeoShell',
+
+    // The cannonical type of this media. One of `acorn.types`.
+    type: 'video',
+
+    // **vimeoId** returns the youtube video id of this link.
+    vimeoId: function() {
+      var link = this.link();
+
+      for (var reidx in this.constructor.validRegexes) {
+        var re = this.constructor.validRegexes[reidx];
+        if (!re.test(link))
+          continue;
+
+        var videoid = re.exec(link)[5];
+        return videoid;
+      }
+
+      throw new Error('Incorrect youtube link, no video id found.');
+    },
+
+    embeddableLink: function() {
+      return 'http://player.vimeo.com/video/' + this.vimeoId()
+        + '?&byline=0&portrait=0';
+    },
+
+    thumbnailLink: function() {
+      return "https://img.youtube.com/vi/" +this.vimeoId()+ "/0.jpg";
+    },
+
+    renderVars: function() {
+      var vsrc = this.embeddableLink();
+      var tsrc = this.thumbnailLink();
+      return {
+        content: iframe(vsrc),
+        // thumb: '<img src="' +tsrc+ '" />',
+      };
+    },
+
+    size: 1,
+
+  }, {
+
+    // **validRegexes** list of valid LinkRegexes
+
+    sizes: [
+      '480x295',
+      '560x340',
+      '640x385',
+    ],
+
+    validRegexes: [
+      UrlRegExp('(www\.)?(player\.)?vimeo\.com\/(video\/)?([0-9]+).*'),
     ],
 
     // **urlMatches** returns whether a given link points to a youtbe video
