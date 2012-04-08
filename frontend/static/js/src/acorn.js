@@ -51,19 +51,23 @@
 
   var NotSupportedError = function(method, extra) {
     throw new Error(method + ' not supported. ' +  (extra || '') );
-  }
+  };
 
   var ParameterError = function(param) {
     throw new Error('Parameter error: ' + param + ' must be specified.');
-  }
+  };
 
   var GetKeyOrSetObjError = function() {
     ParameterError('key to retrieve or object with new key-value pairs to set');
-  }
+  };
 
   var UrlError = function() {
     ParameterError('"url" property or function');
-  }
+  };
+
+  var UndefinedShellError = function(shell) {
+    throw new Error('Attempt to construct undefined shell ' + shell);
+  };
 
   acorn.errors.NotImplementedError = NotImplementedError;
   acorn.errors.NotSupportedError = NotSupportedError;
@@ -296,7 +300,7 @@
 
     initialize: function() {
       this._data = {};
-      this.set({ shells: []});
+      this._data.shells = [];
     },
 
     // Retrieve data
@@ -350,29 +354,29 @@
       return this.get('acornid') == 'new';
     },
 
-    // Shells access
+
     shells: function(shells) {
-      if (shells && typeof shells === object) {
-        this.set({'shells': shells});
+      if (typeof shells === 'object') {
+        this._data.shells = shells;
       }
-      return this.get('shells');
+      return clone(this._data.shells);
     },
 
     addShell: function(shell) {
       if (!shell.constructor.derives(acorn.shells.Shell))
         throw new Error('Invalid, does not derive from acorn.shells.Shell!');
 
-      this._data['shells'].push(shell);
+      this._data.shells.push(shell.data);
     },
 
     removeShell: function(shell) {
-      var idx = this._data['shells'].indexOf(shell);
-      this._data['shells'].splice(idx, 1);
+      var idx = this._data.shells.indexOf(shell.data);
+      this._data.shells.splice(idx, 1);
     },
 
     swapShell: function(oldShell, newShell) {
-      var idx = this._data['shells'].indexOf(oldShell);
-      this._data['shells'].splice(idx, 1, newShell);
+      var idx = this._data.shells.indexOf(oldShell.data);
+      this._data.shells.splice(idx, 1, newShell.data);
     },
 
   });
@@ -389,22 +393,33 @@
     this.shellEl = this.options.shellEl || document.createElement('div');
     this.thumbEl = this.options.thumbEl || document.createElement('div');
 
+    // track the data specifically.
+    this.data = this.options.data;
+    this.options.data = undefined;
+
+    // ensure the shell name is stored.
+    this.data.shell = this.shell;
+
     this.initialize.apply(this, arguments);
   };
 
   // Set up all **acorn.shells.Shell** properties and methods.
   extend(acorn.shells.Shell, {
 
-    // **shell** returns the shell prototype shell name.
-    shell: function() {
-      return this.prototype.shell;
-    },
-
     // Setup extend for inheritance.
     extend: extendPrototype,
 
     // recommended shell sizes
     sizes: [],
+
+    withData: function(data) {
+      for (var sidx in acorn.shells) {
+        var shell = acorn.shells[sidx];
+        if (shell.prototype.shell == data.shell)
+          return shell({data: data});
+      }
+      UndefinedShellError(data.shell);
+    },
 
   });
 
@@ -502,17 +517,18 @@
 
     initialize: function() {
 
-      if (!this.options.link)
+      if (!this.data.link)
         throw new Error('No link provided to LinkShell.');
 
-      this.location = this.options.location || parseUrl(this.options.link);
+      this.location = this.options.location || parseUrl(this.data.link);
 
       if (!this.constructor.urlMatches(this.location))
         throw new Error('Link provided does not match LinkShell.');
+
     },
 
     link: function() {
-      return this.options.link;
+      return this.data.link;
     },
 
     // **renderVars** returns the variables for the render template.
@@ -559,7 +575,7 @@
       }
 
       options = options || {};
-      options.link = link;
+      options.data = {'link': link};
       options.location = location;
       return new (bestShell || acorn.shells.LinkShell)(options);
     },
