@@ -260,7 +260,7 @@
     // Ensure that we have the appropriate request data.
     if (!options.data && model && (method == 'create' || method == 'update')) {
       params.contentType = 'application/json';
-      params.data = JSON.stringify(model.toJSON());
+      params.data = model.toJSON();
     }
 
     // Don't process data on a non-GET request.
@@ -320,15 +320,18 @@
   extend(acorn.Model.prototype, {
 
     // Unique identifier for this acorn.
-    acornid: 'new', // new is the sentinel for new objects.
+    acornid: function() {
+      return this._data.acornid;
+    },
 
     initialize: function() {
       this._data = {};
       this._data.shells = [];
+      this._data.acornid = this.options.acornid || 'new'; // sentinel.
     },
 
     url: function() {
-      return acorn.util.url('api', this.acornid);
+      return acorn.util.url(this.acornid());
     },
 
     // Retrieve data
@@ -345,6 +348,17 @@
       return clone(this._data);
     },
 
+    // **toJSON** return this object as a JSON object
+    toJSON: function() {
+      return JSON.stringify({data: {acorn: this.data()}});
+    },
+
+    // **fromJSON** set properties on this object from JSON representation
+    fromJSON: function(data, options) {
+      data = JSON.parse(data);
+      return this.set(data.data.acorn);
+    },
+
     // Function to retrieve model data.
     fetch: function(options) {
       options = options ? clone(options) : {};
@@ -352,7 +366,7 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        if (!model.set(model.parse(resp, xhr), options))
+        if (!model.fromJSON(resp, options))
           return false;
         if (success)
           success(model, resp);
@@ -379,7 +393,7 @@
     },
 
     isNew: function() {
-      return this.get('acornid') == 'new';
+      return this.acornid() == 'new';
     },
 
 
