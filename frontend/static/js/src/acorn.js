@@ -126,9 +126,9 @@
   acorn.util.derives = derives;
 
 
-  var acorn.util.url = function() {
+  acorn.util.url = function() {
     return 'https://' + acorn.domain + '/' + arguments.join('/');
-  }
+  };
 
   // The following functions are originally from other open-source projects.
   // They are replicated here to avoid dependencies for minimal things.
@@ -437,12 +437,15 @@
       for (var sidx in acorn.shells) {
         var shell = acorn.shells[sidx];
         if (shell.prototype.shell == data.shell)
-          return shell({data: data});
+          return new shell({data: data});
       }
       UndefinedShellError(data.shell);
     },
 
   });
+
+  // shorthand for quick-shell construction.
+  acorn.shell = acorn.shells.Shell.withData;
 
   // Set up all inheritable **acorn.shells.Shell** properties and methods.
   extend(acorn.shells.Shell.prototype, {
