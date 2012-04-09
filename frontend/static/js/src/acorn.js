@@ -377,7 +377,7 @@
       if (!link)
         return undefined;
 
-      var shell = acorn.linkShell(link);
+      var shell = acorn.shellWithLink(link);
       return this.withShell(shell);
     },
 
@@ -730,7 +730,7 @@
 
 
   });
-  acorn.linkShell = acorn.shells.LinkShell.classify;
+  acorn.shellWithLink = acorn.shells.LinkShell.classify;
 
   // acorn.shells.ImageLinkShell
   // ----------------------
