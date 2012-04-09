@@ -541,7 +541,7 @@
   });
 
   // shorthand for quick-shell construction.
-  acorn.shell = acorn.shells.Shell.withData;
+  acorn.withData = acorn.shells.Shell.withData;
 
   // Set up all inheritable **acorn.shells.Shell** properties and methods.
   extend(acorn.shells.Shell.prototype, {
