@@ -365,13 +365,25 @@
   extend(acorn.Model, {
 
     withShell: function(shell) {
+      if (!shell)
+        return undefined;
+
       var acorn = new acorn.Model();
       acorn.addShell(shell);
       return acorn;
     },
 
+    withLink: function(link) {
+      if (!link)
+        return undefined;
+
+      var shell = acorn.linkShell(link);
+      return this.withShell(shell);
+    },
+
   });
-  acorn.acorn = acorn.Model.withShell;
+  acorn.withShell = acorn.Model.withShell;
+  acorn.withLink = acorn.Model.withLink;
 
   // Set up all inheritable **acorn.Model** properties and methods.
   extend(acorn.Model.prototype, {
