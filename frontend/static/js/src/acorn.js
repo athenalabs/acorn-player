@@ -381,9 +381,16 @@
       return this.withShell(shell);
     },
 
+    withData: function(data) {
+      var acorn = new acorn.Model();
+      acorn.set(data);
+      return acorn;
+    },
+
   });
   acorn.withShell = acorn.Model.withShell;
   acorn.withLink = acorn.Model.withLink;
+  acorn.withData = acorn.Model.withData;
 
   // Set up all inheritable **acorn.Model** properties and methods.
   extend(acorn.Model.prototype, {
