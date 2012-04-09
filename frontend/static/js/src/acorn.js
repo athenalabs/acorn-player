@@ -515,6 +515,36 @@
       this._data.shells.splice(idx, 1, newShell.data);
     },
 
+
+    // **thumbEl** shorthand to render the first shell's thumbnail
+    embedThumbnail: function() {
+
+      var shellData = this.shells()[0];
+      if (!shellData)
+        return;
+
+      var shell = acorn.shellWithData(shellData);
+      if (!shell)
+        return;
+
+      shell.render();
+      return shell.thumbEl;
+    },
+
+    // **thumbEl** shorthand to render the first shell
+    embedShell: function() {
+      var shellData = this.shells()[0];
+      if (!shellData)
+        return;
+
+      var shell = acorn.shellWithData(shellData);
+      if (!shell)
+        return;
+
+      shell.render();
+      return shell.shellEl;
+    }
+
   });
 
 
