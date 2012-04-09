@@ -26,7 +26,10 @@
   if (typeof exports !== 'undefined') {
     acorn = exports;
   } else {
-    acorn = root.acorn = {};
+    acorn = root.acorn = function(acornid) {
+      acornid = acornid.trim().split('/').pop();
+      return new acorn.Model({'acornid': acornid});
+    };
   }
 
   // Current version.
@@ -141,6 +144,13 @@
   acorn.util.derives = derives;
 
 
+  // **code** escape html values for code blocks.
+  var code = function(code) {
+    return escape(code);
+  };
+  acorn.util.code = code;
+
+
   // **acorn.util.url** returns a url pointing to given path in acorn website.
   acorn.util.url = function() {
     var path = Array.prototype.slice.call(arguments);
@@ -154,10 +164,11 @@
   };
 
   var iframe = function(src) {
-    return '<iframe frameborder="0"'
+    return '<iframe frameborder="0" border="0"'
          + ' webkitAllowFullScreen mozallowfullscreen allowFullScreen '
          + ' src="' +src+ '"></iframe>'
   };
+  acorn.util.iframe = iframe;
 
   // The following functions are originally from other open-source projects.
   // They are replicated here to avoid dependencies for minimal things.
@@ -172,10 +183,9 @@
     return obj === Object(obj);
   };
 
-  var code = function(code) {
-    return escape(code);
+  var isArray = function (arr) {
+    return Object.prototype.toString.call(arr) === '[object Array]';
   };
-  acorn.util.code = code;
 
   // Extend a given object with all the properties in passed-in object(s).
   var extend = function(obj) {
@@ -350,6 +360,18 @@
     this.options = extend(this.defaults || {}, options || {});
     this.initialize.apply(this, arguments);
   };
+
+  // Set up all **acorn.Model** class properties.
+  extend(acorn.Model, {
+
+    withShell: function(shell) {
+      var acorn = new acorn.Model();
+      acorn.addShell(shell);
+      return acorn;
+    },
+
+  });
+  acorn.acorn = acorn.Model.withShell;
 
   // Set up all inheritable **acorn.Model** properties and methods.
   extend(acorn.Model.prototype, {
@@ -582,6 +604,7 @@
       $(this.shellEl).html( this.renderTemplate(this.shellTemplate, vars) );
       $(this.thumbEl).html( this.renderTemplate(this.thumbTemplate, vars) );
 
+
       // adjust shell size
       this.resize();
 
@@ -688,7 +711,7 @@
 
 
   });
-  acorn.link = acorn.shells.LinkShell.classify;
+  acorn.linkShell = acorn.shells.LinkShell.classify;
 
   // acorn.shells.ImageLinkShell
   // ----------------------
