@@ -5,3 +5,4 @@ frontend/data
 supervisord.pid
 supervisord.log
 data/
+venv/
