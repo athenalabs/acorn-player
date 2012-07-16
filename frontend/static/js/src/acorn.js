@@ -44,10 +44,10 @@
   acorn.domain = 'acorn.tirith';
 
   // Acorn Url
-  acorn.url = 'https://' + acorn.domain;
+  acorn.url = 'http://' + acorn.domain;
 
   // Acorn API Url
-  acorn.apiurl = 'https://' + acorn.domain + '/api/v' + acorn.APIVERSION;
+  acorn.apiurl = 'http://' + acorn.domain + '/api/v' + acorn.APIVERSION;
 
   // Initialize collections
   acorn.options = {};
