@@ -1,5 +1,5 @@
 //     acorn.js 0.0.0
-//     (c) 2012 Juan Batiz-Benet, KnowTree Inc.
+//     (c) 2012 Juan Batiz-Benet, Athena.
 //     Acorn is freely distributable under the MIT license.
 //     Inspired by github:gist.
 //     Portions of code from Underscore.js and Backbone.js
