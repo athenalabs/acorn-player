@@ -28,6 +28,8 @@
   } else {
     acorn = root.acorn = function(acornid) {
       acornid = acornid.trim().split('/').pop();
+      if (acornid == 'new')
+        return undefined;
       return new acorn.Model({'acornid': acornid});
     };
   }
