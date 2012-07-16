@@ -616,7 +616,7 @@
     shellTemplate: '\
       <div class="acorn-shell" shell="{{ shell }}">\
         <div class="acorn-shell-content">{{ content }}</div>\
-        <div class="acorn-overlay">acorn</div>\
+        <div class="acorn-overlay"></div>\
       </div>\
     ',
 
