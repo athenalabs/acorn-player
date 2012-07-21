@@ -439,6 +439,12 @@
       return clone(this._data);
     },
 
+    // return whether this acorn is editable by this user.
+    isEditable: function() {
+      // in the future, do auth checks.
+      return true;
+    },
+
     // **toJSON** return this object as a JSON object
     toJSON: function() {
       return JSON.stringify({data: {acorn: this.data()}});
