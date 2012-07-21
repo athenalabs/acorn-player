@@ -169,7 +169,7 @@
   };
 
   var iframe = function(src) {
-    return '<iframe frameborder="0" border="0"'
+    return '<iframe frameborder="0" border="0" allowTransparency="true"'
          + ' webkitAllowFullScreen mozallowfullscreen allowFullScreen '
          + ' src="' +src+ '"></iframe>'
   };
