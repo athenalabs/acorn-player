@@ -169,7 +169,7 @@
   };
 
   var iframe = function(src) {
-    return '<iframe frameborder="0" border="0"'
+    return '<iframe frameborder="0" border="0" allowTransparency="true"'
          + ' webkitAllowFullScreen mozallowfullscreen allowFullScreen '
          + ' src="' +src+ '"></iframe>'
   };
@@ -439,6 +439,12 @@
       return clone(this._data);
     },
 
+    // return whether this acorn is editable by this user.
+    isEditable: function() {
+      // in the future, do auth checks.
+      return true;
+    },
+
     // **toJSON** return this object as a JSON object
     toJSON: function() {
       return JSON.stringify({data: {acorn: this.data()}});
@@ -616,7 +622,7 @@
     shellTemplate: '\
       <div class="acorn-shell" shell="{{ shell }}">\
         <div class="acorn-shell-content">{{ content }}</div>\
-        <div class="acorn-overlay">acorn</div>\
+        <div class="acorn-overlay"></div>\
       </div>\
     ',
 
