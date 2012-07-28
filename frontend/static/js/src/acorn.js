@@ -447,13 +447,13 @@
 
     // **toJSON** return this object as a JSON object
     toJSON: function() {
-      return JSON.stringify({data: {acorn: this.data()}});
+      return JSON.stringify(this.data());
     },
 
     // **fromJSON** set properties on this object from JSON representation
     fromJSON: function(data, options) {
       // var parsed = JSON.parse(data);
-      return this.set(data.data.acorn);
+      return this.set(data);
     },
 
     // Function to retrieve model data.
