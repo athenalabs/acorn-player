@@ -56,9 +56,6 @@
   acorn.options = {};
   acorn.errors = {};
   acorn.util = {};
-  // acorn.templates = {};
-  // acorn.views = {};
-  // acorn.plugins = {};
   acorn.shells = {};
   acorn.types = {};
 
@@ -186,10 +183,6 @@
 
   var isObject = function(obj) {
     return obj === Object(obj);
-  };
-
-  var isArray = function (arr) {
-    return Object.prototype.toString.call(arr) === '[object Array]';
   };
 
   // Extend a given object with all the properties in passed-in object(s).
@@ -357,6 +350,7 @@
     return result;
   };
   acorn.util.parseUrl = parseUrl;
+
 
   // acorn.Model
   // -----------
