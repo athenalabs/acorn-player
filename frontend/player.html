@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <title>acorn:</title>
+
+  <base href="/" />
+
+  <link rel="shortcut icon" href="/static/img/favicon.ico">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link rel="stylesheet" href="/static/css/acorn.css" />
+
+<style>
+
+html, body {
+  margin: 0px;
+  padding: 0px;
+  background:transparent
+}
+
+#acorn-player,
+#acorn-player > .content,
+#acorn-player > .thumbnail,
+#acorn-player > .thumbnail > img#image {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+
+#acorn-player > .controls {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  height: 30px;
+}
+
+
+#acorn-player {
+  min-width: 100px;
+  background: #000000;
+}
+
+#acorn-player > .thumbnail {}
+
+#acorn-player > .thumbnail > #image {
+  min-width: 100%;
+  min-height: 100%;
+}
+
+#acorn-player > .thumbnail > .thumbnail-icon {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 7px;
+  padding: 5%;
+  width: 20%;
+
+  position: absolute;
+  bottom: 20px;
+}
+
+#acorn-player > .thumbnail > #logo.thumbnail-icon {
+  right: 20px;
+}
+
+#acorn-player > .thumbnail > #type.thumbnail-icon {
+  left: 20px;
+}
+
+#acorn-player > .content {}
+
+</style>
+
+</head>
+<body>
+
+<div id="acorn-player">
+</div>
+
+<script src="/static/js/libs/zepto/zepto.min.js"></script>
+<script src="/static/js/libs/zepto/zepto.bootstrap.js"></script>
+<script src="/static/js/libs/underscore/underscore-min.js"></script>
+<script src="/static/js/libs/backbone/backbone-min.js"></script>
+
+<script src="/static/js/src/acorn.js"></script>
+<script src="/static/js/src/acorn.shells.js"></script>
+<script src="/static/js/src/acorn.player.js"></script>
+
+</body>
+</html>

@@ -55,9 +55,8 @@
   // Initialize collections
   acorn.options = {};
   acorn.errors = {};
-  acorn.util = {};
-  acorn.shells = {};
   acorn.types = {};
+  acorn.util = {};
 
   // Errors
   // ------
@@ -90,13 +89,13 @@
     throw new Error('Acorn API Error: ' + description);
   };
 
-  acorn.errors.NotImplementedError = NotImplementedError;
-  acorn.errors.NotSupportedError = NotSupportedError;
-  acorn.errors.ParameterError = ParameterError;
-  acorn.errors.GetKeyOrSetObjError = GetKeyOrSetObjError;
   acorn.errors.UrlError = UrlError;
-  acorn.errors.UndefinedShellError = UndefinedShellError;
   acorn.errors.APIError = APIError;
+  acorn.errors.ParameterError = ParameterError;
+  acorn.errors.NotSupportedError = NotSupportedError;
+  acorn.errors.GetKeyOrSetObjError = GetKeyOrSetObjError;
+  acorn.errors.UndefinedShellError = UndefinedShellError;
+  acorn.errors.NotImplementedError = NotImplementedError;
 
   // acorn.types
   // -----------
@@ -163,6 +162,12 @@
   acorn.util.apiurl = function() {
     var path = Array.prototype.slice.call(arguments);
     return acorn.apiurl +'/'+ path.join('/');
+  };
+
+  acorn.util.imgurl = function() {
+    var args = Array.prototype.slice.call(arguments);
+    var urlargs = ['static', 'img'].concat(args);
+    return acorn.util.url.apply(this, urlargs);
   };
 
   var iframe = function(src) {
@@ -363,15 +368,6 @@
   // Set up all **acorn.Model** class properties.
   extend(acorn.Model, {
 
-    withShell: function(shell) {
-      if (!shell)
-        return undefined;
-
-      var acorn = new acorn.Model();
-      acorn.addShell(shell);
-      return acorn;
-    },
-
     withLink: function(link) {
       if (!link)
         return undefined;
@@ -387,7 +383,6 @@
     },
 
   });
-  acorn.withShell = acorn.Model.withShell;
   acorn.withLink = acorn.Model.withLink;
   acorn.withData = acorn.Model.withData;
 
@@ -403,7 +398,7 @@
 
     initialize: function() {
       this._data = {};
-      this._data.shells = [];
+      this._data.shell = {};
       this._data.acornid = this.options.acornid || 'new'; // sentinel.
     },
 
@@ -456,11 +451,20 @@
 
       var model = this;
       var success = options.success;
+
+      // if we've already fetched and not forcing, we're done.
+      if (this._fetched && !options.force) {
+        if (success)
+          success(model, null);
+        return;
+      }
+
       options.success = function(resp, status, xhr) {
         if (!model.fromJSON(resp, options))
           return false;
         if (success)
           success(model, resp);
+        model._fetched = true;
       };
 
       return acorn.util.sync('read', this, options);
@@ -496,502 +500,14 @@
     },
 
 
-    shells: function(shells) {
-      if (typeof shells === 'object') {
-        this._data.shells = shells;
-      }
-      return clone(this._data.shells);
-    },
-
-    addShell: function(shell) {
-      if (!shell.constructor.derives(acorn.shells.Shell))
-        throw new Error('Invalid, does not derive from acorn.shells.Shell!');
-
-      this._data.shells.push(shell.data);
-    },
-
-    removeShell: function(shell) {
-      var idx = this._data.shells.indexOf(shell.data);
-      this._data.shells.splice(idx, 1);
-    },
-
-    swapShell: function(oldShell, newShell) {
-      var idx = this._data.shells.indexOf(oldShell.data);
-      this._data.shells.splice(idx, 1, newShell.data);
-    },
-
-
-    // **thumbEl** shorthand to render the first shell's thumbnail
-    embedThumbnail: function() {
-
-      var shellData = this.shells()[0];
-      if (!shellData)
-        return;
-
-      var shell = acorn.shellWithData(shellData);
-      if (!shell)
-        return;
-
-      shell.render();
-      return shell.thumbEl;
-    },
-
-    // **thumbEl** shorthand to render the first shell
-    embedShell: function() {
-      var shellData = this.shells()[0];
-      if (!shellData)
-        return;
-
-      var shell = acorn.shellWithData(shellData);
-      if (!shell)
-        return;
-
-      shell.render();
-      return shell.shellEl;
-    }
-
-  });
-
-
-  // acorn.shells.Shell
-  // ------------------
-
-  // A module that outlines the interface for all media types.
-  acorn.shells.Shell = function(options) {
-    this.options = extend(this.defaults || {}, options || {});
-
-    // track the shell element.
-    this.shellEl = this.options.shellEl || document.createElement('div');
-    this.thumbEl = this.options.thumbEl || document.createElement('div');
-
-    // track the data specifically.
-    this.data = this.options.data;
-    this.options.data = undefined;
-
-    // ensure the shell name is stored.
-    this.data.shell = this.shell;
-
-    this.initialize.apply(this, arguments);
-  };
-
-  // Set up all **acorn.shells.Shell** properties and methods.
-  extend(acorn.shells.Shell, {
-
-    // Setup extend for inheritance.
-    extend: extendPrototype,
-
-    // recommended shell sizes
-    sizes: [],
-
-    withData: function(data) {
-      for (var sidx in acorn.shells) {
-        var shell = acorn.shells[sidx];
-        if (shell.prototype.shell == data.shell)
-          return new shell({data: data});
-      }
-      UndefinedShellError(data.shell);
-    },
-
-  });
-
-  // shorthand for quick-shell construction.
-  acorn.shellWithData = acorn.shells.Shell.withData;
-
-  // Set up all inheritable **acorn.shells.Shell** properties and methods.
-  extend(acorn.shells.Shell.prototype, {
-
-    // The unique `shell` name of an acorn Shell.
-    // The convention is to namespace by vendor. e.g. `acorn.Document`.
-    shell: 'acorn.Shell',
-
-    // The cannonical type of this media. One of `acorn.types`.
-    type: 'text',
-
-    // **initialize** is an empty function by default.
-    // Override it with your own initialization logic.
-    initialize: function() {},
-
-
-    // **shellTemplate** is the html template for shells.
-    shellTemplate: '\
-      <div class="acorn-shell" shell="{{ shell }}">\
-        <div class="acorn-shell-content">{{ content }}</div>\
-        <div class="acorn-overlay"></div>\
-      </div>\
-    ',
-
-
-    // **thumbTemplate** is the html template for thumbnails.
-    thumbTemplate: '\
-      <div class="acorn-thumb" shell="{{ shell }}">\
-        <div class="acorn-thumb-content">{{ thumb }}</div>\
-        <div class="acorn-overlay">\
-          <img class="acorn-mark acorn-icon" src="/static/img/acorn.png" />\
-          <img class="acorn-type acorn-icon" src="/static/img/icons/{{ type }}.png" />\
-        </div>\
-      </div>\
-    ',
-
-    // **renderVars**  is the core function that your media shell should
-    // override, in order to populate the appropriate content HTML.
-    renderVars: function() {
-      return {};
-    },
-
-    // **render** populates the element with the correct html.
-
-    renderTemplate: function(template, vars) {
-      var html = template;
-      for (var arg in vars) {
-        html = html.replace(RegExp('{{ '+arg+' }}', 'i'), vars[arg]);
-      }
-      return html;
-    },
-
-    render: function(template) {
-      var vars = this.renderVars() || {};
-      vars.shell = this.shell;
-      vars.type = this.type;
-      vars.content = vars.content || '';
-      vars.thumb = vars.thumb || vars.content;
-
-      $(this.shellEl).html( this.renderTemplate(this.shellTemplate, vars) );
-      $(this.thumbEl).html( this.renderTemplate(this.thumbTemplate, vars) );
-
-
-      // adjust shell size
-      this.resize();
-
-      return this;
-    },
-
-    // **size** the default size index (for .sizes) for this shell.
-    size: 0,
-
-    // set the dimension of the shell
-    resize: function(size) {
-      size = size || this.options.shellSize || this.size;
-
-      if (typeof size === 'number')
-        size = this.constructor.sizes[size];
-
-      if (typeof size !== 'string')
-        return;
-
-      var w = size.split('x')[0];
-      var h = size.split('x')[1];
-      $(this.shellEl).css('width', parseInt(w));
-      $(this.shellEl).css('height', parseInt(h));
-    },
-
-  });
-
-
-  // acorn.shells.LinkShell
-  // ----------------------
-
-  // A shell that links to media and embeds it.
-  acorn.shells.LinkShell = acorn.shells.Shell.extend({
-
-    shell: 'acorn.LinkShell',
-
-    // The cannonical type of this media. One of `acorn.types`.
-    type: 'link',
-
-    initialize: function() {
-
-      if (!this.data.link)
-        throw new Error('No link provided to LinkShell.');
-
-      this.location = this.options.location || parseUrl(this.data.link);
-
-      if (!this.constructor.urlMatches(this.location))
-        throw new Error('Link provided does not match LinkShell.');
-
-    },
-
-    link: function() {
-      return this.data.link;
-    },
-
-    // **renderVars** returns the variables for the render template.
-    renderVars: function() {
-      var link = this.link();
-      return { content: '<a href="' +link+ '">' +link+ '</a>' };
-    },
-
-
-  }, {
-
-    // from the web.
-    validLinkRegex: /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i,
-
-    isValidLink: function(link) {
-      return this.validLinkRegex.test(link);
-    },
-
-    // **urlMatches** returns whether a given url matches this Shell.
-    // For instance, an ImageShell could return true for links ending in
-    // .jpg, .png, .gif, etc.
-    urlMatches: function(url) {
-      return this.isValidLink(url.href);
-    },
-
-    classify: function(link, options) {
-
-      var location = parseUrl(link);
-
-      var bestShell = undefined;
-      for (var sidx in acorn.shells) {
-        var shell = acorn.shells[sidx];
-
-        // skip shells that do not derive from LinkShell
-        if (!shell.derives || !shell.derives(acorn.shells.LinkShell))
-          continue;
-
-        // Skip parents of the bestShell so far (already more specific)
-        if (bestShell && bestShell.derives(shell))
-          continue;
-
-        if (shell.urlMatches(location))
-          bestShell = shell;
+    shell: function(shell) {
+      if (typeof shell !== "undefined") {
+        this._data.shell = shell;
       }
 
-      options = options || {};
-      options.data = {'link': link};
-      options.location = location;
-      return new (bestShell || acorn.shells.LinkShell)(options);
-    },
-
-
-  });
-  acorn.shellWithLink = acorn.shells.LinkShell.classify;
-
-  // acorn.shells.ImageLinkShell
-  // ----------------------
-
-  // A shell that links to media and embeds it.
-  acorn.shells.ImageLinkShell = acorn.shells.LinkShell.extend({
-
-    shell: 'acorn.ImageLinkShell',
-
-    // The cannonical type of this media. One of `acorn.types`.
-    type: 'image',
-
-    // **renderVars** returns the variables for the render template.
-    renderVars: function() {
-      var link = this.link();
-      return { content: '<img src="' +link+ '" />' };
-    },
-
-  }, {
-
-    // **urlMatches** returns whether a given link points to an image
-    // .jpg, .png, .gif, etc.
-    urlMatches: function(url) {
-
-      switch (url.extension) {
-        case 'jpg': case 'jpeg':
-        case 'gif':
-        case 'png':
-          return true;
-      }
-
-      return false;
-    },
-
-  });
-
-  // acorn.shells.VideoLinkShell
-  // ----------------------
-
-  // A shell that links to media and embeds it.
-  acorn.shells.VideoLinkShell = acorn.shells.LinkShell.extend({
-
-    shell: 'acorn.VideoLinkShell',
-
-    // The cannonical type of this media. One of `acorn.types`.
-    type: 'video',
-
-    // // **renderVars** returns the variables for the render template.
-    // renderVars: function() {
-    //   var link = this.link();
-    //   return { content: '<img src="' +link+ '" />' };
-    // },
-
-  }, {
-
-    // **urlMatches** returns whether a given link points to a video
-    // .wmv, .mov, .avi, etc.
-    urlMatches: function(url) {
-
-      switch (url.extension) {
-        case 'avi':
-        case 'mov':
-        case 'wmv':
-          return true;
-      }
-
-      return false;
-    },
-
-  });
-
-
-  // acorn.shells.YouTubeShell
-  // ----------------------
-
-  // A shell that links to media and embeds it.
-  acorn.shells.YouTubeShell = acorn.shells.LinkShell.extend({
-
-    shell: 'acorn.YouTubeShell',
-
-    // The cannonical type of this media. One of `acorn.types`.
-    type: 'video',
-
-    // **youtubeId** returns the youtube video id of this link.
-    youtubeId: function() {
-      var link = this.link();
-
-      for (var reidx in this.constructor.validRegexes) {
-        var re = this.constructor.validRegexes[reidx];
-        if (!re.test(link))
-          continue;
-
-        var videoid = re.exec(link)[3];
-        return videoid;
-      }
-
-      throw new Error('Incorrect youtube link, no video id found.');
-    },
-
-    embeddableLink: function() {
-      return 'https://www.youtube.com/embed/' + this.youtubeId()
-        + '?fs=1&modestbranding=1&iv_load_policy=3&rel=0&showsearch=0&hd=1&wmode=transparent';
-    },
-
-    thumbnailLink: function() {
-      return "https://img.youtube.com/vi/" +this.youtubeId()+ "/0.jpg";
-    },
-
-    renderVars: function() {
-      var vsrc = this.embeddableLink();
-      var tsrc = this.thumbnailLink();
-      return {
-        content: iframe(vsrc),
-        thumb: '<img src="' +tsrc+ '" />',
-      };
-    },
-
-    size: 1,
-
-  }, {
-
-    // **validRegexes** list of valid LinkRegexes
-
-    sizes: [
-      '480x295',
-      '560x340',
-      '640x385',
-      '853x505',
-      '1280x745',
-      '1920x1105',
-    ],
-
-    validRegexes: [
-      UrlRegExp('(www\.)?youtube\.com\/v\/([A-Za-z0-9\-_]+).*'),
-      UrlRegExp('(www\.)?youtube\.com\/embed\/([A-Za-z0-9\-_]+).*'),
-      UrlRegExp('(www\.)?youtube\.com\/watch\?.*v=([A-Za-z0-9\-_]+).*'),
-      UrlRegExp('(www\.)?y2u.be\/([A-Za-z0-9\-_]+)'),
-    ],
-
-    // **urlMatches** returns whether a given link points to a youtbe video
-
-    urlMatches: function(url) {
-
-      for (var reidx in this.validRegexes) {
-        var re = this.validRegexes[reidx];
-        if (re.test(url.href))
-          return true;
-      }
-
-      return false;
-    },
-
-  });
-
-  // acorn.shells.VimeoShell
-  // ----------------------
-
-  // A shell that links to media and embeds it.
-  acorn.shells.VimeoShell = acorn.shells.LinkShell.extend({
-
-    shell: 'acorn.VimeoShell',
-
-    // The cannonical type of this media. One of `acorn.types`.
-    type: 'video',
-
-    // **vimeoId** returns the youtube video id of this link.
-    vimeoId: function() {
-      var link = this.link();
-
-      for (var reidx in this.constructor.validRegexes) {
-        var re = this.constructor.validRegexes[reidx];
-        if (!re.test(link))
-          continue;
-
-        var videoid = re.exec(link)[5];
-        return videoid;
-      }
-
-      throw new Error('Incorrect youtube link, no video id found.');
-    },
-
-    embeddableLink: function() {
-      return 'http://player.vimeo.com/video/' + this.vimeoId()
-        + '?&byline=0&portrait=0';
-    },
-
-    thumbnailLink: function() {
-      return "https://img.youtube.com/vi/" +this.vimeoId()+ "/0.jpg";
-    },
-
-    renderVars: function() {
-      var vsrc = this.embeddableLink();
-      var tsrc = this.thumbnailLink();
-      return {
-        content: iframe(vsrc),
-        // thumb: '<img src="' +tsrc+ '" />',
-      };
-    },
-
-    size: 1,
-
-  }, {
-
-    // **validRegexes** list of valid LinkRegexes
-
-    sizes: [
-      '480x295',
-      '560x340',
-      '640x385',
-    ],
-
-    validRegexes: [
-      UrlRegExp('(www\.)?(player\.)?vimeo\.com\/(video\/)?([0-9]+).*'),
-    ],
-
-    // **urlMatches** returns whether a given link points to a youtbe video
-
-    urlMatches: function(url) {
-
-      for (var reidx in this.validRegexes) {
-        var re = this.validRegexes[reidx];
-        if (re.test(url.href))
-          return true;
-      }
-
-      return false;
+      if (this._data.shell === undefined)
+        return undefined;
+      return this._data.shell;
     },
 
   });
