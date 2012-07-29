@@ -299,7 +299,7 @@
     embeddableLink: function() {
       return 'https://www.youtube.com/embed/' + this.youtubeId()
            + '?fs=1'
-           + '&modestbranding=1'
+           // + '&modestbranding=1'
            + '&iv_load_policy=3'
            + '&rel=0'
            + '&showsearch=0'

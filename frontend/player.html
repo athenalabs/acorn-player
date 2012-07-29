@@ -39,7 +39,6 @@ html, body {
   left: 0px;
   right: 0px;
   bottom: 0px;
-  height: 30px;
 }
 
 
@@ -48,7 +47,9 @@ html, body {
   background: #000000;
 }
 
-#acorn-player > .thumbnail {}
+#acorn-player > .thumbnail {
+  overflow: hidden;
+}
 
 #acorn-player > .thumbnail > #image {
   min-width: 100%;
@@ -73,7 +74,22 @@ html, body {
   left: 20px;
 }
 
-#acorn-player > .content {}
+#acorn-player > .content {
+  overflow: hidden;
+}
+
+#acorn-player > .controls {
+  height: 28px;
+  width: 598px;
+  border: 1px solid #cccccc;
+  background-color: #ffffff;
+  background-image: linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+}
 
 </style>
 
