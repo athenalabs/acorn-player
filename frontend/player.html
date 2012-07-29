@@ -24,9 +24,9 @@ html, body {
 }
 
 #acorn-player,
-#acorn-player > .content,
-#acorn-player > .thumbnail,
-#acorn-player > .thumbnail > img#image {
+#acorn-player > #content,
+#acorn-player > #thumbnail,
+#acorn-player > #thumbnail > img#image {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -34,7 +34,7 @@ html, body {
   bottom: 0px;
 }
 
-#acorn-player > .controls {
+#acorn-player > #controls {
   position: absolute;
   left: 0px;
   right: 0px;
@@ -45,18 +45,30 @@ html, body {
 #acorn-player {
   min-width: 100px;
   background: #000000;
+
+  -webkit-transition: 0.35s ease;
+  -moz-transition: 0.35s ease;
+  -ms-transition: 0.35s ease;
+  -o-transition: 0.35s ease;
+  transition: 0.35s ease;
 }
 
-#acorn-player > .thumbnail {
+#acorn-player > #thumbnail {
   overflow: hidden;
+
+  -webkit-transition: 0.35s ease;
+  -moz-transition: 0.35s ease;
+  -ms-transition: 0.35s ease;
+  -o-transition: 0.35s ease;
+  transition: 0.35s ease;
 }
 
-#acorn-player > .thumbnail > #image {
+#acorn-player > #thumbnail > #image {
   min-width: 100%;
   min-height: 100%;
 }
 
-#acorn-player > .thumbnail > .thumbnail-icon {
+#acorn-player > #thumbnail > .thumbnail-icon {
   background: rgba(255, 255, 255, 0.9);
   border-radius: 7px;
   padding: 5%;
@@ -66,22 +78,27 @@ html, body {
   bottom: 20px;
 }
 
-#acorn-player > .thumbnail > #logo.thumbnail-icon {
+#acorn-player > #thumbnail > #logo.thumbnail-icon {
   right: 20px;
 }
 
-#acorn-player > .thumbnail > #type.thumbnail-icon {
+#acorn-player > #thumbnail > #type.thumbnail-icon {
   left: 20px;
 }
 
-#acorn-player > .content {
+#acorn-player > #content {
   overflow: hidden;
 }
 
-#acorn-player > .controls {
+#acorn-player > #content:hover + #controls {
+  height: 0px;
+}
+
+#acorn-player > #controls {
   height: 28px;
   width: 598px;
   border: 1px solid #cccccc;
+
   background-color: #ffffff;
   background-image: linear-gradient(top, #ffffff, #e6e6e6);
   background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6);
@@ -89,6 +106,48 @@ html, body {
   background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
   background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
   background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+
+  -webkit-transition: 0.35s ease;
+  -moz-transition: 0.35s ease;
+  -ms-transition: 0.35s ease;
+  -o-transition: 0.35s ease;
+  transition: 0.35s ease;
+
+}
+
+#acorn-player > #controls > .control {
+  padding-top: 1px;
+  padding-bottom: 1px;
+  height: 28px;
+}
+
+#acorn-player > #controls > .control:hover {
+  margin-top: 2px;
+}
+
+#acorn-player > #controls > .control:active {
+  margin-top: 4px;
+}
+
+#acorn-player > #controls > .control.right {
+  float: right;
+  padding-right: 1px;
+  border-left: 1px solid #ccc;
+}
+
+#acorn-player > #controls > .control.left {
+  float: left;
+  padding-left: 1px;
+  border-right: 1px solid #ccc;
+}
+
+
+#acorn-player > #controls > #acorn.control {
+  background: no-repeat url("/static/img/controls/acorn.png") 0px -2px;
+}
+
+#acorn-player > #controls > #fullscreen.control {
+  background: no-repeat url("/static/img/controls/acorn.png") -30px -2px;
 }
 
 </style>

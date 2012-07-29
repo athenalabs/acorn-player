@@ -151,7 +151,7 @@
       <img id="logo" src="" class="thumbnail-icon" />\
     '),
 
-    className: 'thumbnail',
+    id: 'thumbnail',
 
     initialize: function() {
       _.bindAll(this);
@@ -186,7 +186,7 @@
 
   player.views.ContentView = Backbone.View.extend({
 
-    className: 'content',
+    id: 'content',
 
     initialize: function() {
       _.bindAll(this);
@@ -219,11 +219,11 @@
 
   player.views.ControlsView = Backbone.View.extend({
 
-    className: 'controls',
+    id: 'controls',
 
     controls: [
-      player.views.controls.FullscreenControl,
-      player.views.controls.AcornControl,
+      'AcornControl',
+      'FullscreenControl',
     ],
 
     initialize: function() {
@@ -257,7 +257,7 @@
       this.controlViews = _(controls).chain()
         .map(function (ctrl) { return player.views.controls[ctrl]; })
         .filter(function (cls) { return !!cls; })
-        .map(function (cls) { return new viewClass({controls: self}); })
+        .map(function (cls) { return new cls({controls: self}); })
         .value();
 
       this.render();
@@ -271,8 +271,9 @@
 
   player.views.Control = Backbone.View.extend({
 
-    icon: '',   // control icon image.
+    tagName: 'img',
     className: 'control',
+
     events: {
       'click': 'onClick',
     },
@@ -288,11 +289,9 @@
 
     render: function() {
 
-      var icon = acorn.util.imgurl('controls', this.icon + '.png');
-      var img = $('<img>').attr('src', icon);
-
       this.$el.empty();
-      this.$el.append(img)
+      this.$el.attr('src', acorn.util.imgurl('controls', 'blank.png'));
+
     },
 
     onClick: function() {
@@ -307,7 +306,7 @@
   player.views.controls.FullscreenControl = player.views.Control.extend({
 
     id: 'fullscreen',
-    icon: 'fullscreen',
+    className: 'control right',
 
     onClick: function() {
       this.controls.player.trigger('fullscreen');
@@ -321,7 +320,7 @@
   player.views.controls.AcornControl = player.views.Control.extend({
 
     id: 'acorn',
-    icon: 'acorn',
+    className: 'control right',
 
     onClick: function() {
       this.controls.player.trigger('acorn-site');
