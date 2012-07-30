@@ -86,6 +86,9 @@
       this.on('change:acorn', this.onAcornChange);
       this.on('show:content', this.onShowContent);
 
+      this.on('show:edit', this.onShowEdit);
+      this.on('close:edit', this.onCloseEdit);
+
       this.on('fullscreen', this.onFullscreen);
       this.on('acorn-site', this.onAcornSite);
     },
@@ -107,17 +110,42 @@
 
     onShowContent: function() {
 
-      this.thumbnailView.$el.hide(1000);
-
       this.contentView.render();
       this.controlsView.render();
 
       this.$el.append(this.contentView.el);
       this.$el.append(this.controlsView.el);
+
+      this.thumbnailView.$el.hide(1000);
+
     },
 
     triggerShowContent: function() {
       this.trigger('show:content');
+    },
+
+    onShowEdit: function() {
+      if (this.editView)
+        return;
+
+      this.editView = new player.views.EditView({ player: this });
+      this.editView.render();
+      this.editView.$el.css('opacity', 0.0);
+      this.$el.append(this.editView.el);
+      this.editView.$el.css('opacity', 1.0);
+    },
+
+    onCloseEdit: function() {
+      if (!this.editView)
+        return;
+
+      this.editView.$el.hide();
+      this.editView.remove();
+      this.editView = undefined;
+    },
+
+    triggerEdit: function() {
+      this.trigger('show:edit');
     },
 
     onFullscreen: function() {
@@ -324,6 +352,62 @@
 
     onClick: function() {
       this.controls.player.trigger('acorn-site');
+    },
+
+  });
+
+
+  // ** player.views.EditView ** a view to house all editing controls
+  // ----------------------------------------------------------------
+
+  player.views.EditView = Backbone.View.extend({
+
+    template: _.template('\
+      <div class="row" id="toolbar">\
+        <h1>acornid:<span id="acornid"></span></h1>\
+        <div id="actions">\
+          <button id="cancel" type="submit" class="btn">\
+            <i class="icon-ban-circle"></i> Cancel\
+          </button>\
+          <button id="save" type="submit" class="btn btn-success">\
+            <i class="icon-ok-circle icon-white"></i> Save\
+          </button>\
+        </div>\
+      </div>\
+    '),
+
+    id: 'edit',
+
+    events: {
+      'click button#cancel': 'onCancel',
+      'click button#save': 'onSave',
+    },
+
+    initialize: function() {
+      _.bindAll(this);
+
+      this.player = this.options.player;
+      if (!this.player)
+        throw new acorn.errors.ParameterError('player');
+
+    },
+
+    render: function() {
+
+      this.$el.empty();
+
+      this.$el.html(this.template());
+      this.$el.find('#acornid').text(this.player.model.acornid());
+
+    },
+
+    onCancel: function() {
+      this.player.trigger('close:edit');
+    },
+
+    onSave: function() {
+      this.player.trigger('save:acorn');
+      this.player.trigger('close:edit');
     },
 
   });
