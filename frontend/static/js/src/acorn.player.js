@@ -362,6 +362,8 @@
       });
 
       $('title').text('acorn:' + acornid);
+
+      acorn.player.instance = playerView;
     },
 
   });

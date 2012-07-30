@@ -170,10 +170,17 @@
     return acorn.util.url.apply(this, urlargs);
   };
 
-  var iframe = function(src) {
-    return '<iframe frameborder="0" border="0" allowTransparency="true"'
-         + ' webkitAllowFullScreen mozallowfullscreen allowFullScreen '
-         + ' src="' +src+ '"></iframe>'
+  var iframe = function(src, id) {
+    var f = $('<iframe>');
+    f.attr('frameborder', '0').attr('border', '0');
+    f.attr('allowTransparency', 'true');
+    f.attr('allowFullScreen', 'true')
+      .attr('webkitAllowFullScreen', 'true')
+      .attr('mozallowfullscreen', 'true');
+    f.attr('src', src);
+    if (id)
+      f.attr('id', id)
+    return f;
   };
   acorn.util.iframe = iframe;
 
