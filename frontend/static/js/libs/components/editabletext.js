@@ -164,15 +164,16 @@
       var text = this.saveText();
 
       // close popover
-      this.find(".editabletext > #edit").popover('hide');
+      this.find(".editabletext > #edit").tooltip('hide');
 
       // Attempt to validate
       if (this.options.validate) {
         var result = this.options.validate(text);
         if (result) {
+
           // validation failed. show help, and return
-          this.find(".editabletext > #edit").popover(result);
-          this.find(".editabletext > #edit").popover('show');
+          this.find(".editabletext > #edit").tooltip({ title: result });
+          this.find(".editabletext > #edit").tooltip('show');
           return;
         }
       }
