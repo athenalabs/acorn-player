@@ -229,9 +229,12 @@
 
       this.$el.empty();
 
-      this.player.shell.render();
+      var shellView = new this.player.shell.ContentView({
+        shell: this.player.shell,
+      });
 
-      this.$el.append(this.player.shell.el);
+      shellView.render();
+      this.$el.append(shellView.el);
 
     },
 
@@ -374,6 +377,7 @@
           </button>\
         </div>\
       </div>\
+      <div id="form"></div>\
     '),
 
     id: 'edit',
@@ -399,6 +403,12 @@
       this.$el.html(this.template());
       this.$el.find('#acornid').text(this.player.model.acornid());
 
+      var shellView = new this.player.shell.EditView({
+        shell: this.player.shell.clone(),
+      });
+
+      shellView.render();
+      this.$el.find('#form').append(shellView.$el);
     },
 
     onCancel: function() {
