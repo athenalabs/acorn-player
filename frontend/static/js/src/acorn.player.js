@@ -453,16 +453,4 @@
   });
 
 
-  // onLoad entry point
-  // ------------------
-
-  $(document).ready(function() {
-
-    // Initialize routing
-    new acorn.player.Router();
-    Backbone.history.start({pushState: true});
-
-  });
-
-
 }).call(this);

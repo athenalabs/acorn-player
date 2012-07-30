@@ -209,5 +209,17 @@ h1, h2, h3, h4, h5, h6 {
 
 </style>
 
+<script type="text/javascript">
+
+// onLoad entry point
+$(document).ready(function() {
+
+  // Initialize routing
+  new acorn.player.Router();
+  Backbone.history.start({pushState: true});
+
+});
+
+</script>
 </body>
 </html>
