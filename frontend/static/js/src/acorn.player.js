@@ -84,6 +84,8 @@
       this.contentView = new player.views.ContentView({ player: this });
 
       this.on('change:acorn', this.onAcornChange);
+      this.on('save:acorn', this.onAcornSave);
+
       this.on('show:content', this.onShowContent);
 
       this.on('show:edit', this.onShowEdit);
@@ -99,6 +101,23 @@
 
       this.thumbnailView.render();
       this.$el.append(this.thumbnailView.el);
+    },
+
+    onAcornSave: function() {
+      var self = this;
+
+      var data = this.editView.editingShell.data;
+      this.model.shell(data);
+
+      this.model.save({
+        success: function() {
+          self.trigger('close:edit');
+          self.trigger('change:acorn');
+        },
+        error: function() {
+          alert('error saving. make this prettier...');
+        },
+      });
     },
 
     onAcornChange: function() {
@@ -403,8 +422,9 @@
       this.$el.html(this.template());
       this.$el.find('#acornid').text(this.player.model.acornid());
 
+      this.editingShell = this.player.shell.clone();
       var shellView = new this.player.shell.EditView({
-        shell: this.player.shell.clone(),
+        shell: this.editingShell,
       });
 
       shellView.render();
@@ -417,7 +437,6 @@
 
     onSave: function() {
       this.player.trigger('save:acorn');
-      this.player.trigger('close:edit');
     },
 
   });
