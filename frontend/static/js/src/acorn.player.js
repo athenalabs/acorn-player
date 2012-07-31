@@ -402,7 +402,23 @@
     initialize: function() {
       PlayerSubview.prototype.initialize.call(this);
 
+      this.setShell(this.player.shell.clone());
+    },
 
+    setShell: function(shell) {
+
+      if (this.shellView)
+        this.shellView.remove();
+
+      this.editingShell = shell;
+      this.shellView = new this.player.shell.EditView({
+        shell: this.editingShell,
+      });
+
+      // listen to the editing view's swap:shell event.
+      // this will tell us when the shell data changes entire shell and
+      // we need to reassign the shell and render the entire subview.
+      this.shellView.on('swap:shell', this.onSwapShell);
     },
 
     render: function() {
@@ -412,13 +428,17 @@
       this.$el.html(this.template());
       this.$el.find('#acornid').text(this.player.model.acornid());
 
-      this.editingShell = this.player.shell.clone();
-      var shellView = new this.player.shell.EditView({
-        shell: this.editingShell,
-      });
+      if (this.shellView) {
+        this.shellView.render();
+        this.$el.find('#form').append(this.shellView.$el);
+      }
 
-      shellView.render();
-      this.$el.find('#form').append(shellView.$el);
+    },
+
+    onSwapShell: function(data) {
+      var shell = acorn.shellWithData(data);
+      this.setShell(shell);
+      this.render();
     },
 
     onCancel: function() {

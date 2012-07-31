@@ -42,6 +42,7 @@
   // local handles
   var extend = acorn.util.extend;
   var extendPrototype = acorn.util.extendPrototype;
+  var derives = acorn.util.derives;
   var UrlRegExp = acorn.util.UrlRegExp;
   var parseUrl = acorn.util.parseUrl;
   var iframe = acorn.util.iframe;
@@ -58,43 +59,53 @@
 
     var location = parseUrl(link);
 
-    var bestShell = undefined;
-    for (var i in acorn.shells) {
-      var shell = acorn.shells[i];
+    // filter out shells that don't derive from LinkShell.
+    var linkShells = _(acorn.shells).filter(function (shell) {
+      return derives(shell, acorn.shells.LinkShell);
+    });
 
-      // skip shells that do not derive from LinkShell
-      if (!shell.derives || !shell.derives(acorn.shells.LinkShell))
-        continue;
+    // filter out shells that don't match this link.
+    var matchingShells = _(linkShells).filter(function (linkShell) {
+      return linkShell.prototype.isValidLink(location);
+    });
 
-      // Skip parents of the bestShell so far (already more specific)
-      if (bestShell && bestShell.derives(shell))
-        continue;
+    // reduce to the most specific shell (in terms of inheritance).
+    var bestShell = _(matchingShells).reduce(function(bestShell, shell) {
+      return derives(bestShell, shell) ? bestShell : shell;
+    }, acorn.shells.LinkShell);
 
-      if (shell.isValidLink(location))
-        bestShell = shell;
-    }
+    // if all else fails, use LinkShell.
+    bestShell = bestShell || acorn.shells.LinkShell;
 
-    options = options || {};
+    // setup options
+    options = _.extend({}, options);
     options.data = {'link': link};
     options.location = location;
-    return new (bestShell || acorn.shells.LinkShell)(options);
+
+    return new bestShell(options);
+  };
+
+  // **acorn.shellWithData** Construct the right shell for given ``data``
+  // ----------------------------------------------------------------------
+
+  acorn.shellWithData = function(shellData) {
+
+    var shell = _(acorn.shells).find(function (shell) {
+      return shell.prototype.shellid == shellData.shell;
+    });
+
+    if (shell)
+      return new shell({data: shellData});
+
+    acorn.errors.UndefinedShellError(shellData.shell);
+
   };
 
   // **acorn.shellWithAcorn** Construct the right shell for given ``acorn``
   // ----------------------------------------------------------------------
 
   acorn.shellWithAcorn = function(acornModel) {
-
-    var shellData = acornModel.shell();
-    var shell = _(acorn.shells).find(function (shell) {
-      return shell.prototype.shellid == shellData.shell;
-    });
-
-    if (shell)
-      return new shell({model: acornModel});
-
-    acorn.errors.UndefinedShellError(shellData.shell);
-
+    return acorn.shellWithData(acornModel.shell());
   };
 
 
@@ -115,8 +126,10 @@
 
   var Shell = acorn.shells.Shell = function(options) {
     this.options = _.extend({}, (this.defaults || {}), options);
-    this.acorn = this.options.model;
-    this.data = _.extend({}, this.acorn.shell()); // make a copy.
+    this.data = _.extend({}, this.options.data); // make a copy.
+    if (!this.data.shell)
+      this.data.shell = this.shellid;
+    assert(this.data.shell == this.shellid, "Shell data has incorrect type.");
   };
 
   // Set up all **Shell** prototype properties and methods.
@@ -166,12 +179,20 @@
 
       initialize: function() {
         ShellView.prototype.initialize.call(this);
+
+        this.on('change:shell', this.onChangeShell);
       },
 
       // **render** renders the view.
       render: function() {
         this.$el.html(this.template());
       },
+
+      onChangeShell: function() {
+        // when the shell changes, re-render this view.
+        this.render();
+      },
+
 
     }),
 
@@ -238,10 +259,9 @@
         _.bindAll(this);
 
         this.linkView = new Backbone.components.EditableTextCmp.View({
-          textFn: _.bind(this.shell.link, this.shell),
+          textFn: this.link,
           validate: _.bind(this.validateLink, this),
           addToggle: true,
-          onSave: this.render,
         });
 
       },
@@ -254,9 +274,19 @@
       },
 
       link: function(link) {
-        if (link !== undefined)
-          this.data.link = link;
-        return this.data.link;
+        if (link) {
+          this.shell.link(link);
+          var s = acorn.shellForLink(link, {shell: this.shell});
+
+          // if the shellid has changed, we need to swap shells entirely.
+          if (s.shellid != this.shell.data.shell)
+            this.trigger('swap:shell', s.data);
+
+          // else, announce that the shell has changed.
+          else
+            this.trigger('change:shell');
+        }
+        return this.shell.link();
       },
 
       render: function() {
