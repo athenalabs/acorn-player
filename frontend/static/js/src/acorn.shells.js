@@ -260,6 +260,7 @@
 
         this.linkView = new Backbone.components.EditableTextCmp.View({
           textFn: this.link,
+          placeholder: 'Enter Link',
           validate: _.bind(this.validateLink, this),
           addToggle: true,
         });

@@ -44,6 +44,7 @@
     <textarea id='<%= id %>_edit' style='display: none;'><%= text %></textarea>\
     <% } else { %>\
       <input type='text' id='<%= id %>_edit'\
+        placeholder='<%= placeholder %>'\
         style='display: none;' value='<%= text %>' />\
     <% } %>\
   </div>\
@@ -74,6 +75,7 @@
       this.options.addToggle = !!this.options.addToggle;
       this.options.characterLimit = parseInt(this.options.characterLimit) || -1;
       this.options.enterSaves = this.options.enterSaves || true;
+      this.options.placeholder = this.options.placeholder || '';
       this.options.id = this.options.id || EditableTextCmp.nextId();
     },
 
@@ -85,6 +87,7 @@
         text: text_ || '&nbsp;',
         html: this.html(text_ || '&nbsp;'),
         multiline: this.options.multiline,
+        placeholder: this.options.placeholder,
         addToggle: this.isEditable() && this.options.addToggle
       }));
 
