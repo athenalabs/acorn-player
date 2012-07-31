@@ -84,8 +84,8 @@
 
       $(this.el).html(this.template({
         id: this.options.id,
-        text: text_ || '&nbsp;',
-        html: this.html(text_ || '&nbsp;'),
+        text: text_ || '',
+        html: this.html(text_ || ''),
         multiline: this.options.multiline,
         placeholder: this.options.placeholder,
         addToggle: this.isEditable() && this.options.addToggle
@@ -102,6 +102,10 @@
         $(this.options.externalToggle).off(event);
         $(this.options.externalToggle).on(event, this.toggle);
       }
+
+      // adjust text size to match container
+      this.find('.editabletext > #text').css('width', '100%');
+      this.find('.editabletext > #text').css('height', '100%');
     },
 
     find: function(sel) {
@@ -136,8 +140,8 @@
       var leftPad = (this.options.multiline ? 5 : 6);
       var topPad = 5;
 
-      field.css("width", text.css("width") || '100');
-      field.css("height", text.css("height") || '25');
+      field.css("width", text.css("width"));
+      field.css("height", text.css("height"));
       field.css("font", text.css("font"));
       field.css("margin-left", parseInt(text.css("margin-left")) - leftPad);
       field.css("margin-top", parseInt(text.css("margin-top")) - topPad);
