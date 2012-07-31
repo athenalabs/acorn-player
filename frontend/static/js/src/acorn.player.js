@@ -76,8 +76,8 @@
     initialize: function() {
       _.bindAll(this);
 
-      // initialize with clean shell
-      this.shell = undefined;
+      // initialize with the shell the model has (can be undefined)
+      this.shell = this.model.shell();
 
       // Subviews
       this.thumbnailView = new player.views.ThumbnailView({ player: this });
@@ -113,7 +113,7 @@
       this.model.save({
         success: function() {
           self.trigger('close:edit');
-          self.trigger('change:acorn');
+          self.router.navigate('/player/' + self.model.acornid());
         },
         error: function() {
           alert('error saving. make this prettier...');
@@ -459,34 +459,61 @@
 
     routes: {
       '':                     'nothing',
-      'player/:acornid':       'acorn',
+      'player/new':           'new',
+      'player/:acornid':      'acorn',
+      ':catchall':            'nothing',
     },
 
     nothing: function() {
       this.navigate('player/what-is-acorn', {trigger: true});
     },
 
-    acorn: function(acornid) {
+    new: function() {
+
+      var acornModel = acorn('new');
+      acornModel.shell(acorn.shellForLink(''));
+
+      this.playerShowAcorn(acornModel);
 
       var playerView = acorn.player.instance;
-      if (playerView && acornid == playerView.model.acornid()) {
-        playerView.render();
-        return;
-      }
+      playerView.trigger('show:edit');
 
-      playerView = new acorn.player.views.PlayerView({
-        el: $('#acorn-player'),
-        model: acorn(acornid),
-      });
+      playerView.editView.$el.find('#link input:first').focus();
+    },
 
+    acorn: function(acornid) {
+
+      var acornModel = acorn(acornid);
+      this.playerShowAcorn(acornModel);
+
+      var playerView = acorn.player.instance;
       playerView.model.fetch({
         success: function() { playerView.trigger('change:acorn'); },
         error: function() { playerView.error('failed to retrieve'); }
       });
 
-      $('title').text('acorn:' + acornid);
+    },
+
+    playerShowAcorn: function(acornModel) {
+
+      var playerView = acorn.player.instance;
+      if (playerView && acornModel == playerView.model) {
+        playerView.trigger('change:acorn');
+        return;
+      }
+
+      playerView = new acorn.player.views.PlayerView({
+        el: $('#acorn-player'),
+        model: acornModel,
+      });
+
+      // give the playerView a handle to the router
+      playerView.router = this;
+
+      $('title').text('acorn:' + acornModel.acornid());
 
       acorn.player.instance = playerView;
+
     },
 
   });

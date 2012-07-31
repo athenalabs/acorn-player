@@ -250,7 +250,7 @@
       template: _.template('\
         <img id="thumbnail" />\
         <div class="thumbnailside">\
-          <span id="link"></span>\
+          <div id="link"></div>\
         </div>\
       '),
 
@@ -299,6 +299,9 @@
 
         this.linkView.setElement(this.$el.find('#link'));
         this.linkView.render();
+
+        if (!this.link())
+          this.linkView.edit();
       },
 
     }),
