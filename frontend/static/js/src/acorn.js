@@ -146,13 +146,10 @@
     if (!child.__super__)
       return false;
 
-    if (parent == child.__super__)
+    if (parent.prototype == child.__super__)
       return true;
 
-    if (!child.__super__.derives)
-      return false;
-
-    return child.__super__.derives(parent);
+    return derives(child.__super__, parent);
   }
   acorn.util.derives = derives;
 
@@ -271,8 +268,7 @@
     child.prototype.constructor = child;
 
     // Set a convenience property in case the parent is needed later.
-    // WARNING: this is different from Backbone's `parent.prototype`.
-    child.__super__ = parent;
+    child.__super__ = parent.prototype;
 
     // Add the derives property.
     child.derives = function(parent) { return derives(this, parent); };
