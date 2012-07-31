@@ -76,6 +76,9 @@
     initialize: function() {
       _.bindAll(this);
 
+      // Track the acornid for rename checks
+      this._acornid = this.model.acornid();
+
       // initialize with the shell the model has (can be undefined)
       this.shell = this.model.shell();
 
@@ -84,6 +87,7 @@
       this.controlsView = new player.views.ControlsView({ player: this });
       this.contentView = new player.views.ContentView({ player: this });
 
+      this.on('rename:acorn', this.onAcornRename);
       this.on('change:acorn', this.onAcornChange);
       this.on('save:acorn', this.onAcornSave);
 
@@ -113,12 +117,18 @@
       this.model.save({
         success: function() {
           self.trigger('close:edit');
-          self.router.navigate('/player/' + self.model.acornid());
+          self.trigger('change:acorn');
+          if (self._acornid != self.model.acornid())
+            self.trigger('rename:acorn', self.model.acornid());
         },
         error: function() {
           alert('error saving. make this prettier...');
         },
       });
+    },
+
+    onAcornRename: function(acornid) {
+      this._acornid = acornid;
     },
 
     onAcornChange: function() {
@@ -473,47 +483,49 @@
       var acornModel = acorn('new');
       acornModel.shell(acorn.shellForLink(''));
 
-      this.playerShowAcorn(acornModel);
+      this.showAcorn(acornModel);
 
-      var playerView = acorn.player.instance;
-      playerView.trigger('show:edit');
+      this.playerView.render();
+      this.playerView.trigger('show:edit');
 
-      playerView.editView.$el.find('#link input:first').focus();
+      this.playerView.editView.$el.find('#link input:first').focus();
     },
 
     acorn: function(acornid) {
 
-      var acornModel = acorn(acornid);
-      this.playerShowAcorn(acornModel);
+      if (this.playerView && acornModel == this.playerView.model)
+        return;
 
-      var playerView = acorn.player.instance;
-      playerView.model.fetch({
-        success: function() { playerView.trigger('change:acorn'); },
-        error: function() { playerView.error('failed to retrieve'); }
+      var acornModel = acorn(acornid);
+      this.showAcorn(acornModel);
+
+      var self = this;
+      this.playerView.model.fetch({
+        success: function() { self.playerView.trigger('change:acorn'); },
+        error: function() { self.playerView.error('failed to retrieve'); }
       });
 
     },
 
-    playerShowAcorn: function(acornModel) {
+    showAcorn: function(acornModel) {
 
-      var playerView = acorn.player.instance;
-      if (playerView && acornModel == playerView.model) {
-        playerView.trigger('change:acorn');
-        return;
-      }
-
-      playerView = new acorn.player.views.PlayerView({
+      this.playerView = new acorn.player.views.PlayerView({
         el: $('#acorn-player'),
         model: acornModel,
       });
 
       // give the playerView a handle to the router
-      playerView.router = this;
+      this.playerView.router = this;
+      this.playerView.on('rename:acorn', _.bind(this.onRenamedAcorn, this));
 
       $('title').text('acorn:' + acornModel.acornid());
 
-      acorn.player.instance = playerView;
+      acorn.player.instance = this.playerView;
 
+    },
+
+    onRenamedAcorn: function(acornid) {
+      this.navigate('/player/' + acornid, {trigger: true});
     },
 
   });
