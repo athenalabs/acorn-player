@@ -458,12 +458,12 @@
   player.Router = Backbone.Router.extend({
 
     routes: {
-      "":                     "nothing",
-      "player/:acornid":       "acorn",
+      '':                     'nothing',
+      'player/:acornid':       'acorn',
     },
 
     nothing: function() {
-      this.navigate("player/what-is-acorn", {trigger: true});
+      this.navigate('player/what-is-acorn', {trigger: true});
     },
 
     acorn: function(acornid) {
