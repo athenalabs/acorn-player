@@ -89,6 +89,10 @@
     throw new Error('Acorn API Error: ' + description);
   };
 
+  var AssertionFailed = function(description) {
+    throw new Error('Assertion failed: ' + description);
+  };
+
   acorn.errors.UrlError = UrlError;
   acorn.errors.APIError = APIError;
   acorn.errors.ParameterError = ParameterError;
@@ -96,6 +100,7 @@
   acorn.errors.GetKeyOrSetObjError = GetKeyOrSetObjError;
   acorn.errors.UndefinedShellError = UndefinedShellError;
   acorn.errors.NotImplementedError = NotImplementedError;
+  acorn.errors.AssertionFailed = AssertionFailed;
 
   // acorn.types
   // -----------
@@ -115,6 +120,13 @@
   // ----------
 
   // Utility functions.
+
+  // **assert** throw error if ``condition`` does not evaluate to true.
+  var assert = function(condition, description) {
+    if (!condition)
+      AssertionFailed(description);
+  };
+  acorn.util.assert = assert;
 
   // **UrlRegExp** Helper to contruct URL RegExps
   var UrlRegExp = function(simpleUrl) {

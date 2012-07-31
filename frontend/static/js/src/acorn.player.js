@@ -43,6 +43,7 @@
 
   // local handles
   var extend = acorn.util.extend;
+  var assert = acorn.util.assert;
 
 
   // ** acorn.player ** the acorn.player library
@@ -187,10 +188,24 @@
   });
 
 
+  // ** player.views.PlayerSubview ** a sub-component view for PlayerView
+  // --------------------------------------------------------------------
+  var PlayerSubview = player.views.PlayerSubview = Backbone.View.extend({
+
+    initialize: function() {
+      _.bindAll(this);
+
+      this.player = this.options.player;
+      assert(this.player, 'no player provided to PlayerSubview.');
+    },
+
+  });
+
+
   // ** player.views.ThumbnailView ** a view showing the acorn thumbnail
   // -------------------------------------------------------------------
 
-  player.views.ThumbnailView = Backbone.View.extend({
+  player.views.ThumbnailView = PlayerSubview.extend({
 
     template: _.template('\
       <img id="image" src="" />\
@@ -199,15 +214,6 @@
     '),
 
     id: 'thumbnail',
-
-    initialize: function() {
-      _.bindAll(this);
-
-      this.player = this.options.player;
-      if (!this.player)
-        throw new acorn.errors.ParameterError('player');
-
-    },
 
     render: function() {
 
@@ -231,18 +237,9 @@
   // ** player.views.ContentView ** view that renders/embeds shells
   // --------------------------------------------------------------
 
-  player.views.ContentView = Backbone.View.extend({
+  player.views.ContentView = PlayerSubview.extend({
 
     id: 'content',
-
-    initialize: function() {
-      _.bindAll(this);
-
-      this.player = this.options.player;
-      if (!this.player)
-        throw new acorn.errors.ParameterError('player');
-
-    },
 
     render: function() {
 
@@ -267,7 +264,7 @@
   // ** player.views.ControlsView ** view with media control buttons
   // ---------------------------------------------------------------
 
-  player.views.ControlsView = Backbone.View.extend({
+  player.views.ControlsView = PlayerSubview.extend({
 
     id: 'controls',
 
@@ -277,11 +274,7 @@
     ],
 
     initialize: function() {
-      _.bindAll(this);
-
-      this.player = this.options.player;
-      if (!this.player)
-        throw new acorn.errors.ParameterError('player');
+      PlayerSubview.prototype.initialize.call(this);
 
       this.player.on('change:acorn', this.onAcornChange);
     },
@@ -382,7 +375,7 @@
   // ** player.views.EditView ** a view to house all editing controls
   // ----------------------------------------------------------------
 
-  player.views.EditView = Backbone.View.extend({
+  player.views.EditView = PlayerSubview.extend({
 
     template: _.template('\
       <div class="row" id="toolbar">\
@@ -407,11 +400,8 @@
     },
 
     initialize: function() {
-      _.bindAll(this);
+      PlayerSubview.prototype.initialize.call(this);
 
-      this.player = this.options.player;
-      if (!this.player)
-        throw new acorn.errors.ParameterError('player');
 
     },
 

@@ -45,7 +45,7 @@
   var UrlRegExp = acorn.util.UrlRegExp;
   var parseUrl = acorn.util.parseUrl;
   var iframe = acorn.util.iframe;
-
+  var assert = acorn.util.assert;
 
   // Shells container
   acorn.shells = {};
@@ -105,8 +105,7 @@
 
     initialize: function() {
       this.shell = this.options.shell;
-      if (!this.shell)
-        throw new Error('No shell provided to shell ContentView.');
+      assert(this.shell, 'No shell provided to shell ContentView.');
     },
 
   });
@@ -206,13 +205,12 @@
       initialize: function() {
         Shell.prototype.ContentView.prototype.initialize.call(this);
 
-        if (!this.shell.link)
-          throw new Error('No link provided to LinkShell.');
+        assert(this.shell.link, 'No link provided to LinkShell.');
 
         this.location = this.options.location || parseUrl(this.shell.link());
 
-        if (!this.shell.isValidLink(this.location))
-          throw new Error('Link provided does not match ' + this.shell.type);
+        assert(this.shell.isValidLink(this.location),
+          'Link provided does not match ' + this.shell.type);
 
       },
 
@@ -361,12 +359,10 @@
       var link = this.link();
 
       var re = this.urlMatches(link);
-      if (!!re) {
-        var videoid = re.exec(link)[3];
-        return videoid;
-      }
+      assert(re, 'Incorrect youtube link, no video id found.');
 
-      throw new Error('Incorrect youtube link, no video id found.');
+      var videoid = re.exec(link)[3];
+      return videoid;
     },
 
     embedLink: function() {
@@ -420,12 +416,10 @@
       var link = this.link();
 
       var re = this.urlMatches(link);
-      if (!!re) {
-        var videoid = re.exec(link)[5];
-        return videoid;
-      }
+      assert(re, 'Incorrect vimeo link, no vimeo id found');
 
-      throw new Error('Incorrect vimeo link, no video id found.');
+      var videoid = re.exec(link)[5];
+      return videoid;
     },
 
     embedLink: function() {
