@@ -204,6 +204,7 @@
 
     initialize: function() {
       _.bindAll(this);
+      _.defaults(this.options, this.defaults || {});
 
       this.player = this.options.player;
       assert(this.player, 'no player provided to PlayerSubview.');
