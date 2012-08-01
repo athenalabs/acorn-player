@@ -178,13 +178,26 @@
     return acorn.util.url.apply(this, urlargs);
   };
 
+  acorn.util.embed_iframe = function(src, id) {
+    var f = $('<iframe>');
+    f.attr('frameborder', '0').attr('border', '0');
+    f.attr('width', '600').attr('height', '400');
+    f.attr('allowFullScreen', 'true')
+     .attr('webkitAllowFullScreen', 'true')
+     .attr('mozallowfullscreen', 'true');
+    f.attr('src', src);
+    if (id)
+      f.attr('id', id)
+    return f;
+  };
+
   var iframe = function(src, id) {
     var f = $('<iframe>');
     f.attr('frameborder', '0').attr('border', '0');
     f.attr('allowTransparency', 'true');
     f.attr('allowFullScreen', 'true')
-      .attr('webkitAllowFullScreen', 'true')
-      .attr('mozallowfullscreen', 'true');
+     .attr('webkitAllowFullScreen', 'true')
+     .attr('mozallowfullscreen', 'true');
     f.attr('src', src);
     if (id)
       f.attr('id', id)
