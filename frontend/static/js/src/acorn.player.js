@@ -159,9 +159,9 @@
         return;
 
       this.editView = new player.views.EditView({ player: this });
+      this.$el.append(this.editView.el);
       this.editView.render();
       this.editView.$el.css('opacity', 0.0);
-      this.$el.append(this.editView.el);
       this.editView.$el.css('opacity', 1.0);
     },
 
@@ -398,6 +398,7 @@
           <button id="save" type="submit" class="btn btn-success">\
             <i class="icon-ok-circle icon-white"></i> Save\
           </button>\
+          <div id="save-click-capture"></div>\
         </div>\
       </div>\
       <div id="form"></div>\
@@ -426,14 +427,17 @@
         shell: this.editingShell,
       });
 
+      // listen to the child view's edit state
+      this.shellView.on('change:editState', this.onEditStateChange);
+
       // listen to the editing view's swap:shell event.
       // this will tell us when the shell data changes entire shell and
       // we need to reassign the shell and render the entire subview.
       this.shellView.on('swap:shell', this.onSwapShell);
+      this.onEditStateChange();
     },
 
     render: function() {
-
       this.$el.empty();
 
       this.$el.html(this.template());
@@ -444,6 +448,22 @@
         this.$el.find('#form').append(this.shellView.$el);
       }
 
+      this.$el.find('#save-click-capture').tooltip({
+        title: 'Finish editing<br/>before saving!',
+        placement: 'bottom'
+      });
+    },
+
+    onEditStateChange: function() {
+      var save_btn = this.$el.find('#save');
+      var save_click_capture = this.$el.find('#save-click-capture');
+      if (this.shellView.isEditing()) {
+        save_btn.attr('disabled', 'disabled');
+        save_click_capture.show();
+      } else {
+        save_btn.removeAttr('disabled');
+        save_click_capture.hide();
+      }
     },
 
     onSwapShell: function(data) {
@@ -459,7 +479,6 @@
     onSave: function() {
       this.player.trigger('save:acorn');
     },
-
   });
 
 

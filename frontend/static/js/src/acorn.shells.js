@@ -263,8 +263,11 @@
           placeholder: 'Enter Link',
           validate: _.bind(this.validateLink, this),
           addToggle: true,
+          onSave: _.bind(this.onSave, this),
+          onEdit: _.bind(this.onEdit, this),
         });
 
+        this.isEditing_ = false;
       },
 
       validateLink: function(link) {
@@ -302,6 +305,20 @@
 
         if (!this.link())
           this.linkView.edit();
+      },
+
+      isEditing: function() {
+        return this.isEditing_;
+      },
+
+      onSave: function() {
+        this.isEditing_ = false;
+        this.trigger('change:editState');
+      },
+
+      onEdit: function(){
+        this.isEditing_ = true;
+        this.trigger('change:editState');
       },
 
     }),
