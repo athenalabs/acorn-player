@@ -219,6 +219,13 @@
       return this.data.link;
     },
 
+    // **thumbnailLink** returns the link to the thumbnail image
+    thumbnailLink: function(link) {
+      if (link !== undefined)
+        this.data.thumbnailLink = link;
+      return this.data.thumbnailLink;
+    },
+
     // ContentView -- Simply displays the link text for now.
     // TODO: thumbnail the website? embed the webpage in iframe?
     ContentView: acorn.shells.Shell.prototype.ContentView.extend({
@@ -312,13 +319,29 @@
       },
 
       onSave: function() {
-        this.isEditing_ = false;
-        this.trigger('change:editState');
+        var self = this;
+        this.generateThumbnailLink(function(data) {
+          self.shell.thumbnailLink(data);
+          self.isEditing_ = false;
+          self.trigger('change:editState');
+          self.render();
+        });
       },
 
       onEdit: function(){
         this.isEditing_ = true;
         this.trigger('change:editState');
+      },
+
+      generateThumbnailLink: function(callback) {
+        var self = this;
+        var bounds = '600x600';
+        var req_url = '/url2png/' + bounds + '/' + this.shell.link();
+        $.get(req_url, function(data) {
+          callback(data);
+        }).error(function() {
+          alert('error generating url2png url (make this prettier)');
+        });
       },
 
     }),
@@ -434,6 +457,11 @@
       return "https://img.youtube.com/vi/" + this.youtubeId() + "/0.jpg";
     },
 
+    // Overrides LinkShell.generateThumbnailLink()
+    generateThumbnailLink: function(callback) {
+      callback(this.thumbnailLink());
+    },
+
     ContentView: acorn.shells.LinkShell.prototype.ContentView.extend({
       render: function() {
         var link = this.shell.embedLink();
@@ -482,6 +510,10 @@
 
     thumbnailLink: function() {
       return "https://img.youtube.com/vi/" + this.vimeoId() + "/0.jpg";
+    },
+
+    generateThumbnailLink: function(callback) {
+      callback(this.thumbnailLink())
     },
 
     ContentView: acorn.shells.LinkShell.prototype.ContentView.extend({
