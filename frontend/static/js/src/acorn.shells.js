@@ -105,7 +105,7 @@
   // ----------------------------------------------------------------------
 
   acorn.shellWithAcorn = function(acornModel) {
-    return acorn.shellWithData(acornModel.shell());
+    return acorn.shellWithData(acornModel.shellData());
   };
 
 

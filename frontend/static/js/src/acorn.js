@@ -527,9 +527,9 @@
     },
 
 
-    shell: function(shell) {
-      if (typeof shell !== "undefined") {
-        this._data.shell = shell;
+    shellData: function(shellData) {
+      if (typeof shellData !== "undefined") {
+        this._data.shell = shellData;
       }
 
       if (this._data.shell === undefined)

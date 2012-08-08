@@ -80,7 +80,7 @@
       this._acornid = this.model.acornid();
 
       // initialize with the shell the model has (can be undefined)
-      this.shell = this.model.shell();
+      this.shell = this.model.shellData();
 
       // Subviews
       this.thumbnailView = new player.views.ThumbnailView({ player: this });
@@ -112,7 +112,7 @@
       var self = this;
 
       var data = this.editView.editingShell.data;
-      this.model.shell(data);
+      this.model.shellData(data);
 
       this.model.save({
         success: function() {
@@ -501,7 +501,7 @@
     new: function() {
 
       var acornModel = acorn('new');
-      acornModel.shell(acorn.shellForLink(''));
+      acornModel.shellData(acorn.shellForLink(''));
 
       this.showAcorn(acornModel);
 
