@@ -399,7 +399,7 @@
       if (!link)
         return undefined;
 
-      var shell = acorn.shellWithLink(link);
+      var shell = acorn.shellForLink(link);
       return this.withShell(shell);
     },
 
