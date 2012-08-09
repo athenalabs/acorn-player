@@ -457,15 +457,17 @@
       return "https://img.youtube.com/vi/" + this.youtubeId() + "/0.jpg";
     },
 
-    // Overrides LinkShell.generateThumbnailLink()
-    generateThumbnailLink: function(callback) {
-      callback(this.thumbnailLink());
-    },
-
     ContentView: acorn.shells.LinkShell.prototype.ContentView.extend({
       render: function() {
         var link = this.shell.embedLink();
         this.$el.append(iframe(link));
+      },
+    }),
+
+    EditView: acorn.shells.LinkShell.prototype.EditView.extend({
+      // Overrides LinkShell.generateThumbnailLink()
+      generateThumbnailLink: function(callback) {
+        callback(this.shell.thumbnailLink());
       },
     }),
 
@@ -512,14 +514,17 @@
       return "https://img.youtube.com/vi/" + this.vimeoId() + "/0.jpg";
     },
 
-    generateThumbnailLink: function(callback) {
-      callback(this.thumbnailLink())
-    },
-
     ContentView: acorn.shells.LinkShell.prototype.ContentView.extend({
       render: function() {
         var link = this.shell.embedLink();
         this.$el.append(iframe(link));
+      },
+    }),
+
+    EditView: acorn.shells.LinkShell.prototype.EditView.extend({
+      // Overrides LinkShell.generateThumbnailLink()
+      generateThumbnailLink: function(callback) {
+        callback(this.shell.thumbnailLink())
       },
     }),
 
