@@ -262,7 +262,7 @@
       '),
 
       initialize: function() {
-        this.constructor.__super__.initialize.call(this);
+        acorn.shells.Shell.prototype.EditView.prototype.initialize.call(this);
         _.bindAll(this);
 
         this.linkView = new Backbone.components.EditableTextCmp.View({
