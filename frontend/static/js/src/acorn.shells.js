@@ -337,10 +337,13 @@
         var self = this;
         var bounds = '600x600';
         var req_url = '/url2png/' + bounds + '/' + this.shell.link();
-        $.get(req_url, function(data) {
-          callback(data);
-        }).error(function() {
-          alert('error generating url2png url (make this prettier)');
+        $.ajax(req_url, {
+          success: function(data) {
+            callback(data);
+          },
+          error: function() {
+            alert('error generating url2png url (make this prettier)');
+          }
         });
       },
 
