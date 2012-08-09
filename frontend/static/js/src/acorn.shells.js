@@ -328,7 +328,7 @@
         });
       },
 
-      onEdit: function(){
+      onEdit: function() {
         this.isEditing_ = true;
         this.trigger('change:editState');
       },
@@ -490,7 +490,7 @@
     // The cannonical type of this media. One of `acorn.types`.
     type: 'video',
 
-    // **vimeoId** returns the youtube video id of this link.
+    // **vimeoId** returns the vimeo video id of this link.
     vimeoId: function() {
       var link = this.link();
 
