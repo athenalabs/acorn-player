@@ -335,7 +335,7 @@
       params.processData = false;
     }
 
-    options.timeout = options.timeout || 5000;
+    options.timeout = options.timeout || 10000;
 
     var error = options.error;
     options.error = function(xhr, type) {
