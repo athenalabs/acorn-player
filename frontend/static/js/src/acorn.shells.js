@@ -513,10 +513,6 @@
            ;
     },
 
-    thumbnailLink: function() {
-      return "https://img.youtube.com/vi/" + this.vimeoId() + "/0.jpg";
-    },
-
     ContentView: acorn.shells.LinkShell.prototype.ContentView.extend({
       render: function() {
         var link = this.shell.embedLink();
@@ -527,7 +523,21 @@
     EditView: acorn.shells.LinkShell.prototype.EditView.extend({
       // Overrides LinkShell.generateThumbnailLink()
       generateThumbnailLink: function(callback) {
-        callback(this.shell.thumbnailLink())
+        var url_req = '/request_proxy/vimeo.com/api/v2/video/' +
+                      this.shell.vimeoId() + '.json';
+        $.ajax(url_req, {
+          success: function(data) {
+            try {
+              data_obj = $.parseJSON(data);
+              callback(data_obj[0].thumbnail_large);
+            } catch(e) {
+              alert('error extracting vimeo url (make this prettier)');
+            }
+          },
+          error: function() {
+            alert('error generating vimeo url (make this prettier)');
+          }
+        });
       },
     }),
 
