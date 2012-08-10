@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <title>acorn:</title>
+
+  <base href="/" />
+
+  <link rel="shortcut icon" href="/static/img/favicon.ico">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link rel="stylesheet" href="/static/css/acorn.css" />
+
+</head>
+<body>
+
+
+<link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/static/css/bootstrap-responsive.min.css" />
+
+
+<style>
+@import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+
+html, body {
+  margin: 0px;
+  padding: 0px;
+  background:transparent
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0px;
+  font-family: Yanone Kaffeesatz;
+}
+
+.editabletext small {
+  color: #00c;
+  font-weight: bold;
+}
+
+#acorn-player,
+#acorn-player > #content,
+#acorn-player > #thumbnail,
+#acorn-player > #edit,
+#acorn-player > #thumbnail > img#image {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+
+#acorn-player > #controls {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+
+
+#acorn-player {
+  min-width: 100px;
+  background: #000000;
+
+  -webkit-transition: 0.35s ease;
+  -moz-transition: 0.35s ease;
+  -ms-transition: 0.35s ease;
+  -o-transition: 0.35s ease;
+  transition: 0.35s ease;
+}
+
+#acorn-player > #thumbnail {
+  overflow: hidden;
+
+  -webkit-transition: 0.35s ease;
+  -moz-transition: 0.35s ease;
+  -ms-transition: 0.35s ease;
+  -o-transition: 0.35s ease;
+  transition: 0.35s ease;
+}
+
+#acorn-player > #thumbnail > #image {
+  min-width: 100%;
+  min-height: 100%;
+}
+
+#acorn-player > #thumbnail > .thumbnail-icon {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 7px;
+  padding: 5%;
+  width: 20%;
+
+  position: absolute;
+  bottom: 20px;
+}
+
+#acorn-player > #thumbnail > #logo.thumbnail-icon {
+  right: 20px;
+}
+
+#acorn-player > #thumbnail > #type.thumbnail-icon {
+  left: 20px;
+}
+
+#acorn-player > #content {
+  overflow: hidden;
+}
+
+#acorn-player > #content:hover + #controls {
+  height: 0px;
+}
+
+#acorn-player > #controls {
+  height: 28px;
+  border: 1px solid #cccccc;
+
+  background-color: #ffffff;
+  background-image: linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+
+  -webkit-transition: 0.35s ease;
+  -moz-transition: 0.35s ease;
+  -ms-transition: 0.35s ease;
+  -o-transition: 0.35s ease;
+  transition: 0.35s ease;
+
+}
+
+#acorn-player > #controls > .control {
+  padding-top: 1px;
+  padding-bottom: 1px;
+  height: 28px;
+}
+
+#acorn-player > #controls > .control:hover {
+  margin-top: 2px;
+}
+
+#acorn-player > #controls > .control:active {
+  margin-top: 4px;
+}
+
+#acorn-player > #controls > .control.right {
+  float: right;
+  padding-right: 1px;
+  border-left: 1px solid #ccc;
+}
+
+#acorn-player > #controls > .control.left {
+  float: left;
+  padding-left: 1px;
+  border-right: 1px solid #ccc;
+}
+
+
+#acorn-player > #controls > #acorn.control {
+  background: no-repeat url("/static/img/controls/acorn.png") 0px -2px;
+}
+
+#acorn-player > #controls > #fullscreen.control {
+  background: no-repeat url("/static/img/controls/acorn.png") -30px -2px;
+}
+
+#acorn-player > #edit {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 2px 5px rgba(34, 25, 25, 0.4);
+  margin: 10px;
+  padding: 10px;
+  z-index: 10;
+  min-width: 550px;
+}
+
+#acorn-player > #edit > #toolbar {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+  margin-left: 0px;
+}
+
+#acorn-player > #edit > #toolbar > * {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+}
+
+#acorn-player > #edit > #toolbar > h1 {
+  left: 0px;
+}
+
+#acorn-player > #edit > #toolbar > #actions {
+  right: 0px;
+  height: 35px;
+  text-align: right;
+  padding-top:5px;
+}
+
+#acorn-player > #edit > #toolbar > #actions > #save-click-capture {
+  display: none;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 70px;
+  height: 35px;
+}
+
+#acorn-player > #edit > #form > .acorn-shell-edit {
+  position: relative;
+}
+
+#acorn-player > #edit > #form > .acorn-shell-edit > #thumbnail {
+  position: absolute;
+  left: 0px;
+  width: 100px;
+  height: 80px;
+}
+
+#acorn-player > #edit > #form > .acorn-shell-edit > div.thumbnailside {
+  position: absolute;
+  right: 0px;
+  left: 100px;
+  margin-left: 15px;
+  margin-right: 10px;
+}
+
+#acorn-player > #edit > #form > .acorn-shell-edit > div.thumbnailside
+> div#link {
+  width: 100%;
+
+}
+</style>
+
+<div id="acorn-player">
+</div>
+
+<script src="/static/js/libs/jquery/jquery.min.js"></script>
+<script src="/static/js/libs/underscore/underscore-min.js"></script>
+<script src="/static/js/libs/backbone/backbone-min.js"></script>
+<script src="/static/js/libs/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/js/libs/components/editabletext.js"></script>
+
+<script src="/static/js/src/acorn.js"></script>
+<script src="/static/js/src/acorn.shells.js"></script>
+<script src="/static/js/src/acorn.player.js"></script>
+
+<script type="text/javascript">
+
+// onLoad entry point
+$(document).ready(function() {
+
+  // Initialize routing
+  new acorn.player.Router();
+  Backbone.history.start({pushState: true});
+
+});
+
+</script>
+</body>
+</html>

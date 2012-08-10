@@ -44,6 +44,7 @@
     <textarea id='<%= id %>_edit' style='display: none;'><%= text %></textarea>\
     <% } else { %>\
       <input type='text' id='<%= id %>_edit'\
+        placeholder='<%= placeholder %>'\
         style='display: none;' value='<%= text %>' />\
     <% } %>\
   </div>\
@@ -74,6 +75,7 @@
       this.options.addToggle = !!this.options.addToggle;
       this.options.characterLimit = parseInt(this.options.characterLimit) || -1;
       this.options.enterSaves = this.options.enterSaves || true;
+      this.options.placeholder = this.options.placeholder || '';
       this.options.id = this.options.id || EditableTextCmp.nextId();
     },
 
@@ -82,9 +84,10 @@
 
       $(this.el).html(this.template({
         id: this.options.id,
-        text: text_ || '&nbsp;',
-        html: this.html(text_ || '&nbsp;'),
+        text: text_ || '',
+        html: this.html(text_ || ''),
         multiline: this.options.multiline,
+        placeholder: this.options.placeholder,
         addToggle: this.isEditable() && this.options.addToggle
       }));
 
@@ -99,6 +102,10 @@
         $(this.options.externalToggle).off(event);
         $(this.options.externalToggle).on(event, this.toggle);
       }
+
+      // adjust text size to match container
+      this.find('.editabletext > #text').css('width', '100%');
+      this.find('.editabletext > #text').css('height', '100%');
     },
 
     find: function(sel) {
@@ -133,8 +140,8 @@
       var leftPad = (this.options.multiline ? 5 : 6);
       var topPad = 5;
 
-      field.css("width", text.css("width") || '100');
-      field.css("height", text.css("height") || '25');
+      field.css("width", text.css("width"));
+      field.css("height", text.css("height"));
       field.css("font", text.css("font"));
       field.css("margin-left", parseInt(text.css("margin-left")) - leftPad);
       field.css("margin-top", parseInt(text.css("margin-top")) - topPad);
@@ -164,15 +171,16 @@
       var text = this.saveText();
 
       // close popover
-      this.find(".editabletext > #edit").popover('hide');
+      this.find(".editabletext > #edit").tooltip('hide');
 
       // Attempt to validate
       if (this.options.validate) {
         var result = this.options.validate(text);
         if (result) {
+
           // validation failed. show help, and return
-          this.find(".editabletext > #edit").popover(result);
-          this.find(".editabletext > #edit").popover('show');
+          this.find(".editabletext > #edit").tooltip({ title: result });
+          this.find(".editabletext > #edit").tooltip('show');
           return;
         }
       }
