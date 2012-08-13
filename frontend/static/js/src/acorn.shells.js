@@ -576,7 +576,7 @@
       },
 
       timeRangeTemplate: _.template('\
-      <div id="slider"></div>\
+      <div id="slider" class="fader"></div>\
       <form class="form-inline">\
         <div class="input-prepend">\
           <span class="add-on">start:</span>\
@@ -605,9 +605,13 @@
           timeRange.find('#loop').attr('checked', 'checked');
 
         this.$el.find('.thumbnailside').append(timeRange);
+        this.$el.find('#slider').css('opacity', '0.0');
         this.setupSlider();
 
-        this.shell.retrieveExtraInfo(this.setupSlider);
+        this.shell.retrieveExtraInfo(_.bind(function() {
+          this.setupSlider();
+          this.$el.find('#slider').css('opacity', '1.0');
+        }, this));
       },
 
       setupSlider: function() {
