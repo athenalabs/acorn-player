@@ -115,6 +115,7 @@
   var ShellView = Backbone.View.extend({
 
     initialize: function() {
+      _.bindAll(this);
       this.shell = this.options.shell;
       assert(this.shell, 'No shell provided to shell ContentView.');
     },
@@ -158,6 +159,20 @@
       // class name
       className: 'acorn-shell',
 
+      initialize: function() {
+        ShellView.prototype.initialize.call(this);
+
+        this.options.parent.on('playback:play', this.onPlaybackPlay);
+        this.options.parent.on('playback:stop', this.onPlaybackStop);
+      },
+
+      remove: function() {
+        this.options.parent.off('playback:play', this.onPlaybackPlay);
+        this.options.parent.off('playback:stop', this.onPlaybackStop);
+
+        ShellView.prototype.remove.call(this);
+      },
+
       // aspect ratio. undefined if it doesn't matter.
       aspectRatio: undefined,
       adjustAspectRatio: function() {
@@ -166,6 +181,13 @@
 
         console.log('adjustAspectRatio to be implemented.');
       },
+
+
+      // events that all shells should have?
+      // onLoseFocus: function () {},
+      // onGainFocus: function () {},
+      onPlaybackPlay: function () {},
+      onPlaybackStop: function () {},
 
     }),
 
@@ -263,7 +285,6 @@
 
       initialize: function() {
         acorn.shells.Shell.prototype.EditView.prototype.initialize.call(this);
-        _.bindAll(this);
 
         this.linkView = new Backbone.components.EditableTextCmp.View({
           textFn: this.link,

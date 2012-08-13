@@ -174,6 +174,9 @@
       this.editView.render();
       this.editView.$el.css('opacity', 0.0);
       this.editView.$el.css('opacity', 1.0);
+
+      //TODO: list this event somewhere on the top of this view...
+      this.trigger('playback:stop');
     },
 
     onCloseEdit: function() {
@@ -263,12 +266,20 @@
 
     id: 'content',
 
+    initialize: function() {
+      PlayerSubview.prototype.initialize.call(this);
+
+      // proxy player events over, so shell ContentViews can listen.
+      this.player.on('all', this.trigger)
+    },
+
     render: function() {
 
       this.$el.empty();
 
       var shellView = new this.player.shell.ContentView({
         shell: this.player.shell,
+        parent: this,
       });
 
       shellView.render();
