@@ -248,6 +248,24 @@
       return this.data.thumbnailLink;
     },
 
+    extraInfoLink: function() { return ''; },
+
+    // Retrieve extra information. Nothing by default.
+    retrieveExtraInfo: function(callback) {
+      callback = callback || function() {};
+
+      var extraInfoLink = this.extraInfoLink();
+      if (!extraInfoLink || this.extraInfo) {
+        return callback();
+      }
+
+      var self = this;
+      $.getJSON(extraInfoLink, function(data) {
+        self.extraInfo = data;
+        callback();
+      });
+    },
+
     // ContentView -- Simply displays the link text for now.
     // TODO: thumbnail the website? embed the webpage in iframe?
     ContentView: acorn.shells.Shell.prototype.ContentView.extend({
@@ -598,7 +616,7 @@
   // ----------------------
 
   // A shell that links to media and embeds it.
-  acorn.shells.YouTubeShell = acorn.shells.LinkShell.extend({
+  acorn.shells.YouTubeShell = acorn.shells.VideoLinkShell.extend({
 
     shellid: 'acorn.YouTubeShell',
 
@@ -635,6 +653,13 @@
     // **thumbnailLink** returns the link to the thumbnail image
     thumbnailLink: function() {
       return "https://img.youtube.com/vi/" + this.youtubeId() + "/0.jpg";
+    },
+
+
+    extraInfoLink: function() {
+      return 'http://gdata.youtube.com/feeds/api/videos/' + this.youtubeId()
+           + '?v=2'
+           + '&alt=jsonc';
     },
 
     ContentView: acorn.shells.VideoLinkShell.prototype.ContentView.extend({
@@ -786,7 +811,7 @@
   // ----------------------
 
   // A shell that links to media and embeds it.
-  acorn.shells.VimeoShell = acorn.shells.LinkShell.extend({
+  acorn.shells.VimeoShell = acorn.shells.VideoLinkShell.extend({
 
     shellid: 'acorn.VimeoShell',
 
@@ -815,6 +840,12 @@
            + '&byline=1'
            + '&portrait=0'
            + '&color=ffffff'
+           ;
+    },
+
+    extraInfoLink: function() {
+      return 'http://vimeo.com/api/v2/video/' + this.vimeoId() + '.json?'
+           + '&callback=?' // somehow allows cross-domain requests.
            ;
     },
 
@@ -944,6 +975,7 @@
     EditView: acorn.shells.VideoLinkShell.prototype.EditView.extend({
       // Overrides LinkShell.generateThumbnailLink()
       generateThumbnailLink: function(callback) {
+        //TODO(ali01) use retrieveExtraInfo?
         var url_req = '/request_proxy/vimeo.com/api/v2/video/' +
                       this.shell.vimeoId() + '.json';
         $.ajax(url_req, {
