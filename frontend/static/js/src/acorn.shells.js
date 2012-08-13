@@ -456,6 +456,8 @@
       UrlRegExp('.*(avi|mov|wmv)'),
     ],
 
+    duration: function() { return this.data.time_end || 0; },
+
     // ContentView -- displays the video
     ContentView: acorn.shells.LinkShell.prototype.ContentView.extend({
 
@@ -563,16 +565,27 @@
     EditView: acorn.shells.LinkShell.prototype.EditView.extend({
 
       events: {
-        'change input':  'inputChanged',
-        'keyup input':  'inputChanged',
+        'change input':  'timeInputChanged',
+        'keyup input':  'timeInputChanged',
       },
 
       timeRangeTemplate: _.template('\
+      <div id="slider"></div>\
       <form class="form-inline">\
-        <input id="start" type="text" class="input-small" placeholder="start">\
-        <input id="end" type="text" class="input-small" placeholder="end">\
+        <div class="input-prepend">\
+          <span class="add-on">start:</span>\
+          <input id="start" size="16" type="text" class="time">\
+          <!--<span class="add-on">sec</span>-->\
+        </div>\
+        <div class="input-prepend">\
+          <span class="add-on">end:</span>\
+          <input id="end" size="16" type="text" class="time">\
+          <!--<span class="add-on">sec</span>-->\
+        </div>\
         <span id="time"></span>\
-        <label class="checkbox"><input id="loop" type="checkbox"> Loop</label>\
+        <label class="checkbox right" id="loop-label">\
+          <input id="loop" type="checkbox"> Loop\
+        </label>\
       </form>\
       '),
 
@@ -582,19 +595,47 @@
         var timeRange = $(this.timeRangeTemplate());
 
         // update with the correct values.
-        timeRange.find('#start').val(this.shell.data.time_start || '0');
-        timeRange.find('#end').val(this.shell.data.time_end || '100');
         if (this.shell.data.loop)
           timeRange.find('#loop').attr('checked', 'checked');
 
         this.$el.find('.thumbnailside').append(timeRange);
+        this.setupSlider();
 
-        this.inputChanged();
+        this.shell.retrieveExtraInfo(this.setupSlider);
       },
 
-      inputChanged: function() {
-        var start = parseInt(this.$el.find('#start').val());
-        var end = parseInt(this.$el.find('#end').val());
+      setupSlider: function() {
+        var data = this.shell.data;
+
+        // setup slider
+        var self = this;
+        this.$el.find('#slider').slider({
+          min: 0,
+          max: this.shell.duration(),
+          range: true,
+          values: [ data.time_start, data.time_end ],
+          slide: function(e, ui) { self.inputChanged(ui.values); },
+        });
+
+        this.inputChanged([ data.time_start, data.time_end ]);
+
+      },
+
+      timeInputChanged: function() {
+        this.inputChanged([
+          this.$el.find('#start').val(),
+          this.$el.find('#end').val()
+        ]);
+      },
+
+      inputChanged: function(values) {
+        clip = function(min, _, max) {
+          return Math.max(min, Math.min(_ || 0, max));
+        }
+
+        var max = this.shell.data.time_total || this.shell.duration();
+        var start = clip(0, parseInt(values[0]), values[1]);
+        var end = clip(start, parseInt(values[1]), max);
         var loop = !!this.$el.find('#loop').attr('checked');
 
         var diff = (end - start);
@@ -603,6 +644,10 @@
         this.shell.data.time_start = start;
         this.shell.data.time_end = end;
         this.shell.data.loop = loop;
+
+        this.$el.find('#start').val(start);
+        this.$el.find('#end').val(end);
+        this.$el.find('#slider').slider({values: [start, end], 'max': max});
 
         this.$el.find('#time').text(time);
       },
@@ -660,6 +705,10 @@
       return 'http://gdata.youtube.com/feeds/api/videos/' + this.youtubeId()
            + '?v=2'
            + '&alt=jsonc';
+    },
+
+    duration: function() {
+      return this.extraInfo ? this.extraInfo.data.duration : this.data.time_end;
     },
 
     ContentView: acorn.shells.VideoLinkShell.prototype.ContentView.extend({
@@ -847,6 +896,10 @@
       return 'http://vimeo.com/api/v2/video/' + this.vimeoId() + '.json?'
            + '&callback=?' // somehow allows cross-domain requests.
            ;
+    },
+
+    duration: function() {
+      return this.extraInfo ? this.extraInfo[0].duration : this.data.time_end;
     },
 
     ContentView: acorn.shells.VideoLinkShell.prototype.ContentView.extend({

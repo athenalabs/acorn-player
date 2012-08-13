@@ -19,9 +19,9 @@
 <body>
 
 
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/themes/base/jquery-ui.css" />
 <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
 <link rel="stylesheet" href="/static/css/bootstrap-responsive.min.css" />
-
 
 <style>
 @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
@@ -236,8 +236,34 @@ h1, h2, h3, h4, h5, h6 {
 #acorn-player > #edit > #form > .acorn-shell-edit > div.thumbnailside
 > div#link {
   width: 100%;
-
 }
+
+#acorn-player > #edit > #form > .acorn-shell-edit > div.thumbnailside
+ input.time {
+  width: 50px;
+  margin-left: -4px;
+  margin-right: 5px;
+  text-align: center;
+}
+
+#acorn-player > #edit > #form > .acorn-shell-edit > div.thumbnailside
+.right {
+  position: absolute;
+  right: 0px;
+  margin-top: 5px;
+}
+
+
+#acorn-player > #edit > #form > .acorn-shell-edit > div.thumbnailside #slider {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#acorn-player .ui-slider-handle {
+  width: 0.8em;
+}
+
+
 </style>
 
 <div id="acorn-player">
@@ -248,6 +274,7 @@ h1, h2, h3, h4, h5, h6 {
 <script src="/static/js/libs/backbone/backbone-min.js"></script>
 <script src="/static/js/libs/bootstrap/js/bootstrap.min.js"></script>
 <script src="/static/js/libs/components/editabletext.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js"></script>
 
 <script src="/static/js/src/acorn.js"></script>
 <script src="/static/js/src/acorn.shells.js"></script>
