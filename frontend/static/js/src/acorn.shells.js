@@ -540,7 +540,7 @@
       },
     }),
 
-    EditView: acorn.shells.LinkShell.prototype.EditView.extend({
+    EditView: acorn.shells.VideoLinkShell.prototype.EditView.extend({
       // Overrides LinkShell.generateThumbnailLink()
       generateThumbnailLink: function(callback) {
         callback(this.shell.thumbnailLink());
@@ -593,7 +593,7 @@
       },
     }),
 
-    EditView: acorn.shells.LinkShell.prototype.EditView.extend({
+    EditView: acorn.shells.VideoLinkShell.prototype.EditView.extend({
       // Overrides LinkShell.generateThumbnailLink()
       generateThumbnailLink: function(callback) {
         var url_req = '/request_proxy/vimeo.com/api/v2/video/' +
