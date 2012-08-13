@@ -441,6 +441,22 @@
     // ContentView -- displays the video
     ContentView: acorn.shells.LinkShell.prototype.ContentView.extend({
 
+      render: function() {
+        this.$el.empty();
+
+        // stop ticking, in case we had been playing and this is a re-render.
+        this.stopTick();
+      },
+
+      remove: function() {
+        this.stopTick(); // stop the interval on remove.
+
+        acorn.shells.LinkShell
+          .prototype.ContentView
+          .prototype.remove
+          .call(this);
+      },
+
 
       // VideoLinkShell.ContentView interface -- override these in subclasses
       // --------------------------------------------------------------------
@@ -466,6 +482,18 @@
 
       // seeks to the specific offset in seconds
       seek: function(seconds) {},
+
+
+      // shell.ContentView events
+      // ------------------------
+
+      onPlaybackStop: function() {
+        this.stop();
+      },
+
+      onPlaybackPlay: function() {
+        this.play();
+      },
 
 
       // Playback Tick - trigger a callback at a given interval during playback
@@ -610,11 +638,12 @@
     },
 
     ContentView: acorn.shells.VideoLinkShell.prototype.ContentView.extend({
-      render: function() {
-        this.$el.empty();
 
-        // stop ticking, in case we had been playing and this is a re-render.
-        this.stopTick();
+      render: function() {
+        acorn.shells.VideoLinkShell
+          .prototype.ContentView
+          .prototype.render
+          .call(this);
 
         // initialize YouTube setup.
         this.onYTInitialize();
@@ -622,15 +651,6 @@
         // add the YouTube player iframe
         var link = this.shell.embedLink();
         this.$el.append(iframe(link, 'ytplayer'));
-      },
-
-      remove: function() {
-        this.stopTick(); // stop the interval on remove.
-
-        acorn.shells.LinkShell
-          .prototype.ContentView
-          .prototype.remove
-          .call(this);
       },
 
 
@@ -699,17 +719,6 @@
           this.startTick();
         else
           this.stopTick();
-      },
-
-      // shell.ContentView events
-      // ------------------------
-
-      onPlaybackStop: function() {
-        this.ytplayer.pauseVideo();
-      },
-
-      onPlaybackPlay: function() {
-        this.ytplayer.playVideo();
       },
 
 
