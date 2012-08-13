@@ -73,6 +73,10 @@
       'click #image':               'triggerShowContent',
     },
 
+    defaults: {
+      showingContent: false,
+    },
+
     initialize: function() {
       _.bindAll(this);
 
@@ -81,6 +85,9 @@
 
       // initialize with the shell the model has (can be undefined)
       this.shell = this.model.shellData();
+
+      // set option defauls.
+      this.options = _.extend({}, this.defaults, this.options);
 
       // Subviews
       this.thumbnailView = new player.views.ThumbnailView({ player: this });
@@ -106,6 +113,14 @@
 
       this.thumbnailView.render();
       this.$el.append(this.thumbnailView.el);
+
+      if (this.options.showingContent) {
+        this.contentView.render();
+        this.controlsView.render();
+
+        this.$el.append(this.contentView.el);
+        this.$el.append(this.controlsView.el);
+      }
     },
 
     onAcornSave: function() {
@@ -140,14 +155,10 @@
 
     onShowContent: function() {
 
-      this.contentView.render();
-      this.controlsView.render();
-
-      this.$el.append(this.contentView.el);
-      this.$el.append(this.controlsView.el);
+      this.options.showingContent = true;
+      this.render();
 
       this.thumbnailView.$el.hide(1000);
-
     },
 
     triggerShowContent: function() {
