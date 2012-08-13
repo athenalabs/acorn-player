@@ -275,15 +275,17 @@
 
     render: function() {
 
-      this.$el.empty();
+      if (this.shellView)
+        this.shellView.remove();
 
-      var shellView = new this.player.shell.ContentView({
+      this.shellView = new this.player.shell.ContentView({
         shell: this.player.shell,
         parent: this,
       });
 
-      shellView.render();
-      this.$el.append(shellView.el);
+      this.$el.empty();
+      this.shellView.render();
+      this.$el.append(this.shellView.el);
 
     },
 
