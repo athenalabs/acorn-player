@@ -438,6 +438,55 @@
       UrlRegExp('.*(avi|mov|wmv)'),
     ],
 
+    EditView: acorn.shells.LinkShell.prototype.EditView.extend({
+
+      events: {
+        'change input':  'inputChanged',
+        'keyup input':  'inputChanged',
+      },
+
+      timeRangeTemplate: _.template('\
+      <form class="form-inline">\
+        <input id="start" type="text" class="input-small" placeholder="start">\
+        <input id="end" type="text" class="input-small" placeholder="end">\
+        <span id="time"></span>\
+        <label class="checkbox"><input id="loop" type="checkbox"> Loop</label>\
+      </form>\
+      '),
+
+      render: function() {
+        acorn.shells.LinkShell.prototype.EditView.prototype.render.call(this);
+
+        var timeRange = $(this.timeRangeTemplate());
+
+        // update with the correct values.
+        timeRange.find('#start').val(this.shell.data.time_start || '0');
+        timeRange.find('#end').val(this.shell.data.time_end || '100');
+        if (this.shell.data.loop)
+          timeRange.find('#loop').attr('checked', 'checked');
+
+        this.$el.find('.thumbnailside').append(timeRange);
+
+        this.inputChanged();
+      },
+
+      inputChanged: function() {
+        var start = parseInt(this.$el.find('#start').val());
+        var end = parseInt(this.$el.find('#end').val());
+        var loop = !!this.$el.find('#loop').attr('checked');
+
+        var diff = (end - start);
+        var time = (isNaN(diff) ? '--' : diff) + ' seconds';
+
+        this.shell.data.time_start = start;
+        this.shell.data.time_end = end;
+        this.shell.data.loop = loop;
+
+        this.$el.find('#time').text(time);
+      },
+
+    }),
+
   });
 
 
