@@ -195,6 +195,9 @@
 
       className: 'acorn-shell-edit',
 
+      // Supported trigger events
+      // * change:shell - fired when shell data has changed
+
       // **template** defines the html template for this view.
       // Override to structure your own form.
       template: _.template(''),
@@ -300,6 +303,9 @@
           <div id="link"></div>\
         </div>\
       '),
+
+      // Supported trigger events
+      // * change:editState - fired when EditView changes editing state
 
       initialize: function() {
         acorn.shells.Shell.prototype.EditView.prototype.initialize.call(this);

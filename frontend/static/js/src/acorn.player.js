@@ -73,6 +73,24 @@
       'click #image':               'triggerShowContent',
     },
 
+    // Supported trigger events
+    //
+    // * rename:acorn - fired when acorn has been renamed
+    // * change:acorn - fired when acorn data has changed
+    // * save:acorn   - fired when acorn needs to be saved
+    //
+    // * show:content - fired when ContentView should be shown
+    // * show:edit    - fired when EditView should be shown
+    // * close:edit   - fired when EditView shold be closed
+    //
+    // * fullscreen   - fired when acorn should display in fullscreen
+    // * acorn-site   - fired to go to the acorn website
+    //
+    // * playback:play - fired when playback should start or resume
+    // * playback:stop - fired when playback should pause or stop
+
+
+
     defaults: {
       showingContent: false,
       // showingContent: whether the contentView ought to be visible.
@@ -269,6 +287,9 @@
 
     id: 'content',
 
+    // Supported trigger events
+    // * all PlayerView events (proxying)
+
     initialize: function() {
       PlayerSubview.prototype.initialize.call(this);
 
@@ -310,6 +331,9 @@
       'AcornControl',
       'FullscreenControl',
     ],
+
+    // Supported trigger events
+    // * change:acorn - fired when acorn data has changed
 
     initialize: function() {
       PlayerSubview.prototype.initialize.call(this);
