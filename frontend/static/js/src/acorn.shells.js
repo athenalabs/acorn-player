@@ -342,7 +342,9 @@
             callback(data);
           },
           error: function() {
-            alert('error generating url2png url (make this prettier)');
+            var msg = 'Error: failed to generate thumbnail for link.';
+            var error_alert = acorn.util.alert(msg, 'alert-error');
+            $('body').append(error_alert);
           }
         });
       },
@@ -531,11 +533,15 @@
               data_obj = $.parseJSON(data);
               callback(data_obj[0].thumbnail_large);
             } catch(e) {
-              alert('error extracting vimeo url (make this prettier)');
+              var msg = 'Error: failed to extract thumbnail from video.';
+              var error_alert = acorn.util.alert(msg, 'alert-error');
+              $('body').append(error_alert);
             }
           },
           error: function() {
-            alert('error generating vimeo url (make this prettier)');
+            var msg = 'Error: failed to generate thumbnail for video.';
+            var error_alert = acorn.util.alert(msg, 'alert-error');
+            $('body').append(error_alert);
           }
         });
       },
