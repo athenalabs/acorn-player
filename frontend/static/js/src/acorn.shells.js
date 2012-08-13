@@ -467,6 +467,51 @@
       // seeks to the specific offset in seconds
       seek: function(seconds) {},
 
+
+      // Playback Tick - trigger a callback at a given interval during playback
+      // ----------------------------------------------------------------------
+
+      // start the interval
+      startTick: function() {
+        this.stopTick();
+        this.interval = setInterval(this.onTick, 200);
+      },
+
+      // clear the interval
+      stopTick: function() {
+        if (this.interval) {
+          clearInterval(this.interval);
+          this.interval = undefined;
+        }
+      },
+
+      // tick callback
+      onTick: function() {
+        // get shell options
+        var loop = this.shell.data.loop || false;
+        var end = this.shell.data.time_end || this.totalTime();
+        var start = this.shell.data.time_start || 0;
+
+        // get current state
+        var now = this.currentTime();
+        var playing = this.isPlaying();
+
+        // if current playback is behind the start time, seek to start
+        if (playing && now < start) {
+          this.seek(start);
+        }
+
+        // if current playback is after the end time, pause (or loop)
+        if (playing && now >= end) {
+          if (loop) {
+            this.seek(start);
+          } else {
+            this.stop();
+          }
+        }
+      },
+
+
     }),
 
     EditView: acorn.shells.LinkShell.prototype.EditView.extend({
@@ -665,50 +710,6 @@
 
       onPlaybackPlay: function() {
         this.ytplayer.playVideo();
-      },
-
-
-      // Playback Tick - trigger a callback at a given interval during playback
-      // ----------------------------------------------------------------------
-
-      // start the interval
-      startTick: function() {
-        this.stopTick();
-        this.interval = setInterval(this.onTick, 200);
-      },
-
-      // clear the interval
-      stopTick: function() {
-        if (this.interval) {
-          clearInterval(this.interval);
-          this.interval = undefined;
-        }
-      },
-
-      // tick callback
-      onTick: function() {
-        // get shell options
-        var loop = this.shell.data.loop || false;
-        var end = this.shell.data.time_end || this.totalTime();
-        var start = this.shell.data.time_start || 0;
-
-        // get current state
-        var now = this.currentTime();
-        var playing = this.isPlaying();
-
-        // if current playback is behind the start time, seek to start
-        if (playing && now < start) {
-          this.seek(start);
-        }
-
-        // if current playback is after the end time, pause (or loop)
-        if (playing && now >= end) {
-          if (loop) {
-            this.seek(start);
-          } else {
-            this.stop();
-          }
-        }
       },
 
 
