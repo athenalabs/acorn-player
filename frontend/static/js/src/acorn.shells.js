@@ -513,15 +513,18 @@
     },
 
     embedLink: function() {
-      return 'https://www.youtube.com/embed/' + this.youtubeId()
-           + '?fs=1'
+      // see https://developers.google.com/youtube/player_parameters for options
+      return 'http://www.youtube.com/embed/' + this.youtubeId() + '?'
+           + '&fs=1'
            // + '&modestbranding=1'
            + '&iv_load_policy=3'
            + '&rel=0'
            + '&showsearch=0'
+           + '&showinfo=0'
            + '&hd=1'
            + '&wmode=transparent'
-           + '&autoplay=1'
+           + '&enablejsapi=1'
+           + '&controls=0'
            ;
     },
 
