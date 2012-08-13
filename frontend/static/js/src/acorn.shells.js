@@ -535,8 +535,14 @@
 
     ContentView: acorn.shells.LinkShell.prototype.ContentView.extend({
       render: function() {
+        this.$el.empty();
+
+        // initialize YouTube setup.
+        this.onYTInitialize();
+
+        // add the YouTube player iframe
         var link = this.shell.embedLink();
-        this.$el.append(iframe(link));
+        this.$el.append(iframe(link, 'ytplayer'));
       },
 
 
