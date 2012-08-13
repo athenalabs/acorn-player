@@ -537,12 +537,24 @@
       render: function() {
         this.$el.empty();
 
+        // stop ticking, in case we had been playing and this is a re-render.
+        this.stopTick();
+
         // initialize YouTube setup.
         this.onYTInitialize();
 
         // add the YouTube player iframe
         var link = this.shell.embedLink();
         this.$el.append(iframe(link, 'ytplayer'));
+      },
+
+      remove: function() {
+        this.stopTick(); // stop the interval on remove.
+
+        acorn.shells.LinkShell
+          .prototype.ContentView
+          .prototype.remove
+          .call(this);
       },
 
 
@@ -606,6 +618,11 @@
 
       onYTPlayerStateChange: function(event) {
         var state = event.data; // should == this.ytplayer.getPlayerState();
+
+        if (state == YT.PlayerState.PLAYING)
+          this.startTick();
+        else
+          this.stopTick();
       },
 
       // shell.ContentView events
@@ -618,6 +635,52 @@
       onPlaybackPlay: function() {
         this.ytplayer.playVideo();
       },
+
+
+      // Playback Tick - trigger a callback at a given interval during playback
+      // ----------------------------------------------------------------------
+
+      // start the interval
+      startTick: function() {
+        this.stopTick();
+        this.interval = setInterval(this.onTick, 200);
+      },
+
+      // clear the interval
+      stopTick: function() {
+        if (this.interval) {
+          clearInterval(this.interval);
+          this.interval = undefined;
+        }
+      },
+
+      // tick callback
+      onTick: function() {
+        // get shell options
+        var loop = this.shell.data.loop || false;
+        var end = this.shell.data.time_end || this.ytplayer.getDuration();
+        var start = this.shell.data.time_start || 0;
+
+        // get current state
+        var now = this.ytplayer.getCurrentTime();
+        var state = this.ytplayer.getPlayerState();
+        var playing = (state == YT.PlayerState.PLAYING);
+
+        // if current playback is behind the start time, seek to start
+        if (this.ytplayer && playing && now < start) {
+          this.ytplayer.seekTo(start);
+        }
+
+        // if current playback is after the end time, pause (or loop)
+        if (this.ytplayer && playing && now >= end) {
+          if (loop) {
+            this.ytplayer.seekTo(start);
+          } else {
+            this.ytplayer.pauseVideo();
+          }
+        }
+      },
+
     }),
 
     EditView: acorn.shells.VideoLinkShell.prototype.EditView.extend({
