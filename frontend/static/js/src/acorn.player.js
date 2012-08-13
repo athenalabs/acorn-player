@@ -122,7 +122,9 @@
             self.trigger('rename:acorn', self.model.acornid());
         },
         error: function() {
-          alert('error saving. make this prettier...');
+          var msg = 'Error: failed to save model.';
+          var error_alert = acorn.util.alert(msg, 'alert-error');
+          $('body').append(error_alert);
         },
       });
     },
