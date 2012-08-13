@@ -528,8 +528,7 @@
         $.ajax(url_req, {
           success: function(data) {
             try {
-              data_obj = $.parseJSON(data);
-              callback(data_obj[0].thumbnail_large);
+              callback(data[0].thumbnail_large);
             } catch(e) {
               alert('error extracting vimeo url (make this prettier)');
             }
