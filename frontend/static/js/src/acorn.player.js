@@ -346,6 +346,12 @@
 
       var self = this;
       _(this.controlViews).each(function(control) {
+        // `control.el` got removed from the DOM above: `this.$el.empty()`.
+        // the `control` view's elements thus need to be re-delegated.
+        // (apparently this is how backbone works. this could potentially
+        // be biting us elsewhere and we don't even know it!)
+        control.delegateEvents();
+
         control.render();
         self.$el.append(control.el)
       });
