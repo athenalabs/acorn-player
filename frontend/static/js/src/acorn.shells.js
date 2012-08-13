@@ -538,6 +538,80 @@
         var link = this.shell.embedLink();
         this.$el.append(iframe(link));
       },
+
+
+      // YouTube API - communication between the YouTube js API and the shell.
+      // ---------------------------------------------------------------------
+      // see https://developers.google.com/youtube/js_api_reference
+
+      // the javascript file with the youtube player api.
+      youtubePlayerApiSrc: 'http://www.youtube.com/iframe_api',
+
+      // initialize youtube API
+      onYTInitialize: function() {
+        // initialization should only happen once per page load.
+
+        // if YT hasn't been initialized, initialize it.
+        if (!window.onYouTubeIframeAPIReady) {
+
+          // setup YT ready callback
+          window.onYouTubeIframeAPIReady = this.onYTReady;
+
+          // include the YouTubePlayerAPI code
+          var script = $('<script>').attr('src', this.youtubePlayerApiSrc);
+          $('body').append(script);
+
+          return; // onYTReady will be called when YT finishes initializing
+        }
+
+        // must call onYTReady once the current render call stack finishes
+        // because the frame is not yet on the page. YT API expects the id
+        // of a player currently on the page. Backbone has yet to add the
+        // current DOM subtree to the page DOM. setTimeout will schedule
+        // the callback after the current stack finishes.
+        setTimeout(this.onYTReady, 0);
+      },
+
+      // The YT API is ready for use
+      onYTReady: function() {
+
+        // initialize the `ytplayer` object
+        this.ytplayer = new YT.Player('ytplayer', {
+          events: {
+            'onReady': this.onYTPlayerReady,
+            'onStateChange': this.onYTPlayerStateChange,
+          }
+        });
+
+        // clear the callback function, but set empty function:
+        // * in case the callback gets called again
+        // * to signal YT has already been initialized
+        window.onYouTubeIframeAPIReady = function() {};
+      },
+
+      onYTPlayerReady: function() {
+
+        // tell `ytplayer` to load the video, with given start time.
+        // this *should* initialize the playback at the correct point,
+        // but in practice it doesn't. Need a robust solution (tick).
+        var start = parseInt(this.shell.data.time_start || 0);
+        this.ytplayer.loadVideoById(this.shell.youtubeId(), start);
+      },
+
+      onYTPlayerStateChange: function(event) {
+        var state = event.data; // should == this.ytplayer.getPlayerState();
+      },
+
+      // shell.ContentView events
+      // ------------------------
+
+      onPlaybackStop: function() {
+        this.ytplayer.pauseVideo();
+      },
+
+      onPlaybackPlay: function() {
+        this.ytplayer.playVideo();
+      },
     }),
 
     EditView: acorn.shells.VideoLinkShell.prototype.EditView.extend({
