@@ -1,3 +1,11 @@
+div.alert {
+  position: absolute;
+  z-index: 20;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  margin: 20px;
+}
 
 .acorn-shell {
   position: relative;

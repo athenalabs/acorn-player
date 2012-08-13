@@ -191,6 +191,25 @@
     return f;
   };
 
+  // **acorn.util.alert** returns a bootstrap alert element
+  // Args:
+  // * msg - message to be displayed in the alert
+  // * type (default: alert-info) - type of alert-{error,info,success}
+  acorn.util.alert = function(msg, type) {
+    type = typeof type !== 'undefined' ? type : 'alert-info';
+
+    var alert =
+      $('<div>').addClass('alert').addClass(type).text(msg);
+
+    var button =
+      $('<button>').addClass('close')
+                   .attr('data-dismiss', 'alert')
+                   .attr('href', '#').text('x');
+    alert.append(button);
+
+    return alert;
+  };
+
   var iframe = function(src, id) {
     var f = $('<iframe>');
     f.attr('frameborder', '0').attr('border', '0');
