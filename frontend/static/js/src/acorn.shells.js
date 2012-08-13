@@ -438,6 +438,37 @@
       UrlRegExp('.*(avi|mov|wmv)'),
     ],
 
+    // ContentView -- displays the video
+    ContentView: acorn.shells.LinkShell.prototype.ContentView.extend({
+
+
+      // VideoLinkShell.ContentView interface -- override these in subclasses
+      // --------------------------------------------------------------------
+
+      // -- Information:
+
+      // the total duration in seconds
+      totalTime: function() { return 0; },
+
+      // the current playback position in seconds
+      currentTime: function() { return 0; },
+
+      // whether the video is currently playing
+      isPlaying: function() { return false; },
+
+      // -- Actions:
+
+      // begins playing the video (idempotent)
+      play: function() {},
+
+      // stops playing the video (idempotent)
+      stop: function() {},
+
+      // seeks to the specific offset in seconds
+      seek: function(seconds) {},
+
+    }),
+
     EditView: acorn.shells.LinkShell.prototype.EditView.extend({
 
       events: {
@@ -533,7 +564,7 @@
       return "https://img.youtube.com/vi/" + this.youtubeId() + "/0.jpg";
     },
 
-    ContentView: acorn.shells.LinkShell.prototype.ContentView.extend({
+    ContentView: acorn.shells.VideoLinkShell.prototype.ContentView.extend({
       render: function() {
         this.$el.empty();
 
@@ -658,27 +689,68 @@
       onTick: function() {
         // get shell options
         var loop = this.shell.data.loop || false;
-        var end = this.shell.data.time_end || this.ytplayer.getDuration();
+        var end = this.shell.data.time_end || this.totalTime();
         var start = this.shell.data.time_start || 0;
 
         // get current state
-        var now = this.ytplayer.getCurrentTime();
-        var state = this.ytplayer.getPlayerState();
-        var playing = (state == YT.PlayerState.PLAYING);
+        var now = this.currentTime();
+        var playing = this.isPlaying();
 
         // if current playback is behind the start time, seek to start
-        if (this.ytplayer && playing && now < start) {
-          this.ytplayer.seekTo(start);
+        if (playing && now < start) {
+          this.seek(start);
         }
 
         // if current playback is after the end time, pause (or loop)
-        if (this.ytplayer && playing && now >= end) {
+        if (playing && now >= end) {
           if (loop) {
-            this.ytplayer.seekTo(start);
+            this.seek(start);
           } else {
-            this.ytplayer.pauseVideo();
+            this.stop();
           }
         }
+      },
+
+
+      // VideoLinkShell.ContentView interface -- overriding with native impl
+      // -------------------------------------------------------------------
+
+      // -- Information:
+
+      // the total duration in seconds
+      totalTime: function() {
+        return this.ytplayer.getDuration();
+      },
+
+      // the current playback position in seconds
+      currentTime: function() {
+        return this.ytplayer.getCurrentTime();
+      },
+
+      // whether the video is currently playing
+      isPlaying: function() {
+        if (!this.ytplayer)
+          return false;
+
+        var state = this.ytplayer.getPlayerState();
+        return (state == YT.PlayerState.PLAYING);
+      },
+
+      // -- Actions:
+
+      // begins playing the video (idempotent)
+      play: function() {
+        this.ytplayer.playVideo();
+      },
+
+      // stops playing the video (idempotent)
+      stop: function() {
+        this.ytplayer.pauseVideo();
+      },
+
+      // seeks to the specific offset in seconds
+      seek: function(seconds) {
+        this.ytplayer.seekTo(seconds)
       },
 
     }),
