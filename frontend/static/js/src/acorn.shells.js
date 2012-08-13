@@ -572,7 +572,7 @@
 
       events: {
         'change input':  'timeInputChanged',
-        'keyup input':  'timeInputChanged',
+        'blur input':  'timeInputChanged',
       },
 
       timeRangeTemplate: _.template('\
