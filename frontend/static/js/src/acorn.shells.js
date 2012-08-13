@@ -532,7 +532,7 @@
         // if current playback is after the end time, pause (or loop)
         if (playing && now >= end) {
           if (loop) {
-            this.seek(start);
+            this.seek(0); // TODO set to `start` when vimeo bug is found.
           } else {
             this.stop();
           }
@@ -805,17 +805,135 @@
     },
 
     embedLink: function() {
-      return 'http://player.vimeo.com/video/' + this.vimeoId()
-           + '?byline=0'
+      return 'http://player.vimeo.com/video/' + this.vimeoId() + '?'
+           + '&byline=0'
            + '&portrait=0'
+           + '&api=1'
+           + '&player_id=vimeoplayer'
            ;
     },
 
-    ContentView: acorn.shells.LinkShell.prototype.ContentView.extend({
+    ContentView: acorn.shells.VideoLinkShell.prototype.ContentView.extend({
+
       render: function() {
+        this.$el.empty();
+
+        // stop ticking, in case we had been playing and this is a re-render.
+        this.stopTick();
+
+        // initialize YouTube setup.
+        this.onVimeoInitialize();
+
+        // add the Vimeo player iframe
         var link = this.shell.embedLink();
-        this.$el.append(iframe(link));
+        this.$el.append(iframe(link, 'vimeoplayer'));
       },
+
+      // Vimeo API - communication between the Vimeo js API and the shell.
+      // -----------------------------------------------------------------
+      // see http://developer.vimeo.com/player/js-api
+
+      // the javascript file with the youtube player api.
+      vimeoPlayerApiSrc: 'http://a.vimeocdn.com/js/froogaloop2.js',
+
+      // initialize youtube API
+      onVimeoInitialize: function() {
+        // initialization should only happen once per page load.
+
+        // if Vimeo hasn't been initialized, initialize it.
+        if (!window.$f) {
+          $.getScript(this.vimeoPlayerApiSrc, this.onVimeoReady);
+          return;
+        }
+
+        // must call onVimeoReady once the current render call stack finishes
+        // because the frame is not yet on the page. Vimeo API expects the id
+        // of a player currently on the page. Backbone has yet to add the
+        // current DOM subtree to the page DOM. setTimeout will schedule
+        // the callback after the current stack finishes.
+        setTimeout(this.onVimeoReady, 0);
+      },
+
+      // The Vimeo API is ready for use
+      onVimeoReady: function() {
+
+        // initialize the `vimeoPlayer` object
+        var frame = this.$el.find('#vimeoplayer');
+        this.vimeoPlayer = $f(frame[0]);
+
+        this.vimeoPlayer.addEvent('ready', this.onVimeoPlayerReady);
+
+      },
+
+      onVimeoPlayerReady: function() {
+
+        // attach the callbacks to the vimeo player.
+        this.vimeoPlayer.addEvent('pause', this.onVimeoPause);
+        this.vimeoPlayer.addEvent('play', this.onVimeoPlay);
+        this.vimeoPlayer.addEvent('playProgress', this.onVimeoPlayProgress);
+
+        this.play();
+      },
+
+      onVimeoPause: function() {
+        this._isplaying = false;
+      },
+
+      onVimeoPlay: function() {
+        this._isplaying = true;
+      },
+
+      onVimeoPlayProgress: function(params) {
+        this._totalTime = parseFloat(params.duration);
+        this._currentTime = parseFloat(params.seconds);
+        this._isplaying = true;
+
+        // use vimeo's interval callback -- call onTick manually.
+        this.onTick();
+      },
+
+      // override {start,stop}Tick, as Vimeo has it's own interval callback.
+      startTick: function() {},
+      stopTick: function() {},
+
+      // VideoLinkShell.ContentView interface -- overriding with native impl
+      // -------------------------------------------------------------------
+
+      // -- Information:
+
+      // the total duration in seconds
+      totalTime: function() {
+        return this._totalTime || Infinity;
+      },
+
+      // the current playback position in seconds
+      currentTime: function() {
+        return this._currentTime || 0;
+      },
+
+      // whether the video is currently playing
+      isPlaying: function() {
+        return this._isplaying || false;
+      },
+
+      // -- Actions:
+
+      // begins playing the video (idempotent)
+      play: function() {
+        this.vimeoPlayer.api('play');
+      },
+
+      // stops playing the video (idempotent)
+      stop: function() {
+        this.vimeoPlayer.api('pause');
+      },
+
+      // seeks to the specific offset in seconds
+      seek: function(seconds) {
+        // console.log('seekTo ' + seconds);
+        this.vimeoPlayer.api('seekTo', [seconds.toString()]);
+      },
+
     }),
 
     EditView: acorn.shells.VideoLinkShell.prototype.EditView.extend({
