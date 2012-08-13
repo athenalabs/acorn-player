@@ -805,11 +805,16 @@
     },
 
     embedLink: function() {
+      // see http://developer.vimeo.com/player/embedding
       return 'http://player.vimeo.com/video/' + this.vimeoId() + '?'
            + '&byline=0'
            + '&portrait=0'
            + '&api=1'
            + '&player_id=vimeoplayer'
+           + '&title=0'
+           + '&byline=1'
+           + '&portrait=0'
+           + '&color=ffffff'
            ;
     },
 
