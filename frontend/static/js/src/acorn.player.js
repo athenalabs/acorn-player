@@ -75,6 +75,9 @@
 
     defaults: {
       showingContent: false,
+      // showingContent: whether the contentView ought to be visible.
+      // once true, the player should respect the state when re-rendering
+      // (i.e. re-rendering should still show the content, not revert to thumb).
     },
 
     initialize: function() {
