@@ -797,7 +797,10 @@
       },
 
       onYTPlayerStateChange: function(event) {
-        var state = event.data; // should == this.ytplayer.getPlayerState();
+        var state = event.data;
+        // ``event.data`` ought to equal ``this.ytplayer.getPlayerState()``.
+        // I'm using ``event.data`` here in case events get fired from other
+        // YouTube Players?? Seems safer to trust the function paramters.
 
         if (state == YT.PlayerState.PLAYING)
           this.startTick();
