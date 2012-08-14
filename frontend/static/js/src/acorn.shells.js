@@ -342,9 +342,8 @@
             callback(data);
           },
           error: function() {
-            var msg = 'Error: failed to generate thumbnail for link.';
-            var error_alert = acorn.util.alert(msg, 'alert-error');
-            $('body').append(error_alert);
+            acorn.alert('Error: failed to generate thumbnail for link.',
+                        'alert-error');
           }
         });
       },
@@ -533,15 +532,13 @@
               data_obj = $.parseJSON(data);
               callback(data_obj[0].thumbnail_large);
             } catch(e) {
-              var msg = 'Error: failed to extract thumbnail from video.';
-              var error_alert = acorn.util.alert(msg, 'alert-error');
-              $('body').append(error_alert);
+              acorn.alert('Error: failed to extract thumbnail from video.',
+                          'alert-error');
             }
           },
           error: function() {
-            var msg = 'Error: failed to generate thumbnail for video.';
-            var error_alert = acorn.util.alert(msg, 'alert-error');
-            $('body').append(error_alert);
+            acorn.alert('Error: failed to generate thumbnail for video.',
+                        'alert-error');
           }
         });
       },
