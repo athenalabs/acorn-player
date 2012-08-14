@@ -1,6 +1,6 @@
 div.alert {
   position: absolute;
-  z-index: 20;
+  z-index: 1000;
   top: 0px;
   right: 0px;
   left: 0px;
