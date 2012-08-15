@@ -239,6 +239,26 @@
   };
   acorn.util.iframe = iframe;
 
+
+  // **acorn.property** creates and return a get/setter with a closured var.
+  var property = function(defaultValue, validate) {
+
+    // initialize with defaultValue
+    var storedValue = defaultValue;
+
+    // ensure we have at least an empty validate function
+    validate = validate || function(v) { return v; };
+
+    // return the get/setter function
+    return function(value) {
+      if (arguments.length > 0)
+        storedValue = validate(value);
+
+      return storedValue;
+    };
+  };
+  acorn.util.property = property;
+
   // The following functions are originally from other open-source projects.
   // They are replicated here to avoid dependencies for minimal things.
 
