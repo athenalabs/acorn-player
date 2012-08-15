@@ -388,6 +388,10 @@
 
     var result = {};
 
+    // if no protocol is found, prepend http
+    if (!RegExp('://').test(url))
+      url = 'http://' + url
+
     var anchor = document.createElement('a');
     anchor.href = url;
 
