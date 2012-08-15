@@ -499,7 +499,7 @@
         this.shellView.remove();
 
       this.editingShell = shell;
-      this.shellView = new this.player.shell.EditView({
+      this.shellView = new shell.EditView({
         shell: this.editingShell,
       });
 
