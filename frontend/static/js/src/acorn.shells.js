@@ -439,7 +439,7 @@
     // **validRegexes** list of valid LinkRegexes for images
     // .jpg, .png, .gif, etc.
     validRegexes: [
-      UrlRegExp('.*(jpg|jpeg|gif|png|svg)'),
+      UrlRegExp('.*\.(jpg|jpeg|gif|png|svg)'),
     ],
 
   });
@@ -455,10 +455,10 @@
     // The cannonical type of this media. One of `acorn.types`.
     type: 'video',
 
-    // **validRegexes** list of valid LinkRegexes for images
-    // .jpg, .png, .gif, etc.
+    // **validRegexes** list of valid LinkRegexes for videos
+    // .avi, .mov, .wmv, etc.
     validRegexes: [
-      UrlRegExp('.*(avi|mov|wmv)'),
+      UrlRegExp('.*\.(avi|mov|wmv)'),
     ],
 
     duration: function() { return this.data.time_end || 0; },
@@ -1072,6 +1072,5 @@
   _.each(acorn.shells, function(shell) {
     acorn.shells[shell.prototype.shellid] = shell;
   });
-
 
 }).call(this);
