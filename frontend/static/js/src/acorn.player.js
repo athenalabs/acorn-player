@@ -280,9 +280,9 @@
     id: 'controls',
 
     controls: [
+      'FullscreenControl',
       'AcornControl',
       'EditControl',
-      'FullscreenControl',
     ],
 
     initialize: function() {
