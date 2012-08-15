@@ -1216,6 +1216,33 @@
         return shellView;
       },
 
+      // -- Shell Overrides
+
+      // **isEditing** returns whether any shellView isEditing
+      isEditing: function(value) {
+        return _.any(this.shellViews, function (shellView) {
+          return shellView.isEditing();
+        });
+      },
+
+      // **onEdit** overridden to fwd to the first shellView
+      onEdit: function() {
+        if (this.shellViews.length > 0)
+          this.shellViews[0].onEdit();
+      },
+
+      // **onSave** overridden to fwd to all shellViews.
+      onSave: function() {
+        if (!this.shouldSave())
+          return; // bail out if we shouldn't save
+
+        this.map(function (shellView) { shellView.onSave(); });
+      },
+
+      // **onChangeShell** overriden to prevent re-render
+      onChangeShell: function() {},
+
+
 
       // -- MultiShell Events
 
