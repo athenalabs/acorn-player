@@ -618,13 +618,16 @@
       setupSlider: function() {
         var data = this.shell.data;
 
+        var max = this.shell.duration();
+
         // setup slider
         var self = this;
+        this.$el.find('#slider').slider('destroy');
         this.$el.find('#slider').slider({
           min: 0,
-          max: this.shell.duration(),
+          max: max,
           range: true,
-          values: [ data.time_start, data.time_end ],
+          values: [ data.time_start || 0, data.time_end || max],
           slide: function(e, ui) { self.inputChanged(ui.values); },
         });
 
@@ -645,8 +648,8 @@
         }
 
         var max = this.shell.data.time_total || this.shell.duration();
-        var start = clip(0, parseInt(values[0]), values[1]);
-        var end = clip(start, parseInt(values[1]), max);
+        var start = clip(0, parseInt(values[0]), values[1]) || 0;
+        var end = clip(start, parseInt(values[1]), max) || max;
         var loop = !!this.$el.find('#loop').attr('checked');
 
         var diff = (end - start);
@@ -658,9 +661,8 @@
 
         this.$el.find('#start').val(start);
         this.$el.find('#end').val(end);
-        this.$el.find('#slider').slider({values: [start, end], 'max': max});
-
         this.$el.find('#time').text(time);
+        this.$el.find('#slider').slider({ max: max, values: [start, end] });
       },
 
     }),
@@ -817,7 +819,7 @@
 
       // the total duration in seconds
       totalTime: function() {
-        return this.ytplayer.getDuration();
+        return this.ytplayer.getDuration() || Infinity;
       },
 
       // the current playback position in seconds
