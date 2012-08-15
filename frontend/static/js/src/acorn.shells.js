@@ -1122,6 +1122,13 @@
     // The cannonical type of this media. One of `acorn.types`.
     type: 'multimedia',
 
+    // The shell-specific control components to use.
+    controls: [
+      'RightControl',
+      'ListControl',
+      'LeftControl',
+    ],
+
     initialize: function() {
       Shell.prototype.initialize.call(this);
 

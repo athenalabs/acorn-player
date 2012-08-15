@@ -467,6 +467,46 @@
 
   });
 
+  // ** player.views.controls.LeftControl ** onClick : acorn website
+  // ---------------------------------------------------------------------
+
+  player.views.controls.LeftControl = player.views.Control.extend({
+
+    id: 'left',
+    className: 'control left',
+
+    onClick: function() {
+      this.controls.player.trigger('controls:right');
+    },
+
+  });
+
+  // ** player.views.controls.RightControl ** onClick : acorn website
+  // ---------------------------------------------------------------------
+
+  player.views.controls.RightControl = player.views.Control.extend({
+    id: 'right',
+    className: 'control left',
+
+    onClick: function() {
+      this.controls.player.trigger('controls:left');
+    },
+
+  });
+
+  // ** player.views.controls.ListControl ** onClick : acorn website
+  // ---------------------------------------------------------------------
+
+  player.views.controls.ListControl = player.views.Control.extend({
+
+    id: 'list',
+    className: 'control left',
+
+    onClick: function() {
+      this.controls.player.trigger('controls:list');
+    },
+
+  });
 
   // ** player.views.EditView ** a view to house all editing controls
   // ----------------------------------------------------------------
