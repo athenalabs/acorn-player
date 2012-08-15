@@ -373,7 +373,7 @@
 
           // else, announce that the shell has changed.
           else
-            this.trigger('change:shell');
+            this.trigger('change:shell', this.shell);
         }
         return this.shell.link();
       },
