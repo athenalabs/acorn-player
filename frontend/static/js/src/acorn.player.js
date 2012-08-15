@@ -399,6 +399,7 @@
   // --------------------------------------------------------------------
 
   player.views.Control = Backbone.View.extend({
+    tooltip: '',
 
     tagName: 'img',
     className: 'control',
@@ -420,6 +421,7 @@
 
       this.$el.empty();
       this.$el.attr('src', acorn.util.imgurl('controls', 'blank.png'));
+      this.$el.tooltip({ title: this.tooltip });
 
     },
 
@@ -433,6 +435,7 @@
   // -----------------------------------------------------------------
 
   player.views.controls.FullscreenControl = player.views.Control.extend({
+    tooltip: 'Fullscreen',
 
     id: 'fullscreen',
     className: 'control right',
@@ -447,6 +450,7 @@
   // ---------------------------------------------------------------------
 
   player.views.controls.AcornControl = player.views.Control.extend({
+    tooltip: 'Website',
 
     id: 'acorn',
     className: 'control right',
@@ -457,7 +461,12 @@
 
   });
 
+  // ** player.views.controls.EditControl ** onClick : acorn website
+  // ---------------------------------------------------------------------
+
   player.views.controls.EditControl = player.views.Control.extend({
+    tooltip: 'Edit',
+
     id: 'edit',
     className: 'control right',
 
@@ -471,6 +480,7 @@
   // ---------------------------------------------------------------------
 
   player.views.controls.LeftControl = player.views.Control.extend({
+    tooltip: 'Previous',
 
     id: 'left',
     className: 'control left',
@@ -485,6 +495,8 @@
   // ---------------------------------------------------------------------
 
   player.views.controls.RightControl = player.views.Control.extend({
+    tooltip: 'Next',
+
     id: 'right',
     className: 'control left',
 
@@ -498,6 +510,7 @@
   // ---------------------------------------------------------------------
 
   player.views.controls.ListControl = player.views.Control.extend({
+    tooltip: 'Playlist',
 
     id: 'list',
     className: 'control left',
