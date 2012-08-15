@@ -133,7 +133,7 @@
       // * ``onAcornChange`` sets ``this.shell = ...``, ControlsView needs it.
       //
       // Subject to change.
-      // see commit message https://github.com/athenalabs/acorn/commit/d32a36c
+      // see commit message https://github.com/athenalabs/acorn/commit/b1c1587
 
     },
 
