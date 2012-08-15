@@ -213,6 +213,11 @@
       // **isEditing** is a property function in order to be overridable
       isEditing: acorn.util.property(false),
 
+      // **shouldSave** is a property function in order to be overridable
+      // shouldSave can prevent saves from happening. This is useful when
+      // swapping shells. Swapped-out ``shell.EditView`` should not save.
+      shouldSave: acorn.util.property(false),
+
       // **render** renders the view.
       render: function() {
         this.$el.html(this.template());
@@ -224,11 +229,16 @@
       },
 
       onSwapShell: function() {
+        this.shouldSave(false);
       },
 
       // called when EditView saves
       onSave: function() {
+        if (!this.shouldSave())
+          return; // bail out if we shouldn't save
+
         this.isEditing(false);
+        this.shouldSave(false);
         this.trigger('change:editState');
         this.render();
       },
@@ -236,6 +246,7 @@
       // called when EditView begins editing state
       onEdit: function() {
         this.isEditing(true);
+        this.shouldSave(true);
         this.trigger('change:editState');
       },
 
@@ -377,6 +388,9 @@
       },
 
       onSave: function() {
+        if (!this.shouldSave())
+          return; // bail out if we shouldn't save
+
         var self = this;
         this.generateThumbnailLink(function(data) {
           self.shell.thumbnailLink(data);
