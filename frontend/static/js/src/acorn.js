@@ -148,7 +148,7 @@
     if (parent.prototype == child.__super__)
       return true;
 
-    return derives(child.__super__, parent);
+    return derives(child.__super__.constructor, parent);
   }
   acorn.util.derives = derives;
 
