@@ -1068,6 +1068,29 @@
   });
 
 
+  // acorn.shells.PDFLinkShell
+  // ----------------------
+  acorn.shells.PDFLinkShell = acorn.shells.LinkShell.extend({
+
+    shellid: 'acorn.PDFLinkShell',
+
+    // The cannonical type of this media. One of `acorn.types`.
+    type: 'document',
+
+    // **validRegexes** regex to match links to PDFs
+    validRegexes: [
+      UrlRegExp('.*\.pdf'),
+    ],
+
+    EditView: acorn.shells.LinkShell.prototype.EditView.extend({
+      // Overrides LinkShell.generateThumbnailLink()
+      generateThumbnailLink: function(callback) {
+        callback('/static/img/thumbnails/pdf.png');
+      },
+    }),
+  });
+
+
   // Add each shell to the registry under its shellid.
   _.each(acorn.shells, function(shell) {
     acorn.shells[shell.prototype.shellid] = shell;
