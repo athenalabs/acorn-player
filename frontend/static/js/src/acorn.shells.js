@@ -147,6 +147,11 @@
     // The shell-specific control components to use.
     controls: [],
 
+    // Defaults
+    defaults: {
+      autoplay: false, // whether playable media automatically starts playing.
+    },
+
     // **initialize** overridable
     initialize: function() {},
 
@@ -823,7 +828,13 @@
         // this *should* initialize the playback at the correct point,
         // but in practice it doesn't. Need a robust solution (tick).
         var start = parseInt(this.shell.data.time_start || 0);
-        this.ytplayer.loadVideoById(this.shell.youtubeId(), start);
+
+        if (this.options.autoplay) {
+          this.ytplayer.loadVideoById(this.shell.youtubeId(), start);
+        } else {
+          this.ytplayer.cueVideoById(this.shell.youtubeId(), start);
+          this.play();
+        }
       },
 
       onYTPlayerStateChange: function(event) {
@@ -1150,11 +1161,12 @@
         // clean up our elem
         this.$el.empty();
 
-        // render and append all shellViews.
-        this.map(function (shellView) {
-          shellView.render();
-          this.$el.append(shellView.el);
-        });
+        var first = this.shellViews[0];
+        if (!first)
+          return;
+
+        first.render();
+        this.$el.append(first.el);
       },
 
       constructView: function(shellData) {
@@ -1223,6 +1235,7 @@
         var shellView = new shell.EditView({
           shell: shell,
           parent: this,
+          autoplay: (index == 0), /// autoplay the first one
         });
 
         // listen to events of shell EditView
