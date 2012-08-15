@@ -49,9 +49,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #acorn-player,
+#acorn-player > #content {
+  overflow: hidden;
+}
+
+#acorn-player,
 #acorn-player > #content,
 #acorn-player > #thumbnail,
 #acorn-player > #edit,
+#acorn-player > #edit > #form,
 #acorn-player > #thumbnail > img#image {
   position: absolute;
   top: 0px;
@@ -224,8 +230,18 @@ h1, h2, h3, h4, h5, h6 {
   height: 35px;
 }
 
-#acorn-player > #edit > #form > .acorn-shell-edit {
+#acorn-player > #edit > #form {
+  overflow: scroll;
+  margin-top: 56px;
+  padding: 10px;
+}
+
+#acorn-player > #edit > #form .acorn-shell-edit {
   position: relative;
+  display: block;
+  height: 80px;
+  margin-top: 15px;
+  margin-bottom: 30px;
 }
 
 #acorn-player > #edit > #form > .acorn-shell-edit > #thumbnail {

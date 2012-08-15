@@ -186,6 +186,7 @@
      .attr('webkitAllowFullScreen', 'true')
      .attr('mozallowfullscreen', 'true');
     f.attr('src', src);
+    f.attr('scrolling', 'no');
     if (id)
       f.attr('id', id)
     return f;
