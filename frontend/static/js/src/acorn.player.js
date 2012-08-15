@@ -110,11 +110,6 @@
       // set option defauls.
       this.options = _.extend({}, this.defaults, this.options);
 
-      // Subviews
-      this.thumbnailView = new player.views.ThumbnailView({ player: this });
-      this.controlsView = new player.views.ControlsView({ player: this });
-      this.contentView = new player.views.ContentView({ player: this });
-
       this.on('rename:acorn', this.onAcornRename);
       this.on('change:acorn', this.onAcornChange);
       this.on('save:acorn', this.onAcornSave);
@@ -126,6 +121,20 @@
 
       this.on('fullscreen', this.onFullscreen);
       this.on('acorn-site', this.onAcornSite);
+
+      // Subviews
+      this.thumbnailView = new player.views.ThumbnailView({ player: this });
+      this.controlsView = new player.views.ControlsView({ player: this });
+      this.contentView = new player.views.ContentView({ player: this });
+
+      // Order of binding events currently matters. The particular case was:
+      // * ``new player.views.ControlsView({ player: this });`` binds first
+      // * ``this.on('change:acorn', this.onAcornChange);`` binds second
+      // * ``onAcornChange`` sets ``this.shell = ...``, ControlsView needs it.
+      //
+      // Subject to change.
+      // see commit message https://github.com/athenalabs/acorn/commit/d32a36c
+
     },
 
     render: function() {
