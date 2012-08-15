@@ -200,6 +200,7 @@
       className: 'acorn-shell-edit',
 
       // Supported trigger events
+      // * swap:shell - fired when shell type has changed
       // * change:shell - fired when shell data has changed
       // * change:editState - fired when EditView changes editing state
 
