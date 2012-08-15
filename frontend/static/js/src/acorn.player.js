@@ -215,6 +215,14 @@
 
     onFullscreen: function() {
       console.log('fullscreen triggered');
+      var elem = this.$el[0];
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullScreen) {
+        elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+      } else if (elem.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+      }
     },
 
     onAcornSite: function() {
