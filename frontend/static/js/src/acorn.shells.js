@@ -197,6 +197,7 @@
 
       // Supported trigger events
       // * change:shell - fired when shell data has changed
+      // * change:editState - fired when EditView changes editing state
 
       // **template** defines the html template for this view.
       // Override to structure your own form.
@@ -206,7 +207,11 @@
         ShellView.prototype.initialize.call(this);
 
         this.on('change:shell', this.onChangeShell);
+        this.on('swap:shell', this.onSwapShell);
       },
+
+      // **isEditing** is a property function in order to be overridable
+      isEditing: acorn.util.property(false),
 
       // **render** renders the view.
       render: function() {
@@ -216,6 +221,22 @@
       onChangeShell: function() {
         // when the shell changes, re-render this view.
         this.render();
+      },
+
+      onSwapShell: function() {
+      },
+
+      // called when EditView saves
+      onSave: function() {
+        this.isEditing(false);
+        this.trigger('change:editState');
+        this.render();
+      },
+
+      // called when EditView begins editing state
+      onEdit: function() {
+        this.isEditing(true);
+        this.trigger('change:editState');
       },
 
 
@@ -304,9 +325,6 @@
         </div>\
       '),
 
-      // Supported trigger events
-      // * change:editState - fired when EditView changes editing state
-
       initialize: function() {
         acorn.shells.Shell.prototype.EditView.prototype.initialize.call(this);
 
@@ -319,7 +337,6 @@
           onEdit: _.bind(this.onEdit, this),
         });
 
-        this.isEditing_ = false;
       },
 
       validateLink: function(link) {
@@ -359,23 +376,14 @@
           this.linkView.edit();
       },
 
-      isEditing: function() {
-        return this.isEditing_;
-      },
-
       onSave: function() {
         var self = this;
         this.generateThumbnailLink(function(data) {
           self.shell.thumbnailLink(data);
-          self.isEditing_ = false;
-          self.trigger('change:editState');
-          self.render();
-        });
-      },
 
-      onEdit: function() {
-        this.isEditing_ = true;
-        this.trigger('change:editState');
+          // call super class onSave
+          acorn.shells.Shell.prototype.EditView.prototype.onSave.call(self);
+        });
       },
 
       generateThumbnailLink: function(callback) {
