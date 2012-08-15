@@ -1185,7 +1185,9 @@
         this.map(function(shellView) { shellView.remove(); });
 
         // construct all the views
-        this.shellViews = _.map(this.shell.data.shells, this.constructView);
+        this.shellViews = _.map(this.shell.data.shells, function(data, index) {
+          return this.constructView(data, index);
+        }, this);
 
         // clean up our elem
         this.$el.empty();
@@ -1201,7 +1203,7 @@
 
       },
 
-      constructView: function(shellData) {
+      constructView: function(shellData, index) {
         // retrieve shell class from data info
         var shell = acorn.shellWithData(shellData);
 
@@ -1210,6 +1212,15 @@
           shell: shell,
           parent: this,
         });
+
+        // listen to events of shell EditView
+        shellView.on('swap:shell', function(data) {
+          this.onSwapSubShell(data, index);
+        }, this);
+
+        shellView.on('change:shell', function(data) {
+          this.onChangeSubShell(data, index);
+        }, this);
 
         shellView.on('change:editState', this.onChangeEditState);
 
@@ -1248,6 +1259,33 @@
 
       onChangeEditState: function() {
         this.trigger('change:editState');
+      },
+
+      // -- Sub Shell Events
+
+      onSwapSubShell: function(data, index) {
+        var oldShellView = this.shellViews[index];
+        var newShellView = this.constructView(data);
+
+        // render and add the new shellView.
+        newShellView.render();
+        oldShellView.$el.after(newShellView.el);
+
+        // remvoe old shellView
+        oldShellView.remove();
+        this.shellViews[index] = newShellView;
+
+        // update the data itself
+        var shells = this.shells();
+        shells[index] = data;
+        this.shells(shells);
+      },
+
+      onChangeSubShell: function(shell, index) {
+        // update the data itself
+        var shells = this.shells();
+        shells[index] = shell.data;
+        this.shells(shells);
       },
 
       // get/setter for shells value
