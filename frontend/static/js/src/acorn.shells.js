@@ -1175,8 +1175,13 @@
       // **shellViews** is a container for sub shellViews.
       shellViews: [],
 
+      events: {
+        'click button#add': 'onClickAdd',
+      },
+
       template: _.template('\
         <div id="subshells"></div>\
+        <button class="btn btn-success btn-large" id="add">Add Link</button>\
       '),
 
       render: function() {
@@ -1259,6 +1264,20 @@
 
       onChangeEditState: function() {
         this.trigger('change:editState');
+      },
+
+      // **onClickAdd** add another link + shell
+      onClickAdd: function() {
+        // // additional, placeholder adding shells
+        var nextIndex = this.shellViews.length;
+        var addData = acorn.shellForLink('').data;
+        var addView = this.constructView(addData, nextIndex);
+
+        addView.render();
+        this.shellViews.push(addView);
+
+        var subshells_el = this.$el.find('#subshells');
+        subshells_el.append(addView.el);
       },
 
       // -- Sub Shell Events
