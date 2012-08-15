@@ -221,6 +221,10 @@
   acorn.util.alert = acorn.alert; // util alias
 
 
+  // **acorn.iframe** creates and return an <iframe> element with options
+  // Args:
+  // * src - the source of the iframe
+  // * id (optional) - the id to assign to the frame
   var iframe = function(src, id) {
     var f = $('<iframe>');
     f.attr('frameborder', '0').attr('border', '0');
