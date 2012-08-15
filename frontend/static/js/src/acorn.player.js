@@ -281,8 +281,8 @@
 
     controls: [
       'AcornControl',
-      'FullscreenControl',
       'EditControl',
+      'FullscreenControl',
     ],
 
     initialize: function() {
