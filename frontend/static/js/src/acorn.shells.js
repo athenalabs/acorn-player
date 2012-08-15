@@ -286,10 +286,8 @@
       },
 
       render: function() {
-
         var link = this.shell.link();
-        var href = $('<a>').attr('href', link).text(link);
-        this.$el.html(href);
+        this.$el.append(iframe(link, 'link-iframe'));
       },
 
     }),
