@@ -1134,6 +1134,33 @@
       shellViews: [],
 
       render: function() {
+        // remove all previously rendered shellViews.
+        this.map(function(shellView) { shellView.remove(); });
+
+        // construct all the views
+        this.shellViews = _.map(this.shell.data.shells, this.constructView);
+
+        // clean up our elem
+        this.$el.empty();
+
+        // render and append all shellViews.
+        this.map(function (shellView) {
+          shellView.render();
+          this.$el.append(shellView.el);
+        });
+      },
+
+      constructView: function(shellData) {
+        // retrieve shell class from data info
+        var shell = acorn.shellWithData(shellData);
+
+        // construct this shell's ContentView.
+        var shellView = new shell.ContentView({
+          shell: shell,
+          parent: this,
+        });
+
+        return shellView;
       },
 
       // helper to map `func` through `shellViews` with `this` as context
@@ -1148,7 +1175,68 @@
       // **shellViews** is a container for sub shellViews.
       shellViews: [],
 
+      template: _.template('\
+        <div id="subshells"></div>\
+      '),
+
       render: function() {
+
+        // remove all previously rendered shellViews.
+        this.map(function(shellView) { shellView.remove(); });
+
+        // construct all the views
+        this.shellViews = _.map(this.shell.data.shells, this.constructView);
+
+        // clean up our elem
+        this.$el.empty();
+        this.$el.append(this.template());
+
+        var subshells_el = this.$el.find('#subshells');
+
+        // render and append all shellViews.
+        this.map(function (shellView) {
+          shellView.render();
+          subshells_el.append(shellView.el);
+        });
+
+      },
+
+      constructView: function(shellData) {
+        // retrieve shell class from data info
+        var shell = acorn.shellWithData(shellData);
+
+        // construct this shell's EditView.
+        var shellView = new shell.EditView({
+          shell: shell,
+          parent: this,
+        });
+
+        shellView.on('change:editState', this.onChangeEditState);
+
+        return shellView;
+      },
+
+
+      // -- MultiShell Events
+
+      onChangeEditState: function() {
+        this.trigger('change:editState');
+      },
+
+      // get/setter for shells value
+      shells: function(shells) {
+        if (shells !== undefined) {
+          this.shell.data.shells = shells;
+
+          // if there is at most 1 shell, swap.
+          if (shells.length <= 1)
+            this.trigger('swap:shell', shells[0] || {});
+
+          // else, announce that the shell has changed.
+          else
+            this.trigger('change:shell', this.shell);
+        }
+        return this.shell.data.shells;
       },
 
       // helper to map `func` through `shellViews` with `this` as context
