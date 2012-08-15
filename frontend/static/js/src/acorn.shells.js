@@ -1044,7 +1044,18 @@
     EditView: acorn.shells.VideoLinkShell.prototype.EditView.extend({
       // Overrides LinkShell.generateThumbnailLink()
       generateThumbnailLink: function(callback) {
-        //TODO(ali01) use retrieveExtraInfo?
+        // TODO(ali01) use retrieveExtraInfo?
+
+        // This would be the code. It works, and it leverages the fact
+        // that ``retrieveExtraInfo`` already has to be called for the
+        // duration. I think if we fix things away from $.getJSON we'd
+        // do it in retrieveExtraInfo, so I think this below should be
+        // what actually generates the thumbnail.
+
+        // this.shell.retrieveExtraInfo(_.bind(function() {
+        //   callback(this.shell.extraInfo[0].thumbnail_large);
+        // }, this));
+
         var url_req = '/request_proxy/vimeo.com/api/v2/video/' +
                       this.shell.vimeoId() + '.json';
         $.ajax(url_req, {
