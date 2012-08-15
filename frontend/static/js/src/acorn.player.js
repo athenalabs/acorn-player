@@ -73,6 +73,31 @@
       'click #image':               'triggerShowContent',
     },
 
+    // Supported trigger events
+    //
+    // * rename:acorn - fired when acorn has been renamed
+    // * change:acorn - fired when acorn data has changed
+    // * save:acorn   - fired when acorn needs to be saved
+    //
+    // * show:content - fired when ContentView should be shown
+    // * show:edit    - fired when EditView should be shown
+    // * close:edit   - fired when EditView shold be closed
+    //
+    // * fullscreen   - fired when acorn should display in fullscreen
+    // * acorn-site   - fired to go to the acorn website
+    //
+    // * playback:play - fired when playback should start or resume
+    // * playback:stop - fired when playback should pause or stop
+
+
+
+    defaults: {
+      showingContent: false,
+      // showingContent: whether the contentView ought to be visible.
+      // once true, the player should respect the state when re-rendering
+      // (i.e. re-rendering should still show the content, not revert to thumb).
+    },
+
     initialize: function() {
       _.bindAll(this);
 
@@ -81,6 +106,9 @@
 
       // initialize with the shell the model has (can be undefined)
       this.shell = this.model.shellData();
+
+      // set option defauls.
+      this.options = _.extend({}, this.defaults, this.options);
 
       // Subviews
       this.thumbnailView = new player.views.ThumbnailView({ player: this });
@@ -106,6 +134,14 @@
 
       this.thumbnailView.render();
       this.$el.append(this.thumbnailView.el);
+
+      if (this.options.showingContent) {
+        this.contentView.render();
+        this.controlsView.render();
+
+        this.$el.append(this.contentView.el);
+        this.$el.append(this.controlsView.el);
+      }
     },
 
     onAcornSave: function() {
@@ -140,14 +176,10 @@
 
     onShowContent: function() {
 
-      this.contentView.render();
-      this.controlsView.render();
-
-      this.$el.append(this.contentView.el);
-      this.$el.append(this.controlsView.el);
+      this.options.showingContent = true;
+      this.render();
 
       this.thumbnailView.$el.hide(1000);
-
     },
 
     triggerShowContent: function() {
@@ -163,6 +195,9 @@
       this.editView.render();
       this.editView.$el.css('opacity', 0.0);
       this.editView.$el.css('opacity', 1.0);
+
+      //TODO: list this event somewhere on the top of this view...
+      this.trigger('playback:stop');
     },
 
     onCloseEdit: function() {
@@ -180,6 +215,14 @@
 
     onFullscreen: function() {
       console.log('fullscreen triggered');
+      var elem = this.$el[0];
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullScreen) {
+        elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+      } else if (elem.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+      }
     },
 
     onAcornSite: function() {
@@ -252,16 +295,29 @@
 
     id: 'content',
 
+    // Supported trigger events
+    // * all PlayerView events (proxying)
+
+    initialize: function() {
+      PlayerSubview.prototype.initialize.call(this);
+
+      // proxy player events over, so shell ContentViews can listen.
+      this.player.on('all', this.trigger)
+    },
+
     render: function() {
 
-      this.$el.empty();
+      if (this.shellView)
+        this.shellView.remove();
 
-      var shellView = new this.player.shell.ContentView({
+      this.shellView = new this.player.shell.ContentView({
         shell: this.player.shell,
+        parent: this,
       });
 
-      shellView.render();
-      this.$el.append(shellView.el);
+      this.$el.empty();
+      this.shellView.render();
+      this.$el.append(this.shellView.el);
 
     },
 
@@ -284,6 +340,9 @@
       'FullscreenControl',
     ],
 
+    // Supported trigger events
+    // * change:acorn - fired when acorn data has changed
+
     initialize: function() {
       PlayerSubview.prototype.initialize.call(this);
 
@@ -295,6 +354,12 @@
 
       var self = this;
       _(this.controlViews).each(function(control) {
+        // `control.el` got removed from the DOM above: `this.$el.empty()`.
+        // the `control` view's elements thus need to be re-delegated.
+        // (apparently this is how backbone works. this could potentially
+        // be biting us elsewhere and we don't even know it!)
+        control.delegateEvents();
+
         control.render();
         self.$el.append(control.el)
       });

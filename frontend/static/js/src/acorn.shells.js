@@ -115,6 +115,7 @@
   var ShellView = Backbone.View.extend({
 
     initialize: function() {
+      _.bindAll(this);
       this.shell = this.options.shell;
       assert(this.shell, 'No shell provided to shell ContentView.');
     },
@@ -158,6 +159,20 @@
       // class name
       className: 'acorn-shell',
 
+      initialize: function() {
+        ShellView.prototype.initialize.call(this);
+
+        this.options.parent.on('playback:play', this.onPlaybackPlay);
+        this.options.parent.on('playback:stop', this.onPlaybackStop);
+      },
+
+      remove: function() {
+        this.options.parent.off('playback:play', this.onPlaybackPlay);
+        this.options.parent.off('playback:stop', this.onPlaybackStop);
+
+        ShellView.prototype.remove.call(this);
+      },
+
       // aspect ratio. undefined if it doesn't matter.
       aspectRatio: undefined,
       adjustAspectRatio: function() {
@@ -167,11 +182,21 @@
         console.log('adjustAspectRatio to be implemented.');
       },
 
+
+      // events that all shells should have?
+      // onLoseFocus: function () {},
+      // onGainFocus: function () {},
+      onPlaybackPlay: function () {},
+      onPlaybackStop: function () {},
+
     }),
 
     EditView: ShellView.extend({
 
       className: 'acorn-shell-edit',
+
+      // Supported trigger events
+      // * change:shell - fired when shell data has changed
 
       // **template** defines the html template for this view.
       // Override to structure your own form.
@@ -226,6 +251,24 @@
       return this.data.thumbnailLink;
     },
 
+    extraInfoLink: function() { return ''; },
+
+    // Retrieve extra information. Nothing by default.
+    retrieveExtraInfo: function(callback) {
+      callback = callback || function() {};
+
+      var extraInfoLink = this.extraInfoLink();
+      if (!extraInfoLink || this.extraInfo) {
+        return callback();
+      }
+
+      var self = this;
+      $.getJSON(extraInfoLink, function(data) {
+        self.extraInfo = data;
+        callback();
+      });
+    },
+
     // ContentView -- Simply displays the link text for now.
     // TODO: thumbnail the website? embed the webpage in iframe?
     ContentView: acorn.shells.Shell.prototype.ContentView.extend({
@@ -261,9 +304,11 @@
         </div>\
       '),
 
+      // Supported trigger events
+      // * change:editState - fired when EditView changes editing state
+
       initialize: function() {
         acorn.shells.Shell.prototype.EditView.prototype.initialize.call(this);
-        _.bindAll(this);
 
         this.linkView = new Backbone.components.EditableTextCmp.View({
           textFn: this.link,
@@ -418,6 +463,208 @@
       UrlRegExp('.*(avi|mov|wmv)'),
     ],
 
+    duration: function() { return this.data.time_end || 0; },
+
+    // ContentView -- displays the video
+    ContentView: acorn.shells.LinkShell.prototype.ContentView.extend({
+
+      render: function() {
+        this.$el.empty();
+
+        // stop ticking, in case we had been playing and this is a re-render.
+        this.stopTick();
+      },
+
+      remove: function() {
+        this.stopTick(); // stop the interval on remove.
+
+        acorn.shells.LinkShell
+          .prototype.ContentView
+          .prototype.remove
+          .call(this);
+      },
+
+
+      // VideoLinkShell.ContentView interface -- override these in subclasses
+      // --------------------------------------------------------------------
+
+      // -- Information:
+
+      // the total duration in seconds
+      totalTime: function() { return 0; },
+
+      // the current playback position in seconds
+      currentTime: function() { return 0; },
+
+      // whether the video is currently playing
+      isPlaying: function() { return false; },
+
+      // -- Actions:
+
+      // begins playing the video (idempotent)
+      play: function() {},
+
+      // stops playing the video (idempotent)
+      stop: function() {},
+
+      // seeks to the specific offset in seconds
+      seek: function(seconds) {},
+
+
+      // shell.ContentView events
+      // ------------------------
+
+      onPlaybackStop: function() {
+        this.stop();
+      },
+
+      onPlaybackPlay: function() {
+        this.play();
+      },
+
+
+      // Playback Tick - trigger a callback at a given interval during playback
+      // ----------------------------------------------------------------------
+
+      // start the interval
+      startTick: function() {
+        this.stopTick();
+        this.interval = setInterval(this.onTick, 200);
+      },
+
+      // clear the interval
+      stopTick: function() {
+        if (this.interval) {
+          clearInterval(this.interval);
+          this.interval = undefined;
+        }
+      },
+
+      // tick callback
+      onTick: function() {
+        // get shell options
+        var loop = this.shell.data.loop || false;
+        var end = this.shell.data.time_end || this.totalTime();
+        var start = this.shell.data.time_start || 0;
+
+        // get current state
+        var now = this.currentTime();
+        var playing = this.isPlaying();
+
+        // if current playback is behind the start time, seek to start
+        if (playing && now < start) {
+          this.seek(start);
+        }
+
+        // if current playback is after the end time, pause (or loop)
+        if (playing && now >= end) {
+          if (loop) {
+            this.seek(0); // TODO set to `start` when vimeo bug is found.
+          } else {
+            this.stop();
+          }
+        }
+      },
+
+
+    }),
+
+    EditView: acorn.shells.LinkShell.prototype.EditView.extend({
+
+      events: {
+        'change input':  'timeInputChanged',
+        'blur input':  'timeInputChanged',
+      },
+
+      timeRangeTemplate: _.template('\
+      <div id="slider" class="fader"></div>\
+      <form class="form-inline">\
+        <div class="input-prepend">\
+          <span class="add-on">start:</span>\
+          <input id="start" size="16" type="text" class="time">\
+          <!--<span class="add-on">sec</span>-->\
+        </div>\
+        <div class="input-prepend">\
+          <span class="add-on">end:</span>\
+          <input id="end" size="16" type="text" class="time">\
+          <!--<span class="add-on">sec</span>-->\
+        </div>\
+        <span id="time"></span>\
+        <label class="checkbox right" id="loop-label">\
+          <input id="loop" type="checkbox"> Loop\
+        </label>\
+      </form>\
+      '),
+
+      render: function() {
+        acorn.shells.LinkShell.prototype.EditView.prototype.render.call(this);
+
+        var timeRange = $(this.timeRangeTemplate());
+
+        // update with the correct values.
+        if (this.shell.data.loop)
+          timeRange.find('#loop').attr('checked', 'checked');
+
+        this.$el.find('.thumbnailside').append(timeRange);
+        this.$el.find('#slider').css('opacity', '0.0');
+        this.setupSlider();
+
+        this.shell.retrieveExtraInfo(_.bind(function() {
+          this.setupSlider();
+          this.$el.find('#slider').css('opacity', '1.0');
+        }, this));
+      },
+
+      setupSlider: function() {
+        var data = this.shell.data;
+
+        // setup slider
+        var self = this;
+        this.$el.find('#slider').slider({
+          min: 0,
+          max: this.shell.duration(),
+          range: true,
+          values: [ data.time_start, data.time_end ],
+          slide: function(e, ui) { self.inputChanged(ui.values); },
+        });
+
+        this.inputChanged([ data.time_start, data.time_end ]);
+
+      },
+
+      timeInputChanged: function() {
+        this.inputChanged([
+          this.$el.find('#start').val(),
+          this.$el.find('#end').val()
+        ]);
+      },
+
+      inputChanged: function(values) {
+        clip = function(min, _, max) {
+          return Math.max(min, Math.min(_ || 0, max));
+        }
+
+        var max = this.shell.data.time_total || this.shell.duration();
+        var start = clip(0, parseInt(values[0]), values[1]);
+        var end = clip(start, parseInt(values[1]), max);
+        var loop = !!this.$el.find('#loop').attr('checked');
+
+        var diff = (end - start);
+        var time = (isNaN(diff) ? '--' : diff) + ' seconds';
+
+        this.shell.data.time_start = start;
+        this.shell.data.time_end = end;
+        this.shell.data.loop = loop;
+
+        this.$el.find('#start').val(start);
+        this.$el.find('#end').val(end);
+        this.$el.find('#slider').slider({values: [start, end], 'max': max});
+
+        this.$el.find('#time').text(time);
+      },
+
+    }),
+
   });
 
 
@@ -425,7 +672,7 @@
   // ----------------------
 
   // A shell that links to media and embeds it.
-  acorn.shells.YouTubeShell = acorn.shells.LinkShell.extend({
+  acorn.shells.YouTubeShell = acorn.shells.VideoLinkShell.extend({
 
     shellid: 'acorn.YouTubeShell',
 
@@ -444,15 +691,18 @@
     },
 
     embedLink: function() {
-      return 'https://www.youtube.com/embed/' + this.youtubeId()
-           + '?fs=1'
+      // see https://developers.google.com/youtube/player_parameters for options
+      return 'http://www.youtube.com/embed/' + this.youtubeId() + '?'
+           + '&fs=1'
            // + '&modestbranding=1'
            + '&iv_load_policy=3'
            + '&rel=0'
            + '&showsearch=0'
+           + '&showinfo=0'
            + '&hd=1'
            + '&wmode=transparent'
-           + '&autoplay=1'
+           + '&enablejsapi=1'
+           + '&controls=0'
            ;
     },
 
@@ -461,14 +711,149 @@
       return "https://img.youtube.com/vi/" + this.youtubeId() + "/0.jpg";
     },
 
-    ContentView: acorn.shells.LinkShell.prototype.ContentView.extend({
+
+    extraInfoLink: function() {
+      return 'http://gdata.youtube.com/feeds/api/videos/' + this.youtubeId()
+           + '?v=2'
+           + '&alt=jsonc';
+    },
+
+    duration: function() {
+      return this.extraInfo ? this.extraInfo.data.duration : this.data.time_end;
+    },
+
+    ContentView: acorn.shells.VideoLinkShell.prototype.ContentView.extend({
+
       render: function() {
+        acorn.shells.VideoLinkShell
+          .prototype.ContentView
+          .prototype.render
+          .call(this);
+
+        // initialize YouTube setup.
+        this.onYTInitialize();
+
+        // add the YouTube player iframe
         var link = this.shell.embedLink();
-        this.$el.append(iframe(link));
+        this.$el.append(iframe(link, 'ytplayer'));
       },
+
+
+      // YouTube API - communication between the YouTube js API and the shell.
+      // ---------------------------------------------------------------------
+      // see https://developers.google.com/youtube/js_api_reference
+
+      // the javascript file with the youtube player api.
+      youtubePlayerApiSrc: 'http://www.youtube.com/iframe_api',
+
+      // initialize youtube API
+      onYTInitialize: function() {
+        // initialization should only happen once per page load.
+
+        // if YT hasn't been initialized, initialize it.
+        if (!window.onYouTubeIframeAPIReady) {
+
+          // setup YT ready callback
+          window.onYouTubeIframeAPIReady = this.onYTReady;
+
+          // include the YouTubePlayerAPI code
+          var script = $('<script>').attr('src', this.youtubePlayerApiSrc);
+          $('body').append(script);
+
+          return; // onYTReady will be called when YT finishes initializing
+        }
+
+        // must call onYTReady once the current render call stack finishes
+        // because the frame is not yet on the page. YT API expects the id
+        // of a player currently on the page. Backbone has yet to add the
+        // current DOM subtree to the page DOM. setTimeout will schedule
+        // the callback after the current stack finishes.
+        setTimeout(this.onYTReady, 0);
+      },
+
+      // The YT API is ready for use
+      onYTReady: function() {
+
+        // initialize the `ytplayer` object
+        this.ytplayer = new YT.Player('ytplayer', {
+          events: {
+            'onReady': this.onYTPlayerReady,
+            'onStateChange': this.onYTPlayerStateChange,
+          }
+        });
+
+        // clear the callback function, but set empty function:
+        // * in case the callback gets called again
+        // * to signal YT has already been initialized
+        window.onYouTubeIframeAPIReady = function() {};
+      },
+
+      onYTPlayerReady: function() {
+
+        // tell `ytplayer` to load the video, with given start time.
+        // this *should* initialize the playback at the correct point,
+        // but in practice it doesn't. Need a robust solution (tick).
+        var start = parseInt(this.shell.data.time_start || 0);
+        this.ytplayer.loadVideoById(this.shell.youtubeId(), start);
+      },
+
+      onYTPlayerStateChange: function(event) {
+        var state = event.data;
+        // ``event.data`` ought to equal ``this.ytplayer.getPlayerState()``.
+        // I'm using ``event.data`` here in case events get fired from other
+        // YouTube Players?? Seems safer to trust the function paramters.
+
+        if (state == YT.PlayerState.PLAYING)
+          this.startTick();
+        else
+          this.stopTick();
+      },
+
+
+      // VideoLinkShell.ContentView interface -- overriding with native impl
+      // -------------------------------------------------------------------
+
+      // -- Information:
+
+      // the total duration in seconds
+      totalTime: function() {
+        return this.ytplayer.getDuration();
+      },
+
+      // the current playback position in seconds
+      currentTime: function() {
+        return this.ytplayer.getCurrentTime();
+      },
+
+      // whether the video is currently playing
+      isPlaying: function() {
+        if (!this.ytplayer)
+          return false;
+
+        var state = this.ytplayer.getPlayerState();
+        return (state == YT.PlayerState.PLAYING);
+      },
+
+      // -- Actions:
+
+      // begins playing the video (idempotent)
+      play: function() {
+        this.ytplayer.playVideo();
+      },
+
+      // stops playing the video (idempotent)
+      stop: function() {
+        this.ytplayer.pauseVideo();
+      },
+
+      // seeks to the specific offset in seconds
+      seek: function(seconds) {
+        this.ytplayer.seekTo(seconds)
+      },
+
     }),
 
-    EditView: acorn.shells.LinkShell.prototype.EditView.extend({
+    EditView: acorn.shells.VideoLinkShell.prototype.EditView.extend({
       // Overrides LinkShell.generateThumbnailLink()
       generateThumbnailLink: function(callback) {
         callback(this.shell.thumbnailLink());
@@ -489,7 +874,7 @@
   // ----------------------
 
   // A shell that links to media and embeds it.
-  acorn.shells.VimeoShell = acorn.shells.LinkShell.extend({
+  acorn.shells.VimeoShell = acorn.shells.VideoLinkShell.extend({
 
     shellid: 'acorn.VimeoShell',
 
@@ -508,29 +893,162 @@
     },
 
     embedLink: function() {
-      return 'http://player.vimeo.com/video/' + this.vimeoId()
-           + '?byline=0'
+      // see http://developer.vimeo.com/player/embedding
+      return 'http://player.vimeo.com/video/' + this.vimeoId() + '?'
+           + '&byline=0'
            + '&portrait=0'
+           + '&api=1'
+           + '&player_id=vimeoplayer'
+           + '&title=0'
+           + '&byline=1'
+           + '&portrait=0'
+           + '&color=ffffff'
            ;
     },
 
-    ContentView: acorn.shells.LinkShell.prototype.ContentView.extend({
+    extraInfoLink: function() {
+      return 'http://vimeo.com/api/v2/video/' + this.vimeoId() + '.json?'
+           + '&callback=?' // somehow allows cross-domain requests.
+           ;
+    },
+
+    duration: function() {
+      return this.extraInfo ? this.extraInfo[0].duration : this.data.time_end;
+    },
+
+    ContentView: acorn.shells.VideoLinkShell.prototype.ContentView.extend({
+
       render: function() {
+        this.$el.empty();
+
+        // stop ticking, in case we had been playing and this is a re-render.
+        this.stopTick();
+
+        // initialize YouTube setup.
+        this.onVimeoInitialize();
+
+        // add the Vimeo player iframe
         var link = this.shell.embedLink();
-        this.$el.append(iframe(link));
+        this.$el.append(iframe(link, 'vimeoplayer'));
       },
+
+      // Vimeo API - communication between the Vimeo js API and the shell.
+      // -----------------------------------------------------------------
+      // see http://developer.vimeo.com/player/js-api
+
+      // the javascript file with the youtube player api.
+      vimeoPlayerApiSrc: 'http://a.vimeocdn.com/js/froogaloop2.js',
+
+      // initialize youtube API
+      onVimeoInitialize: function() {
+        // initialization should only happen once per page load.
+
+        // if Vimeo hasn't been initialized, initialize it.
+        if (!window.$f) {
+          $.getScript(this.vimeoPlayerApiSrc, this.onVimeoReady);
+          return;
+        }
+
+        // must call onVimeoReady once the current render call stack finishes
+        // because the frame is not yet on the page. Vimeo API expects the id
+        // of a player currently on the page. Backbone has yet to add the
+        // current DOM subtree to the page DOM. setTimeout will schedule
+        // the callback after the current stack finishes.
+        setTimeout(this.onVimeoReady, 0);
+      },
+
+      // The Vimeo API is ready for use
+      onVimeoReady: function() {
+
+        // initialize the `vimeoPlayer` object
+        var frame = this.$el.find('#vimeoplayer');
+        this.vimeoPlayer = $f(frame[0]);
+
+        this.vimeoPlayer.addEvent('ready', this.onVimeoPlayerReady);
+
+      },
+
+      onVimeoPlayerReady: function() {
+
+        // attach the callbacks to the vimeo player.
+        this.vimeoPlayer.addEvent('pause', this.onVimeoPause);
+        this.vimeoPlayer.addEvent('play', this.onVimeoPlay);
+        this.vimeoPlayer.addEvent('playProgress', this.onVimeoPlayProgress);
+
+        this.play();
+      },
+
+      onVimeoPause: function() {
+        this._isplaying = false;
+      },
+
+      onVimeoPlay: function() {
+        this._isplaying = true;
+      },
+
+      onVimeoPlayProgress: function(params) {
+        this._totalTime = parseFloat(params.duration);
+        this._currentTime = parseFloat(params.seconds);
+        this._isplaying = true;
+
+        // use vimeo's interval callback -- call onTick manually.
+        this.onTick();
+      },
+
+      // override {start,stop}Tick, as Vimeo has it's own interval callback.
+      startTick: function() {},
+      stopTick: function() {},
+
+      // VideoLinkShell.ContentView interface -- overriding with native impl
+      // -------------------------------------------------------------------
+
+      // -- Information:
+
+      // the total duration in seconds
+      totalTime: function() {
+        return this._totalTime || Infinity;
+      },
+
+      // the current playback position in seconds
+      currentTime: function() {
+        return this._currentTime || 0;
+      },
+
+      // whether the video is currently playing
+      isPlaying: function() {
+        return this._isplaying || false;
+      },
+
+      // -- Actions:
+
+      // begins playing the video (idempotent)
+      play: function() {
+        this.vimeoPlayer.api('play');
+      },
+
+      // stops playing the video (idempotent)
+      stop: function() {
+        this.vimeoPlayer.api('pause');
+      },
+
+      // seeks to the specific offset in seconds
+      seek: function(seconds) {
+        // console.log('seekTo ' + seconds);
+        this.vimeoPlayer.api('seekTo', [seconds.toString()]);
+      },
+
     }),
 
-    EditView: acorn.shells.LinkShell.prototype.EditView.extend({
+    EditView: acorn.shells.VideoLinkShell.prototype.EditView.extend({
       // Overrides LinkShell.generateThumbnailLink()
       generateThumbnailLink: function(callback) {
+        //TODO(ali01) use retrieveExtraInfo?
         var url_req = '/request_proxy/vimeo.com/api/v2/video/' +
                       this.shell.vimeoId() + '.json';
         $.ajax(url_req, {
           success: function(data) {
             try {
-              data_obj = $.parseJSON(data);
-              callback(data_obj[0].thumbnail_large);
+              callback(data[0].thumbnail_large);
             } catch(e) {
               acorn.alert('Error: failed to extract thumbnail from video.',
                           'alert-error');
