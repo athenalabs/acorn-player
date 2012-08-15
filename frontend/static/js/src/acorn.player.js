@@ -336,8 +336,9 @@
     id: 'controls',
 
     controls: [
-      'AcornControl',
       'FullscreenControl',
+      'AcornControl',
+      'EditControl',
     ],
 
     // Supported trigger events
@@ -443,6 +444,16 @@
 
     onClick: function() {
       this.controls.player.trigger('acorn-site');
+    },
+
+  });
+
+  player.views.controls.EditControl = player.views.Control.extend({
+    id: 'edit',
+    className: 'control right',
+
+    onClick: function() {
+      this.controls.player.trigger('show:edit');
     },
 
   });
