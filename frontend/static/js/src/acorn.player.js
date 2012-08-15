@@ -481,13 +481,13 @@
   // ---------------------------------------------------------------------
 
   player.views.controls.LeftControl = player.views.Control.extend({
-    tooltip: 'Previous',
+    tooltip: 'Prev', // short as it doesn't fit for now :/
 
     id: 'left',
     className: 'control left',
 
     onClick: function() {
-      this.controls.player.trigger('controls:right');
+      this.controls.player.trigger('controls:left');
     },
 
   });
@@ -502,7 +502,7 @@
     className: 'control left',
 
     onClick: function() {
-      this.controls.player.trigger('controls:left');
+      this.controls.player.trigger('controls:right');
     },
 
   });

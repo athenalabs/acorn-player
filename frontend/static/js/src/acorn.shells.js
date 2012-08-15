@@ -1135,9 +1135,9 @@
 
     // The shell-specific control components to use.
     controls: [
-      'RightControl',
-      'ListControl',
       'LeftControl',
+      'ListControl',
+      'RightControl',
     ],
 
     initialize: function() {
