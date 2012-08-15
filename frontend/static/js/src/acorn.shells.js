@@ -1110,6 +1110,57 @@
   });
 
 
+
+  // acorn.shells.MultiShell
+  // -----------------------
+
+  // A shell that contains other shells
+  acorn.shells.MultiShell = Shell.extend({
+
+    shellid: 'acorn.MultiShell',
+
+    // The cannonical type of this media. One of `acorn.types`.
+    type: 'multimedia',
+
+    initialize: function() {
+      Shell.prototype.initialize.call(this);
+
+      this.data.shells = this.data.shells || {};
+    },
+
+    ContentView: acorn.shells.Shell.prototype.ContentView.extend({
+
+      // **shellViews** is a container for sub shellViews.
+      shellViews: [],
+
+      render: function() {
+      },
+
+      // helper to map `func` through `shellViews` with `this` as context
+      map: function(func) {
+        _.map(this.shellViews, func, this);
+      },
+
+    }),
+
+    EditView: Shell.prototype.EditView.extend({
+
+      // **shellViews** is a container for sub shellViews.
+      shellViews: [],
+
+      render: function() {
+      },
+
+      // helper to map `func` through `shellViews` with `this` as context
+      map: function(func) {
+        return _.map(this.shellViews, func, this);
+      },
+
+    }),
+
+  });
+
+
   // Add each shell to the registry under its shellid.
   _.each(acorn.shells, function(shell) {
     acorn.shells[shell.prototype.shellid] = shell;
