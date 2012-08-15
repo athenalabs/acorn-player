@@ -131,6 +131,7 @@
     if (!this.data.shell)
       this.data.shell = this.shellid;
     assert(this.data.shell == this.shellid, "Shell data has incorrect type.");
+    this.initialize();
   };
 
   // Set up all **Shell** prototype properties and methods.
@@ -145,6 +146,9 @@
 
     // The shell-specific control components to use.
     controls: [],
+
+    // **initialize** overridable
+    initialize: function() {},
 
     // **thumbnailLink** returns the link to the thumbnail image
     // Override it with your own shell-specific render code.
