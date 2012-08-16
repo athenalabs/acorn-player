@@ -1391,6 +1391,8 @@
         var title = this.shell.title();
         this.$el.find('#title').text(title);
 
+        var currentIndex = this.options.parent.currentViewIndex();
+
         var summaries = this.$el.find('#summaries');
         _.map(this.options.parent.shells, function(shell, idx) {
 
@@ -1401,6 +1403,10 @@
 
           summary.render();
           summaries.append(summary.el);
+
+          // if this is the currently-viewed shell, mark it selected
+          if (idx == currentIndex)
+            summary.$el.addClass('selected');
 
         }, this);
 
