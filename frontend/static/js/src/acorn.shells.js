@@ -1382,6 +1382,7 @@
 
       events: {
         'click button#close': 'onClickClose',
+        'click button#view': 'onClickView',
       },
 
       render: function() {
@@ -1408,11 +1409,27 @@
           if (idx == currentIndex)
             summary.$el.addClass('selected');
 
+          // an action to view shells from the playlist
+          var view_btn =
+            $('<button>')
+              .text('View')
+              .addClass('btn')
+              .attr('id', 'view')
+              .attr('data-index', idx);
+
+          summary.$el.find('#buttons').append(view_btn);
+
         }, this);
 
       },
 
       onClickClose: function() {
+        this.remove();
+      },
+
+      onClickView: function(event) {
+        var index = $(event.target).attr('data-index');
+        this.options.parent.showView(index);
         this.remove();
       },
 
