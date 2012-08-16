@@ -1351,6 +1351,53 @@
 
     }),
 
+    // **PlaylistView** - A view to summarize the shells within a MultiShell
+    // ---------------------------------------------------------------------
+
+    PlaylistView: ShellView.extend({
+
+      id: 'acorn-multishell-playlist',
+
+      template: _.template('\
+        <h1 id="title"></h1>\
+        <button id="close" class="btn">\
+          <i class="icon-ban-circle"></i> Close\
+        </button>\
+        <div id="summaries"></div>\
+      '),
+
+      events: {
+        'click button#close': 'onClickClose',
+      },
+
+      render: function() {
+        this.$el.empty();
+        this.$el.html(this.template());
+
+        var title = this.shell.title();
+        this.$el.find('#title').text(title);
+
+        var summaries = this.$el.find('#summaries');
+        _.map(this.options.parent.shells, function(shell, idx) {
+
+          var summary = new shell.SummaryView({
+            shell: shell,
+            parent: this,
+          });
+
+          summary.render();
+          summaries.append(summary.el);
+
+        }, this);
+
+      },
+
+      onClickClose: function() {
+        this.remove();
+      },
+
+    }),
+
     EditView: Shell.prototype.EditView.extend({
 
       // **shellViews** is a container for sub shellViews.
