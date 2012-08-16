@@ -1151,6 +1151,18 @@
       // **shellViews** is a container for sub shellViews.
       shellViews: [],
 
+      initialize: function() {
+        Shell.prototype.ContentView.prototype.initialize.call(this);
+
+        // controls
+        this.options.parent.on('controls:left', this.onShowPrevious);
+        this.options.parent.on('controls:list', this.onShowPlaylist);
+        this.options.parent.on('controls:right', this.onShowNext);
+
+        // multishell events
+        this.on('change:subview', this.onChangedSubview);
+      },
+
       render: function() {
         // remove all previously rendered shellViews.
         this.map(function(shellView) { shellView.remove(); });
@@ -1203,6 +1215,26 @@
 
         this.currentView.$el.show();
       },
+
+      // -- MultiShell Events
+
+      // **onShowPrevious** move back in the playlist.
+      onShowPrevious: function() {
+        var index = _.indexOf(this.shellViews, this.currentView);
+        this.showView(index - 1);
+      },
+
+      // **onShowNext** move forward in the playlist.
+      onShowNext: function() {
+        var index = _.indexOf(this.shellViews, this.currentView);
+        this.showView(index + 1);
+      },
+
+      // **onShowPlaylist** show the playlist to the user.
+      onShowPlaylist: function() {
+        console.log('onShowPlaylist');
+      },
+
 
       // helper to map `func` through `shellViews` with `this` as context
       map: function(func) {
