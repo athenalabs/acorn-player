@@ -1250,6 +1250,11 @@
 
         // multishell events
         this.on('change:subview', this.onChangedSubview);
+
+        // initialize shells
+        this.shells = _.map(this.shell.data.shells, acorn.shellWithData);
+        _.map(this.shells, function (shell) { shell.retrieveExtraInfo(); });
+
       },
 
       render: function() {
@@ -1257,7 +1262,13 @@
         this.map(function(shellView) { shellView.remove(); });
 
         // construct all the views
-        this.shellViews = _.map(this.shell.data.shells, this.constructView);
+        this.shellViews = _.map(this.shells, function (shell) {
+          return new shell.ContentView({
+            shell: shell,
+            parent: this,
+            autoplay: true,
+          });
+        }, this);
 
         // clean up our elem
         this.$el.empty();
@@ -1265,20 +1276,6 @@
         this.showView(0)
       },
 
-      // helper to setup each view.
-      constructView: function(shellData) {
-        // retrieve shell class from data info
-        var shell = acorn.shellWithData(shellData);
-
-        // construct this shell's ContentView.
-        var shellView = new shell.ContentView({
-          shell: shell,
-          parent: this,
-          autoplay: true,
-        });
-
-        return shellView;
-      },
 
       showView: function(index) {
         var shellView = this.shellViews[index];
