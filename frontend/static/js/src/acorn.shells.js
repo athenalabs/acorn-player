@@ -1276,6 +1276,9 @@
         this.showView(0)
       },
 
+      currentViewIndex: function() {
+        return _.indexOf(this.shellViews, this.currentView);
+      },
 
       showView: function(index) {
         var shellView = this.shellViews[index];
@@ -1327,14 +1330,12 @@
 
       // **onShowPrevious** move back in the playlist.
       onShowPrevious: function() {
-        var index = _.indexOf(this.shellViews, this.currentView);
-        this.showView(index - 1);
+        this.showView(this.currentViewIndex() - 1);
       },
 
       // **onShowNext** move forward in the playlist.
       onShowNext: function() {
-        var index = _.indexOf(this.shellViews, this.currentView);
-        this.showView(index + 1);
+        this.showView(this.currentViewIndex() + 1);
       },
 
       // **onShowPlaylist** show the playlist to the user.
