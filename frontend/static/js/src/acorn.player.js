@@ -393,6 +393,12 @@
       this.render();
     },
 
+    controlWithId: function(id) {
+      return _.find(this.controlViews, function (ctrlView) {
+        return ctrlView.id == id;
+      });
+    },
+
   });
 
 

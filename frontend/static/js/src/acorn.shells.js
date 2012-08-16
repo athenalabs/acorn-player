@@ -1151,6 +1151,10 @@
       // **shellViews** is a container for sub shellViews.
       shellViews: [],
 
+      // Supported trigger events
+      //
+      // * change:subview - fired when subview currently show changes.
+
       initialize: function() {
         Shell.prototype.ContentView.prototype.initialize.call(this);
 
@@ -1214,9 +1218,30 @@
         }
 
         this.currentView.$el.show();
+
+        // announce changes
+        this.trigger('change:subview');
       },
 
       // -- MultiShell Events
+
+      onChangedSubview: function() {
+        var contentView = this.options.parent;
+        var controlsView = contentView.player.controlsView;
+
+        var left = controlsView.controlWithId('left');
+        var list = controlsView.controlWithId('list');
+        var right = controlsView.controlWithId('right');
+
+        left.$el.removeAttr('disabled');
+        right.$el.removeAttr('disabled');
+
+        if (this.currentView == _.first(this.shellViews))
+          left.$el.attr('disabled', 'disabled');
+
+        if (this.currentView == _.last(this.shellViews))
+          right.$el.attr('disabled', 'disabled');
+      },
 
       // **onShowPrevious** move back in the playlist.
       onShowPrevious: function() {
