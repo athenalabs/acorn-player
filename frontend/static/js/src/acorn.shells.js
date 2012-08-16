@@ -1161,14 +1161,10 @@
         // clean up our elem
         this.$el.empty();
 
-        var first = this.shellViews[0];
-        if (!first)
-          return;
-
-        first.render();
-        this.$el.append(first.el);
+        this.showView(0)
       },
 
+      // helper to setup each view.
       constructView: function(shellData) {
         // retrieve shell class from data info
         var shell = acorn.shellWithData(shellData);
@@ -1177,9 +1173,35 @@
         var shellView = new shell.ContentView({
           shell: shell,
           parent: this,
+          autoplay: true,
         });
 
         return shellView;
+      },
+
+      showView: function(index) {
+        var shellView = this.shellViews[index];
+
+        // bail if no view at that index.
+        if (!shellView)
+          return;
+
+        // tear down previous ``currentView``
+        if (this.currentView) {
+          this.currentView.remove();
+          // removing may be a bit drastic. perhaps:
+          // this.currentView.stop();
+          // this.currentView.$el.hide();
+        }
+
+        // set up shellView as ``currentView``
+        this.currentView = shellView;
+        if (!this.currentView.el.parentNode) {
+          this.currentView.render();
+          this.$el.append(this.currentView.el);
+        }
+
+        this.currentView.$el.show();
       },
 
       // helper to map `func` through `shellViews` with `this` as context
@@ -1235,7 +1257,6 @@
         var shellView = new shell.EditView({
           shell: shell,
           parent: this,
-          autoplay: (index == 0), /// autoplay the first one
         });
 
         // listen to events of shell EditView
