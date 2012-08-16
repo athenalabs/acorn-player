@@ -155,6 +155,14 @@
     // **initialize** overridable
     initialize: function() {},
 
+    // **title** returns a simple title of the shell
+    // Override it with your own shell-specific render code.
+    title: function() { return ''; },
+
+    // **description** returns a simple description of the shell
+    // Override it with your own shell-specific render code.
+    description: function() { return ''; },
+
     // **thumbnailLink** returns the link to the thumbnail image
     // Override it with your own shell-specific render code.
     thumbnailLink: function() { return ''; },
@@ -197,6 +205,37 @@
       // onGainFocus: function () {},
       onPlaybackPlay: function () {},
       onPlaybackStop: function () {},
+
+    }),
+
+    SummaryView: ShellView.extend({
+
+      // class name
+      className: 'acorn-shell-summary',
+
+      template: _.template('\
+        <img id="thumbnail" />\
+        <div class="thumbnailside">\
+          <div id="title"></div>\
+          <div id="description"></div>\
+          <div id="buttons"></div>\
+        </div>\
+      '),
+
+      render: function() {
+
+        this.$el.empty();
+        this.$el.html(this.template());
+
+        var title = this.shell.title();
+        var desc = this.shell.description();
+
+        this.$el.find('#title').text(title);
+        this.$el.find('#description').text(desc);
+
+        var thumbnailLink = this.shell.thumbnailLink();
+        this.$el.find('#thumbnail').attr('src', thumbnailLink);
+      },
 
     }),
 
@@ -285,6 +324,12 @@
         this.data.link = link;
       return this.data.link;
     },
+
+    // **title** returns a simple title of the shell
+    title: function() { return this.link(); },
+
+    // **description** returns a simple description of the shell
+    description: function() { return ''; },
 
     // **thumbnailLink** returns the link to the thumbnail image
     thumbnailLink: function(link) {
@@ -494,6 +539,13 @@
     validRegexes: [
       UrlRegExp('.*(avi|mov|wmv)'),
     ],
+
+    // **description** returns a simple description of the shell
+    description: function() {
+      return 'Seconds ' + this.data.time_start
+           + ' to ' + this.data.time_end
+           + ' of video';
+    },
 
     duration: function() { return this.data.time_end || 0; },
 
@@ -752,6 +804,19 @@
            + '&alt=jsonc';
     },
 
+    // **title** returns a simple title of the shell
+    title: function() {
+      return this.extraInfo ? this.extraInfo.data.title : this.link();
+    },
+
+    // **description** returns a simple description of the shell
+    description: function() {
+      return 'Seconds ' + (this.data.time_start || 0)
+           + ' to ' + (this.data.time_end || this.duration())
+           + ' of YouTube video '
+           + this.link();
+    },
+
     duration: function() {
       return this.extraInfo ? this.extraInfo.data.duration : this.data.time_end;
     },
@@ -952,6 +1017,19 @@
            ;
     },
 
+    // **title** returns a simple title of the shell
+    title: function() {
+      return this.extraInfo ? this.extraInfo[0].title : this.link();
+    },
+
+    // **description** returns a simple description of the shell
+    description: function() {
+      return 'Seconds ' + (this.data.time_start || 0)
+           + ' to ' + (this.data.time_end || this.duration())
+           + ' of Vimeo video '
+           + this.link();
+    },
+
     duration: function() {
       return this.extraInfo ? this.extraInfo[0].duration : this.data.time_end;
     },
@@ -1144,6 +1222,13 @@
       Shell.prototype.initialize.call(this);
 
       this.data.shells = this.data.shells || {};
+    },
+
+    // **title** returns a simple title of the shell
+    title: function() {
+      var items = _.keys(this.data.shells).length;
+      var s = (items == 1 ? '' : 's');
+      return 'playlist with ' + items + ' item' + s;
     },
 
     ContentView: acorn.shells.Shell.prototype.ContentView.extend({
