@@ -96,6 +96,11 @@
       // showingContent: whether the contentView ought to be visible.
       // once true, the player should respect the state when re-rendering
       // (i.e. re-rendering should still show the content, not revert to thumb).
+
+      autohideControls: false,
+      // autohideControls: whether the acorn controls should auto-hide.
+      // this option only sets css class ``.autohide-controls``.
+      // css controls the actual meaning of ``auto-hiding``.
     },
 
     initialize: function() {
@@ -131,6 +136,9 @@
     render: function() {
 
       this.$el.empty();
+
+      if (this.options.autohideControls)
+        this.$el.addClass('autohide-controls');
 
       this.thumbnailView.render();
       this.$el.append(this.thumbnailView.el);
