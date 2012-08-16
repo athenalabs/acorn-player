@@ -1310,6 +1310,11 @@
 
       // **showPlaylist** bring up a container with subview summaries
       showPlaylist: function() {
+        // only open playlist once.
+        var playlistId = this.shell.PlaylistView.prototype.id;
+        if (this.$el.find('#' + playlistId).length > 0)
+          return;
+
         var playlistView = new this.shell.PlaylistView({
           shell: this.shell,
           parent: this,
