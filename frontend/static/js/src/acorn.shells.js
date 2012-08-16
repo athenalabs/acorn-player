@@ -1308,6 +1308,20 @@
         this.trigger('change:subview');
       },
 
+      // **showPlaylist** bring up a container with subview summaries
+      showPlaylist: function() {
+        var playlistView = new this.shell.PlaylistView({
+          shell: this.shell,
+          parent: this,
+        });
+
+        playlistView.render();
+        this.$el.append(playlistView.el);
+
+        // stop playback on the currently-playing view
+        this.currentView.stop();
+      },
+
       // -- MultiShell Events
 
       onChangedSubview: function() {
@@ -1340,7 +1354,7 @@
 
       // **onShowPlaylist** show the playlist to the user.
       onShowPlaylist: function() {
-        console.log('onShowPlaylist');
+        this.showPlaylist();
       },
 
 
