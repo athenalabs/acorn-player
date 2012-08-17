@@ -404,6 +404,7 @@
       },
 
       validateLink: function(link) {
+        link = parseUrl(link).toString();
         if (acorn.util.isValidLink(link))
           return false;
 
@@ -412,6 +413,7 @@
 
       link: function(link) {
         if (link) {
+          link = parseUrl(link).toString();
           this.shell.link(link);
           var s = acorn.shellForLink(link, {shell: this.shell});
 
