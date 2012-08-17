@@ -49,10 +49,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #acorn-player,
+#acorn-player > #content {
+  overflow: hidden;
+}
+
+#acorn-player,
 #acorn-player > #content,
 #acorn-player > #thumbnail,
 #acorn-player > #edit,
-#acorn-player > #thumbnail > img#image {
+#acorn-player > #edit > #form,
+#acorn-player > #thumbnail > img#image,
+#acorn-player #acorn-multishell-playlist {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -125,6 +132,20 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
+#acorn-player > #content > .acorn-shell > #acorn-multishell-playlist {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 2px 5px rgba(34, 25, 25, 0.4);
+  margin: 10px;
+  padding: 20px;
+  z-index: 10;
+}
+
+#acorn-player > #content > .acorn-shell > #acorn-multishell-playlist > #close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
 #acorn-player > #controls {
   height: 28px;
   border: 1px solid #cccccc;
@@ -149,6 +170,11 @@ h1, h2, h3, h4, h5, h6 {
   padding-top: 1px;
   padding-bottom: 1px;
   height: 28px;
+}
+
+#acorn-player > #controls > .control[disabled=disabled] {
+  pointer-events: none;
+  opacity: 0.3;
 }
 
 #acorn-player > #controls > .control:hover {
@@ -181,7 +207,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #acorn-player > #controls > #edit.control {
-  background: no-repeat url("/static/img/controls/acorn.png") -86px -2px;
+  background: no-repeat url("/static/img/controls/acorn.png") -90px -2px;
+}
+
+#acorn-player > #controls > #left.control {
+  background: no-repeat url("/static/img/controls/acorn.png") -150px -2px;
+}
+
+#acorn-player > #controls > #right.control {
+  background: no-repeat url("/static/img/controls/acorn.png") -120px -2px;
+}
+
+#acorn-player > #controls > #list.control {
+  background: no-repeat url("/static/img/controls/acorn.png") -180px -2px;
 }
 
 #acorn-player > #edit {
@@ -229,31 +267,55 @@ h1, h2, h3, h4, h5, h6 {
   height: 35px;
 }
 
-#acorn-player > #edit > #form > .acorn-shell-edit {
-  position: relative;
+#acorn-player > #edit > #form {
+  overflow: scroll;
+  margin-top: 56px;
+  padding: 10px;
 }
 
-#acorn-player > #edit > #form > .acorn-shell-edit > #thumbnail {
+#acorn-player > #edit > #form .acorn-shell-edit,
+#acorn-player > #content .acorn-shell-summary {
+  position: relative;
+  display: block;
+  height: 80px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+
+#acorn-player > #edit > #form .acorn-shell-edit.selected,
+#acorn-player > #content .acorn-shell-summary.selected {
+  background-color: #dff0d8;
+}
+
+#acorn-player > #edit > #form .acorn-shell-edit > #thumbnail,
+#acorn-player > #content .acorn-shell-summary > #thumbnail {
   position: absolute;
   left: 0px;
+
   width: 100px;
   height: 80px;
+  border: 1px solid #ccc;
 }
 
-#acorn-player > #edit > #form > .acorn-shell-edit > div.thumbnailside {
+#acorn-player > #edit > #form .acorn-shell-edit > div.thumbnailside,
+#acorn-player > #content .acorn-shell-summary > div.thumbnailside {
   position: absolute;
   right: 0px;
   left: 100px;
+
   margin-left: 15px;
   margin-right: 10px;
+  height: 80px;
 }
 
-#acorn-player > #edit > #form > .acorn-shell-edit > div.thumbnailside
+#acorn-player > #edit > #form .acorn-shell-edit > div.thumbnailside
 > div#link {
   width: 100%;
 }
 
-#acorn-player > #edit > #form > .acorn-shell-edit > div.thumbnailside
+#acorn-player > #edit > #form .acorn-shell-edit > div.thumbnailside
  input.time {
   width: 50px;
   margin-left: -4px;
@@ -261,7 +323,7 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
-#acorn-player > #edit > #form > .acorn-shell-edit > div.thumbnailside
+#acorn-player > #edit > #form .acorn-shell-edit > div.thumbnailside
 .right {
   position: absolute;
   right: 0px;
@@ -269,13 +331,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
-#acorn-player > #edit > #form > .acorn-shell-edit > div.thumbnailside #slider {
+#acorn-player > #edit > #form .acorn-shell-edit > div.thumbnailside #slider {
   margin-top: 10px;
   margin-bottom: 10px;
 }
 
 #acorn-player .ui-slider-handle {
   width: 0.8em;
+}
+
+#acorn-player > #edit > #form > .acorn-shell-edit > button#add {
+  margin-left: 120px;
+  margin-top: 10px;
+  margin-bottom: 30px;
+  padding: 5px;
+  width: 420px;
 }
 
 /* jquery ui hacks to match boostrap */

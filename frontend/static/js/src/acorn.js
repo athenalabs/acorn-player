@@ -148,7 +148,7 @@
     if (parent.prototype == child.__super__)
       return true;
 
-    return derives(child.__super__, parent);
+    return derives(child.__super__.constructor, parent);
   }
   acorn.util.derives = derives;
 
@@ -186,6 +186,7 @@
      .attr('webkitAllowFullScreen', 'true')
      .attr('mozallowfullscreen', 'true');
     f.attr('src', src);
+    f.attr('scrolling', 'no');
     if (id)
       f.attr('id', id)
     return f;
@@ -221,6 +222,10 @@
   acorn.util.alert = acorn.alert; // util alias
 
 
+  // **acorn.iframe** creates and return an <iframe> element with options
+  // Args:
+  // * src - the source of the iframe
+  // * id (optional) - the id to assign to the frame
   var iframe = function(src, id) {
     var f = $('<iframe>');
     f.attr('frameborder', '0').attr('border', '0');
@@ -234,6 +239,26 @@
     return f;
   };
   acorn.util.iframe = iframe;
+
+
+  // **acorn.property** creates and return a get/setter with a closured var.
+  var property = function(defaultValue, validate) {
+
+    // initialize with defaultValue
+    var storedValue = defaultValue;
+
+    // ensure we have at least an empty validate function
+    validate = validate || function(v) { return v; };
+
+    // return the get/setter function
+    return function(value) {
+      if (arguments.length > 0)
+        storedValue = validate(value);
+
+      return storedValue;
+    };
+  };
+  acorn.util.property = property;
 
   // The following functions are originally from other open-source projects.
   // They are replicated here to avoid dependencies for minimal things.
@@ -383,6 +408,10 @@
   var parseUrl = function(url) {
 
     var result = {};
+
+    // if no protocol is found, prepend http
+    if (!RegExp('://').test(url))
+      url = 'http://' + url
 
     var anchor = document.createElement('a');
     anchor.href = url;

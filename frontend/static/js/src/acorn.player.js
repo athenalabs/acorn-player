@@ -115,11 +115,6 @@
       // set option defauls.
       this.options = _.extend({}, this.defaults, this.options);
 
-      // Subviews
-      this.thumbnailView = new player.views.ThumbnailView({ player: this });
-      this.controlsView = new player.views.ControlsView({ player: this });
-      this.contentView = new player.views.ContentView({ player: this });
-
       this.on('rename:acorn', this.onAcornRename);
       this.on('change:acorn', this.onAcornChange);
       this.on('save:acorn', this.onAcornSave);
@@ -131,6 +126,20 @@
 
       this.on('fullscreen', this.onFullscreen);
       this.on('acorn-site', this.onAcornSite);
+
+      // Subviews
+      this.thumbnailView = new player.views.ThumbnailView({ player: this });
+      this.controlsView = new player.views.ControlsView({ player: this });
+      this.contentView = new player.views.ContentView({ player: this });
+
+      // Order of binding events currently matters. The particular case was:
+      // * ``new player.views.ControlsView({ player: this });`` binds first
+      // * ``this.on('change:acorn', this.onAcornChange);`` binds second
+      // * ``onAcornChange`` sets ``this.shell = ...``, ControlsView needs it.
+      //
+      // Subject to change.
+      // see commit message https://github.com/athenalabs/acorn/commit/b1c1587
+
     },
 
     render: function() {
@@ -321,6 +330,7 @@
       this.shellView = new this.player.shell.ContentView({
         shell: this.player.shell,
         parent: this,
+        autoplay: true,
       });
 
       this.$el.empty();
@@ -391,6 +401,12 @@
       this.render();
     },
 
+    controlWithId: function(id) {
+      return _.find(this.controlViews, function (ctrlView) {
+        return ctrlView.id == id;
+      });
+    },
+
   });
 
 
@@ -398,6 +414,7 @@
   // --------------------------------------------------------------------
 
   player.views.Control = Backbone.View.extend({
+    tooltip: '',
 
     tagName: 'img',
     className: 'control',
@@ -419,6 +436,7 @@
 
       this.$el.empty();
       this.$el.attr('src', acorn.util.imgurl('controls', 'blank.png'));
+      this.$el.tooltip({ title: this.tooltip });
 
     },
 
@@ -432,6 +450,7 @@
   // -----------------------------------------------------------------
 
   player.views.controls.FullscreenControl = player.views.Control.extend({
+    tooltip: 'Fullscreen',
 
     id: 'fullscreen',
     className: 'control right',
@@ -446,6 +465,7 @@
   // ---------------------------------------------------------------------
 
   player.views.controls.AcornControl = player.views.Control.extend({
+    tooltip: 'Website',
 
     id: 'acorn',
     className: 'control right',
@@ -456,7 +476,12 @@
 
   });
 
+  // ** player.views.controls.EditControl ** onClick : acorn website
+  // ---------------------------------------------------------------------
+
   player.views.controls.EditControl = player.views.Control.extend({
+    tooltip: 'Edit',
+
     id: 'edit',
     className: 'control right',
 
@@ -466,6 +491,50 @@
 
   });
 
+  // ** player.views.controls.LeftControl ** onClick : acorn website
+  // ---------------------------------------------------------------------
+
+  player.views.controls.LeftControl = player.views.Control.extend({
+    tooltip: 'Prev', // short as it doesn't fit for now :/
+
+    id: 'left',
+    className: 'control left',
+
+    onClick: function() {
+      this.controls.player.trigger('controls:left');
+    },
+
+  });
+
+  // ** player.views.controls.RightControl ** onClick : acorn website
+  // ---------------------------------------------------------------------
+
+  player.views.controls.RightControl = player.views.Control.extend({
+    tooltip: 'Next',
+
+    id: 'right',
+    className: 'control left',
+
+    onClick: function() {
+      this.controls.player.trigger('controls:right');
+    },
+
+  });
+
+  // ** player.views.controls.ListControl ** onClick : acorn website
+  // ---------------------------------------------------------------------
+
+  player.views.controls.ListControl = player.views.Control.extend({
+    tooltip: 'Playlist',
+
+    id: 'list',
+    className: 'control left',
+
+    onClick: function() {
+      this.controls.player.trigger('controls:list');
+    },
+
+  });
 
   // ** player.views.EditView ** a view to house all editing controls
   // ----------------------------------------------------------------
@@ -507,7 +576,7 @@
         this.shellView.remove();
 
       this.editingShell = shell;
-      this.shellView = new this.player.shell.EditView({
+      this.shellView = new shell.EditView({
         shell: this.editingShell,
       });
 
@@ -585,7 +654,7 @@
     new: function() {
 
       var acornModel = acorn('new');
-      acornModel.shellData(acorn.shellForLink(''));
+      acornModel.shellData(new acorn.shells.MultiShell());
 
       this.showAcorn(acornModel);
 

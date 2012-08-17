@@ -131,6 +131,7 @@
     if (!this.data.shell)
       this.data.shell = this.shellid;
     assert(this.data.shell == this.shellid, "Shell data has incorrect type.");
+    this.initialize();
   };
 
   // Set up all **Shell** prototype properties and methods.
@@ -145,6 +146,22 @@
 
     // The shell-specific control components to use.
     controls: [],
+
+    // Defaults
+    defaults: {
+      autoplay: false, // whether playable media automatically starts playing.
+    },
+
+    // **initialize** overridable
+    initialize: function() {},
+
+    // **title** returns a simple title of the shell
+    // Override it with your own shell-specific render code.
+    title: function() { return ''; },
+
+    // **description** returns a simple description of the shell
+    // Override it with your own shell-specific render code.
+    description: function() { return ''; },
 
     // **thumbnailLink** returns the link to the thumbnail image
     // Override it with your own shell-specific render code.
@@ -191,12 +208,45 @@
 
     }),
 
+    SummaryView: ShellView.extend({
+
+      // class name
+      className: 'acorn-shell-summary',
+
+      template: _.template('\
+        <img id="thumbnail" />\
+        <div class="thumbnailside">\
+          <div id="title"></div>\
+          <div id="description"></div>\
+          <div id="buttons"></div>\
+        </div>\
+      '),
+
+      render: function() {
+
+        this.$el.empty();
+        this.$el.html(this.template());
+
+        var title = this.shell.title();
+        var desc = this.shell.description();
+
+        this.$el.find('#title').text(title);
+        this.$el.find('#description').text(desc);
+
+        var thumbnailLink = this.shell.thumbnailLink();
+        this.$el.find('#thumbnail').attr('src', thumbnailLink);
+      },
+
+    }),
+
     EditView: ShellView.extend({
 
       className: 'acorn-shell-edit',
 
       // Supported trigger events
+      // * swap:shell - fired when shell type has changed
       // * change:shell - fired when shell data has changed
+      // * change:editState - fired when EditView changes editing state
 
       // **template** defines the html template for this view.
       // Override to structure your own form.
@@ -206,7 +256,16 @@
         ShellView.prototype.initialize.call(this);
 
         this.on('change:shell', this.onChangeShell);
+        this.on('swap:shell', this.onSwapShell);
       },
+
+      // **isEditing** is a property function in order to be overridable
+      isEditing: acorn.util.property(false),
+
+      // **shouldSave** is a property function in order to be overridable
+      // shouldSave can prevent saves from happening. This is useful when
+      // swapping shells. Swapped-out ``shell.EditView`` should not save.
+      shouldSave: acorn.util.property(false),
 
       // **render** renders the view.
       render: function() {
@@ -216,6 +275,28 @@
       onChangeShell: function() {
         // when the shell changes, re-render this view.
         this.render();
+      },
+
+      onSwapShell: function() {
+        this.shouldSave(false);
+      },
+
+      // called when EditView saves
+      onSave: function() {
+        if (!this.shouldSave())
+          return; // bail out if we shouldn't save
+
+        this.isEditing(false);
+        this.shouldSave(false);
+        this.trigger('change:editState');
+        this.render();
+      },
+
+      // called when EditView begins editing state
+      onEdit: function() {
+        this.isEditing(true);
+        this.shouldSave(true);
+        this.trigger('change:editState');
       },
 
 
@@ -243,6 +324,12 @@
         this.data.link = link;
       return this.data.link;
     },
+
+    // **title** returns a simple title of the shell
+    title: function() { return this.link(); },
+
+    // **description** returns a simple description of the shell
+    description: function() { return ''; },
 
     // **thumbnailLink** returns the link to the thumbnail image
     thumbnailLink: function(link) {
@@ -302,9 +389,6 @@
         </div>\
       '),
 
-      // Supported trigger events
-      // * change:editState - fired when EditView changes editing state
-
       initialize: function() {
         acorn.shells.Shell.prototype.EditView.prototype.initialize.call(this);
 
@@ -317,7 +401,6 @@
           onEdit: _.bind(this.onEdit, this),
         });
 
-        this.isEditing_ = false;
       },
 
       validateLink: function(link) {
@@ -338,7 +421,7 @@
 
           // else, announce that the shell has changed.
           else
-            this.trigger('change:shell');
+            this.trigger('change:shell', this.shell);
         }
         return this.shell.link();
       },
@@ -357,23 +440,17 @@
           this.linkView.edit();
       },
 
-      isEditing: function() {
-        return this.isEditing_;
-      },
-
       onSave: function() {
+        if (!this.shouldSave())
+          return; // bail out if we shouldn't save
+
         var self = this;
         this.generateThumbnailLink(function(data) {
           self.shell.thumbnailLink(data);
-          self.isEditing_ = false;
-          self.trigger('change:editState');
-          self.render();
-        });
-      },
 
-      onEdit: function() {
-        this.isEditing_ = true;
-        this.trigger('change:editState');
+          // call super class onSave
+          acorn.shells.Shell.prototype.EditView.prototype.onSave.call(self);
+        });
       },
 
       generateThumbnailLink: function(callback) {
@@ -460,6 +537,13 @@
     validRegexes: [
       UrlRegExp('.*\.(avi|mov|wmv)'),
     ],
+
+    // **description** returns a simple description of the shell
+    description: function() {
+      return 'Seconds ' + this.data.time_start
+           + ' to ' + this.data.time_end
+           + ' of video';
+    },
 
     duration: function() { return this.data.time_end || 0; },
 
@@ -616,13 +700,16 @@
       setupSlider: function() {
         var data = this.shell.data;
 
+        var max = this.shell.duration();
+
         // setup slider
         var self = this;
+        this.$el.find('#slider').slider('destroy');
         this.$el.find('#slider').slider({
           min: 0,
-          max: this.shell.duration(),
+          max: max,
           range: true,
-          values: [ data.time_start, data.time_end ],
+          values: [ data.time_start || 0, data.time_end || max],
           slide: function(e, ui) { self.inputChanged(ui.values); },
         });
 
@@ -643,8 +730,8 @@
         }
 
         var max = this.shell.data.time_total || this.shell.duration();
-        var start = clip(0, parseInt(values[0]), values[1]);
-        var end = clip(start, parseInt(values[1]), max);
+        var start = clip(0, parseInt(values[0]), values[1]) || 0;
+        var end = clip(start, parseInt(values[1]), max) || max;
         var loop = !!this.$el.find('#loop').attr('checked');
 
         var diff = (end - start);
@@ -656,9 +743,8 @@
 
         this.$el.find('#start').val(start);
         this.$el.find('#end').val(end);
-        this.$el.find('#slider').slider({values: [start, end], 'max': max});
-
         this.$el.find('#time').text(time);
+        this.$el.find('#slider').slider({ max: max, values: [start, end] });
       },
 
     }),
@@ -714,6 +800,19 @@
       return 'http://gdata.youtube.com/feeds/api/videos/' + this.youtubeId()
            + '?v=2'
            + '&alt=jsonc';
+    },
+
+    // **title** returns a simple title of the shell
+    title: function() {
+      return this.extraInfo ? this.extraInfo.data.title : this.link();
+    },
+
+    // **description** returns a simple description of the shell
+    description: function() {
+      return 'Seconds ' + (this.data.time_start || 0)
+           + ' to ' + (this.data.time_end || this.duration())
+           + ' of YouTube video '
+           + this.link();
     },
 
     duration: function() {
@@ -792,7 +891,13 @@
         // this *should* initialize the playback at the correct point,
         // but in practice it doesn't. Need a robust solution (tick).
         var start = parseInt(this.shell.data.time_start || 0);
-        this.ytplayer.loadVideoById(this.shell.youtubeId(), start);
+
+        if (this.options.autoplay) {
+          this.ytplayer.loadVideoById(this.shell.youtubeId(), start);
+        } else {
+          this.ytplayer.cueVideoById(this.shell.youtubeId(), start);
+          this.play();
+        }
       },
 
       onYTPlayerStateChange: function(event) {
@@ -815,7 +920,7 @@
 
       // the total duration in seconds
       totalTime: function() {
-        return this.ytplayer.getDuration();
+        return this.ytplayer.getDuration() || Infinity;
       },
 
       // the current playback position in seconds
@@ -908,6 +1013,19 @@
       return 'http://vimeo.com/api/v2/video/' + this.vimeoId() + '.json?'
            + '&callback=?' // somehow allows cross-domain requests.
            ;
+    },
+
+    // **title** returns a simple title of the shell
+    title: function() {
+      return this.extraInfo ? this.extraInfo[0].title : this.link();
+    },
+
+    // **description** returns a simple description of the shell
+    description: function() {
+      return 'Seconds ' + (this.data.time_start || 0)
+           + ' to ' + (this.data.time_end || this.duration())
+           + ' of Vimeo video '
+           + this.link();
     },
 
     duration: function() {
@@ -1040,7 +1158,18 @@
     EditView: acorn.shells.VideoLinkShell.prototype.EditView.extend({
       // Overrides LinkShell.generateThumbnailLink()
       generateThumbnailLink: function(callback) {
-        //TODO(ali01) use retrieveExtraInfo?
+        // TODO(ali01) use retrieveExtraInfo?
+
+        // This would be the code. It works, and it leverages the fact
+        // that ``retrieveExtraInfo`` already has to be called for the
+        // duration. I think if we fix things away from $.getJSON we'd
+        // do it in retrieveExtraInfo, so I think this below should be
+        // what actually generates the thumbnail.
+
+        // this.shell.retrieveExtraInfo(_.bind(function() {
+        //   callback(this.shell.extraInfo[0].thumbnail_large);
+        // }, this));
+
         var url_req = '/request_proxy/vimeo.com/api/v2/video/' +
                       this.shell.vimeoId() + '.json';
         $.ajax(url_req, {
@@ -1088,6 +1217,410 @@
         callback('/static/img/thumbnails/pdf.png');
       },
     }),
+  });
+
+
+
+  // acorn.shells.MultiShell
+  // -----------------------
+
+  // A shell that contains other shells
+  acorn.shells.MultiShell = Shell.extend({
+
+    shellid: 'acorn.MultiShell',
+
+    // The cannonical type of this media. One of `acorn.types`.
+    type: 'multimedia',
+
+    // The shell-specific control components to use.
+    controls: [
+      'LeftControl',
+      'ListControl',
+      'RightControl',
+    ],
+
+    initialize: function() {
+      Shell.prototype.initialize.call(this);
+
+      this.data.shells = this.data.shells || {};
+    },
+
+    // **title** returns a simple title of the shell
+    title: function() {
+      var items = _.keys(this.data.shells).length;
+      var s = (items == 1 ? '' : 's');
+      return 'playlist with ' + items + ' item' + s;
+    },
+
+    ContentView: acorn.shells.Shell.prototype.ContentView.extend({
+
+      // **shellViews** is a container for sub shellViews.
+      shellViews: [],
+
+      // Supported trigger events
+      //
+      // * change:subview - fired when subview currently show changes.
+
+      initialize: function() {
+        Shell.prototype.ContentView.prototype.initialize.call(this);
+
+        // controls
+        this.options.parent.on('controls:left', this.onShowPrevious);
+        this.options.parent.on('controls:list', this.onShowPlaylist);
+        this.options.parent.on('controls:right', this.onShowNext);
+
+        // multishell events
+        this.on('change:subview', this.onChangedSubview);
+
+        // initialize shells
+        this.shells = _.map(this.shell.data.shells, acorn.shellWithData);
+        _.map(this.shells, function (shell) { shell.retrieveExtraInfo(); });
+
+      },
+
+      render: function() {
+        // remove all previously rendered shellViews.
+        this.map(function(shellView) { shellView.remove(); });
+
+        // construct all the views
+        this.shellViews = _.map(this.shells, function (shell) {
+          return new shell.ContentView({
+            shell: shell,
+            parent: this,
+            autoplay: true,
+          });
+        }, this);
+
+        // clean up our elem
+        this.$el.empty();
+
+        this.showView(0)
+      },
+
+      currentViewIndex: function() {
+        return _.indexOf(this.shellViews, this.currentView);
+      },
+
+      showView: function(index) {
+        var shellView = this.shellViews[index];
+
+        // bail if no view at that index.
+        if (!shellView)
+          return;
+
+        // tear down previous ``currentView``
+        if (this.currentView) {
+          this.currentView.remove();
+          // removing may be a bit drastic. perhaps:
+          // this.currentView.stop();
+          // this.currentView.$el.hide();
+        }
+
+        // set up shellView as ``currentView``
+        this.currentView = shellView;
+        if (!this.currentView.el.parentNode) {
+          this.currentView.render();
+          this.$el.append(this.currentView.el);
+        }
+
+        this.currentView.$el.show();
+
+        // announce changes
+        this.trigger('change:subview');
+      },
+
+      // **showPlaylist** bring up a container with subview summaries
+      showPlaylist: function() {
+        // only open playlist once.
+        var playlistId = this.shell.PlaylistView.prototype.id;
+        if (this.$el.find('#' + playlistId).length > 0)
+          return;
+
+        var playlistView = new this.shell.PlaylistView({
+          shell: this.shell,
+          parent: this,
+        });
+
+        playlistView.render();
+        this.$el.append(playlistView.el);
+
+        // stop playback on the currently-playing view
+        this.currentView.stop();
+      },
+
+      // -- MultiShell Events
+
+      onChangedSubview: function() {
+        var contentView = this.options.parent;
+        var controlsView = contentView.player.controlsView;
+
+        var left = controlsView.controlWithId('left');
+        var list = controlsView.controlWithId('list');
+        var right = controlsView.controlWithId('right');
+
+        left.$el.removeAttr('disabled');
+        right.$el.removeAttr('disabled');
+
+        if (this.currentView == _.first(this.shellViews))
+          left.$el.attr('disabled', 'disabled');
+
+        if (this.currentView == _.last(this.shellViews))
+          right.$el.attr('disabled', 'disabled');
+      },
+
+      // **onShowPrevious** move back in the playlist.
+      onShowPrevious: function() {
+        this.showView(this.currentViewIndex() - 1);
+      },
+
+      // **onShowNext** move forward in the playlist.
+      onShowNext: function() {
+        this.showView(this.currentViewIndex() + 1);
+      },
+
+      // **onShowPlaylist** show the playlist to the user.
+      onShowPlaylist: function() {
+        this.showPlaylist();
+      },
+
+
+      // helper to map `func` through `shellViews` with `this` as context
+      map: function(func) {
+        _.map(this.shellViews, func, this);
+      },
+
+    }),
+
+    // **PlaylistView** - A view to summarize the shells within a MultiShell
+    // ---------------------------------------------------------------------
+
+    PlaylistView: ShellView.extend({
+
+      id: 'acorn-multishell-playlist',
+
+      template: _.template('\
+        <h1 id="title"></h1>\
+        <button id="close" class="btn">\
+          <i class="icon-ban-circle"></i> Close\
+        </button>\
+        <div id="summaries"></div>\
+      '),
+
+      events: {
+        'click button#close': 'onClickClose',
+        'click button#view': 'onClickView',
+      },
+
+      render: function() {
+        this.$el.empty();
+        this.$el.html(this.template());
+
+        var title = this.shell.title();
+        this.$el.find('#title').text(title);
+
+        var currentIndex = this.options.parent.currentViewIndex();
+
+        var summaries = this.$el.find('#summaries');
+        _.map(this.options.parent.shells, function(shell, idx) {
+
+          var summary = new shell.SummaryView({
+            shell: shell,
+            parent: this,
+          });
+
+          summary.render();
+          summaries.append(summary.el);
+
+          // if this is the currently-viewed shell, mark it selected
+          if (idx == currentIndex)
+            summary.$el.addClass('selected');
+
+          // an action to view shells from the playlist
+          var view_btn =
+            $('<button>')
+              .text('View')
+              .addClass('btn')
+              .attr('id', 'view')
+              .attr('data-index', idx);
+
+          summary.$el.find('#buttons').append(view_btn);
+
+        }, this);
+
+      },
+
+      onClickClose: function() {
+        this.remove();
+      },
+
+      onClickView: function(event) {
+        var index = $(event.target).attr('data-index');
+        this.options.parent.showView(index);
+        this.remove();
+      },
+
+    }),
+
+    EditView: Shell.prototype.EditView.extend({
+
+      // **shellViews** is a container for sub shellViews.
+      shellViews: [],
+
+      events: {
+        'click button#add': 'onClickAdd',
+      },
+
+      template: _.template('\
+        <div id="subshells"></div>\
+        <button class="btn btn-success btn-large" id="add">Add Link</button>\
+      '),
+
+      render: function() {
+
+        // remove all previously rendered shellViews.
+        this.map(function(shellView) { shellView.remove(); });
+
+        // construct all the views
+        this.shellViews = _.map(this.shell.data.shells, function(data, index) {
+          return this.constructView(data, index);
+        }, this);
+
+        // clean up our elem
+        this.$el.empty();
+        this.$el.append(this.template());
+
+        var subshells_el = this.$el.find('#subshells');
+
+        // render and append all shellViews.
+        this.map(function (shellView) {
+          shellView.render();
+          subshells_el.append(shellView.el);
+        });
+
+      },
+
+      constructView: function(shellData, index) {
+        // retrieve shell class from data info
+        var shell = acorn.shellWithData(shellData);
+
+        // construct this shell's EditView.
+        var shellView = new shell.EditView({
+          shell: shell,
+          parent: this,
+        });
+
+        // listen to events of shell EditView
+        shellView.on('swap:shell', function(data) {
+          this.onSwapSubShell(data, index);
+        }, this);
+
+        shellView.on('change:shell', function(data) {
+          this.onChangeSubShell(data, index);
+        }, this);
+
+        shellView.on('change:editState', this.onChangeEditState);
+
+        return shellView;
+      },
+
+      // -- Shell Overrides
+
+      // **isEditing** returns whether any shellView isEditing
+      isEditing: function(value) {
+        return _.any(this.shellViews, function (shellView) {
+          return shellView.isEditing();
+        });
+      },
+
+      // **onEdit** overridden to fwd to the first shellView
+      onEdit: function() {
+        if (this.shellViews.length > 0)
+          this.shellViews[0].onEdit();
+      },
+
+      // **onSave** overridden to fwd to all shellViews.
+      onSave: function() {
+        if (!this.shouldSave())
+          return; // bail out if we shouldn't save
+
+        this.map(function (shellView) { shellView.onSave(); });
+      },
+
+      // **onChangeShell** overriden to prevent re-render
+      onChangeShell: function() {},
+
+
+
+      // -- MultiShell Events
+
+      onChangeEditState: function() {
+        this.trigger('change:editState');
+      },
+
+      // **onClickAdd** add another link + shell
+      onClickAdd: function() {
+        // // additional, placeholder adding shells
+        var nextIndex = this.shellViews.length;
+        var addData = acorn.shellForLink('').data;
+        var addView = this.constructView(addData, nextIndex);
+
+        addView.render();
+        this.shellViews.push(addView);
+
+        var subshells_el = this.$el.find('#subshells');
+        subshells_el.append(addView.el);
+      },
+
+      // -- Sub Shell Events
+
+      onSwapSubShell: function(data, index) {
+        var oldShellView = this.shellViews[index];
+        var newShellView = this.constructView(data);
+
+        // render and add the new shellView.
+        newShellView.render();
+        oldShellView.$el.after(newShellView.el);
+
+        // remvoe old shellView
+        oldShellView.remove();
+        this.shellViews[index] = newShellView;
+
+        // update the data itself
+        var shells = this.shells();
+        shells[index] = data;
+        this.shells(shells);
+      },
+
+      onChangeSubShell: function(shell, index) {
+        // update the data itself
+        var shells = this.shells();
+        shells[index] = shell.data;
+        this.shells(shells);
+      },
+
+      // get/setter for shells value
+      shells: function(shells) {
+        if (shells !== undefined) {
+          this.shell.data.shells = shells;
+
+          // if there is at most 1 shell, swap.
+          if (shells.length <= 1)
+            this.trigger('swap:shell', shells[0] || {});
+
+          // else, announce that the shell has changed.
+          else
+            this.trigger('change:shell', this.shell);
+        }
+        return this.shell.data.shells;
+      },
+
+      // helper to map `func` through `shellViews` with `this` as context
+      map: function(func) {
+        return _.map(this.shellViews, func, this);
+      },
+
+    }),
+
   });
 
 
