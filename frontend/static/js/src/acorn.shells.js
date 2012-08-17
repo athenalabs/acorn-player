@@ -1254,6 +1254,16 @@
       return 'playlist with ' + items + ' item' + s;
     },
 
+    // **thumbnailLink** use the first shell's thumbnail
+    thumbnailLink: function() {
+      var first = this.data.shells[0];
+      if (!first)
+        return '';
+
+      var shell = acorn.shellWithData(first);
+      return shell.thumbnailLink();
+    },
+
     ContentView: acorn.shells.Shell.prototype.ContentView.extend({
 
       // **shellViews** is a container for sub shellViews.
