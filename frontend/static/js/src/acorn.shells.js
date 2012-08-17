@@ -557,7 +557,7 @@
         // if current playback is after the end time, pause (or loop)
         if (playing && now >= end) {
           if (loop) {
-            this.seek(0); // TODO set to `start` when vimeo bug is found.
+            this.seek(start);
           } else {
             this.stop();
           }
@@ -700,7 +700,7 @@
            + '&hd=1'
            + '&wmode=transparent'
            + '&enablejsapi=1'
-           + '&controls=0'
+           + '&controls=1'
            ;
     },
 
@@ -846,7 +846,7 @@
 
       // seeks to the specific offset in seconds
       seek: function(seconds) {
-        this.ytplayer.seekTo(seconds)
+        this.ytplayer.seekTo(seconds, true);
       },
 
     }),
