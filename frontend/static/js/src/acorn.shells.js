@@ -286,10 +286,8 @@
       },
 
       render: function() {
-
         var link = this.shell.link();
-        var href = $('<a>').attr('href', link).text(link);
-        this.$el.html(href);
+        this.$el.append(iframe(link, 'link-iframe'));
       },
 
     }),
@@ -441,7 +439,7 @@
     // **validRegexes** list of valid LinkRegexes for images
     // .jpg, .png, .gif, etc.
     validRegexes: [
-      UrlRegExp('.*(jpg|jpeg|gif|png|svg)'),
+      UrlRegExp('.*\.(jpg|jpeg|gif|png|svg)'),
     ],
 
   });
@@ -457,10 +455,10 @@
     // The cannonical type of this media. One of `acorn.types`.
     type: 'video',
 
-    // **validRegexes** list of valid LinkRegexes for images
-    // .jpg, .png, .gif, etc.
+    // **validRegexes** list of valid LinkRegexes for videos
+    // .avi, .mov, .wmv, etc.
     validRegexes: [
-      UrlRegExp('.*(avi|mov|wmv)'),
+      UrlRegExp('.*\.(avi|mov|wmv)'),
     ],
 
     duration: function() { return this.data.time_end || 0; },
@@ -1070,10 +1068,32 @@
   });
 
 
+  // acorn.shells.PDFLinkShell
+  // ----------------------
+  acorn.shells.PDFLinkShell = acorn.shells.LinkShell.extend({
+
+    shellid: 'acorn.PDFLinkShell',
+
+    // The cannonical type of this media. One of `acorn.types`.
+    type: 'document',
+
+    // **validRegexes** regex to match links to PDFs
+    validRegexes: [
+      UrlRegExp('.*\.pdf'),
+    ],
+
+    EditView: acorn.shells.LinkShell.prototype.EditView.extend({
+      // Overrides LinkShell.generateThumbnailLink()
+      generateThumbnailLink: function(callback) {
+        callback('/static/img/thumbnails/pdf.png');
+      },
+    }),
+  });
+
+
   // Add each shell to the registry under its shellid.
   _.each(acorn.shells, function(shell) {
     acorn.shells[shell.prototype.shellid] = shell;
   });
-
 
 }).call(this);
