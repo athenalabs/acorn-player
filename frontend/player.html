@@ -67,6 +67,15 @@ h1, h2, h3, h4, h5, h6 {
   bottom: 0px;
 }
 
+/* autohiding controls */
+#acorn-player:not(.autohide-controls) > #content {
+  bottom: 28px;
+}
+
+#acorn-player.autohide-controls > #content:hover + #controls {
+  height: 0px;
+}
+
 
 #acorn-player {
   min-width: 100px;
@@ -114,10 +123,6 @@ h1, h2, h3, h4, h5, h6 {
 
 #acorn-player > #content {
   overflow: hidden;
-}
-
-#acorn-player > #content:hover + #controls {
-  height: 0px;
 }
 
 #acorn-player > #controls {
