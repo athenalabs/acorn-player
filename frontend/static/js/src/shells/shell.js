@@ -51,7 +51,7 @@ acorn.shellWithAcorn = function(acornModel) {
 
 var Shell = acorn.shells.Shell = function(options) {
   this.options = _.extend({}, (this.defaults || {}), options);
-  this.data = _.extend({}, this.options.data); // make a copy.
+  this.data = JSON.parse(JSON.stringify(this.options.data)); // copy
   if (!this.data.shell)
     this.data.shell = this.shellid;
   assert(this.data.shell == this.shellid, "Shell data has incorrect type.");
