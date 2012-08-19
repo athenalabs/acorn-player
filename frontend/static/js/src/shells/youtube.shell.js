@@ -221,6 +221,7 @@ YouTubeShell.ContentView = VideoLinkShell.ContentView.extend({
 YouTubeShell.EditView = VideoLinkShell.EditView.extend({
   // Overrides LinkShell.generateThumbnailLink()
   generateThumbnailLink: function(callback) {
+    callback = callback || function() {};
     callback(this.shell.thumbnailLink());
   },
 });

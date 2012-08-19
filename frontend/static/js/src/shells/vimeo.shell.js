@@ -210,6 +210,7 @@ VimeoShell.EditView = VideoLinkShell.EditView.extend({
     //   callback(this.shell.extraInfo[0].thumbnail_large);
     // }, this));
 
+    callback = callback || function() {};
     var url_req = '/request_proxy/vimeo.com/api/v2/video/' +
                   this.shell.vimeoId() + '.json';
     $.ajax(url_req, {

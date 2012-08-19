@@ -162,8 +162,13 @@
     },
 
     onAcornSave: function() {
-      var self = this;
+      // if there haven't been any changes, just close.
+      if (!this.editView.isDirty()) {
+        this.trigger('close:edit');
+        return;
+      }
 
+      var self = this;
       var data = this.editView.editingShell.data;
       this.model.shellData(data);
 
@@ -576,7 +581,7 @@
         this.shellView.remove();
 
       this.editingShell = shell;
-      this.shellView = new shell.EditView({
+      this.shellView = new shell.shellClass.EditView({
         shell: this.editingShell,
       });
 
@@ -608,15 +613,6 @@
     },
 
     onEditStateChange: function() {
-      var save_btn = this.$el.find('#save');
-      var save_click_capture = this.$el.find('#save-click-capture');
-      if (this.shellView.isEditing()) {
-        save_btn.attr('disabled', 'disabled');
-        save_click_capture.show();
-      } else {
-        save_btn.removeAttr('disabled');
-        save_click_capture.hide();
-      }
     },
 
     onSwapShell: function(data) {
@@ -630,8 +626,17 @@
     },
 
     onSave: function() {
+      this.shellView.finalizeEdit();
       this.player.trigger('save:acorn');
     },
+
+    // **isDirty** returns whether shell being edited has changes.
+    isDirty: function() {
+      var editingData = this.editingShell.data;
+      var playerData = this.player.shell.data;
+      return !_.isEqual(editingData, playerData);
+    },
+
   });
 
 

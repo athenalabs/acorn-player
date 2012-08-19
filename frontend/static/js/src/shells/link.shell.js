@@ -200,8 +200,7 @@ LinkShell.EditView = Shell.EditView.extend({
       placeholder: 'Enter Link',
       validate: _.bind(this.validateLink, this),
       addToggle: true,
-      onSave: _.bind(this.onSave, this),
-      onEdit: _.bind(this.onEdit, this),
+      onSave: _.bind(this.generateThumbnailLink, this),
     });
 
   },
@@ -245,20 +244,9 @@ LinkShell.EditView = Shell.EditView.extend({
       this.linkView.edit();
   },
 
-  onSave: function() {
-    if (!this.shouldSave())
-      return; // bail out if we shouldn't save
-
-    var self = this;
-    this.generateThumbnailLink(function(data) {
-      self.shell.thumbnailLink(data);
-
-      // call super class onSave
-      Shell.EditView.prototype.onSave.call(self);
-    });
-  },
-
   generateThumbnailLink: function(callback) {
+    callback = callback || function() {};
+
     var self = this;
     var bounds = '600x600';
     var req_url = '/url2png/' + bounds + '/' + this.shell.link();
@@ -272,6 +260,13 @@ LinkShell.EditView = Shell.EditView.extend({
       }
     });
   },
+
+  // **finalizeEdit** finish all edits.
+  finalizeEdit: function() {
+    if (this.linkView.isEditing)
+      this.linkView.save();
+  },
+
 
 });
 

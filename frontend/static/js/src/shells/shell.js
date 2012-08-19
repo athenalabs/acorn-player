@@ -281,24 +281,8 @@ Shell.EditView = ShellView.extend({
     this.shouldSave(false);
   },
 
-  // called when EditView saves
-  onSave: function() {
-    if (!this.shouldSave())
-      return; // bail out if we shouldn't save
-
-    this.isEditing(false);
-    this.shouldSave(false);
-    this.trigger('change:editState');
-    this.render();
-  },
-
-  // called when EditView begins editing state
-  onEdit: function() {
-    this.isEditing(true);
-    this.shouldSave(true);
-    this.trigger('change:editState');
-  },
-
+  // **finalizeEdit** finish all edits.
+  finalizeEdit: function() {},
 
 });
 
