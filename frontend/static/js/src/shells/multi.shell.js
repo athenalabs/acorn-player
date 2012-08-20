@@ -19,7 +19,7 @@ var MultiShell = acorn.shells.MultiShell = Shell.extend({
   initialize: function() {
     Shell.prototype.initialize.call(this);
 
-    this.data.shells = this.data.shells || {};
+    this.data.shells = this.data.shells || [];
   },
 
   // **title** returns a simple title of the shell
@@ -37,6 +37,16 @@ var MultiShell = acorn.shells.MultiShell = Shell.extend({
 
     var shell = acorn.shellWithData(first);
     return shell.thumbnailLink();
+  },
+
+  // **addShellData** adds another shell (via data)
+  addShellData: function(shellData) {
+    this.data.shells.push(shellData);
+  },
+
+  // **addShell** adds another shell
+  addShell: function(shell) {
+    this.addShellData(shell.data)
   },
 
 });

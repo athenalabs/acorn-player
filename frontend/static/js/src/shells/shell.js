@@ -52,7 +52,7 @@ acorn.shellWithAcorn = function(acornModel) {
 var Shell = acorn.shells.Shell = function(options) {
   this.options = _.extend({}, (this.defaults || {}), options);
 
-  assert(this.options.data, 'No data provided to shell.');
+  this.options.data = this.options.data || {};
   this.data = JSON.parse(JSON.stringify(this.options.data)); // copy
 
   if (!this.data.shell)
