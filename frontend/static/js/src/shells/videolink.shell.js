@@ -166,10 +166,10 @@ VideoLinkShell.ContentView = LinkShell.ContentView.extend({
 
 VideoLinkShell.EditView = LinkShell.EditView.extend({
 
-  events: {
+  events: _.extend({}, LinkShell.EditView.prototype.events, {
     'change input':  'timeInputChanged',
     'blur input':  'timeInputChanged',
-  },
+  }),
 
   timeRangeTemplate: _.template('\
   <div id="slider" class="fader"></div>\
