@@ -409,6 +409,9 @@
 
     var result = {};
 
+    // trim out any whitespace
+    url = $.trim(url);
+
     // if no protocol is found, prepend http
     if (!RegExp('://').test(url))
       url = 'http://' + url
