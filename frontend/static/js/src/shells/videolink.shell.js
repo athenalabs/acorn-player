@@ -237,13 +237,20 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
   },
 
   inputChanged: function(values) {
-    clip = function(min, _, max) {
-      return Math.max(min, Math.min(_ || 0, max));
-    }
+    var clip = function(min, val, max) {
+      return Math.max(min, Math.min(val || 0, max));
+    };
+
+    var floatOrDefault = function(num, def) {
+      return (_.isNumber(num) && !_.isNaN(num)) ? parseFloat(num) : def;
+    };
 
     var max = this.shell.data.time_total || this.shell.duration();
-    var start = clip(0, parseInt(values[0]), values[1]) || 0;
-    var end = clip(start, parseInt(values[1]), max) || max;
+    values[0] = floatOrDefault(values[0], 0);
+    values[1] = floatOrDefault(values[1], max);
+
+    var start = clip(0, values[0], values[1]);
+    var end = clip(start, values[1], max);
     var loop = !!this.$el.find('#loop').attr('checked');
 
     var diff = (end - start);
