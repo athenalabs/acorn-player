@@ -153,6 +153,7 @@ VideoLinkShell.ContentView = LinkShell.ContentView.extend({
         this.seek(start);
       } else {
         this.stop();
+        this.trigger('playback:ended');
       }
     }
   },

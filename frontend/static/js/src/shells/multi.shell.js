@@ -88,11 +88,16 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
     // construct all the views
     this.shellViews = _.map(this.shells, function (shell) {
-      return new shell.shellClass.ContentView({
+      var contentView = new shell.shellClass.ContentView({
         shell: shell,
         parent: this,
         autoplay: true,
       });
+
+      // subshell events
+      contentView.on('playback:ended', this.onSubShellPlaybackEnded);
+
+      return contentView;
     }, this);
 
     // clean up our elem
@@ -187,6 +192,29 @@ MultiShell.ContentView = Shell.ContentView.extend({
     this.showPlaylist();
   },
 
+  // -- SubShell Events
+
+  // **onSubShellPlaybackEnded** advance subshells
+  onSubShellPlaybackEnded: function() {
+    // if there are more subshells to play, play them.
+    if (this.hasNext())
+      this.onShowNext();
+
+    // otherwise, signal multishell playback ended.
+    else
+      this.trigger('playback:ended');
+  },
+
+
+  // helper to know whether there are more subshells forward.
+  hasNext: function() {
+    return this.currentViewIndex() < this.shellViews.length - 1;
+  },
+
+  // helper to know whether there are more subshells backward.
+  hasPrevious: function() {
+    return this.currentViewIndex() > 0;
+  },
 
   // helper to map `func` through `shellViews` with `this` as context
   map: function(func) {

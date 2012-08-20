@@ -88,6 +88,7 @@
     //
     // * playback:play - fired when playback should start or resume
     // * playback:stop - fired when playback should pause or stop
+    // * playback:ended - fired when playback has finished
 
 
 
