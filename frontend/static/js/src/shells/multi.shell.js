@@ -232,6 +232,7 @@ MultiShell.PlaylistView = ShellView.extend({
       var summary = new shell.shellClass.SummaryView({
         shell: shell,
         parent: this,
+        autplay: this.options.autoplay,
       });
 
       summary.render();
