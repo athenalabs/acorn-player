@@ -659,8 +659,6 @@
     new: function() {
 
       var acornModel = acorn('new');
-      acornModel.shellData(new acorn.shells.MultiShell());
-
       this.showAcorn(acornModel);
 
       this.playerView.render();

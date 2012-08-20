@@ -484,7 +484,7 @@
 
     initialize: function() {
       this._data = {};
-      this._data.shell = {};
+      this._data.shell = {'shell': 'acorn.LinkShell'};
       this._data.acornid = this.options.acornid || 'new'; // sentinel.
     },
 
