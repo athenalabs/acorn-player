@@ -284,7 +284,7 @@
   player.views.ThumbnailView = PlayerSubview.extend({
 
     template: _.template('\
-      <img id="image" src="" />\
+      <img id="image" src="/static/img/blank.png" />\
       <img id="type" src="" class="thumbnail-icon" />\
       <img id="logo" src="" class="thumbnail-icon" />\
     '),
