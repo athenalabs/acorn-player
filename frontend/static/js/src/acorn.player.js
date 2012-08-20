@@ -109,8 +109,8 @@
       // Track the acornid for rename checks
       this._acornid = this.model.acornid();
 
-      // initialize with the shell the model has (can be undefined)
-      this.shell = this.model.shellData();
+      // initialize with the shell the model has.
+      this.shell = acorn.shellWithAcorn(this.model);
 
       // set option defauls.
       this.options = _.extend({}, this.defaults, this.options);
