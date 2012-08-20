@@ -183,7 +183,7 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
       <input id="end" size="16" type="text" class="time">\
       <!--<span class="add-on">sec</span>-->\
     </div>\
-    <span id="time"></span>\
+    total time: <span id="time"></span>\
     <label class="checkbox right" id="loop-label">\
       <input id="loop" type="checkbox"> Loop\
     </label>\
@@ -231,8 +231,8 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
 
   timeInputChanged: function() {
     this.inputChanged([
-      this.$el.find('#start').val(),
-      this.$el.find('#end').val()
+      timeStringToSeconds(this.$el.find('#start').val()),
+      timeStringToSeconds(this.$el.find('#end').val())
     ]);
   },
 
@@ -247,14 +247,14 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     var loop = !!this.$el.find('#loop').attr('checked');
 
     var diff = (end - start);
-    var time = (isNaN(diff) ? '--' : diff) + ' seconds';
+    var time = (isNaN(diff) ? '--' : secondsToTimeString(diff));
 
     this.shell.data.time_start = start;
     this.shell.data.time_end = end;
     this.shell.data.loop = loop;
 
-    this.$el.find('#start').val(start);
-    this.$el.find('#end').val(end);
+    this.$el.find('#start').val(secondsToTimeString(start));
+    this.$el.find('#end').val(secondsToTimeString(end));
     this.$el.find('#time').text(time);
     this.$el.find('#slider').slider({ max: max, values: [start, end] });
   },

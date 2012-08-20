@@ -7,6 +7,8 @@ var UrlRegExp = acorn.util.UrlRegExp;
 var parseUrl = acorn.util.parseUrl;
 var iframe = acorn.util.iframe;
 var assert = acorn.util.assert;
+var timeStringToSeconds = acorn.util.timeStringToSeconds;
+var secondsToTimeString = acorn.util.secondsToTimeString;
 
 // Shell book-keeping.
 
