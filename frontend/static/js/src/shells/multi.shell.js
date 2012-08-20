@@ -59,9 +59,9 @@ MultiShell.ContentView = Shell.ContentView.extend({
     Shell.ContentView.prototype.initialize.call(this);
 
     // controls
-    this.options.parent.on('controls:left', this.onShowPrevious);
-    this.options.parent.on('controls:list', this.onShowPlaylist);
-    this.options.parent.on('controls:right', this.onShowNext);
+    this.parent.on('controls:left', this.onShowPrevious);
+    this.parent.on('controls:list', this.onShowPlaylist);
+    this.parent.on('controls:right', this.onShowNext);
 
     // multishell events
     this.on('change:subview', this.onChangedSubview);
@@ -145,7 +145,7 @@ MultiShell.ContentView = Shell.ContentView.extend({
   // -- MultiShell Events
 
   onChangedSubview: function() {
-    var contentView = this.options.parent;
+    var contentView = this.parent;
     var controlsView = contentView.player.controlsView;
 
     var left = controlsView.controlWithId('left');
@@ -214,10 +214,10 @@ MultiShell.PlaylistView = ShellView.extend({
     var title = this.shell.title();
     this.$el.find('#title').text(title);
 
-    var currentIndex = this.options.parent.currentViewIndex();
+    var currentIndex = this.parent.currentViewIndex();
 
     var summaries = this.$el.find('#summaries');
-    _.map(this.options.parent.shells, function(shell, idx) {
+    _.map(this.parent.shells, function(shell, idx) {
 
       var summary = new shell.shellClass.SummaryView({
         shell: shell,
@@ -251,7 +251,7 @@ MultiShell.PlaylistView = ShellView.extend({
 
   onClickView: function(event) {
     var index = $(event.target).attr('data-index');
-    this.options.parent.showView(index);
+    this.parent.showView(index);
     this.remove();
   },
 

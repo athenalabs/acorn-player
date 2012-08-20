@@ -583,6 +583,7 @@
       this.editingShell = shell;
       this.shellView = new shell.shellClass.EditView({
         shell: this.editingShell,
+        parent: this,
       });
 
       // listen to the child view's edit state
