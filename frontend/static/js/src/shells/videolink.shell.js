@@ -223,7 +223,12 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
       max: max,
       range: true,
       values: [ data.time_start || 0, data.time_end || max],
-      slide: function(e, ui) { self.inputChanged(ui.values); },
+      slide: function(e, ui) {
+        self.inputChanged(ui.values);
+      },
+      stop: function(e, ui) {
+        self.trigger('change:shell', self.shell);
+      },
     });
 
     this.inputChanged([ data.time_start, data.time_end ]);
@@ -235,6 +240,7 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
       timeStringToSeconds(this.$el.find('#start').val()),
       timeStringToSeconds(this.$el.find('#end').val())
     ]);
+    this.trigger('change:shell', this.shell);
   },
 
   inputChanged: function(values) {
