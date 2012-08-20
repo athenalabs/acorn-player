@@ -260,6 +260,126 @@
   };
   acorn.util.property = property;
 
+  // **acorn.timeStringToSeconds** converts human-readable timeString to seconds
+  // human-readable format is: [[hh:]mm:]ss[.SSS]
+  var timeStringToSeconds = function(timeString) {
+    if (!timeString)
+      return 0;
+
+    var parts = timeString.split('.');
+    var subsec = parseFloat('0.' + (parts.length > 1 ? parts[1] : '0'));
+
+    parts = (parts[0] || '0').split(':');
+    var sec = parseInt(parts.pop())
+    var min = (parts.length > 0) ? parseInt(parts.pop()) : 0;
+    var hrs = (parts.length > 0) ? parseInt(parts.pop()) : 0;
+
+
+    return (hrs * 60 * 60) + (min * 60) + sec + subsec;
+  };
+  acorn.util.timeStringToSeconds = timeStringToSeconds;
+
+  // **acorn.secondsToTimeString** converts seconds to human-readable timeString
+  // human-readable format is: [[hh:]mm:]ss[.SSS]
+  var secondsToTimeString = function(seconds) {
+    var timeString = '';
+
+    // get integer seconds
+    var sec = parseInt(seconds);
+
+    // add hours part
+    var hrs = parseInt(sec / (60 * 60));
+    if (hrs) {
+      sec -= hrs * 60 * 60;
+      timeString += hrs + ':';
+    }
+
+    // add minutes part
+    var min = parseInt(sec / 60);
+    if (hrs || min) {
+      sec -= min * 60;
+      min = (min < 10) ? '0' + min : min;
+      timeString += min + ':';
+    }
+
+    // add seconds part
+    sec = (sec < 10) ? '0' + sec : sec;
+    timeString += sec;
+
+    // add subsecond part
+    var subsec = seconds % 1;
+    if (subsec) {
+      subsec = Math.round(subsec * 1000) / 1000;
+      subsec = ('' + subsec).substr(1, 4); // remove first '0'
+      subsec = subsec.replace(/0+$/, '');
+      timeString += subsec;
+    }
+
+    return timeString;
+  };
+  acorn.util.secondsToTimeString = secondsToTimeString;
+
+  // **testTimeConversions** TODO: move to a test file.
+  // tests ``timeStringToSeconds`` and ``secondsToTimeString``
+  acorn.util.testTimeConversions = function() {
+
+    function assertEquals(a, b) {
+      var str = 'assertEquals(' + a + ', ' + b + ')';
+      if (a == b) {
+        console.log(str + ' PASSED');
+      } else {
+        console.log(str + ' FAILED');
+        assert(a == b, a + ' != ' + b);
+      }
+    }
+
+    assertEquals(timeStringToSeconds('0'), 0);
+    assertEquals(timeStringToSeconds('1'), 1);
+    assertEquals(timeStringToSeconds('10'), 10);
+    assertEquals(timeStringToSeconds('50'), 50);
+    assertEquals(timeStringToSeconds('60'), 60);
+    assertEquals(timeStringToSeconds('.1'), 0.1);
+    assertEquals(timeStringToSeconds('1.1'), 1.1);
+    assertEquals(timeStringToSeconds('.11'), 0.11);
+    assertEquals(timeStringToSeconds('.111'), 0.111);
+    assertEquals(timeStringToSeconds('9.999'), 9.999);
+    assertEquals(timeStringToSeconds('1:00'), 60);
+    assertEquals(timeStringToSeconds('1:10'), 70);
+    assertEquals(timeStringToSeconds('1:60'), 120);
+    assertEquals(timeStringToSeconds('10:00'), 600);
+    assertEquals(timeStringToSeconds('10:10'), 610);
+    assertEquals(timeStringToSeconds('11:11'), 671);
+    assertEquals(timeStringToSeconds('1:00:00'), 3600);
+    assertEquals(timeStringToSeconds('10:00:00'), 36000);
+    assertEquals(timeStringToSeconds('111:11:11'), 400271);
+    assertEquals(timeStringToSeconds('111:11:11.111'), 400271.111);
+    assertEquals(timeStringToSeconds('123:45:67.890'), 445567.89);
+
+
+    assertEquals(secondsToTimeString(0), '00');
+    assertEquals(secondsToTimeString(1), '01');
+    assertEquals(secondsToTimeString(10), '10');
+    assertEquals(secondsToTimeString(50), '50');
+    assertEquals(secondsToTimeString(60), '01:00');
+    assertEquals(secondsToTimeString(0.1), '00.1');
+    assertEquals(secondsToTimeString(1.1), '01.1');
+    assertEquals(secondsToTimeString(0.11), '00.11');
+    assertEquals(secondsToTimeString(0.111), '00.111');
+    assertEquals(secondsToTimeString(9.999), '09.999');
+    assertEquals(secondsToTimeString(60), '01:00');
+    assertEquals(secondsToTimeString(70), '01:10');
+    assertEquals(secondsToTimeString(120), '02:00');
+    assertEquals(secondsToTimeString(600), '10:00');
+    assertEquals(secondsToTimeString(610), '10:10');
+    assertEquals(secondsToTimeString(671), '11:11');
+    assertEquals(secondsToTimeString(3600), '1:00:00');
+    assertEquals(secondsToTimeString(36000), '10:00:00');
+    assertEquals(secondsToTimeString(400271), '111:11:11');
+    assertEquals(secondsToTimeString(400271.111), '111:11:11.111');
+    assertEquals(secondsToTimeString(445567.89), '123:46:07.89');
+  };
+
+
   // The following functions are originally from other open-source projects.
   // They are replicated here to avoid dependencies for minimal things.
 
