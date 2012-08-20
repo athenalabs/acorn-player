@@ -311,7 +311,7 @@ MultiShell.EditView = Shell.EditView.extend({
 
   template: _.template('\
     <div id="subshells"></div>\
-    <button class="btn btn-success btn-large" id="add">Add Link</button>\
+    <button class="btn btn-large" id="add">Add Link</button>\
   '),
 
   render: function() {
