@@ -278,11 +278,11 @@ h1, h2, h3, h4, h5, h6 {
 #acorn-player > #content .acorn-shell-summary {
   position: relative;
   display: block;
-  height: 80px;
+  min-height: 80px;
   padding-top: 10px;
   padding-bottom: 10px;
   margin-top: 5px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 
 #acorn-player > #edit > #form .acorn-shell-edit.selected,
@@ -290,8 +290,13 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #dff0d8;
 }
 
-#acorn-player > #edit > #form .acorn-shell-edit > #thumbnail,
-#acorn-player > #content .acorn-shell-summary > #thumbnail {
+#acorn-player > #edit > #form .acorn-shell-edit > div {
+  min-height: 80px;
+  margin-bottom: 20px;
+}
+
+#acorn-player > #edit > #form .acorn-shell-edit > div >  #thumbnail,
+#acorn-player > #content .acorn-shell-summary > div > #thumbnail {
   position: absolute;
   left: 0px;
 
@@ -300,8 +305,8 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid #ccc;
 }
 
-#acorn-player > #edit > #form .acorn-shell-edit > div.thumbnailside,
-#acorn-player > #content .acorn-shell-summary > div.thumbnailside {
+#acorn-player > #edit > #form .acorn-shell-edit > div > div.thumbnailside,
+#acorn-player > #content .acorn-shell-summary > div > div.thumbnailside {
   position: absolute;
   right: 0px;
   left: 100px;
@@ -311,12 +316,12 @@ h1, h2, h3, h4, h5, h6 {
   height: 80px;
 }
 
-#acorn-player > #edit > #form .acorn-shell-edit > div.thumbnailside
+#acorn-player > #edit > #form .acorn-shell-edit > div > div.thumbnailside
 > div#link {
   width: 100%;
 }
 
-#acorn-player > #edit > #form .acorn-shell-edit > div.thumbnailside
+#acorn-player > #edit > #form .acorn-shell-edit > div > div.thumbnailside
  input.time {
   width: 50px;
   margin-left: -4px;
@@ -324,7 +329,7 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
-#acorn-player > #edit > #form .acorn-shell-edit > div.thumbnailside
+#acorn-player > #edit > #form .acorn-shell-edit > div > div.thumbnailside
 .right {
   position: absolute;
   right: 0px;
@@ -332,7 +337,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
-#acorn-player > #edit > #form .acorn-shell-edit > div.thumbnailside #slider {
+#acorn-player > #edit > #form .acorn-shell-edit > div > div.thumbnailside #slider {
   margin-top: 10px;
   margin-bottom: 10px;
 }
