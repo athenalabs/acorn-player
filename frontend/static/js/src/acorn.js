@@ -133,7 +133,7 @@
       '^'
         + '(https?:\/\/)?'
         + simpleUrl
-    // + ((simpleUrl.search(/\?/) == -1) ?  '\?.*' : '')
+    // + ((simpleUrl.search(/\?/) === -1) ?  '\?.*' : '')
       + '$'
     , 'i');
   };
@@ -145,7 +145,7 @@
     if (!child.__super__)
       return false;
 
-    if (parent.prototype == child.__super__)
+    if (parent.prototype === child.__super__)
       return true;
 
     return derives(child.__super__.constructor, parent);
@@ -384,7 +384,7 @@
     }
 
     // Ensure that we have the appropriate request data.
-    if (!options.data && model && (method == 'create' || method == 'update')) {
+    if (!options.data && model && (method === 'create' || method === 'update')) {
       params.contentType = 'application/json';
       params.data = model.toJSON();
     }
@@ -435,10 +435,10 @@
     }
 
     for (var prop in result) {
-      if (prop[prop.length -1] == '_')
+      if (prop[prop.length -1] === '_')
         continue;
 
-      if (typeof result[prop] == 'string')
+      if (typeof result[prop] === 'string')
         result[prop + '_'] = result[prop].toLowerCase();
     }
 
@@ -586,7 +586,7 @@
     },
 
     isNew: function() {
-      return this.acornid() == 'new';
+      return this.acornid() === 'new';
     },
 
 
