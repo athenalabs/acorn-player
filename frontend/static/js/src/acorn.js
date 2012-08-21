@@ -253,7 +253,7 @@
     // return the get/setter function
     return function(value) {
       if (arguments.length > 0)
-        storedValue = validate(value);
+        storedValue = validate(value, storedValue);
 
       return storedValue;
     };
