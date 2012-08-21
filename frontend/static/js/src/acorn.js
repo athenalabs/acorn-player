@@ -273,6 +273,10 @@
     return obj === Object(obj);
   };
 
+  var isFunction = function(fxn) {
+    return Object.prototype.toString.call(fxn) === '[object Function]';
+  };
+
   // Extend a given object with all the properties in passed-in object(s).
   var extend = function(obj) {
     for (var arg in arguments) {
@@ -355,7 +359,7 @@
   // Helper function to get a value from an object as a property or function.
   var getValue = function(object, prop) {
     if (!(object && object[prop])) return null;
-    return _.isFunction(object[prop]) ? object[prop]() : object[prop];
+    return isFunction(object[prop]) ? object[prop]() : object[prop];
   };
   acorn.util.getValue = getValue;
 
