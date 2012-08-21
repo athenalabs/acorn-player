@@ -248,7 +248,7 @@
     var storedValue = defaultValue;
 
     // ensure we have at least an empty validate function
-    validate = validate || function(v) { return v; };
+    validate = typeof(validate) === 'function' ? validate : function(v) { return v; };
 
     // return the get/setter function
     return function(value) {
