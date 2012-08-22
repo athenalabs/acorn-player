@@ -248,12 +248,15 @@
     var storedValue = defaultValue;
 
     // ensure we have at least an empty validate function
-    validate = typeof(validate) === 'function' ? validate : function(v) { return v; };
+    if (typeof(validate) !== 'function') {
+      validate = function(v) { return v; };
+    };
 
-    // return the get/setter function
+    // return the get/setter function; validate should raise error if invalid
     return function(value) {
-      if (arguments.length > 0)
-        storedValue = validate(value, storedValue);
+      if (arguments.length > 0) {
+        storedValue = validate(value);
+      };
 
       return storedValue;
     };
