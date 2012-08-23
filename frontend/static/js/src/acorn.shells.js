@@ -27,9 +27,9 @@
   if (acorn == undefined)
     throw new Error('acorn.lib.js requires acorn.js');
 
-  // Error out if backbone isn't present.
+  // Error out if underscore isn't present.
   if (_ == undefined)
-    throw new Error('acorn.viewer.js requires Backbone.js');
+    throw new Error('acorn.viewer.js requires Underscore.js');
 
   // Error out if backbone isn't present.
   if (Backbone == undefined)
