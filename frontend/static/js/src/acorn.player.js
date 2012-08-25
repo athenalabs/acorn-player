@@ -30,7 +30,7 @@
 
   // Error out if acorn.shells isn't present.
   if (acorn.shells == undefined)
-    throw new Error('acorn.player.js requires acorn.shells.js');
+    throw new Error('acorn.player.js requires acorn.shells');
 
   // Error out if backbone isn't present.
   if (_ == undefined)
