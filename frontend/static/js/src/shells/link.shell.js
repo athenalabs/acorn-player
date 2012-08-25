@@ -27,7 +27,8 @@
 //
 
 var LinkRegExp =
-  RegExp('http://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]', 'i');
+  RegExp('https?://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]',
+   'i');
 
 
 // LinkValidationInterface -- for determining whether links match.
