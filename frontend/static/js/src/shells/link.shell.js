@@ -94,7 +94,7 @@ acorn.shellForLink = function(link, options) {
 
 
 
-// LinkShellAPI -- interface for determining whether links match.
+// LinkShellAPI -- the interface _all_ link shells must support.
 // -------------------------------------------------------------------
 
 var LinkShellAPI = {

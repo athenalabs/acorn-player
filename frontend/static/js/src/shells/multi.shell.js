@@ -411,7 +411,7 @@ MultiShell.EditView = Shell.EditView.extend({
     newShellView.render();
     oldShellView.$el.after(newShellView.el);
 
-    // remvoe old shellView
+    // remove old shellView
     oldShellView.remove();
     this.shellViews[index] = newShellView;
 
