@@ -361,6 +361,10 @@ MultiShell.EditView = Shell.EditView.extend({
       this.onChangeSubShell(data, shellView);
     }, this);
 
+    shellView.on('delete:shell', function() {
+      this.onDeleteSubShell(shellView);
+    }, this);
+
     shellView.on('change:editState', this.onChangeEditState);
 
     return shellView;
@@ -432,6 +436,20 @@ MultiShell.EditView = Shell.EditView.extend({
     var shells = this.shells();
     shells[index] = shell.data;
     this.shells(shells);
+  },
+
+  onDeleteSubShell: function(shellView) {
+    // remove shell from `this.shellViews`
+    var index = this.indexOfView(shellView);
+    this.shellViews.splice(index, 1);
+
+    // remove shell from `this.shells`
+    var shells = this.shells();
+    shells.splice(index, 1);
+    this.shells(shells);
+
+    // remove shellview
+    shellView.remove();
   },
 
   // get/setter for shells value
