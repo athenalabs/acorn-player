@@ -208,8 +208,11 @@ LinkShell.EditView = Shell.EditView.extend({
       placeholder: 'Enter Link',
       validate: _.bind(this.validateLink, this),
       addToggle: true,
+      deleteFn: _.bind(this.triggerDelete, this),
       onSave: _.bind(this.generateThumbnailLink, this),
     });
+
+    this.on('delete:shell', this.onDeleteShell);
 
   },
 
@@ -222,8 +225,8 @@ LinkShell.EditView = Shell.EditView.extend({
   },
 
   link: function(link) {
-    if (link) {
-      link = parseUrl(link).toString();
+    if (link || link === '') {
+      link = link === '' ? '' : parseUrl(link).toString();
       this.shell.link(link);
       var s = acorn.shellForLink(link, {shell: this.shell});
 
@@ -253,6 +256,16 @@ LinkShell.EditView = Shell.EditView.extend({
 
     if (this.isSubShellView())
       this.$el.find('button#add').hide();
+  },
+
+  triggerDelete: function() {
+    this.trigger('delete:shell');
+  },
+
+  onDeleteShell: function() {
+    if (!this.isSubShellView()) {
+      this.link('');
+    };
   },
 
   generateThumbnailLink: function(callback) {

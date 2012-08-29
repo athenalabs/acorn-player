@@ -39,6 +39,7 @@
     <div id='<%= id %>_text'>\
       <%= html %>\
       <% if (addToggle) { %><small id='toggle'>edit</small><% } %>\
+      <% if (addDelete) { %><small id='delete'>delete</small><% } %>\
     </div>\
     <% if (multiline) { %>\
     <textarea id='<%= id %>_edit' style='display: none;'><%= text %></textarea>\
@@ -59,7 +60,8 @@
     events: {
       "keypress textarea":  "saveOnEnter",
       "keypress input":  "saveOnEnter",
-      "click #toggle": "toggle"
+      "click #toggle": "toggle",
+      "click #delete": "delete"
     },
 
 
@@ -73,6 +75,7 @@
       this.options.html = this.options.html || function(_) { return _; }
       this.options.multiline = !!this.options.multiline;
       this.options.addToggle = !!this.options.addToggle;
+      this.options.addDelete = !!this.options.deleteFn;
       this.options.characterLimit = parseInt(this.options.characterLimit) || -1;
       this.options.enterSaves = this.options.enterSaves || true;
       this.options.placeholder = this.options.placeholder || '';
@@ -88,7 +91,8 @@
         html: this.html(text_ || ''),
         multiline: this.options.multiline,
         placeholder: this.options.placeholder,
-        addToggle: this.isEditable() && this.options.addToggle
+        addToggle: this.isEditable() && this.options.addToggle,
+        addDelete: this.options.addDelete
       }));
 
       if (this.options.help) {
@@ -199,6 +203,12 @@
 
     toggle: function() {
       this.isEditing ? this.save() : this.edit();
+    },
+
+    delete: function() {
+      if (this.options.deleteFn) {
+        this.options.deleteFn();
+      };
     },
 
     saveOnEnter: function(e) {
