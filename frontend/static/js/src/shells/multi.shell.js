@@ -106,8 +106,12 @@ MultiShell.ContentView = Shell.ContentView.extend({
     this.showView(0)
   },
 
+  indexOfView: function(view) {
+    return _.indexOf(this.shellViews, view);
+  },
+
   currentViewIndex: function() {
-    return _.indexOf(this.shellViews, this.currentView);
+    return this.indexOfView(this.currentView);
   },
 
   showView: function(index) {
@@ -350,11 +354,11 @@ MultiShell.EditView = Shell.EditView.extend({
 
     // listen to events of shell EditView
     shellView.on('swap:shell', function(data) {
-      this.onSwapSubShell(data, index);
+      this.onSwapSubShell(data, shellView);
     }, this);
 
     shellView.on('change:shell', function(data) {
-      this.onChangeSubShell(data, index);
+      this.onChangeSubShell(data, shellView);
     }, this);
 
     shellView.on('change:editState', this.onChangeEditState);
@@ -403,7 +407,8 @@ MultiShell.EditView = Shell.EditView.extend({
 
   // -- Sub Shell Events
 
-  onSwapSubShell: function(data, index) {
+  onSwapSubShell: function(data, shellView) {
+    var index = this.indexOfView(shellView);
     var oldShellView = this.shellViews[index];
     var newShellView = this.constructView(data, index);
 
@@ -421,8 +426,9 @@ MultiShell.EditView = Shell.EditView.extend({
     this.shells(shells);
   },
 
-  onChangeSubShell: function(shell, index) {
+  onChangeSubShell: function(shell, shellView) {
     // update the data itself
+    var index = this.indexOfView(shellView);
     var shells = this.shells();
     shells[index] = shell.data;
     this.shells(shells);
@@ -442,6 +448,13 @@ MultiShell.EditView = Shell.EditView.extend({
         this.trigger('change:shell', this.shell);
     }
     return this.shell.data.shells;
+  },
+
+  // helper to return a view's index in `shellViews`
+  indexOfView: function(view) {
+    return (
+      _.bind(this.shell.shellClass.ContentView.prototype.indexOfView, this)
+    )(view);
   },
 
   // helper to map `func` through `shellViews` with `this` as context
