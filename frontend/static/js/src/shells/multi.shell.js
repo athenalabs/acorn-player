@@ -387,6 +387,15 @@ MultiShell.EditView = Shell.EditView.extend({
     this.map(function (shellView) {
       return shellView.finalizeEdit();
     });
+
+    // remove empty shells (but ensure at least one shell remains)
+    var emptyShellData = this.emptyShellData();
+    var shells = this.shells();
+    shells = _.filter(shells, function(shell) {
+      return !_.isEqual(shell, emptyShellData);
+    });
+    shells = shells.length === 0 ? [emptyShellData] : shells;
+    this.shells(shells);
   },
 
   // -- MultiShell Events
@@ -399,7 +408,7 @@ MultiShell.EditView = Shell.EditView.extend({
   onClickAdd: function() {
     // // additional, placeholder adding shells
     var nextIndex = this.shellViews.length;
-    var addData = acorn.shellForLink('').data;
+    var addData = this.emptyShellData();
     var addView = this.constructView(addData, nextIndex);
 
     addView.render();
@@ -466,6 +475,11 @@ MultiShell.EditView = Shell.EditView.extend({
         this.trigger('change:shell', this.shell);
     }
     return this.shell.data.shells;
+  },
+
+  // create an empty link shell
+  emptyShellData: function() {
+    return acorn.shellForLink('').data;
   },
 
   // helper to return a view's index in `shellViews`
