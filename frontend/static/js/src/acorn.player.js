@@ -327,7 +327,7 @@
       if (this.shellView)
         this.shellView.remove();
 
-      this.shellView = new this.player.shell.ContentView({
+      this.shellView = new this.player.shell.shellClass.ContentView({
         shell: this.player.shell,
         parent: this,
         autoplay: true,
