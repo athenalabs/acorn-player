@@ -217,8 +217,8 @@ LinkShell.EditView = Shell.EditView.extend({
   },
 
   validateLink: function(link) {
-    link = parseUrl(link).toString();
-    if (acorn.util.isValidLink(link))
+    parsedLink = parseUrl(link).toString();
+    if (acorn.util.isValidLink(parsedLink) || link === '')
       return false;
 
     return "invalid link."
