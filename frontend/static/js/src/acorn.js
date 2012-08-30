@@ -133,7 +133,7 @@
       '^'
         + '(https?:\/\/)?'
         + simpleUrl
-    // + ((simpleUrl.search(/\?/) == -1) ?  '\?.*' : '')
+    // + ((simpleUrl.search(/\?/) === -1) ?  '\?.*' : '')
       + '$'
     , 'i');
   };
@@ -145,7 +145,7 @@
     if (!child.__super__)
       return false;
 
-    if (parent.prototype == child.__super__)
+    if (parent.prototype === child.__super__)
       return true;
 
     return derives(child.__super__.constructor, parent);
@@ -248,12 +248,15 @@
     var storedValue = defaultValue;
 
     // ensure we have at least an empty validate function
-    validate = validate || function(v) { return v; };
+    if (typeof(validate) !== 'function') {
+      validate = function(v) { return v; };
+    };
 
-    // return the get/setter function
+    // return the get/setter function; validate should raise error if invalid
     return function(value) {
-      if (arguments.length > 0)
+      if (arguments.length > 0) {
         storedValue = validate(value);
+      };
 
       return storedValue;
     };
@@ -271,6 +274,10 @@
 
   var isObject = function(obj) {
     return obj === Object(obj);
+  };
+
+  var isFunction = function(fxn) {
+    return Object.prototype.toString.call(fxn) === '[object Function]';
   };
 
   // Extend a given object with all the properties in passed-in object(s).
@@ -355,7 +362,7 @@
   // Helper function to get a value from an object as a property or function.
   var getValue = function(object, prop) {
     if (!(object && object[prop])) return null;
-    return _.isFunction(object[prop]) ? object[prop]() : object[prop];
+    return isFunction(object[prop]) ? object[prop]() : object[prop];
   };
   acorn.util.getValue = getValue;
 
@@ -380,7 +387,7 @@
     }
 
     // Ensure that we have the appropriate request data.
-    if (!options.data && model && (method == 'create' || method == 'update')) {
+    if (!options.data && model && (method === 'create' || method === 'update')) {
       params.contentType = 'application/json';
       params.data = model.toJSON();
     }
@@ -431,10 +438,10 @@
     }
 
     for (var prop in result) {
-      if (prop[prop.length -1] == '_')
+      if (prop[prop.length -1] === '_')
         continue;
 
-      if (typeof result[prop] == 'string')
+      if (typeof result[prop] === 'string')
         result[prop + '_'] = result[prop].toLowerCase();
     }
 
@@ -582,7 +589,7 @@
     },
 
     isNew: function() {
-      return this.acornid() == 'new';
+      return this.acornid() === 'new';
     },
 
 

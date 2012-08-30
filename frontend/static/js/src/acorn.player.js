@@ -32,9 +32,9 @@
   if (acorn.shells == undefined)
     throw new Error('acorn.player.js requires acorn.shells.js');
 
-  // Error out if backbone isn't present.
+  // Error out if underscore isn't present.
   if (_ == undefined)
-    throw new Error('acorn.player.js requires Backbone.js');
+    throw new Error('acorn.player.js requires Underscore.js');
 
   // Error out if backbone isn't present.
   if (Backbone == undefined)
