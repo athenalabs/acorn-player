@@ -32,9 +32,9 @@
   if (acorn.shells == undefined)
     throw new Error('acorn.player.js requires acorn.shells');
 
-  // Error out if backbone isn't present.
+  // Error out if underscore isn't present.
   if (_ == undefined)
-    throw new Error('acorn.player.js requires Backbone.js');
+    throw new Error('acorn.player.js requires Underscore.js');
 
   // Error out if backbone isn't present.
   if (Backbone == undefined)
@@ -452,7 +452,7 @@
 
   });
 
-  // ** player.views.controls.FullscreenControl ** onClick : fulscreen
+  // ** player.views.controls.FullscreenControl ** onClick : fullscreen
   // -----------------------------------------------------------------
 
   player.views.controls.FullscreenControl = player.views.Control.extend({
@@ -467,7 +467,7 @@
 
   });
 
-  // ** player.views.controls.FullscreenControl ** onClick : acorn website
+  // ** player.views.controls.AcornControl ** onClick : acorn website
   // ---------------------------------------------------------------------
 
   player.views.controls.AcornControl = player.views.Control.extend({
@@ -482,7 +482,7 @@
 
   });
 
-  // ** player.views.controls.EditControl ** onClick : acorn website
+  // ** player.views.controls.EditControl ** onClick : edit
   // ---------------------------------------------------------------------
 
   player.views.controls.EditControl = player.views.Control.extend({
@@ -497,7 +497,7 @@
 
   });
 
-  // ** player.views.controls.LeftControl ** onClick : acorn website
+  // ** player.views.controls.LeftControl ** onClick : previous link
   // ---------------------------------------------------------------------
 
   player.views.controls.LeftControl = player.views.Control.extend({
@@ -512,7 +512,7 @@
 
   });
 
-  // ** player.views.controls.RightControl ** onClick : acorn website
+  // ** player.views.controls.RightControl ** onClick : next link
   // ---------------------------------------------------------------------
 
   player.views.controls.RightControl = player.views.Control.extend({
@@ -527,7 +527,7 @@
 
   });
 
-  // ** player.views.controls.ListControl ** onClick : acorn website
+  // ** player.views.controls.ListControl ** onClick : list links
   // ---------------------------------------------------------------------
 
   player.views.controls.ListControl = player.views.Control.extend({

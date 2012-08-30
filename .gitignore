@@ -6,3 +6,4 @@ supervisord.pid
 supervisord.log
 data/
 venv/
+*.swp
