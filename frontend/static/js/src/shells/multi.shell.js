@@ -484,9 +484,8 @@ MultiShell.EditView = Shell.EditView.extend({
 
   // helper to return a view's index in `shellViews`
   indexOfView: function(view) {
-    return (
-      _.bind(this.shell.shellClass.ContentView.prototype.indexOfView, this)
-    )(view);
+    var indexOf = this.shell.shellClass.ContentView.prototype.indexOfView;
+    return indexOf.call(this, view);
   },
 
   // helper to map `func` through `shellViews` with `this` as context
