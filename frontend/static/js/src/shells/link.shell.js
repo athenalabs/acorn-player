@@ -1,22 +1,33 @@
 
 // LinkRegExp -- Regular
 
-var LinkRegExp = RegExp(''
-  // word boundaries
-  + '\b('
+// var LinkRegExp = RegExp(''
+//   + '\b'                      // words
+//   + '('                       // Capture 1: entire matched URL
+//   +   '(?:'
+//   +     'https?://'                   // http or https protocol
+//   +     '|'                           // or
+//   +     'www\d{0,3}[.]'               // "www.", "www1.", "www2." … "www999."
+//   +     '|'                           // or
+//   +     '[a-z0-9.\-]+[.][a-z]{2,4}/'  // domain name followed by a slash
+//   +   ')'
+//   +   '(?:'                       // One or more:
+//   +     '[^\s()<>]+'                  // Run of non-space, non-()<>
+//   +     '|'                           // or
+//   +     '\(([^\s()<>]+|(\([^\s()<>]+\)))*\)' // balanced parens, up to 2 levels
+//   +   ')+'
+//   +   '(?:'                       // End with:
+//   +     '\(([^\s()<>]+|(\([^\s()<>]+\)))*\)'  // balanced parens, up to 2 levels
+//   +     '|'                               //   or
+//   +     '[^\s`!()\[\]{};:\'".,<>?«»“”‘’]'  // not these punct chars
+//   +   ')'
+//   + ')',
+//   'i'
+// );
+//
 
-    // protocol and domain
-    + '(?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)'
-
-    // TODO: ???
-    + '(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+'
-
-    // Filepath + Query String
-    + '(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’])'
-
-  + ')',
-  'i'
-);
+var LinkRegExp =
+  RegExp('http://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]', 'i');
 
 
 // LinkValidationInterface -- for determining whether links match.
@@ -189,8 +200,7 @@ LinkShell.EditView = Shell.EditView.extend({
       placeholder: 'Enter Link',
       validate: _.bind(this.validateLink, this),
       addToggle: true,
-      onSave: _.bind(this.onSave, this),
-      onEdit: _.bind(this.onEdit, this),
+      onSave: _.bind(this.generateThumbnailLink, this),
     });
 
   },
@@ -234,20 +244,9 @@ LinkShell.EditView = Shell.EditView.extend({
       this.linkView.edit();
   },
 
-  onSave: function() {
-    if (!this.shouldSave())
-      return; // bail out if we shouldn't save
-
-    var self = this;
-    this.generateThumbnailLink(function(data) {
-      self.shell.thumbnailLink(data);
-
-      // call super class onSave
-      Shell.EditView.prototype.onSave.call(self);
-    });
-  },
-
   generateThumbnailLink: function(callback) {
+    callback = callback || function() {};
+
     var self = this;
     var bounds = '600x600';
     var req_url = '/url2png/' + bounds + '/' + this.shell.link();
@@ -261,6 +260,13 @@ LinkShell.EditView = Shell.EditView.extend({
       }
     });
   },
+
+  // **finalizeEdit** finish all edits.
+  finalizeEdit: function() {
+    if (this.linkView.isEditing)
+      this.linkView.save();
+  },
+
 
 });
 

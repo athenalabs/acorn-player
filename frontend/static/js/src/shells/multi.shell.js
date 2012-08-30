@@ -332,24 +332,15 @@ MultiShell.EditView = Shell.EditView.extend({
     });
   },
 
-  // **onEdit** overridden to fwd to the first shellView
-  onEdit: function() {
-    if (this.shellViews.length > 0)
-      this.shellViews[0].onEdit();
-  },
-
-  // **onSave** overridden to fwd to all shellViews.
-  onSave: function() {
-    if (!this.shouldSave())
-      return; // bail out if we shouldn't save
-
-    this.map(function (shellView) { shellView.onSave(); });
-  },
-
   // **onChangeShell** overriden to prevent re-render
   onChangeShell: function() {},
 
-
+  // **finalizeEdit** propagate to subshells
+  finalizeEdit: function() {
+    this.map(function (shellView) {
+      return shellView.finalizeEdit();
+    });
+  },
 
   // -- MultiShell Events
 
@@ -375,7 +366,7 @@ MultiShell.EditView = Shell.EditView.extend({
 
   onSwapSubShell: function(data, index) {
     var oldShellView = this.shellViews[index];
-    var newShellView = this.constructView(data);
+    var newShellView = this.constructView(data, index);
 
     // render and add the new shellView.
     newShellView.render();

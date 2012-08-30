@@ -51,7 +51,7 @@ acorn.shellWithAcorn = function(acornModel) {
 
 var Shell = acorn.shells.Shell = function(options) {
   this.options = _.extend({}, (this.defaults || {}), options);
-  this.data = _.extend({}, this.options.data); // make a copy.
+  this.data = JSON.parse(JSON.stringify(this.options.data)); // copy
   if (!this.data.shell)
     this.data.shell = this.shellid;
   assert(this.data.shell == this.shellid, "Shell data has incorrect type.");
@@ -281,24 +281,8 @@ Shell.EditView = ShellView.extend({
     this.shouldSave(false);
   },
 
-  // called when EditView saves
-  onSave: function() {
-    if (!this.shouldSave())
-      return; // bail out if we shouldn't save
-
-    this.isEditing(false);
-    this.shouldSave(false);
-    this.trigger('change:editState');
-    this.render();
-  },
-
-  // called when EditView begins editing state
-  onEdit: function() {
-    this.isEditing(true);
-    this.shouldSave(true);
-    this.trigger('change:editState');
-  },
-
+  // **finalizeEdit** finish all edits.
+  finalizeEdit: function() {},
 
 });
 
