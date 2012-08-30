@@ -153,6 +153,7 @@ VideoLinkShell.ContentView = LinkShell.ContentView.extend({
         this.seek(start);
       } else {
         this.stop();
+        this.trigger('playback:ended');
       }
     }
   },
@@ -165,10 +166,10 @@ VideoLinkShell.ContentView = LinkShell.ContentView.extend({
 
 VideoLinkShell.EditView = LinkShell.EditView.extend({
 
-  events: {
+  events: _.extend({}, LinkShell.EditView.prototype.events, {
     'change input':  'timeInputChanged',
     'blur input':  'timeInputChanged',
-  },
+  }),
 
   timeRangeTemplate: _.template('\
   <div id="slider" class="fader"></div>\
@@ -183,7 +184,7 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
       <input id="end" size="16" type="text" class="time">\
       <!--<span class="add-on">sec</span>-->\
     </div>\
-    <span id="time"></span>\
+    total time: <span id="time"></span>\
     <label class="checkbox right" id="loop-label">\
       <input id="loop" type="checkbox"> Loop\
     </label>\
@@ -222,7 +223,12 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
       max: max,
       range: true,
       values: [ data.time_start || 0, data.time_end || max],
-      slide: function(e, ui) { self.inputChanged(ui.values); },
+      slide: function(e, ui) {
+        self.inputChanged(ui.values);
+      },
+      stop: function(e, ui) {
+        self.trigger('change:shell', self.shell);
+      },
     });
 
     this.inputChanged([ data.time_start, data.time_end ]);
@@ -231,30 +237,38 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
 
   timeInputChanged: function() {
     this.inputChanged([
-      this.$el.find('#start').val(),
-      this.$el.find('#end').val()
+      timeStringToSeconds(this.$el.find('#start').val()),
+      timeStringToSeconds(this.$el.find('#end').val())
     ]);
+    this.trigger('change:shell', this.shell);
   },
 
   inputChanged: function(values) {
-    clip = function(min, _, max) {
-      return Math.max(min, Math.min(_ || 0, max));
-    }
+    var clip = function(min, val, max) {
+      return Math.max(min, Math.min(val || 0, max));
+    };
+
+    var floatOrDefault = function(num, def) {
+      return (_.isNumber(num) && !_.isNaN(num)) ? parseFloat(num) : def;
+    };
 
     var max = this.shell.data.time_total || this.shell.duration();
-    var start = clip(0, parseInt(values[0]), values[1]) || 0;
-    var end = clip(start, parseInt(values[1]), max) || max;
+    values[0] = floatOrDefault(values[0], 0);
+    values[1] = floatOrDefault(values[1], max);
+
+    var start = clip(0, values[0], values[1]);
+    var end = clip(start, values[1], max);
     var loop = !!this.$el.find('#loop').attr('checked');
 
     var diff = (end - start);
-    var time = (isNaN(diff) ? '--' : diff) + ' seconds';
+    var time = (isNaN(diff) ? '--' : secondsToTimeString(diff));
 
     this.shell.data.time_start = start;
     this.shell.data.time_end = end;
     this.shell.data.loop = loop;
 
-    this.$el.find('#start').val(start);
-    this.$el.find('#end').val(end);
+    this.$el.find('#start').val(secondsToTimeString(start));
+    this.$el.find('#end').val(secondsToTimeString(end));
     this.$el.find('#time').text(time);
     this.$el.find('#slider').slider({ max: max, values: [start, end] });
   },

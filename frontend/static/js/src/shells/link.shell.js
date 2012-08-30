@@ -27,7 +27,8 @@
 //
 
 var LinkRegExp =
-  RegExp('http://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]', 'i');
+  RegExp('https?://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]',
+   'i');
 
 
 // LinkValidationInterface -- for determining whether links match.
@@ -185,11 +186,18 @@ LinkShell.ContentView = Shell.ContentView.extend({
 
 LinkShell.EditView = Shell.EditView.extend({
 
+  events: {
+    'click button#add': 'onClickAdd',
+  },
+
   template: _.template('\
-    <img id="thumbnail" />\
-    <div class="thumbnailside">\
-      <div id="link"></div>\
+    <div>\
+      <img id="thumbnail" />\
+      <div class="thumbnailside">\
+        <div id="link"></div>\
+      </div>\
     </div>\
+    <button class="btn btn-large" id="add">Add Link</button>\
   '),
 
   initialize: function() {
@@ -242,6 +250,9 @@ LinkShell.EditView = Shell.EditView.extend({
 
     if (!this.link())
       this.linkView.edit();
+
+    if (this.isSubShellView())
+      this.$el.find('button#add').hide();
   },
 
   generateThumbnailLink: function(callback) {
@@ -265,6 +276,15 @@ LinkShell.EditView = Shell.EditView.extend({
   finalizeEdit: function() {
     if (this.linkView.isEditing)
       this.linkView.save();
+  },
+
+  // **onClickAdd** add another link
+  onClickAdd: function() {
+
+    var multiShell = new acorn.shells.MultiShell();
+    multiShell.addShell(this.shell);
+    multiShell.addShell(new acorn.shellForLink(''));
+    this.trigger('swap:shell', multiShell.data);
   },
 
 

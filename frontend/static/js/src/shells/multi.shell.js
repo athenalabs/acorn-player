@@ -19,7 +19,7 @@ var MultiShell = acorn.shells.MultiShell = Shell.extend({
   initialize: function() {
     Shell.prototype.initialize.call(this);
 
-    this.data.shells = this.data.shells || {};
+    this.data.shells = this.data.shells || [];
   },
 
   // **title** returns a simple title of the shell
@@ -37,6 +37,16 @@ var MultiShell = acorn.shells.MultiShell = Shell.extend({
 
     var shell = acorn.shellWithData(first);
     return shell.thumbnailLink();
+  },
+
+  // **addShellData** adds another shell (via data)
+  addShellData: function(shellData) {
+    this.data.shells.push(shellData);
+  },
+
+  // **addShell** adds another shell
+  addShell: function(shell) {
+    this.addShellData(shell.data)
   },
 
 });
@@ -59,9 +69,9 @@ MultiShell.ContentView = Shell.ContentView.extend({
     Shell.ContentView.prototype.initialize.call(this);
 
     // controls
-    this.options.parent.on('controls:left', this.onShowPrevious);
-    this.options.parent.on('controls:list', this.onShowPlaylist);
-    this.options.parent.on('controls:right', this.onShowNext);
+    this.parent.on('controls:left', this.onShowPrevious);
+    this.parent.on('controls:list', this.onShowPlaylist);
+    this.parent.on('controls:right', this.onShowNext);
 
     // multishell events
     this.on('change:subview', this.onChangedSubview);
@@ -78,11 +88,16 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
     // construct all the views
     this.shellViews = _.map(this.shells, function (shell) {
-      return new shell.shellClass.ContentView({
+      var contentView = new shell.shellClass.ContentView({
         shell: shell,
         parent: this,
         autoplay: true,
       });
+
+      // subshell events
+      contentView.on('playback:ended', this.onSubShellPlaybackEnded);
+
+      return contentView;
     }, this);
 
     // clean up our elem
@@ -145,7 +160,7 @@ MultiShell.ContentView = Shell.ContentView.extend({
   // -- MultiShell Events
 
   onChangedSubview: function() {
-    var contentView = this.options.parent;
+    var contentView = this.parent;
     var controlsView = contentView.player.controlsView;
 
     var left = controlsView.controlWithId('left');
@@ -177,6 +192,29 @@ MultiShell.ContentView = Shell.ContentView.extend({
     this.showPlaylist();
   },
 
+  // -- SubShell Events
+
+  // **onSubShellPlaybackEnded** advance subshells
+  onSubShellPlaybackEnded: function() {
+    // if there are more subshells to play, play them.
+    if (this.hasNext())
+      this.onShowNext();
+
+    // otherwise, signal multishell playback ended.
+    else
+      this.trigger('playback:ended');
+  },
+
+
+  // helper to know whether there are more subshells forward.
+  hasNext: function() {
+    return this.currentViewIndex() < this.shellViews.length - 1;
+  },
+
+  // helper to know whether there are more subshells backward.
+  hasPrevious: function() {
+    return this.currentViewIndex() > 0;
+  },
 
   // helper to map `func` through `shellViews` with `this` as context
   map: function(func) {
@@ -214,14 +252,15 @@ MultiShell.PlaylistView = ShellView.extend({
     var title = this.shell.title();
     this.$el.find('#title').text(title);
 
-    var currentIndex = this.options.parent.currentViewIndex();
+    var currentIndex = this.parent.currentViewIndex();
 
     var summaries = this.$el.find('#summaries');
-    _.map(this.options.parent.shells, function(shell, idx) {
+    _.map(this.parent.shells, function(shell, idx) {
 
       var summary = new shell.shellClass.SummaryView({
         shell: shell,
         parent: this,
+        autplay: this.options.autoplay,
       });
 
       summary.render();
@@ -251,7 +290,7 @@ MultiShell.PlaylistView = ShellView.extend({
 
   onClickView: function(event) {
     var index = $(event.target).attr('data-index');
-    this.options.parent.showView(index);
+    this.parent.showView(index);
     this.remove();
   },
 
@@ -272,7 +311,7 @@ MultiShell.EditView = Shell.EditView.extend({
 
   template: _.template('\
     <div id="subshells"></div>\
-    <button class="btn btn-success btn-large" id="add">Add Link</button>\
+    <button class="btn btn-large" id="add">Add Link</button>\
   '),
 
   render: function() {

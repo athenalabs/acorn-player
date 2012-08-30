@@ -7,6 +7,8 @@ var UrlRegExp = acorn.util.UrlRegExp;
 var parseUrl = acorn.util.parseUrl;
 var iframe = acorn.util.iframe;
 var assert = acorn.util.assert;
+var timeStringToSeconds = acorn.util.timeStringToSeconds;
+var secondsToTimeString = acorn.util.secondsToTimeString;
 
 // Shell book-keeping.
 
@@ -51,7 +53,10 @@ acorn.shellWithAcorn = function(acornModel) {
 
 var Shell = acorn.shells.Shell = function(options) {
   this.options = _.extend({}, (this.defaults || {}), options);
+
+  this.options.data = this.options.data || {};
   this.data = JSON.parse(JSON.stringify(this.options.data)); // copy
+
   if (!this.data.shell)
     this.data.shell = this.shellid;
   assert(this.data.shell == this.shellid, "Shell data has incorrect type.");
@@ -121,7 +126,16 @@ var ShellView = Shell.ShellView = Backbone.View.extend({
   initialize: function() {
     _.bindAll(this);
     this.shell = this.options.shell;
-    assert(this.shell, 'No shell provided to shell ContentView.');
+    this.parent = this.options.parent;
+
+    assert(this.shell, 'No shell provided to ShellView.');
+    assert(this.parent, 'No parent provided to ShellView')
+  },
+
+  // **isSubShellView** whether this shellview is the child of another
+  isSubShellView: function() {
+    // ShellViews have the ``isSubShellView`` property.
+    return this.parent.isSubShellView !== undefined;
   },
 
 });
@@ -162,13 +176,13 @@ Shell.ContentView = ShellView.extend({
   initialize: function() {
     ShellView.prototype.initialize.call(this);
 
-    this.options.parent.on('playback:play', this.onPlaybackPlay);
-    this.options.parent.on('playback:stop', this.onPlaybackStop);
+    this.parent.on('playback:play', this.onPlaybackPlay);
+    this.parent.on('playback:stop', this.onPlaybackStop);
   },
 
   remove: function() {
-    this.options.parent.off('playback:play', this.onPlaybackPlay);
-    this.options.parent.off('playback:stop', this.onPlaybackStop);
+    this.parent.off('playback:play', this.onPlaybackPlay);
+    this.parent.off('playback:stop', this.onPlaybackStop);
 
     ShellView.prototype.remove.call(this);
   },

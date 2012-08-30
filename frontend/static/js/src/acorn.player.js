@@ -30,7 +30,7 @@
 
   // Error out if acorn.shells isn't present.
   if (acorn.shells == undefined)
-    throw new Error('acorn.player.js requires acorn.shells.js');
+    throw new Error('acorn.player.js requires acorn.shells');
 
   // Error out if backbone isn't present.
   if (_ == undefined)
@@ -88,6 +88,7 @@
     //
     // * playback:play - fired when playback should start or resume
     // * playback:stop - fired when playback should pause or stop
+    // * playback:ended - fired when playback has finished
 
 
 
@@ -109,8 +110,8 @@
       // Track the acornid for rename checks
       this._acornid = this.model.acornid();
 
-      // initialize with the shell the model has (can be undefined)
-      this.shell = this.model.shellData();
+      // initialize with the shell the model has.
+      this.shell = acorn.shellWithAcorn(this.model);
 
       // set option defauls.
       this.options = _.extend({}, this.defaults, this.options);
@@ -284,7 +285,7 @@
   player.views.ThumbnailView = PlayerSubview.extend({
 
     template: _.template('\
-      <img id="image" src="" />\
+      <img id="image" src="/static/img/blank.png" />\
       <img id="type" src="" class="thumbnail-icon" />\
       <img id="logo" src="" class="thumbnail-icon" />\
     '),
@@ -583,6 +584,7 @@
       this.editingShell = shell;
       this.shellView = new shell.shellClass.EditView({
         shell: this.editingShell,
+        parent: this,
       });
 
       // listen to the child view's edit state
@@ -659,8 +661,6 @@
     new: function() {
 
       var acornModel = acorn('new');
-      acornModel.shellData(new acorn.shells.MultiShell());
-
       this.showAcorn(acornModel);
 
       this.playerView.render();
