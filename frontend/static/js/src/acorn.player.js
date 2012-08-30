@@ -446,7 +446,7 @@
 
   });
 
-  // ** player.views.controls.FullscreenControl ** onClick : fulscreen
+  // ** player.views.controls.FullscreenControl ** onClick : fullscreen
   // -----------------------------------------------------------------
 
   player.views.controls.FullscreenControl = player.views.Control.extend({
@@ -461,7 +461,7 @@
 
   });
 
-  // ** player.views.controls.FullscreenControl ** onClick : acorn website
+  // ** player.views.controls.AcornControl ** onClick : acorn website
   // ---------------------------------------------------------------------
 
   player.views.controls.AcornControl = player.views.Control.extend({
@@ -476,7 +476,7 @@
 
   });
 
-  // ** player.views.controls.EditControl ** onClick : acorn website
+  // ** player.views.controls.EditControl ** onClick : edit
   // ---------------------------------------------------------------------
 
   player.views.controls.EditControl = player.views.Control.extend({
@@ -491,7 +491,7 @@
 
   });
 
-  // ** player.views.controls.LeftControl ** onClick : acorn website
+  // ** player.views.controls.LeftControl ** onClick : previous link
   // ---------------------------------------------------------------------
 
   player.views.controls.LeftControl = player.views.Control.extend({
@@ -506,7 +506,7 @@
 
   });
 
-  // ** player.views.controls.RightControl ** onClick : acorn website
+  // ** player.views.controls.RightControl ** onClick : next link
   // ---------------------------------------------------------------------
 
   player.views.controls.RightControl = player.views.Control.extend({
@@ -521,7 +521,7 @@
 
   });
 
-  // ** player.views.controls.ListControl ** onClick : acorn website
+  // ** player.views.controls.ListControl ** onClick : list links
   // ---------------------------------------------------------------------
 
   player.views.controls.ListControl = player.views.Control.extend({
