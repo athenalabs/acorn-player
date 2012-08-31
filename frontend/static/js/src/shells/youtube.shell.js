@@ -71,6 +71,7 @@ var YouTubeShell = acorn.shells.YouTubeShell = VideoLinkShell.extend({
     UrlRegExp('(www\.)?youtube\.com\/embed\/([A-Za-z0-9\-_]+).*'),
     UrlRegExp('(www\.)?youtube\.com\/watch\?.*v=([A-Za-z0-9\-_]+).*'),
     UrlRegExp('(www\.)?y2u.be\/([A-Za-z0-9\-_]+)'),
+    UrlRegExp('(www\.)?youtu\.be\/([A-Za-z0-9\-_]+).*'),
   ],
 
 });
