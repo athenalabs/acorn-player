@@ -209,7 +209,6 @@ LinkShell.EditView = Shell.EditView.extend({
       validate: _.bind(this.validateLink, this),
       addToggle: true,
       deleteFn: _.bind(this.triggerDelete, this),
-      onSave: _.bind(this.generateThumbnailLink, this),
     });
 
     this.on('delete:shell', this.onDeleteShell);
