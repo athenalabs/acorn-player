@@ -70,7 +70,7 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
     // controls
     this.parent.on('controls:left', this.onShowPrevious);
-    this.parent.on('controls:list', this.onShowPlaylist);
+    this.parent.on('controls:list', this.onTogglePlaylist);
     this.parent.on('controls:right', this.onShowNext);
 
     // multishell events
@@ -142,17 +142,20 @@ MultiShell.ContentView = Shell.ContentView.extend({
     this.trigger('change:subview');
   },
 
-  // **showPlaylist** bring up a container with subview summaries
-  showPlaylist: function() {
-    // only open playlist once.
-    var playlistId = this.shell.shellClass.PlaylistView.prototype.id;
-    if (this.$el.find('#' + playlistId).length > 0)
+  // **togglePlaylist** toggle a container with subview summaries
+  togglePlaylist: function() {
+    if (this.playlistView) {
+      this.playlistView.close();
+      this.playlistView = null;
       return;
+    };
 
     var playlistView = new this.shell.shellClass.PlaylistView({
       shell: this.shell,
       parent: this,
     });
+
+    this.playlistView = playlistView;
 
     playlistView.render();
     this.$el.append(playlistView.el);
@@ -191,9 +194,9 @@ MultiShell.ContentView = Shell.ContentView.extend({
     this.showView(this.currentViewIndex() + 1);
   },
 
-  // **onShowPlaylist** show the playlist to the user.
-  onShowPlaylist: function() {
-    this.showPlaylist();
+  // **onTogglePlaylist** toggle showing the playlist to the user.
+  onTogglePlaylist: function() {
+    this.togglePlaylist();
   },
 
   // -- SubShell Events
@@ -256,8 +259,6 @@ MultiShell.PlaylistView = ShellView.extend({
     var title = this.shell.title();
     this.$el.find('#title').text(title);
 
-    var currentIndex = this.parent.currentViewIndex();
-
     var summaries = this.$el.find('#summaries');
     _.map(this.parent.shells, function(shell, idx) {
 
@@ -269,10 +270,7 @@ MultiShell.PlaylistView = ShellView.extend({
 
       summary.render();
       summaries.append(summary.el);
-
-      // if this is the currently-viewed shell, mark it selected
-      if (idx == currentIndex)
-        summary.$el.addClass('selected');
+      summary.$el.attr('data-index', idx);
 
       // an action to view shells from the playlist
       var view_btn =
@@ -286,10 +284,28 @@ MultiShell.PlaylistView = ShellView.extend({
 
     }, this);
 
+    // select current shell and respond when current shell changes
+    this.parent.on('change:subview', this.updateSelected);
+    this.updateSelected();
+
+  },
+
+  updateSelected: function() {
+    var summaries = this.$el.find('#summaries');
+    var currentIndex = this.parent.currentViewIndex();
+    var selector = "[data-index='"+currentIndex+"']:not('button')";
+
+    // unselect any selected summaries and select the current shell's summary
+    summaries.find('.selected').removeClass('selected');
+    summaries.find(selector).addClass('selected');
+  },
+
+  close: function() {
+    this.remove();
   },
 
   onClickClose: function() {
-    this.remove();
+    this.close();
   },
 
   onClickView: function(event) {
