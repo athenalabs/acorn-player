@@ -61,6 +61,9 @@ MultiShell.ContentView = Shell.ContentView.extend({
   // **shellViews** is a container for sub shellViews.
   shellViews: [],
 
+  // overwrite 'acorn-shell' as classname
+  className: 'acorn-multishell',
+
   // Supported trigger events
   //
   // * change:subview - fired when subview currently show changes.
