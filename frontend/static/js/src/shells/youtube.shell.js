@@ -95,9 +95,9 @@ YouTubeShell.ContentView = VideoLinkShell.ContentView.extend({
   },
 
 
-  // YouTube API - communication between the YouTube js API and the shell.
+  // YouTube API - communication between the YouTube iframe API and the shell.
   // ---------------------------------------------------------------------
-  // see https://developers.google.com/youtube/js_api_reference
+  // see https://developers.google.com/youtube/iframe_api_reference
 
   // the javascript file with the youtube player api.
   youtubePlayerApiSrc: 'http://www.youtube.com/iframe_api',
