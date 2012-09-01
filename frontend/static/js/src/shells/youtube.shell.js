@@ -201,17 +201,23 @@ YouTubeShell.ContentView = VideoLinkShell.ContentView.extend({
 
   // begins playing the video (idempotent)
   play: function() {
-    this.ytplayer.playVideo();
+    if (this.ytplayer) {
+      this.ytplayer.playVideo();
+    };
   },
 
   // stops playing the video (idempotent)
   stop: function() {
-    this.ytplayer.pauseVideo();
+    if (this.ytplayer) {
+      this.ytplayer.pauseVideo();
+    };
   },
 
   // seeks to the specific offset in seconds
   seek: function(seconds) {
-    this.ytplayer.seekTo(seconds, true);
+    if (this.ytplayer) {
+      this.ytplayer.seekTo(seconds, true);
+    };
   },
 
 });

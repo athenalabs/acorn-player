@@ -127,14 +127,14 @@ MultiShell.ContentView = Shell.ContentView.extend({
       // removing may be a bit drastic. perhaps:
       // this.currentView.stop();
       // this.currentView.$el.hide();
-    }
+    };
 
     // set up shellView as ``currentView``
     this.currentView = shellView;
     if (!this.currentView.el.parentNode) {
       this.currentView.render();
       this.$el.append(this.currentView.el);
-    }
+    };
 
     this.currentView.$el.show();
 
