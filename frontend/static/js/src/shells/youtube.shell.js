@@ -155,8 +155,6 @@ YouTubeShell.ContentView = VideoLinkShell.ContentView.extend({
       this.ytplayer.loadVideoById(this.shell.youtubeId(), start);
     } else {
       this.ytplayer.cueVideoById(this.shell.youtubeId(), start);
-      // TODO: what is this doing here? this seems to contrdict the if.
-      this.play();
     }
   },
 

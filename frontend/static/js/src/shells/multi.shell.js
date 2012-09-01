@@ -131,6 +131,7 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
     // set up shellView as ``currentView``
     this.currentView = shellView;
+
     if (!this.currentView.el.parentNode) {
       this.currentView.render();
       this.$el.append(this.currentView.el);
@@ -160,8 +161,10 @@ MultiShell.ContentView = Shell.ContentView.extend({
     playlistView.render();
     this.$el.append(playlistView.el);
 
-    // stop playback on the currently-playing view
-    this.currentView.stop();
+    // stop playback on the currently-playing view if necessary
+    if (this.currentView.stop) {
+      this.currentView.stop();
+    };
   },
 
   // -- MultiShell Events
