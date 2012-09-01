@@ -135,21 +135,44 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
+#acorn-player > #content > .acorn-shell {
+  height: 100%;
+  width: 100%;
+}
+
 #acorn-player > #content > .acorn-shell > #acorn-multishell-playlist {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
   background: rgba(0, 0, 0, 0.00);
   z-index: 10;
 }
 
-#acorn-player > #content > .acorn-shell > #acorn-multishell-playlist > .inner {
+#acorn-player > #content > .acorn-shell > #acorn-multishell-playlist >
+    .background {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
   background: rgba(255, 255, 255, 0.98);
   box-shadow: 0 2px 5px rgba(34, 25, 25, 0.4);
-  margin: 10px;
-  padding: 20px;
+}
+
+#acorn-player > #content > .acorn-shell > #acorn-multishell-playlist >
+    .background > .inner {
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
   overflow: scroll;
 }
 
-#acorn-player > #content > .acorn-shell > #acorn-multishell-playlist > .inner >
-    #close {
+#acorn-player > #content > .acorn-shell > #acorn-multishell-playlist >
+    .background > .inner > #close {
   position: absolute;
   top: 20px;
   right: 20px;
