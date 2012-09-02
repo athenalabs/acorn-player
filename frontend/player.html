@@ -58,7 +58,7 @@ h1, h2, h3, h4, h5, h6 {
 #acorn-player > #content,
 #acorn-player > #thumbnail,
 #acorn-player > #edit,
-#acorn-player > #edit > #form,
+#acorn-player > #edit > .background > .inner > #form,
 #acorn-player > #thumbnail > img#image,
 #acorn-player #acorn-multishell-playlist {
   position: absolute;
@@ -265,15 +265,38 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #acorn-player > #edit {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 2px 5px rgba(34, 25, 25, 0.4);
-  margin: 10px;
-  padding: 10px;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  width: 100%;
+  height: 100%;
+  min-width: 590px;
   z-index: 10;
-  min-width: 550px;
+  background: rgba(0, 0, 0, 0.00);
 }
 
-#acorn-player > #edit > #toolbar {
+#acorn-player > #edit > .background {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 2px 5px rgba(34, 25, 25, 0.4);
+}
+
+#acorn-player > #edit > .background > .inner {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  overflow: scroll;
+}
+
+#acorn-player > #edit > .background > .inner > #toolbar {
   position: relative;
   width: 100%;
   height: 40px;
@@ -283,24 +306,25 @@ h1, h2, h3, h4, h5, h6 {
   margin-left: 0px;
 }
 
-#acorn-player > #edit > #toolbar > * {
+#acorn-player > #edit > .background > .inner > #toolbar > * {
   position: absolute;
   width: 50%;
   height: 100%;
 }
 
-#acorn-player > #edit > #toolbar > h1 {
+#acorn-player > #edit > .background > .inner > #toolbar > h1 {
   left: 0px;
 }
 
-#acorn-player > #edit > #toolbar > #actions {
+#acorn-player > #edit > .background > .inner > #toolbar > #actions {
   right: 0px;
   height: 35px;
   text-align: right;
   padding-top:5px;
 }
 
-#acorn-player > #edit > #toolbar > #actions > #save-click-capture {
+#acorn-player > #edit > .background > .inner > #toolbar > #actions
+    > #save-click-capture {
   display: none;
   position: absolute;
   top: 0px;
@@ -309,13 +333,13 @@ h1, h2, h3, h4, h5, h6 {
   height: 35px;
 }
 
-#acorn-player > #edit > #form {
+#acorn-player > #edit > .background > .inner > #form {
   overflow: scroll;
   margin-top: 56px;
   padding: 10px;
 }
 
-#acorn-player > #edit > #form .acorn-shell-edit,
+#acorn-player > #edit > .background > .inner > #form .acorn-shell-edit,
 #acorn-player > #content .acorn-shell-summary {
   position: relative;
   display: block;
@@ -326,17 +350,18 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 5px;
 }
 
-#acorn-player > #edit > #form .acorn-shell-edit.selected,
+#acorn-player > #edit > .background > .inner > #form .acorn-shell-edit.selected,
 #acorn-player > #content .acorn-shell-summary.selected {
   background-color: #dff0d8;
 }
 
-#acorn-player > #edit > #form .acorn-shell-edit > div {
+#acorn-player > #edit > .background > .inner > #form .acorn-shell-edit > div {
   min-height: 80px;
   margin-bottom: 20px;
 }
 
-#acorn-player > #edit > #form .acorn-shell-edit > div >  #thumbnail,
+#acorn-player > #edit > .background > .inner > #form .acorn-shell-edit > div >
+    #thumbnail,
 #acorn-player > #content .acorn-shell-summary #thumbnail {
   position: absolute;
   left: 0px;
@@ -346,7 +371,8 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid #ccc;
 }
 
-#acorn-player > #edit > #form .acorn-shell-edit > div > div.thumbnailside,
+#acorn-player > #edit > .background > .inner > #form .acorn-shell-edit > div 
+    div.thumbnailside,
 #acorn-player > #content .acorn-shell-summary div.thumbnailside {
   position: absolute;
   right: 0px;
@@ -357,28 +383,29 @@ h1, h2, h3, h4, h5, h6 {
   height: 80px;
 }
 
-#acorn-player > #edit > #form .acorn-shell-edit > div > div.thumbnailside
-> div#link {
+#acorn-player > #edit > .background > .inner > #form .acorn-shell-edit > div >
+    div.thumbnailside > div#link {
   width: 100%;
 }
 
-#acorn-player > #edit > #form .acorn-shell-edit > div > div.thumbnailside
- input.time {
+#acorn-player > #edit > .background > .inner > #form .acorn-shell-edit > div >
+    div.thumbnailside input.time {
   width: 50px;
   margin-left: -4px;
   margin-right: 5px;
   text-align: center;
 }
 
-#acorn-player > #edit > #form .acorn-shell-edit > div > div.thumbnailside
-.right {
+#acorn-player > #edit > .background > .inner > #form .acorn-shell-edit > div >
+    div.thumbnailside.right {
   position: absolute;
   right: 0px;
   margin-top: 5px;
 }
 
 
-#acorn-player > #edit > #form .acorn-shell-edit > div > div.thumbnailside #slider {
+#acorn-player > #edit > .background > .inner > #form .acorn-shell-edit > div >
+    div.thumbnailside #slider {
   margin-top: 10px;
   margin-bottom: 10px;
 }
@@ -387,7 +414,8 @@ h1, h2, h3, h4, h5, h6 {
   width: 0.8em;
 }
 
-#acorn-player > #edit > #form > .acorn-shell-edit > button#add {
+#acorn-player > #edit > .background > .inner > #form > .acorn-shell-edit >
+    button#add {
   margin-left: 120px;
   margin-top: 10px;
   margin-bottom: 30px;
