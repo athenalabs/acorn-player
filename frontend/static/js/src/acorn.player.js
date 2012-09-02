@@ -214,12 +214,11 @@
         return;
 
       this.editView = new player.views.EditView({ player: this });
+      this.editView.$el.css('opacity', 0.0);
       this.$el.append(this.editView.el);
       this.editView.render();
-      this.editView.$el.css('opacity', 0.0);
       this.editView.$el.css('opacity', 1.0);
 
-      //TODO: list this event somewhere on the top of this view...
       this.trigger('playback:stop');
     },
 

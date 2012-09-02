@@ -66,7 +66,7 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
   // Supported trigger events
   //
-  // * change:subview - fired when subview currently show changes.
+  // * change:subview - fired when subview currently shown changes.
 
   initialize: function() {
     Shell.ContentView.prototype.initialize.call(this);
