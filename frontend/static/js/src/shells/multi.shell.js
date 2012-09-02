@@ -128,7 +128,7 @@ MultiShell.ContentView = Shell.ContentView.extend({
     if (this.currentView) {
       this.currentView.remove();
       // removing may be a bit drastic. perhaps:
-      // this.currentView.stop();
+      // this.triggerPlaybackStop();
       // this.currentView.$el.hide();
     };
 
@@ -164,10 +164,8 @@ MultiShell.ContentView = Shell.ContentView.extend({
     playlistView.render();
     this.$el.append(playlistView.el);
 
-    // stop playback on the currently-playing view if necessary
-    if (this.currentView.stop) {
-      this.currentView.stop();
-    };
+    // stop playback on the currently-playing view
+    this.triggerPlaybackStop();
   },
 
   // -- MultiShell Events
@@ -188,6 +186,15 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
     if (this.currentView == _.last(this.shellViews))
       right.$el.attr('disabled', 'disabled');
+  },
+
+  triggerPlaybackStop: function() {
+    this.trigger('playback:stop');
+  },
+
+  // **onPlaybackStop** forward 'stop:playback' event from parent
+  onPlaybackStop: function() {
+    this.triggerPlaybackStop();
   },
 
   // **onShowPrevious** move back in the playlist.
