@@ -22,10 +22,15 @@ var ImageLinkShell = acorn.shells.ImageLinkShell = LinkShell.extend({
 
 ImageLinkShell.ContentView =  LinkShell.ContentView.extend({
 
+  template: _.template('\
+    <div class="wrapper"></div>\
+  '),
+
   render: function() {
     var link = this.shell.link();
     var img = $('<img>').attr('src', link);
-    this.$el.html(img);
+    this.$el.html(this.template);
+    this.$el.find('.wrapper').append(img);
 
     // TODO: make image fit within bounds of player
   },
