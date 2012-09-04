@@ -150,7 +150,7 @@ MultiShell.ContentView = Shell.ContentView.extend({
   togglePlaylist: function() {
     if (this.playlistView) {
       this.playlistView.close();
-      this.playlistView = null;
+      this.playlistView = undefined;
       return;
     };
 
