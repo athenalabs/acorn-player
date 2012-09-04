@@ -1,4 +1,4 @@
-// ImageLinkShell --  A shell that links to imaged and embeds them.
+// ImageLinkShell --  A shell that links to images and embeds them.
 // ----------------------------------------------------------------
 
 var ImageLinkShell = acorn.shells.ImageLinkShell = LinkShell.extend({
