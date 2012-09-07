@@ -302,9 +302,13 @@ MultiShell.PlaylistView = ShellView.extend({
     }, this);
 
     // select current shell and respond when current shell changes
-    this.parent.on('change:subview', this.updateSelected);
+    this.parent.on('change:subview', this.onChangedSubview);
     this.updateSelected();
 
+  },
+
+  onChangedSubview: function () {
+    this.updateSelected();
   },
 
   updateSelected: function() {
