@@ -292,6 +292,7 @@ LinkShell.EditView = Shell.EditView.extend({
 
   // **onClickAdd** add another link
   onClickAdd: function() {
+    // save unsaved edits and beget a multishell
     this.finalizeEdit();
     var multiShell = new acorn.shells.MultiShell();
     multiShell.addShell(this.shell);
