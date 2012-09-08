@@ -175,7 +175,7 @@
 
   acorn.util.imgurl = function() {
     var args = Array.prototype.slice.call(arguments);
-    var urlargs = ['static', 'img'].concat(args);
+    var urlargs = ['img'].concat(args);
     return acorn.util.url.apply(this, urlargs);
   };
 

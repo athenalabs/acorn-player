@@ -23,7 +23,7 @@ PDFLinkShell.EditView =  LinkShell.EditView.extend({
   // Overrides LinkShell.generateThumbnailLink()
   generateThumbnailLink: function(callback) {
     callback = callback || function() {};
-    callback('/static/img/thumbnails/pdf.png');
+    callback('/img/icons/pdf.png');
   },
 
 });
