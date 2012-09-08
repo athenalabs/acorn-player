@@ -28,7 +28,7 @@ acorn.registerShell = function (shell) {
 
 acorn.shellWithData = function(shellData) {
 
-  var shell = _(acorn.shells).find(function (shell) {
+  var shell = _(acorn.shells).find(function(shell) {
     return shell.prototype.shellid == shellData.shell;
   });
 
@@ -65,7 +65,7 @@ var Shell = acorn.shells.Shell = function(options) {
 };
 
 
-// ShellAPI - the interface _all_ shells must support.
+// ShellAPI -- the interface _all_ shells must support.
 // ---------------------------------------------------
 
 var ShellAPI = {

@@ -61,16 +61,19 @@ MultiShell.ContentView = Shell.ContentView.extend({
   // **shellViews** is a container for sub shellViews.
   shellViews: [],
 
+  // overwrite 'acorn-shell' as classname
+  className: 'acorn-multishell',
+
   // Supported trigger events
   //
-  // * change:subview - fired when subview currently show changes.
+  // * change:subview - fired when subview currently shown changes.
 
   initialize: function() {
     Shell.ContentView.prototype.initialize.call(this);
 
     // controls
     this.parent.on('controls:left', this.onShowPrevious);
-    this.parent.on('controls:list', this.onShowPlaylist);
+    this.parent.on('controls:list', this.onTogglePlaylist);
     this.parent.on('controls:right', this.onShowNext);
 
     // multishell events
@@ -106,8 +109,12 @@ MultiShell.ContentView = Shell.ContentView.extend({
     this.showView(0)
   },
 
+  indexOfView: function(view) {
+    return _.indexOf(this.shellViews, view);
+  },
+
   currentViewIndex: function() {
-    return _.indexOf(this.shellViews, this.currentView);
+    return this.indexOfView(this.currentView);
   },
 
   showView: function(index) {
@@ -121,16 +128,17 @@ MultiShell.ContentView = Shell.ContentView.extend({
     if (this.currentView) {
       this.currentView.remove();
       // removing may be a bit drastic. perhaps:
-      // this.currentView.stop();
+      // this.triggerPlaybackStop();
       // this.currentView.$el.hide();
-    }
+    };
 
     // set up shellView as ``currentView``
     this.currentView = shellView;
+
     if (!this.currentView.el.parentNode) {
       this.currentView.render();
       this.$el.append(this.currentView.el);
-    }
+    };
 
     this.currentView.$el.show();
 
@@ -138,23 +146,26 @@ MultiShell.ContentView = Shell.ContentView.extend({
     this.trigger('change:subview');
   },
 
-  // **showPlaylist** bring up a container with subview summaries
-  showPlaylist: function() {
-    // only open playlist once.
-    var playlistId = this.shell.shellClass.PlaylistView.prototype.id;
-    if (this.$el.find('#' + playlistId).length > 0)
+  // **togglePlaylist** toggle a container with subview summaries
+  togglePlaylist: function() {
+    if (this.playlistView) {
+      this.playlistView.close();
+      this.playlistView = undefined;
       return;
+    };
 
     var playlistView = new this.shell.shellClass.PlaylistView({
       shell: this.shell,
       parent: this,
     });
 
+    this.playlistView = playlistView;
+
     playlistView.render();
     this.$el.append(playlistView.el);
 
     // stop playback on the currently-playing view
-    this.currentView.stop();
+    this.triggerPlaybackStop();
   },
 
   // -- MultiShell Events
@@ -177,6 +188,15 @@ MultiShell.ContentView = Shell.ContentView.extend({
       right.$el.attr('disabled', 'disabled');
   },
 
+  triggerPlaybackStop: function() {
+    this.trigger('playback:stop');
+  },
+
+  // **onPlaybackStop** forward 'stop:playback' event from parent
+  onPlaybackStop: function() {
+    this.triggerPlaybackStop();
+  },
+
   // **onShowPrevious** move back in the playlist.
   onShowPrevious: function() {
     this.showView(this.currentViewIndex() - 1);
@@ -187,9 +207,9 @@ MultiShell.ContentView = Shell.ContentView.extend({
     this.showView(this.currentViewIndex() + 1);
   },
 
-  // **onShowPlaylist** show the playlist to the user.
-  onShowPlaylist: function() {
-    this.showPlaylist();
+  // **onTogglePlaylist** toggle showing the playlist to the user.
+  onTogglePlaylist: function() {
+    this.togglePlaylist();
   },
 
   // -- SubShell Events
@@ -233,11 +253,15 @@ MultiShell.PlaylistView = ShellView.extend({
   id: 'acorn-multishell-playlist',
 
   template: _.template('\
-    <h1 id="title"></h1>\
-    <button id="close" class="btn">\
-      <i class="icon-ban-circle"></i> Close\
-    </button>\
-    <div id="summaries"></div>\
+    <div class="clear-cover"></div>\
+    <div class="background"></div>\
+    <div class="content">\
+      <h1 id="title"></h1>\
+      <button id="close" class="btn">\
+        <i class="icon-ban-circle"></i> Close\
+      </button>\
+      <div id="summaries"></div>\
+    </div>\
   '),
 
   events: {
@@ -252,8 +276,6 @@ MultiShell.PlaylistView = ShellView.extend({
     var title = this.shell.title();
     this.$el.find('#title').text(title);
 
-    var currentIndex = this.parent.currentViewIndex();
-
     var summaries = this.$el.find('#summaries');
     _.map(this.parent.shells, function(shell, idx) {
 
@@ -265,10 +287,7 @@ MultiShell.PlaylistView = ShellView.extend({
 
       summary.render();
       summaries.append(summary.el);
-
-      // if this is the currently-viewed shell, mark it selected
-      if (idx == currentIndex)
-        summary.$el.addClass('selected');
+      summary.$el.attr('data-index', idx);
 
       // an action to view shells from the playlist
       var view_btn =
@@ -282,10 +301,32 @@ MultiShell.PlaylistView = ShellView.extend({
 
     }, this);
 
+    // select current shell and respond when current shell changes
+    this.parent.on('change:subview', this.onChangedSubview);
+    this.updateSelected();
+
+  },
+
+  onChangedSubview: function () {
+    this.updateSelected();
+  },
+
+  updateSelected: function() {
+    var summaries = this.$el.find('#summaries');
+    var currentIndex = this.parent.currentViewIndex();
+    var selector = "[data-index='"+currentIndex+"']:not('button')";
+
+    // unselect any selected summaries and select the current shell's summary
+    summaries.find('.selected').removeClass('selected');
+    summaries.find(selector).addClass('selected');
+  },
+
+  close: function() {
+    this.remove();
   },
 
   onClickClose: function() {
-    this.remove();
+    this.close();
   },
 
   onClickView: function(event) {
@@ -350,11 +391,15 @@ MultiShell.EditView = Shell.EditView.extend({
 
     // listen to events of shell EditView
     shellView.on('swap:shell', function(data) {
-      this.onSwapSubShell(data, index);
+      this.onSwapSubShell(data, shellView);
     }, this);
 
     shellView.on('change:shell', function(data) {
-      this.onChangeSubShell(data, index);
+      this.onChangeSubShell(data, shellView);
+    }, this);
+
+    shellView.on('delete:shell', function() {
+      this.onDeleteSubShell(shellView);
     }, this);
 
     shellView.on('change:editState', this.onChangeEditState);
@@ -379,6 +424,15 @@ MultiShell.EditView = Shell.EditView.extend({
     this.map(function (shellView) {
       return shellView.finalizeEdit();
     });
+
+    // remove empty shells (but ensure at least one shell remains)
+    var emptyShellData = this.emptyShellData();
+    var shells = this.shells();
+    shells = _.filter(shells, function(shell) {
+      return !_.isEqual(shell, emptyShellData);
+    });
+    shells = shells.length === 0 ? [emptyShellData] : shells;
+    this.shells(shells);
   },
 
   // -- MultiShell Events
@@ -391,7 +445,7 @@ MultiShell.EditView = Shell.EditView.extend({
   onClickAdd: function() {
     // // additional, placeholder adding shells
     var nextIndex = this.shellViews.length;
-    var addData = acorn.shellForLink('').data;
+    var addData = this.emptyShellData();
     var addView = this.constructView(addData, nextIndex);
 
     addView.render();
@@ -403,7 +457,8 @@ MultiShell.EditView = Shell.EditView.extend({
 
   // -- Sub Shell Events
 
-  onSwapSubShell: function(data, index) {
+  onSwapSubShell: function(data, shellView) {
+    var index = this.indexOfView(shellView);
     var oldShellView = this.shellViews[index];
     var newShellView = this.constructView(data, index);
 
@@ -411,7 +466,7 @@ MultiShell.EditView = Shell.EditView.extend({
     newShellView.render();
     oldShellView.$el.after(newShellView.el);
 
-    // remvoe old shellView
+    // remove old shellView
     oldShellView.remove();
     this.shellViews[index] = newShellView;
 
@@ -421,11 +476,26 @@ MultiShell.EditView = Shell.EditView.extend({
     this.shells(shells);
   },
 
-  onChangeSubShell: function(shell, index) {
+  onChangeSubShell: function(shell, shellView) {
     // update the data itself
+    var index = this.indexOfView(shellView);
     var shells = this.shells();
     shells[index] = shell.data;
     this.shells(shells);
+  },
+
+  onDeleteSubShell: function(shellView) {
+    // remove shell from `this.shellViews`
+    var index = this.indexOfView(shellView);
+    this.shellViews.splice(index, 1);
+
+    // remove shell from `this.shells`
+    var shells = this.shells();
+    shells.splice(index, 1);
+    this.shells(shells);
+
+    // remove shellview
+    shellView.remove();
   },
 
   // get/setter for shells value
@@ -442,6 +512,16 @@ MultiShell.EditView = Shell.EditView.extend({
         this.trigger('change:shell', this.shell);
     }
     return this.shell.data.shells;
+  },
+
+  // create an empty link shell
+  emptyShellData: function() {
+    return acorn.shellForLink('').data;
+  },
+
+  // helper to return a view's index in `shellViews`
+  indexOfView: function(view) {
+    return _.indexOf(this.shellViews, view);
   },
 
   // helper to map `func` through `shellViews` with `this` as context

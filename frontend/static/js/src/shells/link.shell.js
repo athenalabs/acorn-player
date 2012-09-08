@@ -94,7 +94,7 @@ acorn.shellForLink = function(link, options) {
 
 
 
-// LinkShellAPI -- interface for determining whether links match.
+// LinkShellAPI -- the interface _all_ link shells must support.
 // -------------------------------------------------------------------
 
 var LinkShellAPI = {
@@ -208,22 +208,24 @@ LinkShell.EditView = Shell.EditView.extend({
       placeholder: 'Enter Link',
       validate: _.bind(this.validateLink, this),
       addToggle: true,
-      onSave: _.bind(this.generateThumbnailLink, this),
+      deleteFn: _.bind(this.triggerDelete, this),
     });
+
+    this.on('delete:shell', this.onDeleteShell);
 
   },
 
   validateLink: function(link) {
-    link = parseUrl(link).toString();
-    if (acorn.util.isValidLink(link))
+    parsedLink = parseUrl(link).toString();
+    if (acorn.util.isValidLink(parsedLink) || link === '')
       return false;
 
     return "invalid link."
   },
 
   link: function(link) {
-    if (link) {
-      link = parseUrl(link).toString();
+    if (link || link === '') {
+      link = link === '' ? '' : parseUrl(link).toString();
       this.shell.link(link);
       var s = acorn.shellForLink(link, {shell: this.shell});
 
@@ -255,6 +257,16 @@ LinkShell.EditView = Shell.EditView.extend({
       this.$el.find('button#add').hide();
   },
 
+  triggerDelete: function() {
+    this.trigger('delete:shell');
+  },
+
+  onDeleteShell: function() {
+    if (!this.isSubShellView()) {
+      this.link('');
+    };
+  },
+
   generateThumbnailLink: function(callback) {
     callback = callback || function() {};
 
@@ -280,7 +292,8 @@ LinkShell.EditView = Shell.EditView.extend({
 
   // **onClickAdd** add another link
   onClickAdd: function() {
-
+    // save unsaved edits and beget a multishell
+    this.finalizeEdit();
     var multiShell = new acorn.shells.MultiShell();
     multiShell.addShell(this.shell);
     multiShell.addShell(new acorn.shellForLink(''));

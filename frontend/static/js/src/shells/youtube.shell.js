@@ -71,6 +71,7 @@ var YouTubeShell = acorn.shells.YouTubeShell = VideoLinkShell.extend({
     UrlRegExp('(www\.)?youtube\.com\/embed\/([A-Za-z0-9\-_]+).*'),
     UrlRegExp('(www\.)?youtube\.com\/watch\?.*v=([A-Za-z0-9\-_]+).*'),
     UrlRegExp('(www\.)?y2u.be\/([A-Za-z0-9\-_]+)'),
+    UrlRegExp('(www\.)?youtu\.be\/([A-Za-z0-9\-_]+).*'),
   ],
 
 });
@@ -94,9 +95,9 @@ YouTubeShell.ContentView = VideoLinkShell.ContentView.extend({
   },
 
 
-  // YouTube API - communication between the YouTube js API and the shell.
+  // YouTube API - communication between the YouTube iframe API and the shell.
   // ---------------------------------------------------------------------
-  // see https://developers.google.com/youtube/js_api_reference
+  // see https://developers.google.com/youtube/iframe_api_reference
 
   // the javascript file with the youtube player api.
   youtubePlayerApiSrc: 'http://www.youtube.com/iframe_api',
@@ -154,8 +155,6 @@ YouTubeShell.ContentView = VideoLinkShell.ContentView.extend({
       this.ytplayer.loadVideoById(this.shell.youtubeId(), start);
     } else {
       this.ytplayer.cueVideoById(this.shell.youtubeId(), start);
-      // TODO: what is this doing here? this seems to contrdict the if.
-      this.play();
     }
   },
 
@@ -200,17 +199,23 @@ YouTubeShell.ContentView = VideoLinkShell.ContentView.extend({
 
   // begins playing the video (idempotent)
   play: function() {
-    this.ytplayer.playVideo();
+    if (this.ytplayer) {
+      this.ytplayer.playVideo();
+    };
   },
 
   // stops playing the video (idempotent)
   stop: function() {
-    this.ytplayer.pauseVideo();
+    if (this.ytplayer) {
+      this.ytplayer.pauseVideo();
+    };
   },
 
   // seeks to the specific offset in seconds
   seek: function(seconds) {
-    this.ytplayer.seekTo(seconds, true);
+    if (this.ytplayer) {
+      this.ytplayer.seekTo(seconds, true);
+    };
   },
 
 });

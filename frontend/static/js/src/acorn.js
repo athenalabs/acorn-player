@@ -111,6 +111,7 @@
   acorn.types.video = true;
   acorn.types.audio = true;
   acorn.types.document = true;
+  acorn.types.link = true;
   acorn.types.interactive = true;
   acorn.types.multimedia = true; // group of other types.
 
