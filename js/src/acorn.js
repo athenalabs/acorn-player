@@ -592,9 +592,9 @@
     },
 
     withData: function(data) {
-      var acorn = new acorn.Model();
-      acorn.set(data);
-      return acorn;
+      var model = new acorn.Model();
+      model.set(data);
+      return model;
     },
 
   });
