@@ -4,7 +4,7 @@
 //     Inspired by github:gist.
 //     Portions of code from Underscore.js and Backbone.js
 //     For all details and documentation:
-//     http://github.com/jbenet/acorn
+//     http://github.com/athenalabs/acorn-player
 
 (function() {
 

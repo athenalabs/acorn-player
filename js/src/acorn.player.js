@@ -2,9 +2,8 @@
 //     (c) 2012 Juan Batiz-Benet, Athena.
 //     Acorn is freely distributable under the MIT license.
 //     Inspired by github:gist.
-//     Portions of code from Underscore.js and Backbone.js
 //     For all details and documentation:
-//     http://github.com/jbenet/acorn
+//     http://github.com/athenalabs/acorn-player
 
 (function() {
 
