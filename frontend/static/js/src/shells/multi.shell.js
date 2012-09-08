@@ -253,14 +253,14 @@ MultiShell.PlaylistView = ShellView.extend({
   id: 'acorn-multishell-playlist',
 
   template: _.template('\
-    <div class="background">\
-      <div class="inner">\
-        <h1 id="title"></h1>\
-        <button id="close" class="btn">\
-          <i class="icon-ban-circle"></i> Close\
-        </button>\
-        <div id="summaries"></div>\
-      </div>\
+    <div class="clear-cover"></div>\
+    <div class="background"></div>\
+    <div class="content">\
+      <h1 id="title"></h1>\
+      <button id="close" class="btn">\
+        <i class="icon-ban-circle"></i> Close\
+      </button>\
+      <div id="summaries"></div>\
     </div>\
   '),
 

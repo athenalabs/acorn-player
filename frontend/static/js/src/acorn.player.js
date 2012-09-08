@@ -547,22 +547,22 @@
   player.views.EditView = PlayerSubview.extend({
 
     template: _.template('\
-      <div class="background">\
-        <div class="inner">\
-          <div class="row" id="toolbar">\
-            <h1>acornid:<span id="acornid"></span></h1>\
-            <div id="actions">\
-              <button id="cancel" type="submit" class="btn">\
-                <i class="icon-ban-circle"></i> Cancel\
-              </button>\
-              <button id="save" type="submit" class="btn btn-success">\
-                <i class="icon-ok-circle icon-white"></i> Save\
-              </button>\
-              <div id="save-click-capture"></div>\
-            </div>\
+      <div class="clear-cover"></div>\
+      <div class="background"></div>\
+      <div class="content">\
+        <div class="row" id="toolbar">\
+          <h1>acornid:<span id="acornid"></span></h1>\
+          <div id="actions">\
+            <button id="cancel" type="submit" class="btn">\
+              <i class="icon-ban-circle"></i> Cancel\
+            </button>\
+            <button id="save" type="submit" class="btn btn-success">\
+              <i class="icon-ok-circle icon-white"></i> Save\
+            </button>\
+            <div id="save-click-capture"></div>\
           </div>\
-          <div id="form"></div>\
         </div>\
+        <div id="form"></div>\
       </div>\
     '),
 
