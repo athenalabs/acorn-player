@@ -1,0 +1,108 @@
+<html>
+<head>
+<style>
+iframe {
+  width: 600px;
+  height: 400px;
+}
+</style>
+<script src="/js/src/acorn.js"></script>
+</head>
+<body>
+
+<iframe id="player"
+frameborder="0" border="0" allowtransparency="true"
+allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"
+src="/player/new"></iframe>
+
+<script type="text/javascript">
+
+var acornModel = acorn.withData({
+  "acornid": "local",
+  "shell": {
+    "shell": "acorn.MultiShell",
+    "shells": [
+      {
+        "shell": "acorn.ImageLinkShell",
+        "thumbnailLink":
+          "https://img.skitch.com/20120817-x97rpbjc2rd5yt1gh9j8udfbsu.png",
+        "link":
+          "https://img.skitch.com/20120817-x97rpbjc2rd5yt1gh9j8udfbsu.png"
+      },
+      {
+        "shell": "acorn.ImageLinkShell",
+        "thumbnailLink":
+          "https://img.skitch.com/20120817-tuaw1jbgrstyeugsfb4bgwu6wi.png",
+        "link":
+          "https://img.skitch.com/20120817-tuaw1jbgrstyeugsfb4bgwu6wi.png"
+      },
+      {
+        "shell": "acorn.ImageLinkShell",
+        "thumbnailLink":
+          "https://img.skitch.com/20120817-iimtd5kguy59rg3spw6c2gw6n.png",
+        "link":
+          "https://img.skitch.com/20120817-iimtd5kguy59rg3spw6c2gw6n.png"
+      },
+      {
+        "shell": "acorn.ImageLinkShell",
+        "thumbnailLink":
+          "https://img.skitch.com/20120817-82gh54631tqaptmh449mgn6kct.png",
+        "link":
+          "https://img.skitch.com/20120817-82gh54631tqaptmh449mgn6kct.png"
+      },
+      {
+        "shell": "acorn.ImageLinkShell",
+        "thumbnailLink":
+          "https://img.skitch.com/20120817-fta7cpsxsujdftuik6h29848pq.png",
+        "link":
+          "https://img.skitch.com/20120817-fta7cpsxsujdftuik6h29848pq.png"
+      },
+      {
+        "shell": "acorn.ImageLinkShell",
+        "thumbnailLink":
+          "https://img.skitch.com/20120817-tgum22tuyeb1293mypyxkt7gsf.png",
+        "link":
+          "https://img.skitch.com/20120817-tgum22tuyeb1293mypyxkt7gsf.png"
+      },
+      {
+        "shell": "acorn.ImageLinkShell",
+        "thumbnailLink":
+          "https://img.skitch.com/20120817-bes8y7ntahfi65si9u9pmakrms.png",
+        "link":
+          "https://img.skitch.com/20120817-bes8y7ntahfi65si9u9pmakrms.png"
+      },
+      {
+        "shell": "acorn.ImageLinkShell",
+        "thumbnailLink":
+          "https://img.skitch.com/20120817-pq8yxbmq2ry93sswsjhrra8wrk.png",
+        "link":
+          "https://img.skitch.com/20120817-pq8yxbmq2ry93sswsjhrra8wrk.png"
+      },
+    ],
+  },
+});
+
+var player = undefined;
+var playerFrame = document.getElementById('player');
+
+// setup callback to fire once the iframe finishes loading.
+playerFrame.onload = function() {
+  // get the window within the iframe
+  var f = playerFrame;
+  var w = f.contentWindow ? f.contentWindow : f.contentDocument.defaultView;
+
+  // get the player instance from the iframe window
+  player = w.acorn.player.instance;
+
+  // set the new acorn model
+  player.model = acornModel;
+
+  // trigger acorn change.
+  player.trigger('change:acorn');
+};
+
+
+</script>
+
+</body>
+</html>

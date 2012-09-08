@@ -1,0 +1,54 @@
+<html>
+<head>
+<style>
+iframe {
+  width: 600px;
+  height: 400px;
+}
+</style>
+<script src="/js/src/acorn.js"></script>
+</head>
+<body>
+
+<iframe id="player"
+frameborder="0" border="0" allowtransparency="true"
+allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"
+src="/player/new"></iframe>
+
+<script type="text/javascript">
+
+var acornModel = acorn.withData({
+  "acornid": "local",
+  "shell": {
+    "shell": "acorn.YouTubeShell",
+    "link": "http://www.youtube.com/watch?v=CbIZU8cQWXc",
+    "time_start": 0,
+    "time_end": 83,
+    "loop": true,
+  },
+});
+
+var player = undefined;
+var playerFrame = document.getElementById('player');
+
+// setup callback to fire once the iframe finishes loading.
+playerFrame.onload = function() {
+  // get the window within the iframe
+  var f = playerFrame;
+  var w = f.contentWindow ? f.contentWindow : f.contentDocument.defaultView;
+
+  // get the player instance from the iframe window
+  player = w.acorn.player.instance;
+
+  // set the new acorn model
+  player.model = acornModel;
+
+  // trigger acorn change.
+  player.trigger('change:acorn');
+};
+
+
+</script>
+
+</body>
+</html>
