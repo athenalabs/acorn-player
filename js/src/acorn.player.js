@@ -658,7 +658,7 @@
     },
 
     nothing: function() {
-      this.navigate('player/what-is-acorn', {trigger: true});
+      this.navigate('player/new', {trigger: true});
     },
 
     new: function() {
