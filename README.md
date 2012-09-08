@@ -7,6 +7,8 @@
 
 ``[acorn](http://staging.acorn.athena.ai)`` is a universal media wrapper.
 
+![player-image](https://img.skitch.com/20120908-fcad4pqca1chdrrgr446q1euj7.png)
+
 It's great for:
 * sharing media
 * remixing media
