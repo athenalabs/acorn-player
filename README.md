@@ -3,9 +3,9 @@
 
 ## about
 
-``acorn-player`` is the embedded-player in use by acorn.
+``acorn-player`` is the embedded-player used by acorn.
 
-``[acorn](http://staging.acorn.athena.ai)`` is a universal media wrapper.
+[acorn](http://staging.acorn.athena.ai) is a universal media wrapper.
 
 ![player-image](https://img.skitch.com/20120908-fcad4pqca1chdrrgr446q1euj7.png)
 
