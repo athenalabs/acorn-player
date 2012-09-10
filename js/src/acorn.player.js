@@ -59,6 +59,25 @@
 
   player.views = {};
 
+
+  // ** player.play ** tell the player instance to play given acorn
+  // --------------------------------------------------------------
+  player.play = function(acornModel) {
+
+    if (!player.instance)
+      throw new Error('no acorn player instance available.');
+
+    if (!acornModel)
+      throw new Error('no acorn given');
+
+    // set the new acorn model
+    player.instance.model = acornModel;
+
+    // trigger acorn change.
+    player.instance.trigger('change:acorn');
+
+  };
+
   // ** player.views.PlayerView ** the acorn player main view
   // --------------------------------------------------------
 
