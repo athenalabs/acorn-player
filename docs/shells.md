@@ -35,7 +35,7 @@ EmptyShell (defined in [empty.shell.js](/athenalabs/acorn-player/blob/master/js/
     });
 
 #### Full  Example
-[acorn-player/test/test.emptyshell.html](/athenalabs/acorn-player/blob/master/test/test.emptyshell.html)
+[acorn-player/examples/example.emptyshell.html](/athenalabs/acorn-player/blob/master/examples/example.emptyshell.html)
 
 
 
@@ -56,7 +56,7 @@ LinkShell (defined in [link.shell.js](/athenalabs/acorn-player/blob/master/js/sr
     });
 
 #### Full  Example
-[acorn-player/test/test.linkshell.html](/athenalabs/acorn-player/blob/master/test/test.linkshell.html)
+[acorn-player/examples/example.linkshell.html](/athenalabs/acorn-player/blob/master/examples/example.linkshell.html)
 
 
 
@@ -79,7 +79,7 @@ ImageLinkShell (defined in [imagelink.shell.js](/athenalabs/acorn-player/blob/ma
     });
 
 #### Full  Example
-[acorn-player/test/test.imagelinkshell.html](/athenalabs/acorn-player/blob/master/test/test.imagelinkshell.html)
+[acorn-player/examples/example.imagelinkshell.html](/athenalabs/acorn-player/blob/master/examples/example.imagelinkshell.html)
 
 
 
@@ -102,7 +102,7 @@ PDFShell (defined in [pdf.shell.js](/athenalabs/acorn-player/blob/master/js/src/
     });
 
 #### Full  Example
-[acorn-player/test/test.pdfshell.html](/athenalabs/acorn-player/blob/master/test/test.pdfshell.html)
+[acorn-player/examples/example.pdfshell.html](/athenalabs/acorn-player/blob/master/examples/example.pdfshell.html)
 
 
 
@@ -134,7 +134,7 @@ YouTubeShell (defined in [youtube.shell.js](/athenalabs/acorn-player/blob/master
     });
 
 #### Full  Example
-[acorn-player/test/test.youtubeshell.html](/athenalabs/acorn-player/tree/master/test/test.youtubeshell.html)
+[acorn-player/examples/example.youtubeshell.html](/athenalabs/acorn-player/tree/master/examples/example.youtubeshell.html)
 
 
 
@@ -155,7 +155,7 @@ VimeoShell (defined in [vimeo.shell.js](/athenalabs/acorn-player/blob/master/js/
     });
 
 #### Full  Example
-[acorn-player/test/test.vimeoshell.html](/athenalabs/acorn-player/tree/master/test/test.vimeoshell.html)
+[acorn-player/examples/example.vimeoshell.html](/athenalabs/acorn-player/tree/master/examples/example.vimeoshell.html)
 
 
 
@@ -236,4 +236,4 @@ MultiShell (defined in [multi.shell.js](/athenalabs/acorn-player/blob/master/js/
     });
 
 #### Full  Example
-[acorn-player/test/test.multishell.html](/athenalabs/acorn-player/blob/master/test/test.multishell.html)
+[acorn-player/examples/example.multishell.html](/athenalabs/acorn-player/blob/master/examples/example.multishell.html)

@@ -115,7 +115,7 @@ An ``acorn`` is just an object with some meta-data that tells the
         });
 
 * stored directly in your code
-(see [test/test.youtubeshell.html](test/test.youtubeshell.html))
+(see [examples/example.youtubeshell.html](examples/example.youtubeshell.html))
 
         var acornModel = acorn.withData({
           "acornid": "local",
