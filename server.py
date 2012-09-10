@@ -11,7 +11,7 @@ class PlayerHandler(SimpleHTTPRequestHandler):
       self.path = '/player.html'
 
     # player/ requests should return player.html.
-    if self.path.startswith('/player/'):
+    if self.path.split('/')[1] == 'player':
       self.path = '/player.html'
 
     return SimpleHTTPRequestHandler.do_GET(self)
