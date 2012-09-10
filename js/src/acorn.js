@@ -738,5 +738,31 @@
 
   });
 
+  // **acorn.playInFrame** -- play given acornModel in given iframe (async)
+  // Args:
+  // * acornModel - the acorn model to play
+  // * iframe - an iframe html element to play within. it should load a page
+  //            that has included both acorn.js and acorn-player.js
+  //
+  // Warning: if the iframe has loaded but has no acorn object,
+  //          the onload will never fire and this call will be a noop.
+  // ----------------------------------------------------------------------
+
+  acorn.playInFrame = function(acornModel, iframe) {
+
+    // function to play acorn in given iframe.
+    function playInIframe() {
+      var iframeAcorn = acorn.util.acornInFrame(iframe);
+      iframeAcorn.player.play(acornModel);
+    };
+
+    var iframeAcorn = acorn.util.acornInFrame(iframe);
+    if (iframeAcorn == undefined) // acorn not yet loaded? set onload.
+      iframe.onload = playInIframe;
+
+    else  // seems like acorn is loaded. just go ahead and play.
+      playInIframe();
+  };
+
 
 }).call(this);
