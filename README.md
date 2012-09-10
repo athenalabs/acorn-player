@@ -108,6 +108,11 @@ An ``acorn`` is just an object with some meta-data that tells the
 (like [acorn.athena.ai](http://staging.acorn.athena.ai))
 
         var acornModel = acorn('nyfskeqlyx');
+        acornModel.fetch({
+          success: function() {
+            // acornModel finished loading.
+          }
+        });
 
 * stored directly in your code
 (see [test/test.youtubeshell.html](test/test.youtubeshell.html))
