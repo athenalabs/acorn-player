@@ -1,6 +1,6 @@
 # Shells
 
-An acorn shell is an implementation of acorn's wrapping functionality for a single type of media. Said type can can be anything from an image or PDF to a YouTube video. A shell can even wrap a collection (or a playlist) of child shells, as with MultiShell.
+An acorn shell is an implementation of acorn's wrapping functionality for a single type of media. Said type can be anything from an image or PDF to a YouTube video. A shell can even wrap a collection (or a playlist) of child shells, as with MultiShell.
 
 Each shell is implemented as an independent module where the shell object in question ultimately inherits from acorn.shells.Shell (defined in [shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/shell.js)). The inheritance hierarchy of the shells currently supported is the following:
 
@@ -23,7 +23,7 @@ Shell (defined in [shells.js](/athenalabs/acorn-player/blob/master/js/src/shells
 
 
 ## EmptyShell
-EmptyShell (defined in [empty.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/empty.shell.js)) is a shell that contains no media. An acorn's type is EmptyShell initially before any media has been added, or can become EmptyShell if all of its media is removed.
+EmptyShell (defined in [empty.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/empty.shell.js)) is a shell that contains no media. An acorn's type is EmptyShell initially before any media has been added and it reverts to EmptyShell if all of its media is removed.
 
 ### Source
 #### Data Model Example

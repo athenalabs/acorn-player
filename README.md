@@ -44,7 +44,7 @@ Pull-requests welcome!
 
 ## Development
 
-To develop ``acorn-player`, you need to:
+To develop ``acorn-player``, you need to:
 
 ### download source
 
