@@ -243,6 +243,10 @@
   // Args:
   // * iframe - the iframe element
   acorn.util.acornInFrame = function(iframe) {
+    // if iframe is a jquery selector, get the first element.
+    if (iframe.jquery)
+      iframe = iframe.get(0);
+
     // get the window within the iframe
     var f = playerFrame;
     var w = f.contentWindow ? f.contentWindow : f.contentDocument.defaultView;
