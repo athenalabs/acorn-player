@@ -239,6 +239,17 @@
   };
   acorn.util.iframe = iframe;
 
+  // **acorn.acornInFrame** get the acorn variable in <iframe> element
+  // Args:
+  // * iframe - the iframe element
+  acorn.util.acornInFrame = function(iframe) {
+    // get the window within the iframe
+    var f = playerFrame;
+    var w = f.contentWindow ? f.contentWindow : f.contentDocument.defaultView;
+
+    return w.acorn; // if acorn is undefined, it doesn't exist yet.
+  };
+
 
   // **acorn.property** creates and return a get/setter with a closured var.
   var property = function(defaultValue, validate) {
