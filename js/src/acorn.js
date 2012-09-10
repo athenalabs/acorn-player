@@ -248,7 +248,7 @@
       iframe = iframe.get(0);
 
     // get the window within the iframe
-    var f = playerFrame;
+    var f = iframe;
     var w = f.contentWindow ? f.contentWindow : f.contentDocument.defaultView;
 
     return w.acorn; // if acorn is undefined, it doesn't exist yet.
