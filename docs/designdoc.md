@@ -308,6 +308,8 @@ currently empty. Visit acorn.athena.ai for more acorns."
 [youtube.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/youtube.shell.js) is a shell that wraps a YouTube video. It inherits from [videolink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/videolink.shell.js).
 
 ##### vimeo.shell.js
+[vimeo.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/vimeo.shell.js) is a shell that wraps a Vimeo video. It inherits from [videolink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/videolink.shell.js).
+
 ##### pdf.shell.js
 ##### multi.shell.js
 ##### shell.js
