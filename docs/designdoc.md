@@ -264,6 +264,32 @@ interaction with acorns.
 
 
 ##### acorn.player.js
+[acorn.player.js](/athenalabs/acorn-player/blob/master/js/src/acorn.player.js)
+defines the acorn.player object. The acorn.player object encapsulates all
+the views (deriving from Backbone.View) that are needed to create the user 
+experience and behavior outlined in the overview section above. The model behind those views is provided by [acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js).
+
+At a high level, acorn.player comprises four primary views (among several other subsidiary views):
+
+* PlayerView - the main acorn player view.
+  The PlayerView object provides abstracts away the following behaviors:
+  * initialization of the acorn's data model and Backbone view hierarchy
+  * adequate event firing whenever the user interacts with the acorn at the
+    player level (e.g. the acorn is renamed, changed, or saved).
+  * player rendering logic; note that the content of the acorn is rendered by
+    the implementation of the acorn shell for said content type.
+* ControlsView - the view containing media control buttons. The ControlsView 
+  provides the control buttons that all acorns share (namely, 
+  FullscreenControl, AcornControl, and EditControl). Shells can extend that 
+  list of controls with their own, special purpose buttons.
+* ContentView - the parent view for each shells' main content view. Each
+  shell's ContentView derives from this top-level ContentView and implements
+  the rendering logic for the shell's own content-type.
+* EditView - the parent view for all shells' edit views. Each
+  shell's EditView derives from this top-level EditView and implements
+  the rendering logic for the shell's own edit mode.
+
+
 ##### empty.shell.js
 ##### imagelink.shell.js
 ##### link.shell.js
