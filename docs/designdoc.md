@@ -291,6 +291,12 @@ views):
   the rendering logic for the shell's own edit mode.
 
 
+##### shell.js
+[shells.js](/athenalabs/acorn-player/blob/master/js/src/shells/shell.js) is
+the abstract, top-level shell object from which all other shells inherit. It
+defines the base shell API as well as the base functionality for all shell
+views.
+
 ##### empty.shell.js
 [empty.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/empty.shell.js) is the simplest example of a shell implementation. It
 simply implements the rendering of a shell that has no content. At the moment, 
@@ -332,4 +338,3 @@ from
 [link.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/link.shell.js).
 
 ##### multi.shell.js
-##### shell.js
