@@ -67,7 +67,7 @@ different kinds of media in a unified way.
 * composing remixes
 * embedding in webpages
 
-#### playing media pieces
+#### Playing Media Pieces
 
 ``acorn-player`` aims to be a player that can play all kinds of different media
 pieces, of various kinds and from various vendors. For example, it should be
@@ -135,6 +135,76 @@ The controls above are:
 
 ![controls-division-full](https://img.skitch.com/20120911-c82ujsw994ty81aqy9xnawnye4.png)
 
+
+#### Composing Remixes
+
+
+``acorn`` aims to enable remixing one or multiple media pieces (of different
+kinds) into a new media piece. ``acorn-player`` allows this remixing via
+a composition or editing interface, that is specific to the media kind.
+
+Some examples of remixing, with interfaces:
+
+* clipping a video -- VideoLinkShell
+
+![videolinkshell-editing](https://img.skitch.com/20120911-1t1seh9g4i25r59ij7n887qu82.png)
+
+* playlist of various media -- MultiShell
+
+![multishell-editing](https://img.skitch.com/20120911-chk6qapyd81gn61fh4qs2rr4uu.png)
+
+This capability is implemented by having a generic acorn-wide edit view where
+the acorn itself can be edited:
+
+![edit-view](https://img.skitch.com/20120911-akb42ac6iumippjapkkxj6mtf.png)
+
+and a section of the view is devoted to editing the shell itself.
+
+![edit-view](https://img.skitch.com/20120911-1fhmsb3wa8rhtssrjnqutts9dk.png)
+
+The shell itself can decide how and what to render in its area -- similar to how
+the content view allows shells to decide what to render. This is so that shells
+are free to craft the best editing experience for themselves. For example, MultiShells, having various subshells, just render the edit views of its subshells:
+
+![multi-shell-edit-view](https://img.skitch.com/20120911-gq8bwnxd9ytsbshyhfpx4uqx59.png)
+
+
+#### Embedding in Webpages
+
+``acorn-player`` aims to allow diverse kinds of media to be embeddable into
+webpages, in a uniform fasion. Being embeddable itself, then, allows users and
+developers both to compose acorns out of the media they wish to embed. Users
+may use the player interface and developers could do it programmatically, yet
+the end is the same: easily embedding various sorts of media in the same way.
+
+**Historical Note**: developing wrappers to embed various kinds of media is a
+particular painpoint for any developer wishing to build a website that enables
+its users to submit arbitrary media. This pain is actually what motivated the
+original conception of acorn. @jbenet sought for a uniform library that could
+handle embedding all kinds of media links uniformly. Subsequently, the
+remixing power afforded by introducing this computing layer of indirection
+became apparent.
+
+``acorn-player`` ought to be embeddable across the web, much like the YouTube
+and Vimeo players. It should load quickly, regardless of underlying media type.
+Further, it should behave in a manner expected by current web-denizens. These
+requirements motivate the use of an iframe, first showing a thumbnail, with the
+actual content loaded behind the scenes and swapped into view once the user
+engages with the media (click!).
+
+embedded ``acorn-player``:
+
+![embedded-acorn-player](https://img.skitch.com/20120911-ewk57srmfynjiwkhhyfgfxx884.png)
+
+
+In order to provide information regarding the primitive type of the media to
+the viewer, the thumbnail should be overlaid with an icon that conveys the kind
+of media.
+
+![annotated-embedded-acorn-player](https://img.skitch.com/20120911-keruw8hcbjbt8gt2tm6xt1pg52.png)
+
+Clicking the player should begin playing the media, transitioning to show
+the content area.
 
 
 ## Implementation
