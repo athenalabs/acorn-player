@@ -267,9 +267,12 @@ interaction with acorns.
 [acorn.player.js](/athenalabs/acorn-player/blob/master/js/src/acorn.player.js)
 defines the acorn.player object. The acorn.player object encapsulates all
 the views (deriving from Backbone.View) that are needed to create the user 
-experience and behavior outlined in the overview section above. The model behind those views is provided by [acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js).
+experience and behavior outlined in the overview section above. The model
+behind those views is provided by
+[acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js).
 
-At a high level, acorn.player comprises four primary views (among several other subsidiary views):
+At a high level, acorn.player comprises four primary views (among several 
+other subsidiary views):
 
 * PlayerView - the main acorn player view.
   The PlayerView object provides abstracts away the following behaviors:
