@@ -480,7 +480,7 @@ The Views are broken down as follows:
       * **ControlViews** -- the controls in use currently.
 
 ###### PlayerView - the main acorn player view.
-The PlayerView object provides abstracts away the following behaviors:
+The PlayerView object provides the following behaviors:
 * initialization of the acorn's data model and Backbone view hierarchy
 * adequate event firing whenever the user interacts with the acorn at the
 player level (e.g. the acorn is renamed, changed, or saved).
