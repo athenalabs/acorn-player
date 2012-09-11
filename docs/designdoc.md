@@ -305,6 +305,8 @@ currently empty. Visit acorn.athena.ai for more acorns."
 [videolink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/videolink.shell.js) is the abstract shell from which all video shells (like the YouTube and Vimeo shells) derive.
 
 ##### youtube.shell.js
+[youtube.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/youtube.shell.js) is a shell that wraps a YouTube video. It inherits from [videolink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/videolink.shell.js).
+
 ##### vimeo.shell.js
 ##### pdf.shell.js
 ##### multi.shell.js
