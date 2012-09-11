@@ -232,8 +232,8 @@ Services:
 ### Architecture
 #### Acorn Data Model
 
-An acorn is backed by a dictionary that defines the basic 
-properties and behavior of the acorn. At the very least, the most basic 
+An acorn is backed by a dictionary that defines the basic
+properties and behavior of the acorn. At the very least, the most basic
 representation of an acorn requires an ```acornid``` and a shell specification.
 
 An acorn shell is an implementation of acorn's wrapping functionality for a
@@ -244,14 +244,14 @@ where the shell object in question ultimately inherits from acorn.shells.Shell
 (defined in
 [shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/shell.js)).
 
-The simplest shell implementation is the 
+The simplest shell implementation is the
 [EmptyShell](/athenalabs/acorn-player/blob/master/js/src/shells/empty.shell.js)
 , which is used to represent and render a shell to which no media has been
 added.
 
 ##### Construction
 
-For example, the following code snippet illustrates how to create the most 
+For example, the following code snippet illustrates how to create the most
 basic of acorns using an ```EmptyShell```:
 
     var acornModel = acorn.withData({
@@ -271,8 +271,8 @@ only required piece of information for shells. Everything else depends on the
 specific shell class that the shell type identifies.)
 
 The only assumptions made by the code above are that ```acorn.js``` is included
-and that there exists an iframe with id "player" in the DOM. To view the full 
-source of the above example, see 
+and that there exists an iframe with id "player" in the DOM. To view the full
+source of the above example, see
 [example.emptyshell.html](/athenalabs/acorn-player/blob/docfix/examples/example.emptyshell.html) in the examples directory.
 
 The code above instantiates an ```acorn.Model``` object from a javascript
@@ -320,12 +320,12 @@ A more complex (and functional) example is the following:
     var playerFrame = document.getElementById('player');
     acorn.playInFrame(acornModel, playerFrame);
 
-The above illustrates the construction of an acorn of type 
+The above illustrates the construction of an acorn of type
 [MultiShell](/athenalabs/acorn-player/blob/master/js/src/shells/multi.shell.js).
-MultiShell is the one shell to contain them all. Or rather, it is a shell that 
-can contain one or more shells of different types. The acorn in the above 
-example contains three different shells: image, PDF and YouTube. Note that the 
-MultiShell shell specification must include a ```shells``` array that encloses 
+MultiShell is the one shell to contain them all. Or rather, it is a shell that
+can contain one or more shells of different types. The acorn in the above
+example contains three different shells: image, PDF and YouTube. Note that the
+MultiShell shell specification must include a ```shells``` array that encloses
 all sub-shells contained by the acorn.
 
 
