@@ -29,6 +29,7 @@ var ImageLinkShell = acorn.shells.ImageLinkShell = LinkShell.extend({
 
   //@@ the type here indicates the primitive (or cannonical) media kind.
   //@@ this is used to indicate (with icons) to users what to expect.
+
   // The cannonical type of this media. One of `acorn.types`.
   type: 'image',
 
@@ -36,6 +37,7 @@ var ImageLinkShell = acorn.shells.ImageLinkShell = LinkShell.extend({
   //@@ here, image files are defined to end in an image file extension.
   //@@ of course, some images won't have URLs like that, but certain kinds
   //@@ of media do follow this pattern closely (see YouTubeShell).
+
   // **validRegexes** list of valid LinkRegexes for images
   // .jpg, .png, .gif, etc.
   validRegexes: [
@@ -82,6 +84,10 @@ ImageLinkShell.ContentView =  LinkShell.ContentView.extend({
 });
 
 
+//@@ This Shell does not need to specify an EditView. It simply uses its
+//@@ parent's, LinkShell.EditView. It provides exactly the functionality
+//@@ we want.
+
 //@@ Registering the shell is important. It's what allows the acorn-player
 //@@ to construct the right Shell objects for the right shell identifiers.
 
@@ -91,7 +97,3 @@ acorn.registerShell(ImageLinkShell);
 //@@ That's it! It was that easy to create an acorn view.
 
 ```
-
-//TODO annotate MultiShell.
-
-
