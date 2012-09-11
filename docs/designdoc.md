@@ -92,27 +92,48 @@ and a generic controls bar:
 The content area is left up to specific shells to render as they wish, for
 example:
 
-* VimeoShell
+* VimeoShell - Renders vimeo player through an embedded iframe.
 
 ![vimeo-shell](http://static.enrage.me/athena/test.vimeo.shell.png)
-  Renders vimeo player through an embedded iframe.
 
-* PDFShell
+* PDFShell - Renders pdf through an embedded iframe.
 
 ![pdf-shell](http://static.enrage.me/athena/test.pdf.shell.png)
-  Renders pdf through an embedded iframe.
 
-* LinkShell
+* LinkShell - Renders website through an embedded iframe.
 
 ![link-shell](http://static.enrage.me/athena/test.link.shell.png)
-  Renders website through an embedded iframe.
+
 
 ##### Controls Bar
 
 The controls bar is further divided in two sections:
 
+* **acorn-wide section**: controls that affect or leverage all acorns,
+regardless of the underlying media kinds (or the shells used to render them).
+
+* **shell-specific section**: controls that affect or leverage the media
+playing, and thus depend on the underlying media kinds and the shells used to
+render them.
+
+
 ![controls-division](https://img.skitch.com/20120911-cds9g6j2ub3g1t97ea8fxp9wy7.png)
 
+
+The controls above are:
+
+* acorn-wide controls:
+  * **Edit** opens an editor to edit the underlying acorn.
+  * **Link** opens the current acorn webpage (if it is saved to a server).
+  * **Fullscreen** fullscreens the acorn in the browser.
+
+
+* shell-specific controls, in this case for a MultiShell:
+  * **Previous** switches to the previous subshell.
+  * **List** opens a list of all subshells in this MultiShell.
+  * **Next** switches to the next subshell.
+
+![controls-division-full](https://img.skitch.com/20120911-c82ujsw994ty81aqy9xnawnye4.png)
 
 
 
