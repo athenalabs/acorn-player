@@ -451,18 +451,38 @@ prototype vars:
 
 #### Acorn Player
 
-describe how the player works
+The ``acorn-player`` is a combination of HTML, CSS3, and Javascript designed to be embedded through an iframe. Loading ``player.html`` through an iframe embeds the player. ``player.html`` includes the relevant css and javascript files. ``acorn-player`` is written using Backbone.js, and implements the functionality described in the [Overview](#Overview) through various Views (Backbone).
 
-describe view hierarchy of the player
 
-describe shells (module) and how they work. (ShellViews)
+##### Shells
 
-describe how content area is supposed to work (talk briefly about how shells
-render media through ContentViews)
+``acorn-player`` uses Shells, modules that implement a particular media type, and specify:
 
-describe how edit view is supposed to work (talk briefly about how shells render media composition through EditViews)
+* how a particular media piece is represented in data (see [Acorn Data Model](#acorn-data-model)),
+* how it is rendered, through a Shell.ContentView,
+* how it is controlled, through controls it requires, and
+* how it is edited, through a Shell.EditView.
 
-describe how embedding works (iframe, include /player.html, it loads acorn.js and acorn-player.js and all the shells, all the views, and relevant css). How it only first shows thumbnail, and when it clicks, it renders the acorn shell,
+
+##### View Hierarchy
+
+The Views are broken down as follows:
+
+* **PlayerView** -- the main Player object.
+   * **ThumbnailView** -- renders thumbnail and type icon
+   * **ContentView** --  contains the Shell.ContentView
+      * **Shell.ContentView** -- renders the media piece accordingly
+   * **EditView** -- contains the Shell.EditView (and saves)
+      * **Shell.EditView** -- renders the media piece editing view.
+   * **ControlsView** -- contains the control views.
+      * **ControlViews** -- the controls in use currently.
+
+
+A useful diagram:
+
+![acorn-player-views](https://img.skitch.com/20120911-kugx38r8g5tdpcxf2emsufhabu.png)
+
+
 
 ### Codebase
 
