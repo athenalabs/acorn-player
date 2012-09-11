@@ -293,6 +293,12 @@ other subsidiary views):
 
 
 ##### empty.shell.js
+[empty.shell.js](https://github.com/athenalabs/acorn-player/blob/master/js/src/
+shells/empty.shell.js) is the simplest example of a shell implementation. It
+simply implements the rendering of a shell that has no content. At the moment, 
+the shell simply displays a message along the lines of "This acorn is currently empty. Visit acorn.athena.ai for more acorns."
+
+
 ##### imagelink.shell.js
 ##### link.shell.js
 ##### multi.shell.js
