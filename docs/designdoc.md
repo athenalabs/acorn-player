@@ -321,7 +321,7 @@ A more complex (and functional) example is the following:
     acorn.playInFrame(acornModel, playerFrame);
 
 The above illustrates the construction of an acorn of type 
-[MultiShell](/athenalabs/acorn-player/blob/master/js/src/shells/multi.shell.js.
+[MultiShell](/athenalabs/acorn-player/blob/master/js/src/shells/multi.shell.js).
 MultiShell is the one shell to contain them all. Or rather, it is a shell that 
 can contain one or more shells of different types. The acorn in the above 
 example contains three different shells: image, PDF and YouTube. Note that the 
