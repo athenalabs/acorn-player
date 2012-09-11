@@ -1,5 +1,5 @@
 //     acorn.player.js 0.0.0
-//     (c) 2012 Juan Batiz-Benet, Athena.
+//     (c) 2012 Juan Batiz-Benet, Ali Yahya, Daniel Windham
 //     Acorn is freely distributable under the MIT license.
 //     Inspired by github:gist.
 //     For all details and documentation:
