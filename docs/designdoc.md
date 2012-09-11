@@ -338,3 +338,7 @@ from
 [link.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/link.shell.js).
 
 ##### multi.shell.js
+[multi.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/multi.shell.js)
+is a shell implementation that wraps multiple child shells of any type. A
+MultiShell can be thought of as a playlist. It inherits from
+[shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/shell.js).
