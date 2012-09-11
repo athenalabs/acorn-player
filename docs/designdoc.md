@@ -55,6 +55,11 @@ Note: overview from a product-centric view.
 
   (e.g. ``ImageLinkShell``, ``YouTubeShell``).
 
+* **shell type**: an identifier that uniquely identifies a shell module. They are meant to be vendor-specific.
+
+  (e.g. ``acorn.ImageLinkShell``, ``acorn.YouTubeShell``).
+
+
 
 
 ### Description
@@ -228,9 +233,170 @@ Services:
 
 #### Acorn Data Model
 
-describe how acorns are represented.
+``acorns`` are represented by ``acorn.Model``. The data representation of an
+``acorn`` in JSON is an object like this:
 
-describe acorn.Model
+    {
+      "acornid": "nyfskeqlyx",
+      "shell": {
+        ...
+      }
+    }
+
+Acorns have:
+
+* ``acornid``: a unique identifier. This is used to store and retrieve acorns
+  from the acorn service. When creating a new acorn on the fly, not intended to
+  be saved, use a descriptive ``acornid``, such as 'local'.
+
+  {
+    "acornid": "local",
+    "shell": {
+      ...
+    }
+  }
+
+* ``shell``: the data used to represent the shell. This is used to provide
+  the required meta-data regarding the acorn's media piece. For example, an
+  acorn with a ``YouTubeShell`` could look like this:
+
+
+    {
+      "acornid": "nyfskeqlyx",
+      "shell": {
+        "shell": "acorn.YouTubeShell",
+        "link": "https://www.youtube.com/watch?v=yYAw79386WI",
+        "loop": true,
+        "time_end": 192,
+        "time_start": 157
+      }
+    }
+
+
+The acorn data can be constructed on the fly to represent the desired media.
+The shells encode the relevant information necessary for the player and the
+shell module to render the media. (Note that ``shell``, the shell type, is the
+only required piece of information for shells. Everything else depends on the
+specific shell class that the shell type identifies.)
+
+
+##### acorn.Model
+
+
+``acorn.Model``, which represents ``acorns``, is a Backbone-style model (the
+class does not inherit from Backbone.Model, but emulates several
+characteristics). Among other things, it provides:
+
+class vars:
+
+* **acorn.Model.withData**: initialize an acorn.Model with given acorn data.
+
+        var acornModel = acorn.Model.withData({
+          "acornid": "local",
+          "shell": {
+            "shell": "acorn.YouTubeShell",
+            "link": "http://www.youtube.com/watch?v=CbIZU8cQWXc",
+          },
+        });
+
+* **acorn.Model.withLink**: initialize an acorn.Model with given link, and find
+  the appropriate kind of LinkShell (e.g. VideoLinkShell, ImageLinkShell, etc.).
+
+        var link = "http://www.youtube.com/watch?v=CbIZU8cQWXc";
+        var acornModel = acorn.Model.withLink(link);
+        acornModel.data().shell.link;
+        // returns:
+        // "http://www.youtube.com/watch?v=CbIZU8cQWXc"
+
+
+prototype vars:
+
+* **acorn.Model().acornid**: getsetter for the acornid.
+
+        var acornModel = acorn.Model.withData({
+          "acornid": "local",
+          "shell": {
+            "shell": "acorn.EmptyShell",
+          },
+        });
+        acornModel.acornid();
+        // returns:
+        // "local"
+
+* **acorn.Model().data**: getter for (a copy of) the acorn data.
+
+        var acornModel = acorn.Model.withData({
+          "acornid": "local",
+          "shell": {
+            "shell": "acorn.YouTubeShell",
+            "link": "http://www.youtube.com/watch?v=CbIZU8cQWXc",
+          },
+        });
+        acornModel.data();
+        // returns:
+        // {
+        //   "acornid": "local",
+        //   "shell": {
+        //     "shell": "acorn.YouTubeShell",
+        //     "link": "http://www.youtube.com/watch?v=CbIZU8cQWXc",
+        //   },
+        // }
+
+
+* **acorn.Model().fetch**: retrieves acorn from the server.
+
+        var acornModel = acorn('nyfskeqlyx');
+        acornModel.fetch({
+          success: function() {
+            // acornModel finished loading.
+          },
+        });
+
+* **acorn.Model().save**: stores acorns to the server.
+
+        var acornModel = acorn.Model.withData({
+          "acornid": "local",
+          "shell": {
+            "shell": "acorn.YouTubeShell",
+            "link": "http://www.youtube.com/watch?v=CbIZU8cQWXc",
+          },
+        });
+        acornModel.save({
+          success: function() {
+            // acornModel finished saving.
+          },
+        });
+
+
+* **acorn.Model().toJSON**: getter for JSON encoded acorn data.
+
+        var acornModel = acorn.Model.withData({
+          "acornid": "local",
+          "shell": {
+            "shell": "acorn.YouTubeShell",
+            "link": "http://www.youtube.com/watch?v=CbIZU8cQWXc",
+          },
+        });
+        acornModel.toJSON();
+        // returns:
+        // '{"shell":{"shell":"acorn.YouTubeShell","link":
+        // "http://www.youtube.com/watch?v=CbIZU8cQWXc"},"acornid":"local"}'
+
+
+* **acorn.Model().fromJSON**: setter using new JSON encoded acorn data.
+
+
+        var acornModel = acorn.Model.withData({
+          "acornid": "local",
+          "shell": {
+            "shell": "acorn.EmptyShell",
+          },
+        });
+        acornModel.fromJSON({"shell":{"shell":"acorn.YouTubeShell","link":
+        "http://www.youtube.com/watch?v=CbIZU8cQWXc"},"acornid":"local"});
+        acornModel.data().shell.link
+        // "http://www.youtube.com/watch?v=CbIZU8cQWXc"
+
 
 #### Acorn Player
 
