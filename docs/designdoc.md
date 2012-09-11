@@ -39,7 +39,7 @@ Note: overview from a product-centric view.
 
   (e.g. a specific video clip from a specific video).
 
-* **player**: web technology that enables viewing/consuming of media pieces.
+* **player**: web technology that enables viewing/consumption of media pieces.
 
 * **native-player**: web technology of a particular vendor, to be used to play
   media pieces hosted by the vendor
@@ -70,16 +70,15 @@ different kinds of media in a unified way.
 #### Playing Media Pieces
 
 ``acorn-player`` aims to be a player that can play all kinds of different media
-pieces, of various kinds and from various vendors. For example, it should be
-able to:
+pieces, of various kinds and from various vendors. It should be able to:
 
 * show videos, music, images, text, documents, etc.
-* more specifically, show YouTube Videos, Vimeo Videos, image files, sound
+* more specifically, show YouTube and Vimeo videos, .jpg and .png files, .mp3
   files, Flash games, PDF files, etc.
 * and show compositions of these, such as playlists, galleries, slideshows,
   spliced videos, etc.
 
-Thus, ``acorn-player`` should have a very general approach to interacting with
+Thus, ``acorn-player`` has a very general approach to interacting with
  media that can be extended to support each specific kind of media.
 
 The current design of the player viewing state features a content viewing area,
@@ -139,9 +138,9 @@ The controls above are:
 #### Composing Remixes
 
 
-``acorn`` aims to enable remixing one or multiple media pieces (of different
-kinds) into a new media piece. ``acorn-player`` allows this remixing via
-a composition or editing interface, that is specific to the media kind.
+``acorn`` enables remixing one or multiple media pieces (of different kinds)
+into a new media piece. ``acorn-player`` allows this remixing via a composition
+or editing interface, that is specific to the media kind.
 
 Some examples of remixing, with interfaces:
 
@@ -171,35 +170,35 @@ are free to craft the best editing experience for themselves. For example, Multi
 
 #### Embedding in Webpages
 
-``acorn-player`` aims to allow diverse kinds of media to be embeddable into
-webpages, in a uniform fasion. Being embeddable itself, then, allows users and
-developers both to compose acorns out of the media they wish to embed. Users
-may use the player interface and developers could do it programmatically, yet
-the end is the same: easily embedding various sorts of media in the same way.
+Acorn allows diverse kinds of media to be incorporated into webpages in a
+uniform fasion. The ``acorn-player`` is simple to embed, and it handles the
+complexities of dealing with different kinds of media internally. As a result,
+both users and developers can embed a wide variety of media in exactly the same
+way every time. Users can do this through the acorn player interface and
+developers can do so programmatically.
 
-**Historical Note**: developing wrappers to embed various kinds of media is a
-particular painpoint for any developer wishing to build a website that enables
+**Historical Note**: creating wrappers to embed various kinds of media is a
+particular pain point for any developer wishing to build a website that enables
 its users to submit arbitrary media. This pain is actually what motivated the
-original conception of acorn. @jbenet sought for a uniform library that could
-handle embedding all kinds of media links uniformly. Subsequently, the
-remixing power afforded by introducing this computing layer of indirection
-became apparent.
+original conception of acorn. @jbenet sought a uniform library that could embed
+all kinds of media links uniformly but could not find any. As acorn took shape
+to fulfill this need, it became apparent that the computing layer of indirection
+acorn introduced afforded exciting power to remix media.
 
-``acorn-player`` ought to be embeddable across the web, much like the YouTube
+``acorn-player`` aims to be embeddable across the web, much like the YouTube
 and Vimeo players. It should load quickly, regardless of underlying media type.
 Further, it should behave in a manner expected by current web-denizens. These
-requirements motivate the use of an iframe, first showing a thumbnail, with the
-actual content loaded behind the scenes and swapped into view once the user
-engages with the media (click!).
+requirements motivate the use of an iframe that initially shows a thumbnail
+while content loads behind the scenes. The content is swapped into view when the
+user engages with the media (click!).
 
 embedded ``acorn-player``:
 
 ![embedded-acorn-player](https://img.skitch.com/20120911-ewk57srmfynjiwkhhyfgfxx884.png)
 
 
-In order to provide information regarding the primitive type of the media to
-the viewer, the thumbnail should be overlaid with an icon that conveys the kind
-of media.
+In order to inform the viewer of the media's primitive type, the thumbnail
+should be overlaid with an icon that conveys the kind of media.
 
 ![annotated-embedded-acorn-player](https://img.skitch.com/20120911-keruw8hcbjbt8gt2tm6xt1pg52.png)
 
@@ -251,16 +250,16 @@ Services:
 [acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js) defines and
 implements the base acorn model and top level API. First and foremost, the
 acorn model includes basic operations common to all acorns including (but not
-limited to) ways to construct acorns from URLs to media or preexisting acorn
-data objects. Second, it provides useful accessors to the acorn data to fields
+limited to) ways to construct acorns from URLs, media, or preexisting acorn
+data objects. Second, it provides useful accessors to the acorn data fields
 like the acornid. Third, it provides utility methods for the JSON
 serialization and deserialization of acorns. Fourth, it includes preliminary
 support for integration of acorn with a backend of your choice.
 
-Outside of the acorn data model, [acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js) includes a
+Outside of the acorn data model,
+[acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js) includes a
 slew of utility functions (under acorn.util.*) that facilitate programatic
 interaction with acorns.
-
 
 ##### acorn.player.js
 [acorn.player.js](/athenalabs/acorn-player/blob/master/js/src/acorn.player.js)
@@ -268,9 +267,9 @@ defines the acorn.player object. The acorn.player object encapsulates all
 the views (deriving from Backbone.View) that are needed to create the user 
 experience and behavior outlined in the overview section above. The model
 behind those views is provided by
-[acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js). At a high 
-level, acorn.player comprises four primary views (among several 
-other subsidiary views):
+[acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js). At a high
+level, acorn.player comprises four primary views (among several other subsidiary
+views):
 
 * PlayerView - the main acorn player view.
   The PlayerView object provides abstracts away the following behaviors:
