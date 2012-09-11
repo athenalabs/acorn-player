@@ -451,7 +451,7 @@ prototype vars:
 
 #### Acorn Player
 
-The ``acorn-player`` is a combination of HTML, CSS3, and Javascript designed to be embedded through an iframe. Loading ``player.html`` through an iframe embeds the player. ``player.html`` includes the relevant css and javascript files. ``acorn-player`` is written using Backbone.js, and implements the functionality described in the [Overview](#Overview) through various Views (Backbone).
+The ``acorn.player`` object encapsulates all the views (each deriving from Backbone.View) that are needed to create the user experience and behavior outlined in the [Overview](#Overview) section above. It is a combination of HTML, CSS3, and Javascript designed to be embedded through an iframe. Loading ``player.html`` through an iframe embeds the player. ``player.html`` includes the relevant css and javascript files. The model that backs those views is provided by [acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js) (see [Acorn Data Model](#acorn-data-model)).
 
 
 ##### Shells
