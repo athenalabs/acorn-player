@@ -464,6 +464,8 @@ The ``acorn-player`` is a combination of HTML, CSS3, and Javascript designed to 
 * how it is edited, through a Shell.EditView.
 
 
+See [docs/writing-shells.md](writing-shells.md).
+
 ##### View Hierarchy
 
 The Views are broken down as follows:
