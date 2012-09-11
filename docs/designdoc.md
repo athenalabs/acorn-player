@@ -174,7 +174,8 @@ Acorn allows diverse kinds of media to be incorporated into webpages in a
 uniform fasion. The ``acorn-player`` is simple to embed, and it handles the
 complexities of dealing with different kinds of media internally. As a result,
 both users and developers can embed a wide variety of media in exactly the same
-way.
+way every time. Users can do this through the acorn player interface and
+developers can do so programmatically.
 
 **Historical Note**: creating wrappers to embed various kinds of media is a
 particular pain point for any developer wishing to build a website that enables
@@ -256,16 +257,20 @@ like the acornid. Third, it provides utility methods for the JSON
 serialization and deserialization of acorns. Fourth, it includes preliminary
 support for integration of acorn with a backend of your choice.
 
-Outside of the acorn data model, acorn.js includes a slew of utility functions
-(under acorn.util.*) that facilitate programatic interaction with acorns.
+Outside of the acorn data model,
+[acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js) includes a
+slew of utility functions (under acorn.util.*) that facilitate programatic
+interaction with acorns.
 
 ##### acorn.player.js
 [acorn.player.js](/athenalabs/acorn-player/blob/master/js/src/acorn.player.js)
 defines the acorn.player object. The acorn.player object encapsulates all
 the views (deriving from Backbone.View) that are needed to create the user 
 experience and behavior outlined in the overview section above. The model
-behind those views is provided by acorn.js. At a high level, acorn.player
-comprises four primary views (among several other subsidiary views):
+behind those views is provided by
+[acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js). At a high
+level, acorn.player comprises four primary views (among several other subsidiary
+views):
 
 * PlayerView - the main acorn player view.
   The PlayerView object provides abstracts away the following behaviors:
