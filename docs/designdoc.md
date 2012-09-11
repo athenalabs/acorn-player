@@ -302,6 +302,8 @@ currently empty. Visit acorn.athena.ai for more acorns."
 [imagelink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/imagelink.shell.js) is a shell implementation that wraps any image type (formats currently supported: *.{jpg,gif,png,svg}) by embedding it into an HTML image tag in the render function of the shell's ContentView.
 
 ##### videolink.shell.js
+[videolink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/videolink.shell.js) is the abstract shell from which all video shells (like the YouTube and Vimeo shells) derive.
+
 ##### youtube.shell.js
 ##### vimeo.shell.js
 ##### pdf.shell.js
