@@ -603,12 +603,18 @@
         return undefined;
 
       var shell = acorn.shellForLink(link);
-      return this.withShell(shell);
+      return acorn.Model.withShell(shell);
     },
 
     withData: function(data) {
       var model = new acorn.Model();
       model.set(data);
+      return model;
+    },
+
+    withShell: function(shell) {
+      var model = new acorn.Model();
+      model.shellData(shell.data);
       return model;
     },
 
