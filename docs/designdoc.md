@@ -230,48 +230,39 @@ Services:
 //TODO(ali): add note that thumbnails wont work :p
 
 ### Architecture
-
 #### Acorn Data Model
 
-``acorns`` are represented by ``acorn.Model``. The data representation of an
-``acorn`` in JSON is an object like this:
+An acorn is backed by a dictionary that defines the basic 
+properties and behavior of the acorn. At the very least, the most basic 
+representation of an acorn requires an ```acornid``` and a shell specification.
 
-    {
-      "acornid": "nyfskeqlyx",
+An acorn shell is an implementation of acorn's wrapping functionality for a
+single type of media. Said type can be anything from an image or PDF to a
+YouTube video. A shell can even wrap a collection (or a playlist) of child
+shells, as with MultiShell. Each shell is implemented as an independent module
+where the shell object in question ultimately inherits from acorn.shells.Shell
+(defined in
+[shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/shell.js)).
+
+The simplest shell implementation is the 
+[EmptyShell](/athenalabs/acorn-player/blob/master/js/src/shells/empty.shell.js)
+, which is used to represent and render a shell to which no media has been
+added.
+
+##### Construction
+
+For example, the following code snippet illustrates how to create the most 
+basic of acorns using an ```EmptyShell```:
+
+    var acornModel = acorn.withData({
+      "acornid": "local",
       "shell": {
-        ...
-      }
-    }
+        "shell": "acorn.EmptyShell",
+      },
+    });
 
-Acorns have:
-
-* ``acornid``: a unique identifier. This is used to store and retrieve acorns
-  from the acorn service. When creating a new acorn on the fly, not intended to
-  be saved, use a descriptive ``acornid``, such as 'local'.
-
-  {
-    "acornid": "local",
-    "shell": {
-      ...
-    }
-  }
-
-* ``shell``: the data used to represent the shell. This is used to provide
-  the required meta-data regarding the acorn's media piece. For example, an
-  acorn with a ``YouTubeShell`` could look like this:
-
-
-    {
-      "acornid": "nyfskeqlyx",
-      "shell": {
-        "shell": "acorn.YouTubeShell",
-        "link": "https://www.youtube.com/watch?v=yYAw79386WI",
-        "loop": true,
-        "time_end": 192,
-        "time_start": 157
-      }
-    }
-
+    var playerFrame = document.getElementById('player');
+    acorn.playInFrame(acornModel, playerFrame);
 
 The acorn data can be constructed on the fly to represent the desired media.
 The shells encode the relevant information necessary for the player and the
@@ -279,11 +270,69 @@ shell module to render the media. (Note that ``shell``, the shell type, is the
 only required piece of information for shells. Everything else depends on the
 specific shell class that the shell type identifies.)
 
+The only assumptions made by the code above are that ```acorn.js``` is included
+and that there exists an iframe with id "player" in the DOM. To view the full 
+source of the above example, see 
+[example.emptyshell.html](/athenalabs/acorn-player/blob/docfix/examples/example.emptyshell.html) in the examples directory.
 
-##### acorn.Model
+The code above instantiates an ```acorn.Model``` object from a javascript
+dictionary. The definition of ```acorn.Model``` in
+[acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js) implements the
+base acorn model and top level API. ```acorn.Model``` includes basic operations
+common to all acorns including ways to construct acorns from URLs, media, or
+preexisting acorn data objects. It also provides useful accessors to the
+acorn data fields like the ```acornid```, along with utility methods for the
+acorn's JSON serialization and deserialization.
+
+#####  Other Shell Types
+
+A more complex (and functional) example is the following:
+
+    var acornModel = acorn.withData({
+      "acornid": "local",
+      "shell": {
+        "shell": "acorn.MultiShell",
+        "shells": [
+          {
+            "shell": "acorn.ImageLinkShell",
+            "thumbnailLink":
+              "https://img.skitch.com/20120817-x97rpbjc2rd5yt1gh9j8udfbsu.png",
+            "link":
+              "https://img.skitch.com/20120817-x97rpbjc2rd5yt1gh9j8udfbsu.png"
+          },
+          {
+            "shell": "acorn.PDFShell",
+            "thumbnailLink":
+              "https://img.skitch.com/20120817-tuaw1jbgrstyeugsfb4bgwu6wi.png",
+            "link": "http://static.enrage.me/qjam-report.pdf"
+          },
+          {
+            "shell": "acorn.YouTubeShell",
+            "link": "http://www.youtube.com/watch?v=CbIZU8cQWXc",
+            "time_start": 0,
+            "time_end": 83,
+            "loop": false,
+          },
+        ],
+      },
+    });
+
+    var playerFrame = document.getElementById('player');
+    acorn.playInFrame(acornModel, playerFrame);
+
+The above illustrates the construction of an acorn of type 
+[MultiShell](/athenalabs/acorn-player/blob/master/js/src/shells/multi.shell.js.
+MultiShell is the one shell to contain them all. Or rather, it is a shell that 
+can contain one or more shells of different types. The acorn in the above 
+example contains three different shells: image, PDF and YouTube. Note that the 
+MultiShell shell specification must include a ```shells``` array that encloses 
+all sub-shells contained by the acorn.
 
 
-``acorn.Model``, which represents ``acorns``, is a Backbone-style model (the
+##### Breakdown of acorn.Model
+
+
+``acorn.Model`` is a Backbone-style model (the
 class does not inherit from Backbone.Model, but emulates several
 characteristics). Among other things, it provides:
 
@@ -396,6 +445,8 @@ prototype vars:
         "http://www.youtube.com/watch?v=CbIZU8cQWXc"},"acornid":"local"});
         acornModel.data().shell.link
         // "http://www.youtube.com/watch?v=CbIZU8cQWXc"
+
+
 
 
 #### Acorn Player
