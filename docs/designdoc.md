@@ -300,19 +300,31 @@ currently empty. Visit acorn.athena.ai for more acorns."
 ##### link.shell.js
 
 ##### imagelink.shell.js
-[imagelink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/imagelink.shell.js) is a shell implementation that wraps any image type (formats currently supported: *.{jpg,gif,png,svg}) by embedding it into an HTML image tag in the render function of the shell's ContentView.
+[imagelink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/imagelink.shell.js)
+is a shell implementation that wraps any image type (formats currently
+supported: *.{jpg,gif,png,svg}) by embedding it into an HTML image tag in the
+render function of the shell's ContentView.
 
 ##### videolink.shell.js
-[videolink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/videolink.shell.js) is the abstract shell from which all video shells (like the YouTube and Vimeo shells) derive.
+[videolink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/videolink.shell.js)
+is the abstract shell from which all video shells (like the YouTube and Vimeo
+shells) derive.
 
 ##### youtube.shell.js
-[youtube.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/youtube.shell.js) is a shell that wraps a YouTube video. It inherits from [videolink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/videolink.shell.js).
+[youtube.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/youtube.shell.js)
+is a shell that wraps a YouTube video. It inherits from
+[videolink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/videolink.shell.js).
 
 ##### vimeo.shell.js
-[vimeo.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/vimeo.shell.js) is a shell that wraps a Vimeo video. It inherits from [videolink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/videolink.shell.js).
+[vimeo.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/vimeo.shell.js)
+is a shell that wraps a Vimeo video. It inherits from
+[videolink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/videolink.shell.js).
 
 ##### pdf.shell.js
-[pdf.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/pdf.shell.js) is a shell that wraps a PDF document by loading it in an iframe. IT inherits from [link.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/link.shell.js).
+[pdf.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/pdf.shell.js)
+is a shell that wraps a PDF document by loading it in an iframe. It inherits
+from
+[link.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/link.shell.js).
 
 ##### multi.shell.js
 ##### shell.js
