@@ -179,7 +179,7 @@ Services:
 #### Code Hierarchy
 
 ##### acorn.js
-[acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js) defines and implements the base acorn model and top level API. First, the acorn model includes basic operations common to all acorns including (but not limited to) ways to construct acorns from URLs to media or preexisting acorn data objects. Second, it provides useful accessors to the acorn data to fields like the acornid. Third, it provides utility methods for the JSON serialization and deserialization of acorns. Fourth, it includes preliminary support for integration of acorn with a backend of your choice.
+[acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js) defines and implements the base acorn model and top level API. First and foremost, the acorn model includes basic operations common to all acorns including (but not limited to) ways to construct acorns from URLs to media or preexisting acorn data objects. Second, it provides useful accessors to the acorn data to fields like the acornid. Third, it provides utility methods for the JSON serialization and deserialization of acorns. Fourth, it includes preliminary support for integration of acorn with a backend of your choice.
 
 Outside of the acorn data model, [acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js) includes a slew of utility functions (under acorn.util.*) that facilitate programatic interaction with acorns.
 
