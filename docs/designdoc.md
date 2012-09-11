@@ -1,8 +1,119 @@
 # DESIGNDOC
 
-description
+``acorn-player`` is the embedded-player used by acorn.
+[Acorn](http://staging.acorn.athena.ai) is a universal media wrapper.
+
+The purpose of ``acorn-player`` is to provide a simple media
+player that supports viewing all sorts of different media types, in a unified
+way.
 
 ## Overview
+
+Note: overview from a product-centric view.
+
+### Terminology:
+
+* **media**: a viewable, consumable stream of information, usually of a
+  particular kind
+
+  (e.g. video, sound, text, games).
+
+* **media primitive**: cannonical kinds of media
+
+  (e.g. video, text, sound).
+
+* **multimedia**: a kind of media that encompasses other kinds of media
+
+  (e.g. games, slideshow).
+
+
+* **media kind**: a concretely defined type of media (on the web).
+
+  (e.g. text, an audio file, an image file, a YouTube Video, a Vimeo Video)
+
+* **media piece**: an independent, atomic media item
+
+  (e.g. a specific video).
+
+* **remix**: a media piece built on top of other media pieces.
+
+  (e.g. a specific video clip from a specific video).
+
+* **player**: web technology that enables viewing/consuming of media pieces.
+
+* **native-player**: web technology of a particular vendor, to be used to play
+  media pieces hosted by the vendor
+
+  (e.g. YouTube Embedded Player, Vimeo Player).
+
+* **acorn**: a remix combining media pieces through the use of computation.
+
+* **``acorn-player``**: a player that plays acorns
+
+
+* **shell**: an ``acorn-player`` module to play and edit specific media kinds.
+
+  (e.g. ``ImageLinkShell``, ``YouTubeShell``).
+
+
+
+### Description
+
+``acorn-player`` is a web technology that enables playing and remixing
+different kinds of media in a unified way.
+
+``acorn-player`` enables:
+* playing media pieces of various kinds
+* composing remixes
+* embedding in webpages
+
+#### playing media pieces
+
+``acorn-player`` aims to be a player that can play all kinds of different media
+pieces, of various kinds and from various vendors. For example, it should be
+able to:
+
+* show videos, music, images, text, documents, etc.
+* more specifically, show YouTube Videos, Vimeo Videos, image files, sound
+  files, Flash games, PDF files, etc.
+* and show compositions of these, such as playlists, galleries, slideshows,
+  spliced videos, etc.
+
+Thus, ``acorn-player`` should have a very general approach to interacting with
+ media that can be extended to support each specific kind of media.
+
+The current design of the player viewing state features a content viewing area,
+and a generic controls bar:
+
+![content-controls-separation](https://img.skitch.com/20120911-kwxurtywnhpnyssm188a21mry9.png)
+
+##### Content Area
+
+The content area is left up to specific shells to render as they wish, for
+example:
+
+* VimeoShell
+
+![vimeo-shell](http://static.enrage.me/athena/test.vimeo.shell.png)
+  Renders vimeo player through an embedded iframe.
+
+* PDFShell
+
+![pdf-shell](http://static.enrage.me/athena/test.pdf.shell.png)
+  Renders pdf through an embedded iframe.
+
+* LinkShell
+
+![link-shell](http://static.enrage.me/athena/test.link.shell.png)
+  Renders website through an embedded iframe.
+
+##### Controls Bar
+
+The controls bar is further divided in two sections:
+
+![controls-division](https://img.skitch.com/20120911-cds9g6j2ub3g1t97ea8fxp9wy7.png)
+
+
 
 
 ## Implementation
@@ -13,6 +124,7 @@ description
 HTML5, JS, CSS3
 
 Libraries:
+
 * jQuery (js)
 * Underscore.js
 * Backbone.js
