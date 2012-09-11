@@ -298,6 +298,11 @@ the shell simply displays a message along the lines of "This acorn is
 currently empty. Visit acorn.athena.ai for more acorns."
 
 ##### link.shell.js
+[link.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/link.shell.js)
+is a shell that wraps the content of an arbitrary link whose content-type is
+not specifically supported by acorn. The link destination will simply be
+embedded as an iframe by the shell. It inherits from
+[shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/shell.js).
 
 ##### imagelink.shell.js
 [imagelink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/imagelink.shell.js)
