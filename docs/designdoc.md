@@ -226,6 +226,27 @@ Services:
 
 ### Architecture
 
+#### Acorn Data Model
+
+describe how acorns are represented.
+
+describe acorn.Model
+
+#### Acorn Player
+
+describe how the player works
+
+describe view hierarchy of the player
+
+describe shells (module) and how they work. (ShellViews)
+
+describe how content area is supposed to work (talk briefly about how shells
+render media through ContentViews)
+
+describe how edit view is supposed to work (talk briefly about how shells render media composition through EditViews)
+
+describe how embedding works (iframe, include /player.html, it loads acorn.js and acorn-player.js and all the shells, all the views, and relevant css). How it only first shows thumbnail, and when it clicks, it renders the acorn shell,
+
 ### Codebase
 
 #### File Hierarchy:
@@ -246,7 +267,6 @@ Services:
 
 
 #### Code Hierarchy
-
 
 
 classes (does not include utility functions):
