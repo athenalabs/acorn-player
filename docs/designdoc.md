@@ -479,11 +479,26 @@ The Views are broken down as follows:
    * **ControlsView** -- contains the control views.
       * **ControlViews** -- the controls in use currently.
 
+###### PlayerView - the main acorn player view.
+The PlayerView object provides abstracts away the following behaviors:
+* initialization of the acorn's data model and Backbone view hierarchy
+* adequate event firing whenever the user interacts with the acorn at the
+player level (e.g. the acorn is renamed, changed, or saved).
+* player rendering logic; note that the content of the acorn is rendered by
+the implementation of the acorn shell for said content type.
 
-A useful diagram:
+###### ContentView - the parent view for each shells' main content view.
+Each shell's ContentView derives from this top-level ContentView and
+implements the rendering logic for the shell's own content-type.
 
-![acorn-player-views](https://img.skitch.com/20120911-kugx38r8g5tdpcxf2emsufhabu.png)
+###### EditView - the parent view for all shells' edit views.
+Each shell's EditView derives from this top-level EditView and implements
+the rendering logic for the shell's own edit mode.
 
+###### ControlsView - the view containing media control buttons.
+The ControlsView provides the control buttons that all acorns share (namely,
+FullscreenControl, AcornControl, and EditControl). Shells can extend that
+list of controls with their own, special purpose buttons.
 
 
 ### Codebase
@@ -619,28 +634,6 @@ behind those views is provided by
 [acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js). At a high
 level, acorn.player comprises four primary views (among several other subsidiary
 views):
-
-###### PlayerView - the main acorn player view.
-The PlayerView object provides abstracts away the following behaviors:
-* initialization of the acorn's data model and Backbone view hierarchy
-* adequate event firing whenever the user interacts with the acorn at the
-  player level (e.g. the acorn is renamed, changed, or saved).
-* player rendering logic; note that the content of the acorn is rendered by
-  the implementation of the acorn shell for said content type.
-
-###### ControlsView - the view containing media control buttons.
-The ControlsView provides the control buttons that all acorns share (namely,
-FullscreenControl, AcornControl, and EditControl). Shells can extend that
-list of controls with their own, special purpose buttons.
-
-###### ContentView - the parent view for each shells' main content view.
-Each shell's ContentView derives from this top-level ContentView and
-implements the rendering logic for the shell's own content-type.
-
-###### EditView - the parent view for all shells' edit views.
-Each shell's EditView derives from this top-level EditView and implements
-the rendering logic for the shell's own edit mode.
-
 
 ##### shell.js
 [shells.js](/athenalabs/acorn-player/blob/master/js/src/shells/shell.js) is
