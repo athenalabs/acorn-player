@@ -254,7 +254,6 @@
     },
 
     onFullscreen: function() {
-      console.log('fullscreen triggered');
       var elem = this.$el[0];
       if (elem.requestFullscreen) {
         elem.requestFullscreen();
@@ -366,7 +365,10 @@
 
 
   // control views.
-  player.views.controls = {};
+  player.views.controls = {
+    acornControls: {},
+    shellControls: {},
+  };
 
 
   // ** player.views.ControlsView ** view with media control buttons
@@ -376,25 +378,39 @@
 
     id: 'controls',
 
-    controls: [
-      'FullscreenControl',
-      'AcornControl',
-      'EditControl',
-    ],
-
-    // Supported trigger events
-    // * change:acorn - fired when acorn data has changed
-
-    initialize: function() {
-      PlayerSubview.prototype.initialize.call(this);
-
-      this.player.on('change:acorn', this.onAcornChange);
-    },
-
     render: function() {
+
+      this.acornControls = new player.views.AcornControlsView({
+        player: this.player,
+      });
+      this.shellControls = new player.views.ShellControlsView({
+        player: this.player,
+      });
+
       this.$el.empty();
 
+      this.acornControls.render();
+      this.shellControls.render();
+
+      this.$el.append(this.acornControls.el);
+      this.$el.append(this.shellControls.el);
+
+    },
+
+  });
+
+
+  // ** player.views.ControlsSubview ** a subcomponent view for ControlsView
+  // -----------------------------------------------------------------------
+
+  player.views.ControlsSubview = PlayerSubview.extend({
+
+    render: function() {
       var self = this;
+
+      this.$el.empty();
+      this.constructControlViews();
+
       _(this.controlViews).each(function(control) {
         // `control.el` got removed from the DOM above: `this.$el.empty()`.
         // the `control` view's elements thus need to be re-delegated.
@@ -407,27 +423,75 @@
       });
     },
 
-    onAcornChange: function() {
-
-      var controls = this.controls;
-
-      if (this.player.shell && this.player.shell.controls)
-        controls = controls.concat(this.player.shell.controls);
-
+    constructControlViews: function() {
       var self = this;
-      this.controlViews = _(controls).chain()
-        .map(function (ctrl) { return player.views.controls[ctrl]; })
+
+      this.controls = this.controls || [];
+
+      this.controlViews = _(this.controls).chain()
+        .map(function (ctrl) { return self.controlsList[ctrl]; })
         .filter(function (cls) { return !!cls; })
         .map(function (cls) { return new cls({controls: self}); })
         .value();
-
-      this.render();
     },
+
+    // override with correct subset of player.views.controls
+    controlsList: {},
 
     controlWithId: function(id) {
       return _.find(this.controlViews, function (ctrlView) {
         return ctrlView.id == id;
       });
+    },
+
+  });
+
+
+  // ** player.views.AcornControlsView ** view with acorn control buttons
+  // --------------------------------------------------------------------
+
+  player.views.AcornControlsView = player.views.ControlsSubview.extend({
+
+    id: 'acorn-controls',
+
+    initialize: function() {
+      PlayerSubview.prototype.initialize.call(this);
+
+      // by default, show all acorn controls
+      this.controls = this.options.controls || _.keys(this.controlsList);
+    },
+
+    controlsList: player.views.controls.acornControls,
+
+  });
+
+
+  // ** player.views.ShellControlsView ** view with shell control buttons
+  // --------------------------------------------------------------------
+
+  player.views.ShellControlsView = player.views.ControlsSubview.extend({
+
+    id: 'shell-controls',
+
+    // Supported trigger events
+    // * change:acorn - fired when acorn data has changed
+
+    initialize: function() {
+      PlayerSubview.prototype.initialize.call(this);
+
+      // by default, show no shell controls
+      this.controls = this.options.controls || [];
+
+      this.player.on('change:acorn', this.onAcornChange);
+    },
+
+    controlsList: player.views.controls.shellControls,
+
+    onAcornChange: function() {
+      if (this.player.shell && this.player.shell.controls)
+        this.controls = this.player.shell.controls;
+
+      this.render();
     },
 
   });
@@ -469,14 +533,16 @@
 
   });
 
-  // ** player.views.controls.FullscreenControl ** onClick : fullscreen
-  // -----------------------------------------------------------------
 
-  player.views.controls.FullscreenControl = player.views.Control.extend({
+  // ** player.views.controls.acornControls.FullscreenControl **
+  //    onClick : fullscreen
+  // -----------------------------------------------------------
+
+  player.views.controls.acornControls.FullscreenControl =
+      player.views.Control.extend({
     tooltip: 'Fullscreen',
 
     id: 'fullscreen',
-    className: 'control right',
 
     onClick: function() {
       this.controls.player.trigger('fullscreen');
@@ -484,14 +550,15 @@
 
   });
 
-  // ** player.views.controls.AcornControl ** onClick : acorn website
-  // ---------------------------------------------------------------------
+  // ** player.views.controls.acornControls.AcornControl **
+  //    onClick : acorn website
+  // ------------------------------------------------------
 
-  player.views.controls.AcornControl = player.views.Control.extend({
+  player.views.controls.acornControls.AcornControl =
+      player.views.Control.extend({
     tooltip: 'Website',
 
     id: 'acorn',
-    className: 'control right',
 
     onClick: function() {
       this.controls.player.trigger('acorn-site');
@@ -499,14 +566,14 @@
 
   });
 
-  // ** player.views.controls.EditControl ** onClick : edit
-  // ---------------------------------------------------------------------
+  // ** player.views.controls.acornControls.EditControl ** onClick : edit
+  // --------------------------------------------------------------------
 
-  player.views.controls.EditControl = player.views.Control.extend({
+  player.views.controls.acornControls.EditControl =
+      player.views.Control.extend({
     tooltip: 'Edit',
 
     id: 'edit',
-    className: 'control right',
 
     onClick: function() {
       this.controls.player.trigger('show:edit');
@@ -514,14 +581,15 @@
 
   });
 
-  // ** player.views.controls.LeftControl ** onClick : previous link
-  // ---------------------------------------------------------------------
+  // ** player.views.controls.shellControls.LeftControl **
+  //    onClick : previous shell
+  // -----------------------------------------------------
 
-  player.views.controls.LeftControl = player.views.Control.extend({
+  player.views.controls.shellControls.LeftControl =
+      player.views.Control.extend({
     tooltip: 'Prev', // short as it doesn't fit for now :/
 
     id: 'left',
-    className: 'control left',
 
     onClick: function() {
       this.controls.player.trigger('controls:left');
@@ -529,14 +597,15 @@
 
   });
 
-  // ** player.views.controls.RightControl ** onClick : next link
-  // ---------------------------------------------------------------------
+  // ** player.views.controls.shellControls.RightControl **
+  //    onClick : next shell
+  // ------------------------------------------------------
 
-  player.views.controls.RightControl = player.views.Control.extend({
+  player.views.controls.shellControls.RightControl =
+      player.views.Control.extend({
     tooltip: 'Next',
 
     id: 'right',
-    className: 'control left',
 
     onClick: function() {
       this.controls.player.trigger('controls:right');
@@ -544,14 +613,15 @@
 
   });
 
-  // ** player.views.controls.ListControl ** onClick : list links
-  // ---------------------------------------------------------------------
+  // ** player.views.controls.shellControls.ListControl **
+  //    onClick : list shells
+  // -----------------------------------------------------
 
-  player.views.controls.ListControl = player.views.Control.extend({
+  player.views.controls.shellControls.ListControl =
+      player.views.Control.extend({
     tooltip: 'Playlist',
 
     id: 'list',
-    className: 'control left',
 
     onClick: function() {
       this.controls.player.trigger('controls:list');
