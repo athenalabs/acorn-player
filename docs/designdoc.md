@@ -293,13 +293,16 @@ other subsidiary views):
 
 
 ##### empty.shell.js
-[empty.shell.js](https://github.com/athenalabs/acorn-player/blob/master/js/src/
-shells/empty.shell.js) is the simplest example of a shell implementation. It
+[empty.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/empty.shell.js) is the simplest example of a shell implementation. It
 simply implements the rendering of a shell that has no content. At the moment, 
-the shell simply displays a message along the lines of "This acorn is currently empty. Visit acorn.athena.ai for more acorns."
+the shell simply displays a message along the lines of "This acorn is 
+currently empty. Visit acorn.athena.ai for more acorns."
 
 
 ##### imagelink.shell.js
+[imagelink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/imagelink.shell.js) is a shell implementation that wraps any image type (formats currently supported: *.{jpg,gif,png,svg}) by embedding it into an HTML image tag in the render function of the shell's ContentView.
+
+
 ##### link.shell.js
 ##### multi.shell.js
 ##### pdf.shell.js
