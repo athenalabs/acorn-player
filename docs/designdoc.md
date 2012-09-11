@@ -234,6 +234,7 @@ Services:
     ├── acorn.js
     ├── acorn.player.js
     └── shells
+        ├── shell.js
         ├── empty.shell.js
         ├── link.shell.js
         ├── imagelink.shell.js
@@ -358,6 +359,12 @@ views):
   the rendering logic for the shell's own edit mode.
 
 
+##### shell.js
+[shells.js](/athenalabs/acorn-player/blob/master/js/src/shells/shell.js) is
+the abstract, top-level shell object from which all other shells inherit. It
+defines the base shell API as well as the base functionality for all shell
+views.
+
 ##### empty.shell.js
 [empty.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/empty.shell.js) is the simplest example of a shell implementation. It
 simply implements the rendering of a shell that has no content. At the moment,
@@ -365,13 +372,41 @@ the shell simply displays a message along the lines of "This acorn is
 currently empty. Visit acorn.athena.ai for more acorns."
 
 ##### link.shell.js
+[link.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/link.shell.js)
+is a shell that wraps the content of an arbitrary link whose content-type is
+not specifically supported by acorn. The link destination will simply be
+embedded as an iframe by the shell. It inherits from
+[shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/shell.js).
 
 ##### imagelink.shell.js
-[imagelink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/imagelink.shell.js) is a shell implementation that wraps any image type (formats currently supported: *.{jpg,gif,png,svg}) by embedding it into an HTML image tag in the render function of the shell's ContentView.
+[imagelink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/imagelink.shell.js)
+is a shell implementation that wraps any image type (formats currently
+supported: *.{jpg,gif,png,svg}) by embedding it into an HTML image tag in the
+render function of the shell's ContentView.
 
 ##### videolink.shell.js
+[videolink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/videolink.shell.js)
+is the abstract shell from which all video shells (like the YouTube and Vimeo
+shells) derive.
+
 ##### youtube.shell.js
+[youtube.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/youtube.shell.js)
+is a shell that wraps a YouTube video. It inherits from
+[videolink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/videolink.shell.js).
+
 ##### vimeo.shell.js
+[vimeo.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/vimeo.shell.js)
+is a shell that wraps a Vimeo video. It inherits from
+[videolink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/videolink.shell.js).
+
 ##### pdf.shell.js
+[pdf.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/pdf.shell.js)
+is a shell that wraps a PDF document by loading it in an iframe. It inherits
+from
+[link.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/link.shell.js).
+
 ##### multi.shell.js
-##### shell.js
+[multi.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/multi.shell.js)
+is a shell implementation that wraps multiple child shells of any type. A
+MultiShell can be thought of as a playlist. It inherits from
+[shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/shell.js).
