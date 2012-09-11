@@ -612,13 +612,7 @@ classes (does not include utility functions):
 ##### acorn.js
 
 [acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js) defines and
-implements the base acorn model and top level API. First and foremost, the
-acorn model includes basic operations common to all acorns including (but not
-limited to) ways to construct acorns from URLs, media, or preexisting acorn
-data objects. Second, it provides useful accessors to the acorn data fields
-like the acornid. Third, it provides utility methods for the JSON
-serialization and deserialization of acorns. Fourth, it includes preliminary
-support for integration of acorn with a backend of your choice.
+implements the base acorn model and top level API. See [Acorn Data Model](#acorn-data-model) above.
 
 Outside of the acorn data model,
 [acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js) includes a
@@ -627,13 +621,7 @@ interaction with acorns.
 
 ##### acorn.player.js
 [acorn.player.js](/athenalabs/acorn-player/blob/master/js/src/acorn.player.js)
-defines the acorn.player object. The acorn.player object encapsulates all
-the views (deriving from Backbone.View) that are needed to create the user
-experience and behavior outlined in the overview section above. The model
-behind those views is provided by
-[acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js). At a high
-level, acorn.player comprises four primary views (among several other subsidiary
-views):
+defines the acorn.player object. See [Acorn Player](#acorn-player) above.
 
 ##### shell.js
 [shells.js](/athenalabs/acorn-player/blob/master/js/src/shells/shell.js) is
