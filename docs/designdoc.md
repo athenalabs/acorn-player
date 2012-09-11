@@ -253,6 +253,8 @@ classes (does not include utility functions):
 
 * **acorn.js**
    * **acorn.Model** - represents an acorn, holds acorn data
+
+
 * **acorn.player.js**
    * **PlayerView** - acorn player main view
    * **PlayerSubview** - acorn player subview superclass
@@ -268,7 +270,10 @@ classes (does not include utility functions):
       * **RightControl** - onClick: right or next
       * **ListControl** - onClick: list items
    * **Router** - routes requests (Backbone)
+
+
 * **shells**
+
    * **shell.js**
       * **ShellAPI** - interface all Shells must support
       * **Shell** - module that renders and edits media types
@@ -276,34 +281,50 @@ classes (does not include utility functions):
          * **ContentView** - view to render shell media piece
          * **SummaryView** - view to summarize shell media piece
          * **EditView** - view to edit shell media piece
+
+
    * **empty.shell.js**
       * **EmptyShell** - strawman empty shell (inherits from Shell)
          * **ContentView** - (inherits from Shell.ContentView)
+
+
    * **link.shell.js**
       * **LinkShellAPI** - interface all links must support
       * **LinkShell** - shell that embeds media via link (Shell)
          * **ContentView** - inherits from Shell.ContentView
          * **EditView** - inherits from Shell.EditView
+
+
    * **imagelink.shell.js**
       * **ImageLinkShell** - embeds images (inherits from LinkShell)
          * **ContentView** - (inherits from LinkShell.ContentView)
+
+
    * **videolink.shell.js**
       * **Timer** - object to execute periodic callbacks
       * **VideoPlaybackInterface** - interface video shells implement
       * **VideoLinkShell** - (inherits from LinkShell)
          * **ContentView** - (inherits from LinkShell.ContentView)
          * **EditView** - (inherits from LinkShell.EditView)
+
+
    * **youtube.shell.js**
       * **YouTubeShell** - renders youtube videos (VideoLinkShell)
          * **ContentView** - (inherits from VideoLinkShell.ContentView)
          * **EditView** - (inherits from VideoLinkShell.EditView)
+
+
    * **vimeo.shell.js**
       * **VimeoShell** - renders vimeo videos (VideoLinkShell)
          * **ContentView** - (inherits from VideoLinkShell.ContentView)
          * **EditView** - (inherits from VideoLinkShell.EditView)
+
+
    * **pdf.shell.js**
       * **PDFShell** - renders pdf documents (LinkShell)
          * **EditView** - (inherits from LinkShell.EditView)
+
+
    * **multi.shell.js**
       * **MultiShell** - group of subshells (inherits from Shell)
          * **ContentView** - (inherits from Shell.ContentView)
