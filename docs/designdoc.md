@@ -246,7 +246,75 @@ Services:
 
 #### Code Hierarchy
 
+
+
+classes (does not include utility functions):
+
+* **acorn.js**
+    * **acorn.Model** - represents an acorn, holds acorn data
+* **acorn.player.js**
+    * **PlayerView** - acorn player main view
+    * **PlayerSubview** - acorn player subview superclass
+        * **ThumbnailView** - acorn thumbnail view
+        * **ContentView** - player view that renders shells
+        * **ControlsView** - player view with media controls
+        * **EditView** - player view to house editing views
+    * **Control** - superclass for all controls
+        * **FullscreenControl** - onClick: fullscreen
+        * **AcornControl** - onClick: open acorn page
+        * **EditControl** - onClick: open edit view
+        * **LeftControl** - onClick: left or previous
+        * **RightControl** - onClick: right or next
+        * **ListControl** - onClick: list items
+    * **Router** - routes requests (Backbone)
+* **shells**
+    * **shell.js**
+        * **ShellAPI** - interface all Shells must support
+        * **Shell** - module that renders and edits media types
+            * **ShellView** - view to be used by shells
+            * **ContentView** - view to render shell media piece
+            * **SummaryView** - view to summarize shell media piece
+            * **EditView** - view to edit shell media piece
+    * **empty.shell.js**
+        * **EmptyShell** - strawman empty shell (inherits from Shell)
+            * **ContentView** - (inherits from Shell.ContentView)
+    * **link.shell.js**
+        * **LinkShellAPI** - interface all links must support
+        * **LinkShell** - shell that embeds media via link (Shell)
+            * **ContentView** - inherits from Shell.ContentView
+            * **EditView** - inherits from Shell.EditView
+    * **imagelink.shell.js**
+        * **ImageLinkShell** - embeds images (inherits from LinkShell)
+            * **ContentView** - (inherits from LinkShell.ContentView)
+    * **videolink.shell.js**
+        * **Timer** - object to execute periodic callbacks
+        * **VideoPlaybackInterface** - interface video shells implement
+        * **VideoLinkShell** - (inherits from LinkShell)
+            * **ContentView** - (inherits from LinkShell.ContentView)
+            * **EditView** - (inherits from LinkShell.EditView)
+    * **youtube.shell.js**
+        * **YouTubeShell** - renders youtube videos (VideoLinkShell)
+            * **ContentView** - (inherits from VideoLinkShell.ContentView)
+            * **EditView** - (inherits from VideoLinkShell.EditView)
+    * **vimeo.shell.js**
+        * **VimeoShell** - renders vimeo videos (VideoLinkShell)
+            * **ContentView** - (inherits from VideoLinkShell.ContentView)
+            * **EditView** - (inherits from VideoLinkShell.EditView)
+    * **pdf.shell.js**
+        * **PDFShell** - renders pdf documents (LinkShell)
+            * **EditView** - (inherits from LinkShell.EditView)
+    * **multi.shell.js**
+        * **MultiShell** - group of subshells (inherits from Shell)
+            * **ContentView** - (inherits from Shell.ContentView)
+            * **PlaylistView** - (inherits from Shell.ShellView)
+            * **EditView** - (inherits from Shell.EditView)
+
+
+
+
+
 ##### acorn.js
+
 [acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js) defines and
 implements the base acorn model and top level API. First and foremost, the
 acorn model includes basic operations common to all acorns including (but not
@@ -264,7 +332,7 @@ interaction with acorns.
 ##### acorn.player.js
 [acorn.player.js](/athenalabs/acorn-player/blob/master/js/src/acorn.player.js)
 defines the acorn.player object. The acorn.player object encapsulates all
-the views (deriving from Backbone.View) that are needed to create the user 
+the views (deriving from Backbone.View) that are needed to create the user
 experience and behavior outlined in the overview section above. The model
 behind those views is provided by
 [acorn.js](/athenalabs/acorn-player/blob/master/js/src/acorn.js). At a high
@@ -278,9 +346,9 @@ views):
     player level (e.g. the acorn is renamed, changed, or saved).
   * player rendering logic; note that the content of the acorn is rendered by
     the implementation of the acorn shell for said content type.
-* ControlsView - the view containing media control buttons. The ControlsView 
-  provides the control buttons that all acorns share (namely, 
-  FullscreenControl, AcornControl, and EditControl). Shells can extend that 
+* ControlsView - the view containing media control buttons. The ControlsView
+  provides the control buttons that all acorns share (namely,
+  FullscreenControl, AcornControl, and EditControl). Shells can extend that
   list of controls with their own, special purpose buttons.
 * ContentView - the parent view for each shells' main content view. Each
   shell's ContentView derives from this top-level ContentView and implements
@@ -292,8 +360,8 @@ views):
 
 ##### empty.shell.js
 [empty.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/empty.shell.js) is the simplest example of a shell implementation. It
-simply implements the rendering of a shell that has no content. At the moment, 
-the shell simply displays a message along the lines of "This acorn is 
+simply implements the rendering of a shell that has no content. At the moment,
+the shell simply displays a message along the lines of "This acorn is
 currently empty. Visit acorn.athena.ai for more acorns."
 
 ##### link.shell.js
