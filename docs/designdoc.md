@@ -236,14 +236,13 @@ Services:
     ├── acorn.player.js
     └── shells
         ├── empty.shell.js
-        ├── imagelink.shell.js
         ├── link.shell.js
-        ├── multi.shell.js
-        ├── pdf.shell.js
-        ├── shell.js
+        ├── imagelink.shell.js
         ├── videolink.shell.js
+        ├── youtube.shell.js
         ├── vimeo.shell.js
-        └── youtube.shell.js
+        ├── pdf.shell.js
+        └── multi.shell.js
 
 
 #### Code Hierarchy
@@ -298,16 +297,14 @@ simply implements the rendering of a shell that has no content. At the moment,
 the shell simply displays a message along the lines of "This acorn is 
 currently empty. Visit acorn.athena.ai for more acorns."
 
+##### link.shell.js
 
 ##### imagelink.shell.js
 [imagelink.shell.js](/athenalabs/acorn-player/blob/master/js/src/shells/imagelink.shell.js) is a shell implementation that wraps any image type (formats currently supported: *.{jpg,gif,png,svg}) by embedding it into an HTML image tag in the render function of the shell's ContentView.
 
-
-##### link.shell.js
-##### multi.shell.js
-##### pdf.shell.js
-##### shell.js
 ##### videolink.shell.js
-##### vimeo.shell.js
 ##### youtube.shell.js
-
+##### vimeo.shell.js
+##### pdf.shell.js
+##### multi.shell.js
+##### shell.js
