@@ -100,3 +100,13 @@ acorn.registerShell(ImageLinkShell);
 
 ```
 
+## MultiShell
+
+[MultiShell](../js/src/shells/multi.shell.js) illustrates the power of
+abstracting with shells. Take a look at its source.
+
+## YouTubeShell and VimeoShell
+
+[YouTubeShell](../js/src/shells/youtube.shell.js) and
+[VimeoShell](../js/src/shells/vimeo.shell.js) illustrate how to embed and
+interact with other vendor players.
