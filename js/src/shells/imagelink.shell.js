@@ -5,7 +5,7 @@ var ImageLinkShell = acorn.shells.ImageLinkShell = LinkShell.extend({
 
   shellid: 'acorn.ImageLinkShell',
 
-  // The cannonical type of this media. One of `acorn.types`.
+  // The canonical type of this media. One of `acorn.types`.
   type: 'image',
 
   // **validRegexes** list of valid LinkRegexes for images

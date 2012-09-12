@@ -6,7 +6,7 @@ var YouTubeShell = acorn.shells.YouTubeShell = VideoLinkShell.extend({
 
   shellid: 'acorn.YouTubeShell',
 
-  // The cannonical type of this media. One of `acorn.types`.
+  // The canonical type of this media. One of `acorn.types`.
   type: 'video',
 
   // **youtubeId** returns the youtube video id of this link.

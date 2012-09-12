@@ -20,29 +20,13 @@ src="/player/new"></iframe>
 var acornModel = acorn.withData({
   "acornid": "local",
   "shell": {
-    "shell": "acorn.EmptyShell",
+    "shell": "acorn.VimeoShell",
+    "link": "http://vimeo.com/17871870",
   },
 });
 
-var player = undefined;
 var playerFrame = document.getElementById('player');
-
-// setup callback to fire once the iframe finishes loading.
-playerFrame.onload = function() {
-  // get the window within the iframe
-  var f = playerFrame;
-  var w = f.contentWindow ? f.contentWindow : f.contentDocument.defaultView;
-
-  // get the player instance from the iframe window
-  player = w.acorn.player.instance;
-
-  // set the new acorn model
-  player.model = acornModel;
-
-  // trigger acorn change.
-  player.trigger('change:acorn');
-};
-
+acorn.playInFrame(acornModel, playerFrame);
 
 </script>
 

@@ -1,0 +1,32 @@
+<html>
+<head>
+<style>
+iframe {
+  width: 600px;
+  height: 400px;
+}
+</style>
+<script src="/js/libs/jquery/jquery.min.js"></script>
+<script src="/js/src/acorn.js"></script>
+</head>
+<body>
+
+<iframe id="player"
+frameborder="0" border="0" allowtransparency="true"
+allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"
+src="/player/new"></iframe>
+
+<script type="text/javascript">
+
+var acornModel = acorn('nyfskeqlyx');
+acornModel.fetch({
+  success: function() {
+    var playerFrame = document.getElementById('player');
+    acorn.playInFrame(acornModel, playerFrame);
+  },
+})
+
+</script>
+
+</body>
+</html>

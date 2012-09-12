@@ -1,113 +1,166 @@
 # acorn-player
 
-
 ## about
 
-``acorn-player`` is the embedded-player in use by acorn.
 
-``[acorn](http://staging.acorn.athena.ai)`` is a universal media wrapper.
+``acorn-player`` is the embedded-player used by acorn.
+[Acorn](http://staging.acorn.athena.ai) is a universal media wrapper.
 
 ![player-image](https://img.skitch.com/20120908-fcad4pqca1chdrrgr446q1euj7.png)
 
-It's great for:
-* sharing media
-* remixing media
-* clipping videos
+It's great for all sorts of media-related things, like:
+* sharing
+* remixing
+* clipping
+* looping
 * playlists
 * galleries (soon)
-* versioning media (soon)
+* versioning (soon)
+* annotating (soon)
 * scoping comments (soon)
-* annotating media (soon)
-
-
-### the x for y
-
-`acorn` is like [gist](http://gist.github.com) for _everything_.
-
-### authors
-
-Acorn was written by [Athena](http://github.com/athenalabs) members:
-* [Juan Batiz-Benet](http://github.com/jbenet)
-* [Ali Yahya](http://github.com/ali01)
-* [Daniel Windham](http://github.com/tenedor)
-
-Special Thanks to
-[Tomcat](http://github.com/TomcatEsq) and
-[TomKitten](http://github.com/TomKitten).
-
-### contributors
-
-### repository
 
 Check out the project's github page:
 http://github.com/athenalabs/acorn-player
 
-Pull-requests welcome!
+### authors
 
-### issues
+``acorn-player`` was written by [Athena](http://github.com/athenalabs) members:
 
-Please report issues on the github issues page:
+* [Juan Batiz-Benet](http://github.com/jbenet)
+* [Ali Yahya](http://github.com/ali01)
+* [Daniel Windham](http://github.com/tenedor)
+
+#### contributors
+* [Tomcat](http://github.com/TomcatEsq)
+* [TomKitten](http://github.com/TomKitten)
+
+
+### contact
+
+Please report issues and provide feedback on the github issues page:
 http://github.com/athenalabs/acorn-player/issues
 
+Pull-requests welcome!
 
-## Development Setup
+## Development
 
+To develop ``acorn-player``, you need to:
 
-### Download the source:
+### download source
 
     git clone git@github.com:athenalabs/acorn-player.git
 
-### Run the server:
+### run server
 
 Run the following command:
 
     cd acorn-player
-    python server.py
+    python server.py 8000
 
+See it at http://localhost:8000/
 
-See it:
+### design doc
 
-    http://localhost:8000/
-
+Read the [designdoc](doc/designdoc.md).
 
 ## Usage
 
-Go to http://staging.acorn.athena.ai for acorn.
+``acorn-player`` is a great tool to embed all sorts of media on webpages.
+It features support for diverse kinds of media: video, text, pdfs, images,
+etc. Beyond that, it allows remixing and playlisting these media.
 
-### posting media
+Currently, ``acorn-player`` only supports **linked media**, media hosted on
+other websites, accessible via link (e.g. a youtube video).
 
-You can post media through the acorn website,
-[acorn.athena.ai](http://acorn.athena.ai),
-or through any website that embeds the new acorn player.
+To use ``acorn-player``, you need to
 
-To embed the new acorn player, use:
+* include ``acorn-player`` in an iframe.
+* create an ``acorn`` for the media you want to play.
+* tell the ``acorn-player`` to play the ``acorn``.
 
-    <iframe id="acorn-player-frame"
-    src="http://staging.acorn.athena.ai/player/new"
-    frameborder="0" border="0" width="600" height="400" scrolling="no"
-    allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"
-    ></iframe>
+### Include ``acorn-player`` in ``iframe``
 
-### viewing media
-
-Once posted, the media gets a unique url. You can visit the url directly in
-any web-browser:
-
-    http://staging.acorn.athena.ai/{acorn id}
-
-or you can embed the media (see below).
+``acorn-player`` should be included into your html page in an ``iframe``. You
+can either:
 
 
-### embedding media
+* construct the iframe yourself:
 
-Use:
-
-    <iframe id="acorn-player-frame"
-    src="http://staging.acorn.athena.ai/player/{acorn id}"
-    frameborder="0" border="0" width="600" height="400" scrolling="no"
-    allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"
-    ></iframe>
-
-wherever you want the media to appear.
+        <iframe id="player"
+        frameborder="0" border="0" allowtransparency="true"
+        allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"
+        src="http://localhost:8000/player/"></iframe>
 
 
+* construct the iframe using ``acorn.util.iframe``:
+
+        var iframe = acorn.util.iframe('http://localhost:8000/player/');
+        $('body').append(iframe);
+
+
+
+### Create Acorn
+
+An ``acorn`` is just an object with some meta-data that tells the
+``acorn-player`` what media to show, and how to do it. Acorns are either:
+
+* stored in a server
+(like [acorn.athena.ai](http://staging.acorn.athena.ai))
+
+        var acornModel = acorn('nyfskeqlyx');
+        acornModel.fetch({
+          success: function() {
+            // acornModel finished loading.
+          }
+        });
+
+* stored directly in your code
+(see [examples/example.youtubeshell.html](examples/example.youtubeshell.html))
+
+        var acornModel = acorn.withData({
+          "acornid": "local",
+          "shell": {
+            "shell": "acorn.YouTubeShell",
+            "link": "http://www.youtube.com/watch?v=CbIZU8cQWXc",
+          },
+        });
+
+
+### Play ``acorn`` in ``acorn-player``
+
+The remaining thing to so is to play the ``acorn`` in the ``acorn-player``
+loaded in the ``iframe``:
+
+    acorn.playInFrame(acornModel, iframe);
+
+
+### Full Example:
+
+Assuming you're running the server, here is a full example in javascript:
+
+    var iframe = acorn.util.iframe('http://localhost:8000/player/');
+    $('body').append(iframe);
+
+    var acornModel = acorn.withData({
+      "acornid": "local",
+      "shell": {
+        "shell": "acorn.YouTubeShell",
+        "link": "http://www.youtube.com/watch?v=CbIZU8cQWXc",
+      },
+    });
+
+    acorn.playInFrame(acornModel, iframe);
+
+
+
+### Shells
+
+``acorn-player`` uses a set of modules dubbed **shells** to support:
+* media of various types
+* playlists of various types
+* remixing in various ways
+
+Shells are self-contained modules that tell ``acorn-player`` how to render a
+particular ``acorn``, and how to edit the data with the ``acorn``.
+
+See [doc/shells.md](doc/shells.md).
