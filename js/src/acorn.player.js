@@ -99,7 +99,7 @@
     //
     // * show:content - fired when ContentView should be shown
     // * show:edit    - fired when EditView should be shown
-    // * close:edit   - fired when EditView shold be closed
+    // * close:edit   - fired when EditView should be closed
     //
     // * fullscreen   - fired when acorn should display in fullscreen
     // * acorn-site   - fired to go to the acorn website
@@ -107,6 +107,9 @@
     // * playback:play - fired when playback should start or resume
     // * playback:stop - fired when playback should pause or stop
     // * playback:ended - fired when playback has finished
+    //
+    // * linked:content-controls - fired upon linking shell content and controls
+
 
 
 
@@ -162,7 +165,7 @@
     },
 
     render: function() {
-
+      
       this.$el.empty();
 
       if (this.options.autohideControls)
@@ -175,9 +178,27 @@
         this.contentView.render();
         this.controlsView.render();
 
+        this.linkContentAndControls();
+
         this.$el.append(this.contentView.el);
         this.$el.append(this.controlsView.el);
       }
+    },
+
+    linkContentAndControls: function() {
+      // `shell.ContentView` and `views.ShellControlView`
+      var shellView = this.contentView.shellView;
+      var shellControls = this.controlsView.shellControls;
+
+      assert(shellControls && shellView, 'ContentView and ControlsView must '+
+            'be rendered');
+
+      // inform shell content and control views of one another to render and
+      // manage shell-specific controls
+      shellView.setShellControls(shellControls);
+      shellControls.setShellView(shellView);
+
+      this.trigger('linked:content-controls');
     },
 
     onAcornSave: function() {
@@ -473,23 +494,19 @@
 
     id: 'shell-controls',
 
-    // Supported trigger events
-    // * change:acorn - fired when acorn data has changed
-
     initialize: function() {
       PlayerSubview.prototype.initialize.call(this);
 
       // by default, show no shell controls
       this.controls = this.options.controls || [];
-
-      this.player.on('change:acorn', this.onAcornChange);
     },
 
     controlsList: player.views.controls.shellControls,
 
-    onAcornChange: function() {
-      if (this.player.shell && this.player.shell.controls)
-        this.controls = this.player.shell.controls;
+    setShellView: function(shellView) {
+      this.shellView = shellView;
+      this.controls = acorn.util.clone(this.shellView.shell.controls) ||
+          this.controls;
 
       this.render();
     },
