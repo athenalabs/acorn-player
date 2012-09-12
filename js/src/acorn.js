@@ -104,12 +104,13 @@
 
   // canonical types of media
 
+  acorn.types.empty = true;
+  acorn.types.link = true;
   acorn.types.text = true;
   acorn.types.image = true;
   acorn.types.video = true;
   acorn.types.audio = true;
   acorn.types.document = true;
-  acorn.types.link = true;
   acorn.types.interactive = true;
   acorn.types.multimedia = true; // group of other types.
 
