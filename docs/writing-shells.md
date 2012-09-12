@@ -27,10 +27,10 @@ var ImageLinkShell = acorn.shells.ImageLinkShell = LinkShell.extend({
   //@@ 'shell.shell' value in acorn data.
   shellid: 'acorn.ImageLinkShell',
 
-  //@@ the type here indicates the primitive (or cannonical) media kind.
+  //@@ the type here indicates the primitive (or canonical) media kind.
   //@@ this is used to indicate (with icons) to users what to expect.
 
-  // The cannonical type of this media. One of `acorn.types`.
+  // The canonical type of this media. One of `acorn.types`.
   type: 'image',
 
   //@@ validRegexes specify regular expressions for links to match this shell.

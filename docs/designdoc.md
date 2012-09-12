@@ -18,7 +18,7 @@ Note: overview from a product-centric view.
 
   (e.g. video, sound, text, games).
 
-* **media primitive**: cannonical kinds of media
+* **media primitive**: canonical kinds of media
 
   (e.g. video, text, sound).
 
