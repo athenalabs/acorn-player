@@ -61,7 +61,7 @@ See it at http://localhost:8000/
 
 ### design doc
 
-Read the [designdoc](doc/designdoc.md).
+Read the [designdoc](https://github.com/athenalabs/acorn-player/blob/master/docs/designdoc.md).
 
 ## Usage
 
@@ -163,4 +163,4 @@ Assuming you're running the server, here is a full example in javascript:
 Shells are self-contained modules that tell ``acorn-player`` how to render a
 particular ``acorn``, and how to edit the data with the ``acorn``.
 
-See [doc/shells.md](doc/shells.md).
+See [docs/shells.md](https://github.com/athenalabs/acorn-player/blob/master/docs/shells.md).
