@@ -101,7 +101,7 @@ var LinkShellAPI = {
 
   shellid: 'acorn.LinkShell',
 
-  // The cannonical type of this media. One of `acorn.types`.
+  // The canonical type of this media. One of `acorn.types`.
   type: 'link',
 
   // **link** is the main data kept by LinkShells

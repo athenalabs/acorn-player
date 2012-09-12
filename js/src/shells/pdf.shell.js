@@ -5,7 +5,7 @@ var PDFLinkShell = acorn.shells.PDFLinkShell = LinkShell.extend({
 
   shellid: 'acorn.PDFLinkShell',
 
-  // The cannonical type of this media. One of `acorn.types`.
+  // The canonical type of this media. One of `acorn.types`.
   type: 'document',
 
   // **validRegexes** regex to match links to PDFs
