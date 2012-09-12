@@ -7,7 +7,9 @@ amazing new kinds of media! This is the place to go.
 You may want to familiarize yourself with how Backbone Views work.
 
 
-Let's start by looking at an annotated (with ``//@@``) version of ``ImageLinkShell``, a shell
+## ImageLinkShell
+
+Here is an annotated (with ``//@@``) version of ``ImageLinkShell``, a shell
 that renders image files linked on the web.
 
 
@@ -18,7 +20,7 @@ that renders image files linked on the web.
 
 
 //@@ ImageLinkShell definition.
-//@@ It derives from LinkShell, the geneeric shell for link-based media.
+//@@ It derives from LinkShell, the generic shell for link-based media.
 
 //@@ calling .extend is the Backbone view inheritance pattern.
 var ImageLinkShell = acorn.shells.ImageLinkShell = LinkShell.extend({
@@ -97,3 +99,4 @@ acorn.registerShell(ImageLinkShell);
 //@@ That's it! It was that easy to create an acorn view.
 
 ```
+
