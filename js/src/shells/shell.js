@@ -176,7 +176,6 @@ Shell.ContentView = ShellView.extend({
   initialize: function() {
     ShellView.prototype.initialize.call(this);
 
-    this.parent.on('linked:content-controls', this.onControlsLinked);
     this.parent.on('playback:play', this.onPlaybackPlay);
     this.parent.on('playback:stop', this.onPlaybackStop);
   },
@@ -186,10 +185,6 @@ Shell.ContentView = ShellView.extend({
     this.parent.off('playback:stop', this.onPlaybackStop);
 
     ShellView.prototype.remove.call(this);
-  },
-
-  setShellControls: function(shellControls) {
-    this.shellControls = shellControls;
   },
 
   // aspect ratio. undefined if it doesn't matter.
@@ -205,7 +200,6 @@ Shell.ContentView = ShellView.extend({
   // events that all shells should have?
   // onLoseFocus: function () {},
   // onGainFocus: function () {},
-  onControlsLinked: function () {},
   onPlaybackPlay: function () {},
   onPlaybackStop: function () {},
 

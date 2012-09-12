@@ -201,25 +201,6 @@ MultiShell.ContentView = Shell.ContentView.extend({
     this.trigger('change:subview');
   },
 
-  updateControls: function() {
-    if (!this.shellControls) {
-      return;
-    };
-
-    var left = this.shellControls.controlWithId('left');
-    var list = this.shellControls.controlWithId('list');
-    var right = this.shellControls.controlWithId('right');
-
-    left.$el.removeAttr('disabled');
-    right.$el.removeAttr('disabled');
-
-    if (this.currentView == _.first(this.shellViews))
-      left.$el.attr('disabled', 'disabled');
-
-    if (this.currentView == _.last(this.shellViews))
-      right.$el.attr('disabled', 'disabled');
-  },
-
   // **togglePlaylist** toggle a container with subview summaries
   togglePlaylist: function() {
     if (this.playlistView) {
@@ -244,12 +225,22 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
   // -- MultiShell Events
 
-  onControlsLinked: function() {
-    this.updateControls();
-  },
-
   onChangedSubview: function() {
-    this.updateControls();
+    var contentView = this.parent;
+    var controlsView = contentView.player.controlsView;
+
+    var left = controlsView.controlWithId('left');
+    var list = controlsView.controlWithId('list');
+    var right = controlsView.controlWithId('right');
+
+    left.$el.removeAttr('disabled');
+    right.$el.removeAttr('disabled');
+
+    if (this.currentView == _.first(this.shellViews))
+      left.$el.attr('disabled', 'disabled');
+
+    if (this.currentView == _.last(this.shellViews))
+      right.$el.attr('disabled', 'disabled');
   },
 
   triggerPlaybackStop: function() {

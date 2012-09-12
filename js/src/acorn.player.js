@@ -99,7 +99,7 @@
     //
     // * show:content - fired when ContentView should be shown
     // * show:edit    - fired when EditView should be shown
-    // * close:edit   - fired when EditView should be closed
+    // * close:edit   - fired when EditView shold be closed
     //
     // * fullscreen   - fired when acorn should display in fullscreen
     // * acorn-site   - fired to go to the acorn website
@@ -107,9 +107,6 @@
     // * playback:play - fired when playback should start or resume
     // * playback:stop - fired when playback should pause or stop
     // * playback:ended - fired when playback has finished
-    //
-    // * linked:content-controls - fired upon linking shell content and controls
-
 
 
 
@@ -165,7 +162,7 @@
     },
 
     render: function() {
-      
+
       this.$el.empty();
 
       if (this.options.autohideControls)
@@ -178,27 +175,9 @@
         this.contentView.render();
         this.controlsView.render();
 
-        this.linkContentAndControls();
-
         this.$el.append(this.contentView.el);
         this.$el.append(this.controlsView.el);
       }
-    },
-
-    linkContentAndControls: function() {
-      // `shell.ContentView` and `views.ShellControlView`
-      var shellView = this.contentView.shellView;
-      var shellControls = this.controlsView.shellControls;
-
-      assert(shellControls && shellView, 'ContentView and ControlsView must '+
-            'be rendered');
-
-      // inform shell content and control views of one another to render and
-      // manage shell-specific controls
-      shellView.setShellControls(shellControls);
-      shellControls.setShellView(shellView);
-
-      this.trigger('linked:content-controls');
     },
 
     onAcornSave: function() {
@@ -275,6 +254,7 @@
     },
 
     onFullscreen: function() {
+      console.log('fullscreen triggered');
       var elem = this.$el[0];
       if (elem.requestFullscreen) {
         elem.requestFullscreen();
@@ -386,10 +366,7 @@
 
 
   // control views.
-  player.views.controls = {
-    acornControls: {},
-    shellControls: {},
-  };
+  player.views.controls = {};
 
 
   // ** player.views.ControlsView ** view with media control buttons
@@ -399,39 +376,25 @@
 
     id: 'controls',
 
-    render: function() {
+    controls: [
+      'FullscreenControl',
+      'AcornControl',
+      'EditControl',
+    ],
 
-      this.acornControls = new player.views.AcornControlsView({
-        player: this.player,
-      });
-      this.shellControls = new player.views.ShellControlsView({
-        player: this.player,
-      });
+    // Supported trigger events
+    // * change:acorn - fired when acorn data has changed
 
-      this.$el.empty();
+    initialize: function() {
+      PlayerSubview.prototype.initialize.call(this);
 
-      this.acornControls.render();
-      this.shellControls.render();
-
-      this.$el.append(this.acornControls.el);
-      this.$el.append(this.shellControls.el);
-
+      this.player.on('change:acorn', this.onAcornChange);
     },
 
-  });
-
-
-  // ** player.views.ControlsSubview ** a subcomponent view for ControlsView
-  // -----------------------------------------------------------------------
-
-  player.views.ControlsSubview = PlayerSubview.extend({
-
     render: function() {
-      var self = this;
-
       this.$el.empty();
-      this.constructControlViews();
 
+      var self = this;
       _(this.controlViews).each(function(control) {
         // `control.el` got removed from the DOM above: `this.$el.empty()`.
         // the `control` view's elements thus need to be re-delegated.
@@ -444,71 +407,27 @@
       });
     },
 
-    constructControlViews: function() {
+    onAcornChange: function() {
+
+      var controls = this.controls;
+
+      if (this.player.shell && this.player.shell.controls)
+        controls = controls.concat(this.player.shell.controls);
+
       var self = this;
-
-      this.controls = this.controls || [];
-
-      this.controlViews = _(this.controls).chain()
-        .map(function (ctrl) { return self.controlsList[ctrl]; })
+      this.controlViews = _(controls).chain()
+        .map(function (ctrl) { return player.views.controls[ctrl]; })
         .filter(function (cls) { return !!cls; })
         .map(function (cls) { return new cls({controls: self}); })
         .value();
-    },
 
-    // override with correct subset of player.views.controls
-    controlsList: {},
+      this.render();
+    },
 
     controlWithId: function(id) {
       return _.find(this.controlViews, function (ctrlView) {
         return ctrlView.id == id;
       });
-    },
-
-  });
-
-
-  // ** player.views.AcornControlsView ** view with acorn control buttons
-  // --------------------------------------------------------------------
-
-  player.views.AcornControlsView = player.views.ControlsSubview.extend({
-
-    id: 'acorn-controls',
-
-    initialize: function() {
-      PlayerSubview.prototype.initialize.call(this);
-
-      // by default, show all acorn controls
-      this.controls = this.options.controls || _.keys(this.controlsList);
-    },
-
-    controlsList: player.views.controls.acornControls,
-
-  });
-
-
-  // ** player.views.ShellControlsView ** view with shell control buttons
-  // --------------------------------------------------------------------
-
-  player.views.ShellControlsView = player.views.ControlsSubview.extend({
-
-    id: 'shell-controls',
-
-    initialize: function() {
-      PlayerSubview.prototype.initialize.call(this);
-
-      // by default, show no shell controls
-      this.controls = this.options.controls || [];
-    },
-
-    controlsList: player.views.controls.shellControls,
-
-    setShellView: function(shellView) {
-      this.shellView = shellView;
-      this.controls = acorn.util.clone(this.shellView.shell.controls) ||
-          this.controls;
-
-      this.render();
     },
 
   });
@@ -550,16 +469,14 @@
 
   });
 
+  // ** player.views.controls.FullscreenControl ** onClick : fullscreen
+  // -----------------------------------------------------------------
 
-  // ** player.views.controls.acornControls.FullscreenControl **
-  //    onClick : fullscreen
-  // -----------------------------------------------------------
-
-  player.views.controls.acornControls.FullscreenControl =
-      player.views.Control.extend({
+  player.views.controls.FullscreenControl = player.views.Control.extend({
     tooltip: 'Fullscreen',
 
     id: 'fullscreen',
+    className: 'control right',
 
     onClick: function() {
       this.controls.player.trigger('fullscreen');
@@ -567,15 +484,14 @@
 
   });
 
-  // ** player.views.controls.acornControls.AcornControl **
-  //    onClick : acorn website
-  // ------------------------------------------------------
+  // ** player.views.controls.AcornControl ** onClick : acorn website
+  // ---------------------------------------------------------------------
 
-  player.views.controls.acornControls.AcornControl =
-      player.views.Control.extend({
+  player.views.controls.AcornControl = player.views.Control.extend({
     tooltip: 'Website',
 
     id: 'acorn',
+    className: 'control right',
 
     onClick: function() {
       this.controls.player.trigger('acorn-site');
@@ -583,14 +499,14 @@
 
   });
 
-  // ** player.views.controls.acornControls.EditControl ** onClick : edit
-  // --------------------------------------------------------------------
+  // ** player.views.controls.EditControl ** onClick : edit
+  // ---------------------------------------------------------------------
 
-  player.views.controls.acornControls.EditControl =
-      player.views.Control.extend({
+  player.views.controls.EditControl = player.views.Control.extend({
     tooltip: 'Edit',
 
     id: 'edit',
+    className: 'control right',
 
     onClick: function() {
       this.controls.player.trigger('show:edit');
@@ -598,15 +514,14 @@
 
   });
 
-  // ** player.views.controls.shellControls.LeftControl **
-  //    onClick : previous shell
-  // -----------------------------------------------------
+  // ** player.views.controls.LeftControl ** onClick : previous link
+  // ---------------------------------------------------------------------
 
-  player.views.controls.shellControls.LeftControl =
-      player.views.Control.extend({
+  player.views.controls.LeftControl = player.views.Control.extend({
     tooltip: 'Prev', // short as it doesn't fit for now :/
 
     id: 'left',
+    className: 'control left',
 
     onClick: function() {
       this.controls.player.trigger('controls:left');
@@ -614,15 +529,14 @@
 
   });
 
-  // ** player.views.controls.shellControls.RightControl **
-  //    onClick : next shell
-  // ------------------------------------------------------
+  // ** player.views.controls.RightControl ** onClick : next link
+  // ---------------------------------------------------------------------
 
-  player.views.controls.shellControls.RightControl =
-      player.views.Control.extend({
+  player.views.controls.RightControl = player.views.Control.extend({
     tooltip: 'Next',
 
     id: 'right',
+    className: 'control left',
 
     onClick: function() {
       this.controls.player.trigger('controls:right');
@@ -630,15 +544,14 @@
 
   });
 
-  // ** player.views.controls.shellControls.ListControl **
-  //    onClick : list shells
-  // -----------------------------------------------------
+  // ** player.views.controls.ListControl ** onClick : list links
+  // ---------------------------------------------------------------------
 
-  player.views.controls.shellControls.ListControl =
-      player.views.Control.extend({
+  player.views.controls.ListControl = player.views.Control.extend({
     tooltip: 'Playlist',
 
     id: 'list',
+    className: 'control left',
 
     onClick: function() {
       this.controls.player.trigger('controls:list');
