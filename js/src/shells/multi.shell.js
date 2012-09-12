@@ -1,24 +1,69 @@
 // acorn.shells.MultiShell -- one shell to contain them all.
 // ---------------------------------------------------------
 
+// The idea behind MultiShell is that it provides a generic group for
+// other shells. It provides the basic, core functionality necessary
+// to construct one unified shell out of other "subshells".
+//
+// Types of media groups made possible by MultiShell are, for example:
+// * Playlists
+// * Galleries
+// * Slideshows
+// * Spliced Video
+//
+// MultiShell does its magic by a simple abstraction, it interacts with
+// acorn as one single shell, and then directs actions/events to the
+// specific subshells that should get them.
+//
+// MultiShell is represented by a list (array) of subshells.
+// For example, take http://staging.acorn.athena.ai/yuiezzhxqa:
+//
+// {
+//   "shell": "acorn.MultiShell",
+//   "shells": [
+//     {
+//       "link": "http://www.youtube.com/watch?v=OQSNhk5ICTI",
+//       "shell": "acorn.YouTubeShell",
+//     },
+//     {
+//       "link": "http://www.youtube.com/watch?v=MX0D4oZwCsA",
+//       "shell": "acorn.YouTubeShell"
+//     }
+//   ]
+// }
+//
+// Note that the order of the shells in the array is significant, as
+// MultiShell uses this order to present the subshells.
+
+
 var MultiShell = acorn.shells.MultiShell = Shell.extend({
   // leelo dallas multi shell
 
+  // shellid specifies the shell type, which will be stored in the
+  // ``shell.shell`` value.
   shellid: 'acorn.MultiShell',
 
   // The canonical type of this media. One of `acorn.types`.
   type: 'multimedia',
 
   // The shell-specific control components to use.
+  // These controls are specified from Left to Right on the ControlsView.
   controls: [
+
+    // LeftControl provides a way to go back to the previous subshell.
     'LeftControl',
+
+    // ListControl provides a way to toggle the playlist showing all subshells.
     'ListControl',
+
+    // RightControl provides a way to go forwards to the next subshell.
     'RightControl',
   ],
 
   initialize: function() {
     Shell.prototype.initialize.call(this);
 
+    // ensure we have an internal data structure for our subshells.
     this.data.shells = this.data.shells || [];
   },
 
@@ -56,6 +101,13 @@ var MultiShell = acorn.shells.MultiShell = Shell.extend({
 // **ContentView** - Render each subshell in sequence.
 // ---------------------------------------------------
 
+// The MultiShell.ContentView shows each shell individually,
+// keeping track of the current shell (through currentView).
+// Rendering of the media is left entirely to the specific subshell.
+//
+// It listens to the 'left', 'list', and 'right' events from
+// the Player.ContentView to navigate.
+
 MultiShell.ContentView = Shell.ContentView.extend({
 
   // **shellViews** is a container for sub shellViews.
@@ -85,6 +137,8 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
   },
 
+  // **render** construct and keep all the shellViews in memory, but
+  // only show one at a time.
   render: function() {
     // remove all previously rendered shellViews.
     this.map(function(shellView) { shellView.remove(); });
@@ -117,6 +171,7 @@ MultiShell.ContentView = Shell.ContentView.extend({
     return this.indexOfView(this.currentView);
   },
 
+  // **showView** - shows the view at the specified index.
   showView: function(index) {
     var shellView = this.shellViews[index];
 
@@ -248,6 +303,11 @@ MultiShell.ContentView = Shell.ContentView.extend({
 // **PlaylistView** - A view to summarize the shells within a MultiShell
 // ---------------------------------------------------------------------
 
+// The MultiShell.PlaylistView shows a list of subshell summaries.
+// It highlights the currently shown shell, and provides a button to jump
+// to each subshell.
+
+
 MultiShell.PlaylistView = ShellView.extend({
 
   id: 'acorn-multishell-playlist',
@@ -340,6 +400,10 @@ MultiShell.PlaylistView = ShellView.extend({
 
 // EditView -- displays the subshell EditViews.
 // --------------------------------------------
+
+// The MultiShell.EditView shows each subshell.EditView in a list.
+// It allows editing of all subshells in the same list.
+
 
 MultiShell.EditView = Shell.EditView.extend({
 
