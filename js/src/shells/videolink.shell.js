@@ -71,7 +71,7 @@ var VideoLinkShell = acorn.shells.VideoLinkShell = LinkShell.extend({
 
   shellid: 'acorn.VideoLinkShell',
 
-  // The cannonical type of this media. One of `acorn.types`.
+  // The canonical type of this media. One of `acorn.types`.
   type: 'video',
 
   // **validRegexes** list of valid LinkRegexes for videos

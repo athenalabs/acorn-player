@@ -5,7 +5,7 @@ var EmptyShell = acorn.shells.EmptyShell = LinkShell.extend({
 
   shellid: 'acorn.EmptyShell',
 
-  // The cannonical type of this media. One of `acorn.types`.
+  // The canonical type of this media. One of `acorn.types`.
   type: 'link', // TODO: type: 'empty'? something else?
 
   // valid if link is empty

@@ -5,7 +5,7 @@ var VimeoShell = acorn.shells.VimeoShell = VideoLinkShell.extend({
 
   shellid: 'acorn.VimeoShell',
 
-  // The cannonical type of this media. One of `acorn.types`.
+  // The canonical type of this media. One of `acorn.types`.
   type: 'video',
 
   // **vimeoId** returns the vimeo video id of this link.

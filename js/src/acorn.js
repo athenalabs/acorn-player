@@ -102,7 +102,7 @@
   // acorn.types
   // -----------
 
-  // Cannonical types of media
+  // canonical types of media
 
   acorn.types.text = true;
   acorn.types.image = true;

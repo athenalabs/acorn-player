@@ -74,7 +74,7 @@ var ShellAPI = {
   // The convention is to namespace by vendor. e.g. `acorn.Document`.
   shellid: 'acorn.Shell',
 
-  // The cannonical type of this media. One of `acorn.types`.
+  // The canonical type of this media. One of `acorn.types`.
   type: 'text',
 
   // The shell-specific control components to use.

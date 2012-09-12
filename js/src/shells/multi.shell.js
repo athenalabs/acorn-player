@@ -6,7 +6,7 @@ var MultiShell = acorn.shells.MultiShell = Shell.extend({
 
   shellid: 'acorn.MultiShell',
 
-  // The cannonical type of this media. One of `acorn.types`.
+  // The canonical type of this media. One of `acorn.types`.
   type: 'multimedia',
 
   // The shell-specific control components to use.
