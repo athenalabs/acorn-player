@@ -149,7 +149,7 @@ YouTubeShell.ContentView = VideoLinkShell.ContentView.extend({
     // tell `ytplayer` to load the video, with given start time.
     // this *should* initialize the playback at the correct point,
     // but in practice it doesn't. Need a robust solution (tick).
-    var start = parseInt(this.shell.data.time_start || 0);
+    var start = parseInt(this.shell.data.time_start || 0, 10);
 
     if (this.options.autoplay) {
       this.ytplayer.loadVideoById(this.shell.youtubeId(), start);
