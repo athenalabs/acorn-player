@@ -287,9 +287,9 @@
     var subsec = parseFloat('0.' + (parts.length > 1 ? parts[1] : '0'));
 
     parts = (parts[0] || '0').split(':');
-    var sec = parseInt(parts.pop())
-    var min = (parts.length > 0) ? parseInt(parts.pop()) : 0;
-    var hrs = (parts.length > 0) ? parseInt(parts.pop()) : 0;
+    var sec = parseInt(parts.pop(), 10)
+    var min = (parts.length > 0) ? parseInt(parts.pop(), 10) : 0;
+    var hrs = (parts.length > 0) ? parseInt(parts.pop(), 10) : 0;
 
 
     return (hrs * 60 * 60) + (min * 60) + sec + subsec;
@@ -302,17 +302,17 @@
     var timeString = '';
 
     // get integer seconds
-    var sec = parseInt(seconds);
+    var sec = parseInt(seconds, 10);
 
     // add hours part
-    var hrs = parseInt(sec / (60 * 60));
+    var hrs = parseInt(sec / (60 * 60), 10);
     if (hrs) {
       sec -= hrs * 60 * 60;
       timeString += hrs + ':';
     }
 
     // add minutes part
-    var min = parseInt(sec / 60);
+    var min = parseInt(sec / 60, 10);
     if (hrs || min) {
       sec -= min * 60;
       min = (min < 10) ? '0' + min : min;
