@@ -43,12 +43,6 @@
   // For now, use whatever host we're running on
   acorn.domain = window.location.host;
 
-  // Acorn Url
-  acorn.url = 'http://' + acorn.domain;
-
-  // Acorn API Url
-  acorn.apiurl = acorn.url + '/api/v' + acorn.APIVERSION;
-
   // Initialize collections
   acorn.options = {};
   acorn.errors = {};
@@ -162,13 +156,21 @@
   // **acorn.util.url** returns a url pointing to given path in acorn website.
   acorn.util.url = function() {
     var path = Array.prototype.slice.call(arguments);
-    return acorn.url +'/'+ path.join('/');
+    var url = 'http://' + acorn.domain;
+    if (path.length > 0)
+      url += '/' + path.join('/');
+
+    return url;
   };
 
   // **acorn.util.apiurl** returns an acorn api url
   acorn.util.apiurl = function() {
     var path = Array.prototype.slice.call(arguments);
-    return acorn.apiurl +'/'+ path.join('/');
+    var apiurl = acorn.util.url() + '/api/v' + acorn.APIVERSION;
+    if (path.length > 0)
+      apiurl += '/' + path.join('/');
+
+    return apiurl;
   };
 
   acorn.util.imgurl = function() {
