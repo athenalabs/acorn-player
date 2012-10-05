@@ -40,14 +40,14 @@
   acorn.APIVERSION = '0.0.1';
 
   // Acorn service domain
-  acorn.domain = 'staging.acorn.athena.ai';
+  // For now, use whatever host we're running on
+  acorn.domain = window.location.host;
 
   // Acorn Url
-  // For now, use whatever host we're running on
-  acorn.url = 'http://' + window.location.host;
+  acorn.url = 'http://' + acorn.domain;
 
   // Acorn API Url
-  acorn.apiurl = 'http://' + acorn.domain + '/api/v' + acorn.APIVERSION;
+  acorn.apiurl = acorn.url + '/api/v' + acorn.APIVERSION;
 
   // Initialize collections
   acorn.options = {};
