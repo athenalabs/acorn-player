@@ -10,7 +10,7 @@ var PDFLinkShell = acorn.shells.PDFLinkShell = LinkShell.extend({
 
   // **validRegexes** regex to match links to PDFs
   validRegexes: [
-    UrlRegExp('.*\.pdf'),
+    urlRegExp('.*\.pdf'),
   ],
 
 });

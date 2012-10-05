@@ -59,7 +59,7 @@ var VimeoShell = acorn.shells.VimeoShell = VideoLinkShell.extend({
 
   // **validRegexes** list of valid LinkRegexes
   validRegexes: [
-    UrlRegExp('(www\.)?(player\.)?vimeo\.com\/(video\/)?([0-9]+).*'),
+    urlRegExp('(www\.)?(player\.)?vimeo\.com\/(video\/)?([0-9]+).*'),
   ],
 
 });

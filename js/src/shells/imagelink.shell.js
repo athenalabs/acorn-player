@@ -11,7 +11,7 @@ var ImageLinkShell = acorn.shells.ImageLinkShell = LinkShell.extend({
   // **validRegexes** list of valid LinkRegexes for images
   // .jpg, .png, .gif, etc.
   validRegexes: [
-    UrlRegExp('.*\.(jpg|jpeg|gif|png|svg)'),
+    urlRegExp('.*\.(jpg|jpeg|gif|png|svg)'),
   ],
 
 });

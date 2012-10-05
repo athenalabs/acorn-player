@@ -77,7 +77,7 @@ var VideoLinkShell = acorn.shells.VideoLinkShell = LinkShell.extend({
   // **validRegexes** list of valid LinkRegexes for videos
   // .avi, .mov, .wmv, etc.
   validRegexes: [
-    UrlRegExp('.*\.(avi|mov|wmv)'),
+    urlRegExp('.*\.(avi|mov|wmv)'),
   ],
 
   // **description** returns a simple description of the shell
