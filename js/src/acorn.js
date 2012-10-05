@@ -31,7 +31,7 @@
       acornid = acornid.trim().split('/').pop();
       return new acorn.Model({'acornid': acornid});
     };
-  }
+  };
 
   // Current version.
   acorn.VERSION = '0.0.0';
@@ -40,14 +40,14 @@
   acorn.APIVERSION = '0.0.1';
 
   // Acorn service domain
-  acorn.domain = 'staging.acorn.athena.ai';
+  // For now, use whatever host we're running on
+  acorn.domain = window.location.host;
 
   // Acorn Url
-  // For now, use whatever host we're running on
-  acorn.url = 'http://' + window.location.host;
+  acorn.url = 'http://' + acorn.domain;
 
   // Acorn API Url
-  acorn.apiurl = 'http://' + acorn.domain + '/api/v' + acorn.APIVERSION;
+  acorn.apiurl = acorn.url + '/api/v' + acorn.APIVERSION;
 
   // Initialize collections
   acorn.options = {};
@@ -148,7 +148,7 @@
       return true;
 
     return derives(child.__super__.constructor, parent);
-  }
+  };
   acorn.util.derives = derives;
 
 
@@ -287,10 +287,9 @@
     var subsec = parseFloat('0.' + (parts.length > 1 ? parts[1] : '0'));
 
     parts = (parts[0] || '0').split(':');
-    var sec = parseInt(parts.pop(), 10)
+    var sec = parseInt(parts.pop(), 10);
     var min = (parts.length > 0) ? parseInt(parts.pop(), 10) : 0;
     var hrs = (parts.length > 0) ? parseInt(parts.pop(), 10) : 0;
-
 
     return (hrs * 60 * 60) + (min * 60) + sec + subsec;
   };
@@ -309,7 +308,7 @@
     if (hrs) {
       sec -= hrs * 60 * 60;
       timeString += hrs + ':';
-    }
+    };
 
     // add minutes part
     var min = parseInt(sec / 60, 10);
@@ -317,7 +316,7 @@
       sec -= min * 60;
       min = (min < 10) ? '0' + min : min;
       timeString += min + ':';
-    }
+    };
 
     // add seconds part
     sec = (sec < 10) ? '0' + sec : sec;
@@ -330,7 +329,7 @@
       subsec = ('' + subsec).substr(1, 4); // remove first '0'
       subsec = subsec.replace(/0+$/, '');
       timeString += subsec;
-    }
+    };
 
     return timeString;
   };
@@ -342,13 +341,13 @@
 
     function assertEquals(a, b) {
       var str = 'assertEquals(' + a + ', ' + b + ')';
-      if (a == b) {
+      if (a === b) {
         console.log(str + ' PASSED');
       } else {
         console.log(str + ' FAILED');
-        assert(a == b, a + ' != ' + b);
-      }
-    }
+        assert(a === b, a + ' != ' + b);
+      };
+    };
 
     assertEquals(timeStringToSeconds('0'), 0);
     assertEquals(timeStringToSeconds('1'), 1);
@@ -423,8 +422,8 @@
 
       for (var prop in source) {
         obj[prop] = source[prop];
-      }
-    }
+      };
+    };
     return obj;
   };
   acorn.util.extend = extend;
@@ -440,7 +439,7 @@
   // Originally from backbone.js 0.9.1:
 
   // Shared empty constructor function to aid in prototype-chain creation.
-  var ctor = function(){};
+  var ctor = function() {};
 
   // Helper function to correctly set up the prototype chain, for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
@@ -455,7 +454,7 @@
       child = protoProps.constructor;
     } else {
       child = function() { parent.apply(this, arguments); };
-    }
+    };
 
     // Inherit class (static) properties from parent.
     extend(child, parent);
@@ -467,10 +466,12 @@
 
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
-    if (protoProps) extend(child.prototype, protoProps);
+    if (protoProps)
+      extend(child.prototype, protoProps);
 
     // Add static properties to the constructor function, if supplied.
-    if (staticProps) extend(child, staticProps);
+    if (staticProps)
+      extend(child, staticProps);
 
     // Correctly set child's `prototype.constructor`.
     child.prototype.constructor = child;
@@ -518,18 +519,19 @@
     // Ensure that we have a URL.
     if (!options.url) {
       params.url = getValue(model, 'apiurl') || UrlError();
-    }
+    };
 
     // Ensure that we have the appropriate request data.
-    if (!options.data && model && (method === 'create' || method === 'update')) {
+    if (!options.data && model &&
+        (method === 'create' || method === 'update')) {
       params.contentType = 'application/json';
       params.data = model.toJSON();
-    }
+    };
 
     // Don't process data on a non-GET request.
     if (params.type !== 'GET') {
       params.processData = false;
-    }
+    };
 
     options.timeout = options.timeout || 10000;
 
@@ -537,7 +539,7 @@
     options.error = function(xhr, type) {
       console.log('sync error: ' + type);
       error && error(xhr, type);
-    }
+    };
 
     // Make the request, allowing the user to override any Ajax options.
     return $.ajax(extend(params, options));
@@ -555,7 +557,7 @@
 
     // if no protocol is found, prepend http
     if (!RegExp('://').test(url))
-      url = 'http://' + url
+      url = 'http://' + url;
 
     var anchor = document.createElement('a');
     anchor.href = url;
@@ -564,7 +566,7 @@
     for (var keyIdx in k) {
       var key = k[keyIdx];
       result[key] = anchor[key];
-    }
+    };
 
     result.toString = function() { return result.href; };
     result.resource = result.pathname + result.search;
@@ -572,7 +574,7 @@
 
     result.head = function() {
       NotSupportedError('head', 'Yet.');
-    }
+    };
 
     for (var prop in result) {
       if (prop[prop.length -1] === '_')
@@ -580,7 +582,7 @@
 
       if (typeof result[prop] === 'string')
         result[prop + '_'] = result[prop].toLowerCase();
-    }
+    };
 
     return result;
   };
@@ -635,7 +637,7 @@
     initialize: function() {
       this._data = {};
       this._data.shell = {'shell': 'acorn.LinkShell'};
-      this._data.acornid = this.options.acornid || 'new'; // sentinel.
+      this._data.acornid = this.options.acornid || 'new'; // sentinel
     },
 
     apiurl: function() {
@@ -692,14 +694,17 @@
       if (this._fetched && !options.force) {
         if (success)
           success(model, null);
+
         return;
-      }
+      };
 
       options.success = function(resp, status, xhr) {
         if (!model.fromJSON(resp, options))
           return false;
+
         if (success)
           success(model, resp);
+
         model._fetched = true;
       };
 
@@ -713,15 +718,13 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-
-        if (typeof resp === 'object' && !model.fromJSON(resp, options))
+        if (typeof resp === 'object' && !model.fromJSON(resp, options)) {
           return false;
-
-        else if (typeof resp === 'string')
+        } else if (typeof resp === 'string') {
           model.acornid(resp);
-
-        else
+        } else {
           APIError('invalid response');
+        };
 
         if (success)
           success(model, resp);
@@ -735,14 +738,14 @@
       return this.acornid() === 'new';
     },
 
-
     shellData: function(shellData) {
       if (typeof shellData !== "undefined") {
         this._data.shell = shellData;
-      }
+      };
 
       if (this._data.shell === undefined)
         return undefined;
+
       return this._data.shell;
     },
 
@@ -759,7 +762,6 @@
   // ----------------------------------------------------------------------
 
   acorn.playInFrame = function(acornModel, iframe) {
-
     // function to play acorn in given iframe.
     function playInIframe() {
       var iframeAcorn = acorn.util.acornInFrame(iframe);
@@ -767,12 +769,13 @@
     };
 
     var iframeAcorn = acorn.util.acornInFrame(iframe);
-    if (iframeAcorn == undefined) // acorn not yet loaded? set onload.
+    if (iframeAcorn === undefined) {
+      // acorn not yet loaded? set onload.
       iframe.onload = playInIframe;
-
-    else  // seems like acorn is loaded. just go ahead and play.
+    } else {
+      // seems like acorn is loaded. just go ahead and play.
       playInIframe();
+    };
   };
-
 
 }).call(this);
