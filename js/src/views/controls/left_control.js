@@ -2,9 +2,9 @@
 
 var player = acorn.player;
 
-// ** player.views.controls.LeftControl ** onClick : previous link
+// ** player.views.controls.Left ** onClick : previous link
 // ---------------------------------------------------------------------
-player.views.controls.LeftControl = player.views.Control.extend({
+player.views.controls.Left = player.views.controls.Item.extend({
 
   tooltip: 'Prev', // short as it doesn't fit for now :/
 

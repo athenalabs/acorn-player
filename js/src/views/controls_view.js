@@ -9,9 +9,9 @@ player.views.ControlsView = player.views.PlayerSubview.extend({
   id: 'controls',
 
   controls: [
-    'FullscreenControl',
-    'AcornControl',
-    'EditControl',
+    'Fullscreen',
+    'Acorn',
+    'Edit',
   ],
 
   // Supported trigger events

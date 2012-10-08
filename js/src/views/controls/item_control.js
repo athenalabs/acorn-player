@@ -2,9 +2,9 @@
 
 var player = acorn.player;
 
-// ** player.views.Control ** superclass that all Controls inherit from
-// --------------------------------------------------------------------
-player.views.Control = Backbone.View.extend({
+// ** player.views.controls.Item ** superclass that all Controls inherit from
+// ----------------------------------------------------------------------------
+player.views.controls.Item = Backbone.View.extend({
 
   tooltip: '',
 

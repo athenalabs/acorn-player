@@ -50,14 +50,14 @@ var MultiShell = acorn.shells.MultiShell = Shell.extend({
   // These controls are specified from Left to Right on the ControlsView.
   controls: [
 
-    // LeftControl provides a way to go back to the previous subshell.
-    'LeftControl',
+    // Left provides a way to go back to the previous subshell.
+    'Left',
 
-    // ListControl provides a way to toggle the playlist showing all subshells.
-    'ListControl',
+    // List provides a way to toggle the playlist showing all subshells.
+    'List',
 
-    // RightControl provides a way to go forwards to the next subshell.
-    'RightControl',
+    // Right provides a way to go forwards to the next subshell.
+    'Right',
   ],
 
   initialize: function() {
