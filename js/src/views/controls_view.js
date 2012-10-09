@@ -9,9 +9,9 @@ player.views.ControlsView = player.views.PlayerSubview.extend({
   id: 'controls',
 
   controls: [
-    'Fullscreen',
-    'Acorn',
-    'Edit',
+    'FullscreenControl',
+    'AcornControl',
+    'EditControl',
   ],
 
   // Supported trigger events
@@ -47,7 +47,7 @@ player.views.ControlsView = player.views.PlayerSubview.extend({
 
     var self = this;
     this.controlViews = _(controls).chain()
-      .map(function (ctrl) { return player.views.controls[ctrl]; })
+      .map(function (ctrl) { return player.views[ctrl]; })
       .filter(function (cls) { return !!cls; })
       .map(function (cls) { return new cls({controls: self}); })
       .value();

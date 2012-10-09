@@ -2,9 +2,9 @@
 
 var player = acorn.player;
 
-// ** player.views.controls.List ** onClick : list links
-// ---------------------------------------------------------------------
-player.views.controls.List = player.views.controls.Item.extend({
+// ** player.views.ListControl ** onClick : list links
+// ---------------------------------------------------
+player.views.ListControl = player.views.ControlItem.extend({
 
   tooltip: 'Playlist',
 
@@ -13,7 +13,7 @@ player.views.controls.List = player.views.controls.Item.extend({
   className: 'control left',
 
   onClick: function() {
-    this.controls.player.trigger('controls:list');
+    this.player.trigger('controls:list');
   },
 
 });

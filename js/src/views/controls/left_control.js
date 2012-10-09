@@ -2,9 +2,9 @@
 
 var player = acorn.player;
 
-// ** player.views.controls.Left ** onClick : previous link
+// ** player.views.LeftControl ** onClick : previous link
 // ---------------------------------------------------------------------
-player.views.controls.Left = player.views.controls.Item.extend({
+player.views.LeftControl = player.views.ControlItem.extend({
 
   tooltip: 'Prev', // short as it doesn't fit for now :/
 
@@ -13,7 +13,7 @@ player.views.controls.Left = player.views.controls.Item.extend({
   className: 'control left',
 
   onClick: function() {
-    this.controls.player.trigger('controls:left');
+    this.player.trigger('controls:left');
   },
 
 });

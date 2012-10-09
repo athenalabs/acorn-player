@@ -58,7 +58,6 @@ player.VERSION = '0.0.0';
 player.instance = undefined;
 
 player.views = {};
-player.views.controls = {};
 
 // ** player.play ** tell the player instance to play given acorn
 // --------------------------------------------------------------
