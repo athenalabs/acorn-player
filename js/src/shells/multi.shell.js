@@ -133,7 +133,7 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
     // initialize shells
     this.shells = _.map(this.shell.data.shells, acorn.shellWithData);
-    _.map(this.shells, function (shell) { shell.retrieveExtraInfo(); });
+    _.map(this.shells, function (shell) { shell.retrieveMetaData(); });
 
   },
 

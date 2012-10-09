@@ -33,7 +33,7 @@ var VimeoShell = acorn.shells.VimeoShell = VideoLinkShell.extend({
          ;
   },
 
-  extraInfoLink: function() {
+  metaDataLink: function() {
     return 'http://vimeo.com/api/v2/video/' + this.vimeoId() + '.json?'
          + '&callback=?' // somehow allows cross-domain requests.
          ;
@@ -41,7 +41,7 @@ var VimeoShell = acorn.shells.VimeoShell = VideoLinkShell.extend({
 
   // **title** returns a simple title of the shell
   title: function() {
-    return this.extraInfo ? this.extraInfo[0].title : this.link();
+    return this.metaData ? this.metaData[0].title : this.link();
   },
 
   // **description** returns a simple description of the shell
@@ -53,7 +53,7 @@ var VimeoShell = acorn.shells.VimeoShell = VideoLinkShell.extend({
   },
 
   duration: function() {
-    return this.extraInfo ? this.extraInfo[0].duration : this.data.time_end;
+    return this.metaData ? this.metaData[0].duration : this.data.time_end;
   },
 
 
@@ -198,16 +198,16 @@ VimeoShell.ContentView = VideoLinkShell.ContentView.extend({
 VimeoShell.EditView = VideoLinkShell.EditView.extend({
   // Overrides LinkShell.generateThumbnailLink()
   generateThumbnailLink: function(callback) {
-    // TODO(ali01) use retrieveExtraInfo?
+    // TODO(ali01) use retrieveMetaData?
 
     // This would be the code. It works, and it leverages the fact
-    // that ``retrieveExtraInfo`` already has to be called for the
+    // that ``retrieveMetaData`` already has to be called for the
     // duration. I think if we fix things away from $.getJSON we'd
-    // do it in retrieveExtraInfo, so I think this below should be
+    // do it in retrieveMetaData, so I think this below should be
     // what actually generates the thumbnail.
 
-    // this.shell.retrieveExtraInfo(_.bind(function() {
-    //   callback(this.shell.extraInfo[0].thumbnail_large);
+    // this.shell.retrieveMetaData(_.bind(function() {
+    //   callback(this.shell.metaData[0].thumbnail_large);
     // }, this));
 
     callback = callback || function() {};

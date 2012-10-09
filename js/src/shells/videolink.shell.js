@@ -204,7 +204,7 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     this.$el.find('#slider').css('opacity', '0.0');
     this.setupSlider();
 
-    this.shell.retrieveExtraInfo(_.bind(function() {
+    this.shell.retrieveMetaData(_.bind(function() {
       this.setupSlider();
       this.$el.find('#slider').css('opacity', '1.0');
     }, this));

@@ -124,20 +124,20 @@ var LinkShellAPI = {
     return this.data.thumbnailLink;
   },
 
-  extraInfoLink: function() { return ''; },
+  metaDataLink: function() { return ''; },
 
   // Retrieve extra information. Nothing by default.
-  retrieveExtraInfo: function(callback) {
+  retrieveMetaData: function(callback) {
     callback = callback || function() {};
 
-    var extraInfoLink = this.extraInfoLink();
-    if (!extraInfoLink || this.extraInfo) {
+    var metaDataLink = this.metaDataLink();
+    if (!metaDataLink || this.metaData) {
       return callback();
     }
 
     var self = this;
-    $.getJSON(extraInfoLink, function(data) {
-      self.extraInfo = data;
+    $.getJSON(metaDataLink, function(data) {
+      self.metaData = data;
       callback();
     });
   },
