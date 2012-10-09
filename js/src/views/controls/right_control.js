@@ -2,9 +2,9 @@
 
 var player = acorn.player;
 
-// ** player.views.RightControl ** onClick : next link
+// ** player.RightControlView ** onClick : next link
 // ---------------------------------------------------------------------
-player.views.RightControl = player.views.ControlItem.extend({
+player.RightControlView = player.ControlItemView.extend({
 
   tooltip: 'Next',
 

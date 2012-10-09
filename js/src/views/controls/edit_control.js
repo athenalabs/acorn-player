@@ -2,9 +2,9 @@
 
 var player = acorn.player;
 
-// ** player.views.EditControl ** onClick : edit
-// ---------------------------------------------------------------------
-player.views.EditControl = player.views.ControlItem.extend({
+// ** player.EditControlView ** onClick : edit
+// -------------------------------------------
+player.EditControlView = player.ControlItemView.extend({
 
   tooltip: 'Edit',
 

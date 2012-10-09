@@ -2,23 +2,23 @@
 
 var player = acorn.player;
 
-// ** player.views.ControlsView ** view with media control buttons
+// ** player.ControlsView ** view with media control buttons
 // ---------------------------------------------------------------
-player.views.ControlsView = player.views.PlayerSubview.extend({
+player.ControlsView = player.PlayerSubview.extend({
 
   id: 'controls',
 
   controls: [
-    'FullscreenControl',
-    'AcornControl',
-    'EditControl',
+    'FullscreenControlView',
+    'AcornControlView',
+    'EditControlView',
   ],
 
   // Supported trigger events
   // * change:acorn - fired when acorn data has changed
 
   initialize: function() {
-    player.views.PlayerSubview.prototype.initialize.call(this);
+    player.PlayerSubview.prototype.initialize.call(this);
 
     this.player.on('change:acorn', this.onAcornChange);
   },
@@ -47,7 +47,7 @@ player.views.ControlsView = player.views.PlayerSubview.extend({
 
     var self = this;
     this.controlViews = _(controls).chain()
-      .map(function (ctrl) { return player.views[ctrl]; })
+      .map(function (ctrl) { return player[ctrl]; })
       .filter(function (cls) { return !!cls; })
       .map(function (cls) { return new cls({controls: self}); })
       .value();

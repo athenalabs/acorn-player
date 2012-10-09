@@ -2,9 +2,9 @@
 
 var player = acorn.player;
 
-// ** player.views.EditView ** a view to house all editing controls
+// ** player.EditView ** a view to house all editing controls
 // ----------------------------------------------------------------
-player.views.EditView = player.views.PlayerSubview.extend({
+player.EditView = player.PlayerSubview.extend({
 
   template: _.template('\
     <div class="clear-cover"></div>\
@@ -34,7 +34,7 @@ player.views.EditView = player.views.PlayerSubview.extend({
   },
 
   initialize: function() {
-    player.views.PlayerSubview.prototype.initialize.call(this);
+    player.PlayerSubview.prototype.initialize.call(this);
 
     this.setShell(this.player.shell.clone());
   },

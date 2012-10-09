@@ -2,9 +2,9 @@
 
 var player = acorn.player;
 
-// ** player.views.AcornControl ** onClick : acorn website
-// -------------------------------------------------------
-player.views.AcornControl = player.views.ControlItem.extend({
+// ** player.AcornControlView ** onClick : acorn website
+// -----------------------------------------------------
+player.AcornControlView = player.ControlItemView.extend({
 
   tooltip: 'Website',
 

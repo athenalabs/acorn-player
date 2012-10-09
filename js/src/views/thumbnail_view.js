@@ -2,9 +2,9 @@
 
 var player = acorn.player;
 
-// ** player.views.ThumbnailView ** a view showing the acorn thumbnail
-// -------------------------------------------------------------------
-player.views.ThumbnailView = player.views.PlayerSubview.extend({
+// ** player.ThumbnailView ** a view showing the acorn thumbnail
+// -------------------------------------------------------------
+player.ThumbnailView = player.PlayerSubview.extend({
 
   template: _.template('\
     <img id="image" src="/img/blank.png" />\

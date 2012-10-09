@@ -43,7 +43,7 @@ player.Router = Backbone.Router.extend({
   },
 
   showAcorn: function(acornModel) {
-    this.playerView = new acorn.player.views.PlayerView({
+    this.playerView = new acorn.player.PlayerView({
       el: $('#acorn-player'),
       model: acornModel,
     });

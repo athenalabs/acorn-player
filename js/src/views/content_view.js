@@ -2,9 +2,9 @@
 
 var player = acorn.player;
 
-// ** player.views.ContentView ** view that renders/embeds shells
+// ** player.ContentView ** view that renders/embeds shells
 // --------------------------------------------------------------
-player.views.ContentView = player.views.PlayerSubview.extend({
+player.ContentView = player.PlayerSubview.extend({
 
   id: 'content',
 
@@ -12,7 +12,7 @@ player.views.ContentView = player.views.PlayerSubview.extend({
   // * all PlayerView events (proxying)
 
   initialize: function() {
-    player.views.PlayerSubview.prototype.initialize.call(this);
+    player.PlayerSubview.prototype.initialize.call(this);
 
     // proxy player events over, so shell ContentViews can listen.
     this.player.on('all', this.trigger)

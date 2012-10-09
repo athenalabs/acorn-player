@@ -2,9 +2,9 @@
 
 var player = acorn.player;
 
-// ** player.views.FullscreenControl ** onClick : fullscreen
-// -----------------------------------------------------------------
-player.views.FullscreenControl = player.views.ControlItem.extend({
+// ** player.FullscreenControlView ** onClick : fullscreen
+// -------------------------------------------------------
+player.FullscreenControlView = player.ControlItemView.extend({
 
   tooltip: 'Fullscreen',
 

@@ -2,9 +2,9 @@
 
 var player = acorn.player;
 
-// ** player.views.PlayerSubview ** a sub-component view for PlayerView
+// ** player.PlayerSubview ** a sub-component view for PlayerView
 // --------------------------------------------------------------------
-var PlayerSubview = player.views.PlayerSubview = Backbone.View.extend({
+var PlayerSubview = player.PlayerSubview = Backbone.View.extend({
 
   initialize: function() {
     _.bindAll(this);

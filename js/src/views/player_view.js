@@ -2,9 +2,9 @@
 
 var player = acorn.player;
 
-// ** player.views.PlayerView ** the acorn player main view
+// ** player.PlayerView ** the acorn player main view
 // --------------------------------------------------------
-player.views.PlayerView = Backbone.View.extend({
+player.PlayerView = Backbone.View.extend({
 
   className: 'acorn-player',
 
@@ -70,12 +70,12 @@ player.views.PlayerView = Backbone.View.extend({
     this.on('acorn-site', this.onAcornSite);
 
     // Subviews
-    this.thumbnailView = new player.views.ThumbnailView({ player: this });
-    this.controlsView = new player.views.ControlsView({ player: this });
-    this.contentView = new player.views.ContentView({ player: this });
+    this.thumbnailView = new player.ThumbnailView({ player: this });
+    this.controlsView = new player.ControlsView({ player: this });
+    this.contentView = new player.ContentView({ player: this });
 
     // Order of binding events currently matters. The particular case was:
-    // * ``new player.views.ControlsView({ player: this });`` binds first
+    // * ``new player.ControlsView({ player: this });`` binds first
     // * ``this.on('change:acorn', this.onAcornChange);`` binds second
     // * ``onAcornChange`` sets ``this.shell = ...``, ControlsView needs it.
     //
@@ -149,7 +149,7 @@ player.views.PlayerView = Backbone.View.extend({
     if (this.editView)
       return;
 
-    this.editView = new player.views.EditView({ player: this });
+    this.editView = new player.EditView({ player: this });
     this.editView.$el.css('opacity', 0.0);
     this.$el.append(this.editView.el);
     this.editView.render();
