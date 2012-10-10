@@ -50,7 +50,7 @@ var YouTubeShell = acorn.shells.YouTubeShell = VideoLinkShell.extend({
 
   // **title** returns a simple title of the shell
   title: function() {
-    return this.metaData ? this.metaData.data.title : this.link();
+    return this.metaData() ? this.metaData().data.title : this.link();
   },
 
   // **description** returns a simple description of the shell
@@ -62,7 +62,7 @@ var YouTubeShell = acorn.shells.YouTubeShell = VideoLinkShell.extend({
   },
 
   duration: function() {
-    return this.metaData ? this.metaData.data.duration : this.data.time_end;
+    return this.metaData() ? this.metaData().data.duration : this.data.time_end;
   },
 
   // **validRegexes** list of valid LinkRegexes
