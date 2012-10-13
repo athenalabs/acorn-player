@@ -204,14 +204,13 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     this.$el.find('#slider').css('opacity', '0.0');
     this.setupSlider();
 
-    this.shell.metaData({
-      fetch: true,
+    var metaDataCache = this.shell.metaData();
+    metaDataCache.sync({
       success: _.bind(function() {
         this.setupSlider();
         this.$el.find('#slider').css('opacity', '1.0');
       }, this),
     });
-
   },
 
   setupSlider: function() {

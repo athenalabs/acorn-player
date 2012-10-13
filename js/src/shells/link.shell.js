@@ -126,78 +126,16 @@ var LinkShellAPI = {
 
   metaDataLink: function() { return undefined; },
 
-  // **metaData** returns the `metaData` object associated with this LinkShell.
-  // If there is no such `metaData` object or it hasn't been fetched from its
-  // remote source, this function will return `undefined`.
-  //
-  // An optional `params` object can be passed. If the `params` object has the
-  // `fetch` property set to true, then this function will asynchronously
-  // retrieve the `metaData` object from its remote source (defined by
-  // metaDataLink()). The `params` object can also include optional `success`
-  // and `error` callbacks to monitor the result of the asynchronous fetch.
-  //
-  // Args:
-  // * params: optional object with properties
-  //   * fetch:   whether or not to fetch from remote source
-  //   * success: jquery style success callback to monitor fetch result
-  //   * error:   jquery style error callback to monitor fetch result
-  //
-  // Examples:
-  // Local Access:
-  // > var md_local = metaData(); // can be undefined if not yet fetched
-  //
-  // Remote Fetch:
-  // > var md_remote;
-  // > metaData({
-  // >   fetch: true,
-  // >   success: function(data) { md_remote = data; },
-  // >   error: function() { console.log('sadface'); },
-  // > });
-  metaData: (function() { // closure to hide private variables
-
-    var metaData = undefined; // private metaData variable
-
-    // internal function to be returned by function closure;
-    // has access to private variable `metaData`
-    return function(params) {
-
-      if (!params || !params.fetch) {
-        // call is synchronous and local;
-        // simply return the currently held value of `metaData`
-        // (possibly undefined)
-        return metaData;
-      };
-
-      // call is asynchronous
-
-      // extracting callbacks
-      var success_callback = params.success || function() {};
-      var error_callback = params.error || function() {};
-
-      // local error cases
-      var metaDataLink = this.metaDataLink();
-      if (!metaDataLink) {
-        error_callback(null, 'error', 'meta-data link is undefined');
-        return;
-      };
-
-      // wrapping success function to also set the internal `metaData` variable
-      var success_wrapper = function(data, textStatus, jqXHR) {
-        metaData = data;
-        success_callback(data, textStatus, jqXHR);
-      };
-
-      // remote (ajax) case
-      $.ajax({
-        url: metaDataLink,
+  metaData: function() {
+    if (!this._metaData) {
+      this._metaData = common.remoteResource({
+        url: this.metaDataLink(),
         dataType: 'json',
-        success: success_wrapper,
-        error: error_callback,
       });
-
     };
 
-  }()), // closure function is evaluated, inner function is returned
+    return this._metaData;
+  },
 
 };
 

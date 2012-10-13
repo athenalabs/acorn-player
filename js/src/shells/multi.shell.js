@@ -135,7 +135,8 @@ MultiShell.ContentView = Shell.ContentView.extend({
     this.shells = _.map(this.shell.data.shells, acorn.shellWithData);
     _.map(this.shells, function (shell) {
       // fetch each shell's associated metadata
-      shell.metaData({ fetch: true, });
+      var cache = shell.metaData();
+      cache.sync();
     });
 
   },
