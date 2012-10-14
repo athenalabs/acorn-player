@@ -117,19 +117,13 @@ var LinkShellAPI = {
   // **description** returns a simple description of the shell
   description: function() { return ''; },
 
-  // **thumbnailLink** returns the link to the thumbnail image
-  thumbnailLink: function(link) {
-    if (link !== undefined)
-      this.data.thumbnailLink = link;
-    return this.data.thumbnailLink;
-  },
+  metaData: function metaData() {
+    // url property to be set by derived classes of LinkShell
+    var url = metaData.url; // currently undefined
 
-  metaDataLink: function() { return undefined; },
-
-  metaData: function() {
-    if (!this._metaData) {
+    if (url && !this._metaData) {
       this._metaData = common.remoteResource({
-        url: this.metaDataLink(),
+        url: url,
         dataType: 'json',
       });
     };

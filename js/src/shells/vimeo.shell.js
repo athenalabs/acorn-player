@@ -3,6 +3,14 @@
 
 var VimeoShell = acorn.shells.VimeoShell = VideoLinkShell.extend({
 
+  initialize: function() {
+    VideoLinkShell.prototype.initialize.apply(this, arguments);
+
+    // setting metaData URL; see LinkShell.metaData
+    this.metaData.url = 'http://vimeo.com/api/v2/video/' +
+                        this.vimeoId() + '.json?' + '&callback=?';
+  },
+
   shellid: 'acorn.VimeoShell',
 
   // The canonical type of this media. One of `acorn.types`.
@@ -30,12 +38,6 @@ var VimeoShell = acorn.shells.VimeoShell = VideoLinkShell.extend({
          + '&byline=1'
          + '&portrait=0'
          + '&color=ffffff'
-         ;
-  },
-
-  metaDataLink: function() {
-    return 'http://vimeo.com/api/v2/video/' + this.vimeoId() + '.json?'
-         + '&callback=?' // somehow allows cross-domain requests.
          ;
   },
 

@@ -4,6 +4,14 @@
 
 var YouTubeShell = acorn.shells.YouTubeShell = VideoLinkShell.extend({
 
+  initialize: function() {
+    VideoLinkShell.prototype.initialize.apply(this, arguments);
+
+    // setting metaData URL; see LinkShell.metaData
+    this.metaData.url = 'http://gdata.youtube.com/feeds/api/videos/' +
+                        this.youtubeId() + '?v=2' + '&alt=jsonc';
+  },
+
   shellid: 'acorn.YouTubeShell',
 
   // The canonical type of this media. One of `acorn.types`.
@@ -39,13 +47,6 @@ var YouTubeShell = acorn.shells.YouTubeShell = VideoLinkShell.extend({
   // **thumbnailLink** returns the link to the thumbnail image
   thumbnailLink: function() {
     return "https://img.youtube.com/vi/" + this.youtubeId() + "/0.jpg";
-  },
-
-
-  metaDataLink: function() {
-    return 'http://gdata.youtube.com/feeds/api/videos/' + this.youtubeId()
-         + '?v=2'
-         + '&alt=jsonc';
   },
 
   // **title** returns a simple title of the shell
