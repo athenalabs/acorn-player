@@ -13,7 +13,7 @@ player.ListControlView = player.ControlItemView.extend({
   className: 'control left',
 
   onClick: function() {
-    this.player.trigger('controls:list');
+    this.controls.player.trigger('controls:list');
   },
 
 });

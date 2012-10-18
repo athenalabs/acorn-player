@@ -13,7 +13,7 @@ player.AcornControlView = player.ControlItemView.extend({
   className: 'control right',
 
   onClick: function() {
-    this.player.trigger('acorn-site');
+    this.controls.player.trigger('acorn-site');
   },
 
 });

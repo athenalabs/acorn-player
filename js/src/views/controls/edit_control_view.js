@@ -13,7 +13,7 @@ player.EditControlView = player.ControlItemView.extend({
   className: 'control right',
 
   onClick: function() {
-    this.player.trigger('show:edit');
+    this.controls.player.trigger('show:edit');
   },
 
 });

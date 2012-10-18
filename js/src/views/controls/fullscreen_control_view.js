@@ -13,7 +13,7 @@ player.FullscreenControlView = player.ControlItemView.extend({
   className: 'control right',
 
   onClick: function() {
-    this.player.trigger('fullscreen');
+    this.controls.player.trigger('fullscreen');
   },
 
 });
