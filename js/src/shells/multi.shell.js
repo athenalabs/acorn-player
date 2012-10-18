@@ -74,11 +74,14 @@ var MultiShell = acorn.shells.MultiShell = Shell.extend({
     return 'playlist with ' + items + ' item' + s;
   },
 
-  // **thumbnailLink** use the first shell's thumbnail
+  // **thumbnailLink** returns a remoteResource object whose data() function
+  // caches and returns this MultiShell's thumbnail link.
   thumbnailLink: function() {
     var first = this.data.shells[0];
-    if (!first)
-      return '';
+    if (!first) {
+      // call default implementation of thumbnailLink in parent class
+      return Shell.prototype.thumbnailLink.call(this);
+    };
 
     var shell = acorn.shellWithData(first);
     return shell.thumbnailLink();

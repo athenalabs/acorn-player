@@ -20,12 +20,17 @@ player.ThumbnailView = player.PlayerSubview.extend({
     var shelltype = this.player.shell.type;
     var typeurl = acorn.util.imgurl('icons', shelltype + '.png');
     var acornurl = acorn.util.imgurl('acorn.png');
-    var thumburl = this.player.shell.thumbnailLink();
 
     this.$el.html(this.template());
     this.$el.find('#type').attr('src', typeurl);
     this.$el.find('#logo').attr('src', acornurl);
-    this.$el.find('#image').attr('src', thumburl);
+
+    var thumbnailLink = this.player.shell.thumbnailLink();
+    thumbnailLink.sync({
+      success: _.bind(function(thumbnailLink) {
+        this.$el.find('#image').attr('src', thumbnailLink);
+      }, this),
+    });
   },
 
 });

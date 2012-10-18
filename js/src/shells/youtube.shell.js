@@ -44,9 +44,22 @@ var YouTubeShell = acorn.shells.YouTubeShell = VideoLinkShell.extend({
          ;
   },
 
-  // **thumbnailLink** returns the link to the thumbnail image
+  // **thumbnailLink** returns a remoteResource object whose data() function
+  // caches and returns this YouTube shell's thumbnail link.
   thumbnailLink: function() {
-    return "https://img.youtube.com/vi/" + this.youtubeId() + "/0.jpg";
+    // YouTube videos' thumbnail links can be derived from the video's ID.
+    // The return-type of thumbnailLink functions is typically a remoteResource
+    // object. This function returns an object that behaves as if it were of
+    // type remoteResource, but that simply returns the static URL instead of
+    // making an AJAX request to obtain it.
+    var remoteResource = common.remoteResourceInterface();
+    _.extend(remoteResource, {
+      data: _.bind(function() {
+        return "https://img.youtube.com/vi/" + this.youtubeId() + "/0.jpg";
+      }, this),
+    });
+
+    return remoteResource;
   },
 
   // **title** returns a simple title of the shell
@@ -221,18 +234,6 @@ YouTubeShell.ContentView = VideoLinkShell.ContentView.extend({
     };
   },
 
-});
-
-
-// EditView -- video link, time clipping, and other options.
-// ---------------------------------------------------------
-
-YouTubeShell.EditView = VideoLinkShell.EditView.extend({
-  // Overrides LinkShell.generateThumbnailLink()
-  generateThumbnailLink: function(callback) {
-    callback = callback || function() {};
-    callback(this.shell.thumbnailLink());
-  },
 });
 
 
