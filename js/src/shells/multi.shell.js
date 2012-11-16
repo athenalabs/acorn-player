@@ -58,6 +58,9 @@ var MultiShell = acorn.shells.MultiShell = Shell.extend({
 
     // RightControl provides a way to go forwards to the next subshell.
     'RightControl',
+
+    // SubcontrolView provides a space for subshell controls
+    'SubcontrolView',
   ],
 
   initialize: function() {
@@ -192,6 +195,7 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
     if (!this.currentView.el.parentNode) {
       this.currentView.render();
+      this.setShellSubcontrols();
       this.$el.append(this.currentView.el);
     };
 
@@ -199,6 +203,33 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
     // announce changes
     this.trigger('change:subview');
+  },
+
+  setShellSubcontrols: function() {
+    // duplicate of player.setShellControls
+    assert(this.currentView, this.shellSubcontrols, 'Subshell ContentView and' +
+          ' shell subcontrols must be rendered');
+
+    this.currentView.setControlsView(this.shellSubcontrols);
+  },
+
+  updateControls: function() {
+    if (!this.controlsView) {
+      return;
+    };
+
+    var left = this.controlsView.controlWithId('left');
+    var list = this.controlsView.controlWithId('list');
+    var right = this.controlsView.controlWithId('right');
+
+    left.$el.removeAttr('disabled');
+    right.$el.removeAttr('disabled');
+
+    if (this.currentView == _.first(this.shellViews))
+      left.$el.attr('disabled', 'disabled');
+
+    if (this.currentView == _.last(this.shellViews))
+      right.$el.attr('disabled', 'disabled');
   },
 
   // **togglePlaylist** toggle a container with subview summaries
@@ -225,22 +256,13 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
   // -- MultiShell Events
 
+  onControlsSet: function() {
+    this.updateControls();
+    // TODO: find and set this.shellSubcontrols;
+  },
+
   onChangedSubview: function() {
-    var contentView = this.parent;
-    var controlsView = contentView.player.controlsView;
-
-    var left = controlsView.controlWithId('left');
-    var list = controlsView.controlWithId('list');
-    var right = controlsView.controlWithId('right');
-
-    left.$el.removeAttr('disabled');
-    right.$el.removeAttr('disabled');
-
-    if (this.currentView == _.first(this.shellViews))
-      left.$el.attr('disabled', 'disabled');
-
-    if (this.currentView == _.last(this.shellViews))
-      right.$el.attr('disabled', 'disabled');
+    this.updateControls();
   },
 
   triggerPlaybackStop: function() {
