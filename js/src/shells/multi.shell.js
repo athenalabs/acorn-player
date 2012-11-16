@@ -454,18 +454,9 @@ MultiShell.EditView = Shell.EditView.extend({
     });
 
     // listen to events of shell EditView
-    shellView.on('swap:shell', function(data) {
-      this.onSwapSubShell(data, shellView);
-    }, this);
-
-    shellView.on('change:shell', function(data) {
-      this.onChangeSubShell(data, shellView);
-    }, this);
-
-    shellView.on('delete:shell', function() {
-      this.onDeleteSubShell(shellView);
-    }, this);
-
+    shellView.on('swap:shell', this.onSwapSubShell);
+    shellView.on('change:shell', this.onChangeSubShell);
+    shellView.on('delete:shell', this.onDeleteSubShell);
     shellView.on('change:editState', this.onChangeEditState);
 
     return shellView;
@@ -569,11 +560,11 @@ MultiShell.EditView = Shell.EditView.extend({
 
       // if there is at most 1 shell, swap.
       if (shells.length <= 1)
-        this.trigger('swap:shell', shells[0] || {});
+        this.trigger('swap:shell', shells[0] || {}, this);
 
       // else, announce that the shell has changed.
       else
-        this.trigger('change:shell', this.shell);
+        this.trigger('change:shell', this.shell, this);
     }
     return this.shell.data.shells;
   },
