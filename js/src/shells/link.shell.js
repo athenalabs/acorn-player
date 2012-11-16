@@ -180,13 +180,15 @@ LinkShell.ContentView = Shell.ContentView.extend({
 });
 
 
-
 // LinkShell.EditView -- a text field for the link.
 // --------------------------------------------------
 
 LinkShell.EditView = Shell.EditView.extend({
 
   events: {
+    'focus input#link': 'onFocusLinkField',
+    'blur input#link': 'onBlurLinkField',
+    'keyup input#link': 'onKeyupLinkField',
     'click button#delete': 'onClickDelete',
     'click button#add': 'onClickAdd',
   },
@@ -195,7 +197,7 @@ LinkShell.EditView = Shell.EditView.extend({
     <div>\
       <img id="thumbnail" />\
       <div class="thumbnailside">\
-        <div id="link"></div>\
+        <input type="text" id="link" placeholder="Enter Link" />\
         <button class="btn" id="delete">delete</button>\
       </div>\
     </div>\
@@ -205,14 +207,8 @@ LinkShell.EditView = Shell.EditView.extend({
   initialize: function() {
     Shell.EditView.prototype.initialize.call(this);
 
-    this.linkView = new Backbone.components.EditableTextCmp.View({
-      textFn: this.link,
-      placeholder: 'Enter Link',
-      validate: _.bind(this.validateLink, this),
-      addToggle: true,
-    });
-
     this.on('delete:shell', this.onDeleteShell);
+    this.on('save:link', this.onSaveLink);
   },
 
   validateLink: function(link) {
@@ -243,15 +239,12 @@ LinkShell.EditView = Shell.EditView.extend({
   render: function() {
     Shell.EditView.prototype.render.call(this);
 
+    // set link field value
+    this.$('input#link').val(this.link());
+
     // set thumbnail src
     var tlink = this.shell.thumbnailLink();
     this.$el.find('#thumbnail').attr('src', tlink);
-
-    this.linkView.setElement(this.$el.find('#link'));
-    this.linkView.render();
-
-    if (!this.link())
-      this.linkView.edit();
 
     if (this.isSubShellView())
       this.$el.find('button#add').hide();
@@ -286,8 +279,52 @@ LinkShell.EditView = Shell.EditView.extend({
 
   // **finalizeEdit** finish all edits.
   finalizeEdit: function() {
-    if (this.linkView.isEditing)
-      this.linkView.save();
+  },
+
+  onFocusLinkField: function() {
+    this.trigger('edit:link');
+  },
+
+  onBlurLinkField: function() {
+    this.trigger('save:link');
+  },
+
+  onKeyupLinkField: function(e) {
+    var ENTER = 13, ESC = 27;
+
+    switch(e.keyCode) {
+      case ENTER:
+        this.onEnterLinkField();
+        break;
+      case ESC:
+        this.onEscapeLinkField();
+        break;
+    };
+  },
+
+  onEnterLinkField: function() {
+    this.$('input#link').blur();
+  },
+
+  onEscapeLinkField: function() {
+    this.$('input#link').val('');
+    this.$('input#link').blur();
+  },
+
+  onSaveLink: function() {
+    var value = this.$('input#link').val();
+
+    // reset to previous value if field is empty
+    if (value === '') {
+      this.$('input#link').val(this.link());
+
+    // else validate and save
+    } else {
+      if (this.validateLink(value))
+        console.log('invalid link');
+
+      this.link(value);
+    };
   },
 
   // **onClickAdd** add another link
