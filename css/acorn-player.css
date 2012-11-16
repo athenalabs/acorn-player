@@ -411,9 +411,9 @@ h1, h2, h3, h4, h5, h6 {
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
     div.thumbnailside > input#link {
-  width: 345px;
+  width: 270px;
   float: left;
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >

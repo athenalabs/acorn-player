@@ -190,6 +190,7 @@ LinkShell.EditView = Shell.EditView.extend({
     'blur input#link': 'onBlurLinkField',
     'keyup input#link': 'onKeyupLinkField',
     'click button#delete': 'onClickDelete',
+    'click button#duplicate': 'onClickDuplicate',
     'click button#add': 'onClickAdd',
   },
 
@@ -199,6 +200,7 @@ LinkShell.EditView = Shell.EditView.extend({
       <div class="thumbnailside">\
         <input type="text" id="link" placeholder="Enter Link" />\
         <button class="btn" id="delete">delete</button>\
+        <button class="btn" id="duplicate">duplicate</button>\
       </div>\
     </div>\
     <button class="btn btn-large" id="add">Add Link</button>\
@@ -325,6 +327,10 @@ LinkShell.EditView = Shell.EditView.extend({
 
   onClickDelete: function() {
     this.trigger('delete:shell', this);
+  },
+
+  onClickDuplicate: function() {
+    this.trigger('duplicate:shell', this);
   },
 
   // **onClickAdd** add another link

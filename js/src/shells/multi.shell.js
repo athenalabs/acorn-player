@@ -457,6 +457,7 @@ MultiShell.EditView = Shell.EditView.extend({
     shellView.on('swap:shell', this.onSwapSubShell);
     shellView.on('change:shell', this.onChangeSubShell);
     shellView.on('delete:shell', this.onDeleteSubShell);
+    shellView.on('duplicate:shell', this.onDuplicateSubShell);
     shellView.on('change:editState', this.onChangeEditState);
 
     return shellView;
@@ -551,6 +552,32 @@ MultiShell.EditView = Shell.EditView.extend({
 
     // remove shellview
     shellView.remove();
+  },
+
+  onDuplicateSubShell: function(shellView) {
+    var index, shellData, shells, duplicateShellView;
+
+    // get next index and duplicate data
+    index = this.indexOfView(shellView) + 1;
+    shellData = this.duplicateShellData(shellView.shell.data);
+
+    // add duplicate to `this.shells`
+    shells = this.shells();
+    shells.splice(index, 0, shellData);
+    this.shells(shells);
+
+    // add duplicate to `this.shellViews`
+    duplicateShellView = this.constructView(shellData);
+    this.shellViews.splice(index, 0, duplicateShellView);
+
+    // add duplicate to DOM
+    duplicateShellView.render();
+    shellView.$el.after(duplicateShellView.el);
+  },
+
+  duplicateShellData: function(data) {
+    // for now, all data is shallow and a simple clone is sufficient
+    return _.clone(data);
   },
 
   // get/setter for shells value
