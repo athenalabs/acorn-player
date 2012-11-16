@@ -167,8 +167,10 @@ VideoLinkShell.ContentView = LinkShell.ContentView.extend({
 VideoLinkShell.EditView = LinkShell.EditView.extend({
 
   events: _.extend({}, LinkShell.EditView.prototype.events, {
-    'change input':  'timeInputChanged',
-    'blur input':  'timeInputChanged',
+    'change input.time':  'timeInputChanged',
+    'blur input.time':  'timeInputChanged',
+    'change input#loop':  'timeInputChanged',
+    'blur input#loop':  'timeInputChanged',
   }),
 
   timeRangeTemplate: _.template('\
