@@ -299,22 +299,25 @@
 
   // **acorn.secondsToTimeString** converts seconds to human-readable timeString
   // human-readable format is: [[hh:]mm:]ss[.SSS]
-  var secondsToTimeString = function(seconds) {
+  // format param may force placeholder zeroes in minutes or hours and minutes
+  var secondsToTimeString = function(seconds, format) {
     var timeString = '';
+
+    _.isObject(format) || (format = {});
 
     // get integer seconds
     var sec = parseInt(seconds, 10);
 
     // add hours part
     var hrs = parseInt(sec / (60 * 60), 10);
-    if (hrs) {
+    if (hrs || format.forceHours) {
       sec -= hrs * 60 * 60;
       timeString += hrs + ':';
     };
 
     // add minutes part
     var min = parseInt(sec / 60, 10);
-    if (hrs || min) {
+    if (hrs || format.forceHours || min || format.forceMinutes) {
       sec -= min * 60;
       min = (min < 10) ? '0' + min : min;
       timeString += min + ':';

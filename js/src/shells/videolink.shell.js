@@ -263,14 +263,14 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     var loop = !!this.$el.find('#loop').attr('checked');
 
     var diff = (end - start);
-    var time = (isNaN(diff) ? '--' : secondsToTimeString(diff));
+    var time = (isNaN(diff) ? '--' : secondsToTimeString(diff, {forceMinutes: true}));
 
     this.shell.data.time_start = start;
     this.shell.data.time_end = end;
     this.shell.data.loop = loop;
 
-    this.$el.find('#start').val(secondsToTimeString(start));
-    this.$el.find('#end').val(secondsToTimeString(end));
+    this.$el.find('#start').val(secondsToTimeString(start, {forceMinutes: true}));
+    this.$el.find('#end').val(secondsToTimeString(end, {forceMinutes: true}));
     this.$el.find('#time').text(time);
     this.$el.find('#slider').slider({ max: max, values: [start, end] });
   },
