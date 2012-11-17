@@ -174,7 +174,10 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
   }),
 
   timeRangeTemplate: _.template('\
-  <div id="slider" class="fader"></div>\
+  <div id="slider-block">\
+    <div id="slider" class="fader"></div>\
+    <div id="time"></div>\
+  </div>\
   <form class="form-inline">\
     <div class="input-prepend">\
       <span class="add-on">start:</span>\
@@ -186,7 +189,6 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
       <input id="end" size="16" type="text" class="time">\
       <!--<span class="add-on">sec</span>-->\
     </div>\
-    total time: <span id="time"></span>\
     <label class="checkbox right" id="loop-label">\
       <input id="loop" type="checkbox"> Loop\
     </label>\
