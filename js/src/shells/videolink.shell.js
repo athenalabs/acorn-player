@@ -168,8 +168,10 @@ VideoLinkShell.ContentView = LinkShell.ContentView.extend({
 VideoLinkShell.EditView = LinkShell.EditView.extend({
 
   events: _.extend({}, LinkShell.EditView.prototype.events, {
-    'change input.time':  'timeInputChanged',
-    'blur input.time':  'timeInputChanged',
+    'change input#start':  'startTimeInputChanged',
+    'blur input#start':  'startTimeInputChanged',
+    'change input#end':  'endTimeInputChanged',
+    'blur input#end':  'endTimeInputChanged',
     'click button.loop': 'onClickLoopButton',
     'change input.loop-n':  'onChangeLoopN',
     'blur input.loop-n':  'onChangeLoopN',
@@ -181,15 +183,19 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     <div id="time"></div>\
   </div>\
   <form class="form-inline">\
-    <div class="input-prepend">\
-      <span class="add-on">start:</span>\
-      <input id="start" size="16" type="text" class="time">\
-      <!--<span class="add-on">sec</span>-->\
+    <div class="control-group time">\
+      <div class="controls input-prepend">\
+        <span class="add-on">start:</span>\
+        <input id="start" size="16" type="text" class="time">\
+        <!--<span class="add-on">sec</span>-->\
+      </div>\
     </div>\
-    <div class="input-prepend">\
-      <span class="add-on">end:</span>\
-      <input id="end" size="16" type="text" class="time">\
-      <!--<span class="add-on">sec</span>-->\
+    <div class="control-group time">\
+      <div class="controls input-prepend">\
+        <span class="add-on">end:</span>\
+        <input id="end" size="16" type="text" class="time">\
+        <!--<span class="add-on">sec</span>-->\
+      </div>\
     </div>\
     <div class="input-prepend input-append loop loop-none">\
       <button class="btn loop" type="button">loop:</button>\
@@ -236,14 +242,16 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
       range: true,
       values: [ data.time_start || 0, data.time_end || max],
       slide: function(e, ui) {
-        self.inputChanged(ui.values);
+        var start = ui.values[0];
+        var end = ui.values[1];
+        self.inputChanged({start: start, end: end});
       },
       stop: function(e, ui) {
         self.trigger('change:shell', self.shell, self);
       },
     });
 
-    this.inputChanged([ data.time_start, data.time_end ]);
+    this.inputChanged({start: data.time_start, end: data.time_end});
   },
 
   setupLoopButton: function() {
@@ -263,32 +271,58 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     };
   },
 
-  timeInputChanged: function() {
-    this.inputChanged([
-      timeStringToSeconds(this.$el.find('#start').val()),
-      timeStringToSeconds(this.$el.find('#end').val())
-    ]);
+  startTimeInputChanged: function() {
+    this.timeInputChanged('start');
+  },
+
+  endTimeInputChanged: function() {
+    this.timeInputChanged('end');
+  },
+
+  timeInputChanged: function(changed) {
+    this.inputChanged({
+      start: timeStringToSeconds(this.$el.find('#start').val()),
+      end: timeStringToSeconds(this.$el.find('#end').val()),
+      lock: changed,
+    });
+
     this.trigger('change:shell', this.shell, this);
   },
 
-  inputChanged: function(values) {
-    var clip = function(min, val, max) {
-      return Math.max(min, Math.min(val || 0, max));
+  inputChanged: function(params) {
+    var offset, max, bound, floatOrDefault, start, end, timeControls, diff,
+        time;
+
+    offset = 10;
+    max = this.shell.data.time_total || this.shell.duration();
+
+    bound = function(val) {
+      return Math.max(0, Math.min(val || 0, max));
     };
 
-    var floatOrDefault = function(num, def) {
+    floatOrDefault = function(num, def) {
       return (_.isNumber(num) && !_.isNaN(num)) ? parseFloat(num) : def;
     };
 
-    var max = this.shell.data.time_total || this.shell.duration();
-    values[0] = floatOrDefault(values[0], 0);
-    values[1] = floatOrDefault(values[1], max);
+    start = floatOrDefault(params.start, 0);
+    end = floatOrDefault(params.end, max);
 
-    var start = clip(0, values[0], values[1]);
-    var end = clip(start, values[1], max);
+    start = bound(start);
+    end = bound(end);
 
-    var diff = (end - start);
-    var time = (isNaN(diff) ? '--' : secondsToTimeString(diff, {forceMinutes: true}));
+    // prohibit negative length
+    if (end < start) {
+      if (params.lock === 'end')
+        start = bound(end - offset);
+      else
+        end = bound(start + offset);
+
+      // after rerender(s), display time error
+      setTimeout(this.timeError, 0);
+    };
+
+    diff = (end - start);
+    time = (isNaN(diff) ? '--' : secondsToTimeString(diff, {forceMinutes: true}));
 
     this.shell.data.time_start = start;
     this.shell.data.time_end = end;
@@ -297,6 +331,13 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     this.$el.find('#end').val(secondsToTimeString(end, {forceMinutes: true}));
     this.$el.find('#time').text(time);
     this.$el.find('#slider').slider({ max: max, values: [start, end] });
+  },
+
+  timeError: function() {
+    // 2 seconds of error display
+    timeControls = this.$('form').children('.control-group.time');
+    timeControls.addClass('error');
+    setTimeout(function() { timeControls.removeClass('error'); }, 2000);
   },
 
   loopN: function(n) {
