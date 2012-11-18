@@ -134,6 +134,7 @@ VideoLinkShell.ContentView = LinkShell.ContentView.extend({
 
   onPlaybackTick: function() {
     // get shell options
+    // TODO: handle looping correctly
     var loop = this.shell.data.loop || false;
     var end = this.shell.data.time_end || this.totalTime();
     var start = this.shell.data.time_start || 0;
@@ -169,8 +170,9 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
   events: _.extend({}, LinkShell.EditView.prototype.events, {
     'change input.time':  'timeInputChanged',
     'blur input.time':  'timeInputChanged',
-    'change input#loop':  'timeInputChanged',
-    'blur input#loop':  'timeInputChanged',
+    'click button.loop': 'onClickLoopButton',
+    'change input.loop-n':  'onChangeLoopN',
+    'blur input.loop-n':  'onChangeLoopN',
   }),
 
   timeRangeTemplate: _.template('\
@@ -189,9 +191,18 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
       <input id="end" size="16" type="text" class="time">\
       <!--<span class="add-on">sec</span>-->\
     </div>\
-    <label class="checkbox right" id="loop-label">\
-      <input id="loop" type="checkbox"> Loop\
-    </label>\
+    <div class="input-prepend input-append loop loop-none">\
+      <button class="btn loop" type="button">loop:</button>\
+      <span class="add-on loop-none">∅</span>\
+    </div>\
+    <div class="input-prepend input-append loop loop-infinity">\
+      <button class="btn loop" type="button">loop:</button>\
+      <span class="add-on loop-infinity">∞</span>\
+    </div>\
+    <div class="input-prepend loop loop-n">\
+      <button class="btn loop" type="button">loop:</button>\
+      <input size="16" type="text" class="loop-n">\
+    </div>\
   </form>\
   '),
 
@@ -200,13 +211,10 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
 
     var timeRange = $(this.timeRangeTemplate());
 
-    // update with the correct values.
-    if (this.shell.data.loop)
-      timeRange.find('#loop').attr('checked', 'checked');
-
     this.$el.find('.thumbnailside').append(timeRange);
     this.$el.find('#slider').css('opacity', '0.0');
     this.setupSlider();
+    this.setupLoopButton();
 
     this.shell.retrieveExtraInfo(_.bind(function() {
       this.setupSlider();
@@ -236,7 +244,23 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     });
 
     this.inputChanged([ data.time_start, data.time_end ]);
+  },
 
+  setupLoopButton: function() {
+    switch (this.shell.data.loop) {
+      case 'none':
+        this.showLoop('none');
+        break;
+
+      case 'infinity':
+        this.showLoop('infinity');
+        break;
+
+      default:
+        this.loopN(this.shell.data.loop);
+        this.$('input.loop-n').val(this.loopN());
+        this.showLoop('n');
+    };
   },
 
   timeInputChanged: function() {
@@ -262,19 +286,74 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
 
     var start = clip(0, values[0], values[1]);
     var end = clip(start, values[1], max);
-    var loop = !!this.$el.find('#loop').attr('checked');
 
     var diff = (end - start);
     var time = (isNaN(diff) ? '--' : secondsToTimeString(diff, {forceMinutes: true}));
 
     this.shell.data.time_start = start;
     this.shell.data.time_end = end;
-    this.shell.data.loop = loop;
 
     this.$el.find('#start').val(secondsToTimeString(start, {forceMinutes: true}));
     this.$el.find('#end').val(secondsToTimeString(end, {forceMinutes: true}));
     this.$el.find('#time').text(time);
     this.$el.find('#slider').slider({ max: max, values: [start, end] });
+  },
+
+  loopN: function(n) {
+    // force integer or NaN - don't interpret whitespace as 0
+    var int = Math.floor(n);
+    if (int === 0 && n !== 0)
+      int = NaN;
+
+    if (int >= 0)
+      this._lastLoopN = int;
+    else if (!_.isNumber(this._lastLoopN))
+      this._lastLoopN = 2;
+
+    return this._lastLoopN;
+  },
+
+  showLoop: function(type) {
+    var active = this.$('div.loop-' + type);
+
+    this.$('div.loop').addClass('hidden');
+    active.removeClass('hidden');
+
+    if (this._selectInputOnShow) {
+      active.find('input').select();
+      this._selectInputOnShow = false;
+    };
+  },
+
+  onClickLoopButton: function() {
+    switch (this.shell.data.loop) {
+      case 'none':
+        this.shell.data.loop = 'infinity';
+        break;
+
+      case 'infinity':
+        this.shell.data.loop = this.loopN();
+        this._selectInputOnShow = true;
+        break;
+
+      default:
+        this.shell.data.loop = 'none';
+    };
+
+    this.trigger('change:shell', this.shell, this);
+  },
+
+  onChangeLoopN: function() {
+    var value, newLoopN;
+
+    value = this.$('input.loop-n').val();
+    newLoopN = this.loopN(value);
+    this.$('input.loop-n').val(newLoopN);
+
+    if (this.shell.data.loop !== newLoopN) {
+      this.shell.data.loop = newLoopN;
+      this.trigger('change:shell', this.shell, this);
+    };
   },
 
 });

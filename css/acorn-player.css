@@ -429,6 +429,24 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop.hidden {
+  display: none;
+}
+
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-none span,
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-infinity span,
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-n input {
+  width: 30px;
+  margin-left: -4px;
+  margin-right: 5px;
+  text-align: center;
+}
+
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-none span,
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-infinity span {
+  background-color: #F4F4F4;
+}
+
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
     div.thumbnailside.right {
   position: absolute;
