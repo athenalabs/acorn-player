@@ -120,8 +120,8 @@
   };
   acorn.util.assert = assert;
 
-  // **UrlRegExp** Helper to contruct URL RegExps
-  var UrlRegExp = function(simpleUrl) {
+  // **urlRegExp** Helper to contruct URL RegExps
+  var urlRegExp = function(simpleUrl) {
     return RegExp(
       '^'
         + '(https?:\/\/)?'
@@ -130,7 +130,7 @@
       + '$'
     , 'i');
   };
-  acorn.util.UrlRegExp = UrlRegExp;
+  acorn.util.urlRegExp = urlRegExp;
 
   // **derives** Helper to check the inheritance chain.
   var derives = function(child, parent) {
@@ -173,6 +173,8 @@
     return apiurl;
   };
 
+  // **acorn.util.imgurl** returns a URL to static images
+  // derived from `arguments`
   acorn.util.imgurl = function() {
     var args = Array.prototype.slice.call(arguments);
     var urlargs = ['img'].concat(args);

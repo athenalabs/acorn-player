@@ -4,6 +4,14 @@
 
 var YouTubeShell = acorn.shells.YouTubeShell = VideoLinkShell.extend({
 
+  initialize: function() {
+    VideoLinkShell.prototype.initialize.apply(this, arguments);
+
+    // setting metaData URL; see LinkShell.metaData
+    this.metaData.url = 'http://gdata.youtube.com/feeds/api/videos/' +
+                        this.youtubeId() + '?v=2' + '&alt=jsonc';
+  },
+
   shellid: 'acorn.YouTubeShell',
 
   // The canonical type of this media. One of `acorn.types`.
@@ -36,21 +44,28 @@ var YouTubeShell = acorn.shells.YouTubeShell = VideoLinkShell.extend({
          ;
   },
 
-  // **thumbnailLink** returns the link to the thumbnail image
+  // **thumbnailLink** returns a remoteResource object whose data() function
+  // caches and returns this YouTube shell's thumbnail link.
   thumbnailLink: function() {
-    return "https://img.youtube.com/vi/" + this.youtubeId() + "/0.jpg";
-  },
+    // YouTube videos' thumbnail links can be derived from the video's ID.
+    // The return-type of thumbnailLink functions is typically a remoteResource
+    // object. This function returns an object that behaves as if it were of
+    // type remoteResource, but that simply returns the static URL instead of
+    // making an AJAX request to obtain it.
+    var remoteResource = common.remoteResourceInterface();
+    _.extend(remoteResource, {
+      data: _.bind(function() {
+        return "https://img.youtube.com/vi/" + this.youtubeId() + "/0.jpg";
+      }, this),
+    });
 
-
-  extraInfoLink: function() {
-    return 'http://gdata.youtube.com/feeds/api/videos/' + this.youtubeId()
-         + '?v=2'
-         + '&alt=jsonc';
+    return remoteResource;
   },
 
   // **title** returns a simple title of the shell
   title: function() {
-    return this.extraInfo ? this.extraInfo.data.title : this.link();
+    var cache = this.metaData();
+    return cache.synced() ? cache.data().data.title : this.link();
   },
 
   // **description** returns a simple description of the shell
@@ -62,16 +77,17 @@ var YouTubeShell = acorn.shells.YouTubeShell = VideoLinkShell.extend({
   },
 
   duration: function() {
-    return this.extraInfo ? this.extraInfo.data.duration : this.data.time_end;
+    var cache = this.metaData();
+    return cache.synced() ? cache.data().data.duration : this.data.time_end;
   },
 
   // **validRegexes** list of valid LinkRegexes
   validRegexes: [
-    UrlRegExp('(www\.)?youtube\.com\/v\/([A-Za-z0-9\-_]+).*'),
-    UrlRegExp('(www\.)?youtube\.com\/embed\/([A-Za-z0-9\-_]+).*'),
-    UrlRegExp('(www\.)?youtube\.com\/watch\?.*v=([A-Za-z0-9\-_]+).*'),
-    UrlRegExp('(www\.)?y2u.be\/([A-Za-z0-9\-_]+)'),
-    UrlRegExp('(www\.)?youtu\.be\/([A-Za-z0-9\-_]+).*'),
+    urlRegExp('(www\.)?youtube\.com\/v\/([A-Za-z0-9\-_]+).*'),
+    urlRegExp('(www\.)?youtube\.com\/embed\/([A-Za-z0-9\-_]+).*'),
+    urlRegExp('(www\.)?youtube\.com\/watch\?.*v=([A-Za-z0-9\-_]+).*'),
+    urlRegExp('(www\.)?y2u.be\/([A-Za-z0-9\-_]+)'),
+    urlRegExp('(www\.)?youtu\.be\/([A-Za-z0-9\-_]+).*'),
   ],
 
 });
@@ -218,18 +234,6 @@ YouTubeShell.ContentView = VideoLinkShell.ContentView.extend({
     };
   },
 
-});
-
-
-// EditView -- video link, time clipping, and other options.
-// ---------------------------------------------------------
-
-YouTubeShell.EditView = VideoLinkShell.EditView.extend({
-  // Overrides LinkShell.generateThumbnailLink()
-  generateThumbnailLink: function(callback) {
-    callback = callback || function() {};
-    callback(this.shell.thumbnailLink());
-  },
 });
 
 
