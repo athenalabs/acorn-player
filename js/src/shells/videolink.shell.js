@@ -289,6 +289,12 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     this.trigger('change:shell', this.shell, this);
   },
 
+  // Args, contained in a single object:
+  // @number start - current start time in seconds
+  // @number end - current end time in seconds
+  // @string [lock] - name the time nob ('start' or 'end') to lock down if the
+  //     times are incompatible (e.g. start = 46, end = 12). by default, start
+  //     will be locked
   inputChanged: function(params) {
     var offset, max, bound, floatOrDefault, start, end, timeControls, diff,
         time;
