@@ -308,17 +308,10 @@ LinkShell.EditView = Shell.EditView.extend({
   onSaveLink: function() {
     var value = this.$('input#link').val();
 
-    // reset to previous value if field is empty
-    if (value === '') {
-      this.$('input#link').val(this.link());
+    if (this.validateLink(value))
+      console.log('invalid link');
 
-    // else validate and save
-    } else {
-      if (this.validateLink(value))
-        console.log('invalid link');
-
-      this.link(value);
-    };
+    this.link(value);
   },
 
   onDeleteShell: function() {
