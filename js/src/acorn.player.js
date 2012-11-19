@@ -445,7 +445,9 @@
       this.controlViews = _(this.controls).chain()
         .map(function (ctrl) { return self.controlsList[ctrl]; })
         .filter(function (cls) { return !!cls; })
-        .map(function (cls) { return new cls({controls: self}); })
+        .map(function (cls) {
+          return new cls({controls: self, player: self.player});
+        })
         .value();
     },
 
@@ -637,6 +639,17 @@
     onClick: function() {
       this.controls.player.trigger('controls:list');
     },
+
+  });
+
+  // ** player.views.controls.shellControls.SubshellControlsView **
+  //    view with control buttons for subshell
+  // -----------------------------------------------------
+
+  player.views.controls.shellControls.SubshellControlsView =
+      player.views.ShellControlsView.extend({
+
+    id: 'subshell-controls',
 
   });
 

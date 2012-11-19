@@ -259,12 +259,18 @@ h1, h2, h3, h4, h5, h6 {
   border-left: 1px solid #ccc;
 }
 
-#acorn-player > #controls > #shell-controls {
+#acorn-player > #controls > #shell-controls,
+#acorn-player > #controls #subshell-controls {
   float: left;
   width: 50%;
 }
 
-#acorn-player > #controls > #shell-controls > .control {
+#acorn-player > #controls #subshell-controls {
+  border-left: 1px solid #aaa;
+}
+
+#acorn-player > #controls > #shell-controls > .control,
+#acorn-player > #controls #subshell-controls > .control {
   float: left;
   padding-left: 1px;
   border-right: 1px solid #ccc;
