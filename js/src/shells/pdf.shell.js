@@ -19,7 +19,7 @@ var PDFLinkShell = acorn.shells.PDFLinkShell = LinkShell.extend({
     var remoteResource = common.remoteResourceInterface();
     _.extend(remoteResource, {
       data: function() {
-        return '/img/icons/pdf.png';
+        return acorn.util.imgurl('icons/pdf.png');
       },
     });
 
