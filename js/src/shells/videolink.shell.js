@@ -77,7 +77,7 @@ var VideoLinkShell = acorn.shells.VideoLinkShell = LinkShell.extend({
   // **validRegexes** list of valid LinkRegexes for videos
   // .avi, .mov, .wmv, etc.
   validRegexes: [
-    UrlRegExp('.*\.(avi|mov|wmv)'),
+    urlRegExp('.*\.(avi|mov|wmv)'),
   ],
 
   // **description** returns a simple description of the shell
@@ -204,10 +204,13 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     this.$el.find('#slider').css('opacity', '0.0');
     this.setupSlider();
 
-    this.shell.retrieveExtraInfo(_.bind(function() {
-      this.setupSlider();
-      this.$el.find('#slider').css('opacity', '1.0');
-    }, this));
+    var metaDataCache = this.shell.metaData();
+    metaDataCache.sync({
+      success: _.bind(function() {
+        this.setupSlider();
+        this.$el.find('#slider').css('opacity', '1.0');
+      }, this),
+    });
   },
 
   setupSlider: function() {

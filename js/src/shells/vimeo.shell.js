@@ -3,6 +3,14 @@
 
 var VimeoShell = acorn.shells.VimeoShell = VideoLinkShell.extend({
 
+  initialize: function() {
+    VideoLinkShell.prototype.initialize.apply(this, arguments);
+
+    // setting metaData URL; see LinkShell.metaData
+    this.metaData.url = 'http://vimeo.com/api/v2/video/' +
+                        this.vimeoId() + '.json?' + '&callback=?';
+  },
+
   shellid: 'acorn.VimeoShell',
 
   // The canonical type of this media. One of `acorn.types`.
@@ -33,15 +41,10 @@ var VimeoShell = acorn.shells.VimeoShell = VideoLinkShell.extend({
          ;
   },
 
-  extraInfoLink: function() {
-    return 'http://vimeo.com/api/v2/video/' + this.vimeoId() + '.json?'
-         + '&callback=?' // somehow allows cross-domain requests.
-         ;
-  },
-
   // **title** returns a simple title of the shell
   title: function() {
-    return this.extraInfo ? this.extraInfo[0].title : this.link();
+    var cache = this.metaData();
+    return cache.synced() ? cache.data()[0].title : this.link();
   },
 
   // **description** returns a simple description of the shell
@@ -53,13 +56,30 @@ var VimeoShell = acorn.shells.VimeoShell = VideoLinkShell.extend({
   },
 
   duration: function() {
-    return this.extraInfo ? this.extraInfo[0].duration : this.data.time_end;
+    var cache = this.metaData();
+    return cache.synced() ? cache.data()[0].duration : this.data.time_end;
   },
 
+  // **thumbnailLink** returns a remoteResource object whose data() function
+  // caches and returns this Vimeo shell's thumbnail link.
+  thumbnailLink: function() {
+    // Because vimeo's meta-data (accessible via LinkShell.metaData())
+    // contains the thumbnailLink for the video, we can simply override the
+    // already existing meta-data remote resource functionality.
+    var metaData = this.metaData();
+    var remoteResource = _.extend({}, metaData, {
+      data: _.bind(function() {
+        var data = metaData.data();
+        return data[0].thumbnail_large;
+      }, this),
+    });
+
+    return remoteResource;
+  },
 
   // **validRegexes** list of valid LinkRegexes
   validRegexes: [
-    UrlRegExp('(www\.)?(player\.)?vimeo\.com\/(video\/)?([0-9]+).*'),
+    urlRegExp('(www\.)?(player\.)?vimeo\.com\/(video\/)?([0-9]+).*'),
   ],
 
 });
@@ -189,45 +209,6 @@ VimeoShell.ContentView = VideoLinkShell.ContentView.extend({
     this.vimeoPlayer.api('seekTo', [seconds.toString()]);
   },
 
-});
-
-
-// EditView -- video link, time clipping, and other options.
-// ---------------------------------------------------------
-
-VimeoShell.EditView = VideoLinkShell.EditView.extend({
-  // Overrides LinkShell.generateThumbnailLink()
-  generateThumbnailLink: function(callback) {
-    // TODO(ali01) use retrieveExtraInfo?
-
-    // This would be the code. It works, and it leverages the fact
-    // that ``retrieveExtraInfo`` already has to be called for the
-    // duration. I think if we fix things away from $.getJSON we'd
-    // do it in retrieveExtraInfo, so I think this below should be
-    // what actually generates the thumbnail.
-
-    // this.shell.retrieveExtraInfo(_.bind(function() {
-    //   callback(this.shell.extraInfo[0].thumbnail_large);
-    // }, this));
-
-    callback = callback || function() {};
-    var url_req = '/request_proxy/vimeo.com/api/v2/video/' +
-                  this.shell.vimeoId() + '.json';
-    $.ajax(url_req, {
-      success: function(data) {
-        try {
-          callback(data[0].thumbnail_large);
-        } catch(e) {
-          acorn.alert('Error: failed to extract thumbnail from video.',
-                      'alert-error');
-        }
-      },
-      error: function() {
-        acorn.alert('Error: failed to generate thumbnail for video.',
-                    'alert-error');
-      }
-    });
-  },
 });
 
 

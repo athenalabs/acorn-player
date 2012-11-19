@@ -26,6 +26,7 @@
 // );
 //
 
+
 var LinkRegExp =
   RegExp('https?://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]',
    'i');
@@ -117,29 +118,49 @@ var LinkShellAPI = {
   // **description** returns a simple description of the shell
   description: function() { return ''; },
 
-  // **thumbnailLink** returns the link to the thumbnail image
-  thumbnailLink: function(link) {
-    if (link !== undefined)
-      this.data.thumbnailLink = link;
-    return this.data.thumbnailLink;
+  // **thumbnailLink** returns a remoteResource object whose data() function
+  // caches and returns this LinkShell's thumbnail link.
+  thumbnailLink: function thumbnailLink() {
+    if (this._tlink && this._tlink.url()) {
+      // if the thumbnail exists and is pointing to a valid URL, return it
+      return this._tlink;
+    };
+
+    var bounds = '600x600';
+    var shellLink = this.link(); // link this LinkShell is pointing to
+
+    if (!thumbnailLink.url && shellLink) {
+      // thumbnailLink.url can be overriden by derived objects
+      thumbnailLink.url = '/url2png/' + bounds + '/' + shellLink;
+    };
+
+    if (thumbnailLink.url) {
+      this._tlink = common.remoteResource({
+        url: thumbnailLink.url,
+      });
+
+    } else {
+      // stub remoteResource object without a valid URL
+      this._tlink = common.remoteResourceInterface();
+    };
+
+    return this._tlink;
   },
 
-  extraInfoLink: function() { return ''; },
+  // **metaData** returns a remoteResource object whose data() function
+  // caches and returns this LinkShell's associated metadata.
+  metaData: function metaData() {
+    // url property to be set by derived classes of LinkShell
+    var url = metaData.url; // currently undefined
 
-  // Retrieve extra information. Nothing by default.
-  retrieveExtraInfo: function(callback) {
-    callback = callback || function() {};
+    if (url && !this._metaData) {
+      this._metaData = common.remoteResource({
+        url: url,
+        dataType: 'json',
+      });
+    };
 
-    var extraInfoLink = this.extraInfoLink();
-    if (!extraInfoLink || this.extraInfo) {
-      return callback();
-    }
-
-    var self = this;
-    $.getJSON(extraInfoLink, function(data) {
-      self.extraInfo = data;
-      callback();
-    });
+    return this._metaData;
   },
 
 };
@@ -155,7 +176,6 @@ var LinkShell = acorn.shells.LinkShell = Shell.extend(LinkShellAPI);
 
 
 // ContentView -- Simply displays the link text for now.
-// TODO: thumbnail the website? embed the webpage in iframe?
 // ---------------------------------------------------------
 
 LinkShell.ContentView = Shell.ContentView.extend({
@@ -244,8 +264,12 @@ LinkShell.EditView = Shell.EditView.extend({
     Shell.EditView.prototype.render.call(this);
 
     // set thumbnail src
-    var tlink = this.shell.thumbnailLink();
-    this.$el.find('#thumbnail').attr('src', tlink);
+    var thumbnailLink = this.shell.thumbnailLink();
+    thumbnailLink.sync({
+      success: _.bind(function(thumbnailLink) {
+        this.$el.find('#thumbnail').attr('src', thumbnailLink);
+      }, this)
+    });
 
     this.linkView.setElement(this.$el.find('#link'));
     this.linkView.render();
@@ -267,23 +291,6 @@ LinkShell.EditView = Shell.EditView.extend({
     };
   },
 
-  generateThumbnailLink: function(callback) {
-    callback = callback || function() {};
-
-    var self = this;
-    var bounds = '600x600';
-    var req_url = '/url2png/' + bounds + '/' + this.shell.link();
-    $.ajax(req_url, {
-      success: function(data) {
-        callback(data);
-      },
-      error: function() {
-        acorn.alert('Error: failed to generate thumbnail for link.',
-                    'alert-error');
-      }
-    });
-  },
-
   // **finalizeEdit** finish all edits.
   finalizeEdit: function() {
     if (this.linkView.isEditing)
@@ -299,7 +306,6 @@ LinkShell.EditView = Shell.EditView.extend({
     multiShell.addShell(new acorn.shellForLink(''));
     this.trigger('swap:shell', multiShell.data);
   },
-
 
 });
 

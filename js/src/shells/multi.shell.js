@@ -50,14 +50,14 @@ var MultiShell = acorn.shells.MultiShell = Shell.extend({
   // These controls are specified from Left to Right on the ControlsView.
   controls: [
 
-    // LeftControl provides a way to go back to the previous subshell.
-    'LeftControl',
+    // Left provides a way to go back to the previous subshell.
+    'Left',
 
-    // ListControl provides a way to toggle the playlist showing all subshells.
-    'ListControl',
+    // List provides a way to toggle the playlist showing all subshells.
+    'List',
 
-    // RightControl provides a way to go forwards to the next subshell.
-    'RightControl',
+    // Right provides a way to go forwards to the next subshell.
+    'Right',
   ],
 
   initialize: function() {
@@ -74,11 +74,14 @@ var MultiShell = acorn.shells.MultiShell = Shell.extend({
     return 'playlist with ' + items + ' item' + s;
   },
 
-  // **thumbnailLink** use the first shell's thumbnail
+  // **thumbnailLink** returns a remoteResource object whose data() function
+  // caches and returns this MultiShell's thumbnail link.
   thumbnailLink: function() {
     var first = this.data.shells[0];
-    if (!first)
-      return '';
+    if (!first) {
+      // call default implementation of thumbnailLink in parent class
+      return Shell.prototype.thumbnailLink.call(this);
+    };
 
     var shell = acorn.shellWithData(first);
     return shell.thumbnailLink();
@@ -133,7 +136,11 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
     // initialize shells
     this.shells = _.map(this.shell.data.shells, acorn.shellWithData);
-    _.map(this.shells, function (shell) { shell.retrieveExtraInfo(); });
+    _.map(this.shells, function (shell) {
+      // fetch each shell's associated metadata
+      var cache = shell.metaData();
+      cache.sync();
+    });
 
   },
 

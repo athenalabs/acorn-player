@@ -3,7 +3,7 @@
 var extend = acorn.util.extend;
 var extendPrototype = acorn.util.extendPrototype;
 var derives = acorn.util.derives;
-var UrlRegExp = acorn.util.UrlRegExp;
+var urlRegExp = acorn.util.urlRegExp;
 var parseUrl = acorn.util.parseUrl;
 var iframe = acorn.util.iframe;
 var assert = acorn.util.assert;
@@ -96,9 +96,10 @@ var ShellAPI = {
   // Override it with your own shell-specific render code.
   description: function() { return ''; },
 
-  // **thumbnailLink** returns the link to the thumbnail image
-  // Override it with your own shell-specific render code.
-  thumbnailLink: function() { return ''; },
+  // **thumbnailLink** returns a remoteResource object whose data() function
+  // caches and returns this Shell's thumbnail link. Stub implementation --
+  // intended to be overriden by derived classes.
+  thumbnailLink: function() { return common.remoteResourceInterface(); },
 
   clone: function() {
     return new this.constructor(this.options);
@@ -233,7 +234,6 @@ Shell.SummaryView = ShellView.extend({
   '),
 
   render: function() {
-
     this.$el.empty();
     this.$el.html(this.template());
 
@@ -244,7 +244,11 @@ Shell.SummaryView = ShellView.extend({
     this.$el.find('#description').text(desc);
 
     var thumbnailLink = this.shell.thumbnailLink();
-    this.$el.find('#thumbnail').attr('src', thumbnailLink);
+    thumbnailLink.sync({
+      success: _.bind(function(thumbnailLink) {
+        this.$el.find('#thumbnail').attr('src', thumbnailLink);
+      }, this),
+    });
   },
 
 });
