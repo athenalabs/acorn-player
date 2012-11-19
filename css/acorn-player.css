@@ -321,13 +321,12 @@ h1, h2, h3, h4, h5, h6 {
   bottom: 20px;
   left: 20px;
   right: 20px;
-  overflow: scroll;
   z-index: 40;
 }
 
 #acorn-player > #edit > .content > #toolbar {
   position: relative;
-  width: 100%;
+  width: 558px;
   height: 40px;
   padding-bottom: 5px;
   border-bottom: 1px solid #ccc;
@@ -362,7 +361,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #acorn-player > #edit > .content > #form {
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   margin-top: 56px;
   padding: 10px;
 }
@@ -381,6 +381,10 @@ h1, h2, h3, h4, h5, h6 {
 #acorn-player > #edit > .content > #form .acorn-shell-edit.selected,
 #acorn-player > #content .acorn-shell-summary.selected {
   background-color: #dff0d8;
+}
+
+#acorn-player > #edit > .content > #form > .acorn-shell-edit {
+  width: 538px;
 }
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div {
@@ -406,13 +410,39 @@ h1, h2, h3, h4, h5, h6 {
   left: 100px;
 
   margin-left: 15px;
-  margin-right: 10px;
   height: 80px;
 }
 
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div
+    div.thumbnailside {
+  width: 423px;
+}
+
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
-    div.thumbnailside > div#link {
-  width: 100%;
+    div.thumbnailside #link-field {
+  height: 28px;
+  margin-bottom: 9px;
+}
+
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside input#link {
+  position: absolute;
+  width: 269px;
+  right: 144px;
+}
+
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside button#delete {
+  position: absolute;
+  width: 58px;
+  right: 81px;
+}
+
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside button#duplicate {
+  position: absolute;
+  width: 76px;
+  right: 0px;
 }
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
@@ -423,6 +453,24 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop.hidden {
+  display: none;
+}
+
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-none span,
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-infinity span,
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-n input {
+  width: 30px;
+  margin-left: -4px;
+  margin-right: 5px;
+  text-align: center;
+}
+
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-none span,
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-infinity span {
+  background-color: #F4F4F4;
+}
+
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
     div.thumbnailside.right {
   position: absolute;
@@ -430,11 +478,43 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 5px;
 }
 
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside #slider-block {
+  position: relative;
+}
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
     div.thumbnailside #slider {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin: 10px 7px 10px 0px;
+  width: 355px;
+}
+
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside #time {
+  position: absolute;
+  left: 365px;
+  top: -6px;
+  width: 46px;
+  height: 18px;
+  padding: 3px 5px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  text-shadow: 0 1px 0 white;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #EEE;
+  border: 1px solid #CCC;
+}
+
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside > form > .control-group.time {
+  display: inline-block;
+}
+
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside .input-prepend:first-child .add-on {
+  margin-left: 0px;
 }
 
 #acorn-player .ui-slider-handle {
@@ -442,11 +522,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #acorn-player > #edit > .content > #form > .acorn-shell-edit > button#add {
-  margin-left: 120px;
-  margin-top: 10px;
-  margin-bottom: 30px;
+  display: block;
+  margin: 10px auto 30px;
   padding: 5px;
-  width: 420px;
+  width: 378px;
 }
 
 /* jquery ui hacks to match boostrap */

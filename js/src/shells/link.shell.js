@@ -180,13 +180,17 @@ LinkShell.ContentView = Shell.ContentView.extend({
 });
 
 
-
 // LinkShell.EditView -- a text field for the link.
 // --------------------------------------------------
 
 LinkShell.EditView = Shell.EditView.extend({
 
   events: {
+    'focus input#link': 'onFocusLinkField',
+    'blur input#link': 'onBlurLinkField',
+    'keyup input#link': 'onKeyupLinkField',
+    'click button#delete': 'onClickDelete',
+    'click button#duplicate': 'onClickDuplicate',
     'click button#add': 'onClickAdd',
   },
 
@@ -194,7 +198,11 @@ LinkShell.EditView = Shell.EditView.extend({
     <div>\
       <img id="thumbnail" />\
       <div class="thumbnailside">\
-        <div id="link"></div>\
+        <div id="link-field">\
+          <input type="text" id="link" placeholder="Enter Link" />\
+          <button class="btn" id="delete">delete</button>\
+          <button class="btn" id="duplicate">duplicate</button>\
+        </div>\
       </div>\
     </div>\
     <button class="btn btn-large" id="add">Add Link</button>\
@@ -203,16 +211,8 @@ LinkShell.EditView = Shell.EditView.extend({
   initialize: function() {
     Shell.EditView.prototype.initialize.call(this);
 
-    this.linkView = new Backbone.components.EditableTextCmp.View({
-      textFn: this.link,
-      placeholder: 'Enter Link',
-      validate: _.bind(this.validateLink, this),
-      addToggle: true,
-      deleteFn: _.bind(this.triggerDelete, this),
-    });
-
     this.on('delete:shell', this.onDeleteShell);
-
+    this.on('save:link', this.onSaveLink);
   },
 
   validateLink: function(link) {
@@ -231,11 +231,11 @@ LinkShell.EditView = Shell.EditView.extend({
 
       // if the shellid has changed, we need to swap shells entirely.
       if (s.shellid != this.shell.data.shell)
-        this.trigger('swap:shell', s.data);
+        this.trigger('swap:shell', s.data, this);
 
       // else, announce that the shell has changed.
       else
-        this.trigger('change:shell', this.shell);
+        this.trigger('change:shell', this.shell, this);
     }
     return this.shell.link();
   },
@@ -243,28 +243,15 @@ LinkShell.EditView = Shell.EditView.extend({
   render: function() {
     Shell.EditView.prototype.render.call(this);
 
+    // set link field value
+    this.$('input#link').val(this.link());
+
     // set thumbnail src
     var tlink = this.shell.thumbnailLink();
     this.$el.find('#thumbnail').attr('src', tlink);
 
-    this.linkView.setElement(this.$el.find('#link'));
-    this.linkView.render();
-
-    if (!this.link())
-      this.linkView.edit();
-
     if (this.isSubShellView())
       this.$el.find('button#add').hide();
-  },
-
-  triggerDelete: function() {
-    this.trigger('delete:shell');
-  },
-
-  onDeleteShell: function() {
-    if (!this.isSubShellView()) {
-      this.link('');
-    };
   },
 
   generateThumbnailLink: function(callback) {
@@ -286,8 +273,59 @@ LinkShell.EditView = Shell.EditView.extend({
 
   // **finalizeEdit** finish all edits.
   finalizeEdit: function() {
-    if (this.linkView.isEditing)
-      this.linkView.save();
+  },
+
+  onFocusLinkField: function() {
+    this.trigger('edit:link');
+  },
+
+  onBlurLinkField: function() {
+    this.trigger('save:link');
+  },
+
+  onKeyupLinkField: function(e) {
+    var ENTER = 13, ESC = 27;
+
+    switch(e.keyCode) {
+      case ENTER:
+        this.onEnterLinkField();
+        break;
+      case ESC:
+        this.onEscapeLinkField();
+        break;
+    };
+  },
+
+  onEnterLinkField: function() {
+    this.$('input#link').blur();
+  },
+
+  onEscapeLinkField: function() {
+    this.$('input#link').val('');
+    this.$('input#link').blur();
+  },
+
+  onSaveLink: function() {
+    var value = this.$('input#link').val();
+
+    if (this.validateLink(value))
+      console.log('invalid link');
+
+    this.link(value);
+  },
+
+  onDeleteShell: function() {
+    if (!this.isSubShellView()) {
+      this.link('');
+    };
+  },
+
+  onClickDelete: function() {
+    this.trigger('delete:shell', this);
+  },
+
+  onClickDuplicate: function() {
+    this.trigger('duplicate:shell', this);
   },
 
   // **onClickAdd** add another link
@@ -297,7 +335,7 @@ LinkShell.EditView = Shell.EditView.extend({
     var multiShell = new acorn.shells.MultiShell();
     multiShell.addShell(this.shell);
     multiShell.addShell(new acorn.shellForLink(''));
-    this.trigger('swap:shell', multiShell.data);
+    this.trigger('swap:shell', multiShell.data, this);
   },
 
 
