@@ -310,14 +310,14 @@
 
     // add hours part
     var hrs = parseInt(sec / (60 * 60), 10);
-    if (hrs || format.forceHours) {
+    if (hrs !== 0 || format.forceHours) {
       sec -= hrs * 60 * 60;
       timeString += hrs + ':';
     };
 
     // add minutes part
     var min = parseInt(sec / 60, 10);
-    if (hrs || format.forceHours || min || format.forceMinutes) {
+    if (hrs !== 0 || format.forceHours || min !== 0 || format.forceMinutes) {
       sec -= min * 60;
       min = (min < 10) ? '0' + min : min;
       timeString += min + ':';
