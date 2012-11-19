@@ -137,6 +137,14 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
   },
 
+  remove: function() {
+    this.parent.off('controls:left', this.onShowPrevious);
+    this.parent.off('controls:list', this.onTogglePlaylist);
+    this.parent.off('controls:right', this.onShowNext);
+
+    Shell.ContentView.prototype.remove.call(this);
+  },
+
   // **render** construct and keep all the shellViews in memory, but
   // only show one at a time.
   render: function() {
