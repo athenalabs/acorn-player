@@ -176,6 +176,8 @@ Shell.ContentView = ShellView.extend({
   initialize: function() {
     ShellView.prototype.initialize.call(this);
 
+    this.on('set:controls', this.onControlsSet);
+
     this.parent.on('playback:play', this.onPlaybackPlay);
     this.parent.on('playback:stop', this.onPlaybackStop);
   },
@@ -185,6 +187,15 @@ Shell.ContentView = ShellView.extend({
     this.parent.off('playback:stop', this.onPlaybackStop);
 
     ShellView.prototype.remove.call(this);
+  },
+
+  setControlsView: function(controlsView) {
+    var controls = acorn.util.clone(this.shell.controls);
+
+    this.controlsView = controlsView;
+    controlsView.setControls(controls);
+
+    this.trigger('set:controls');
   },
 
   // aspect ratio. undefined if it doesn't matter.
@@ -200,6 +211,7 @@ Shell.ContentView = ShellView.extend({
   // events that all shells should have?
   // onLoseFocus: function () {},
   // onGainFocus: function () {},
+  onControlsSet: function () {},
   onPlaybackPlay: function () {},
   onPlaybackStop: function () {},
 

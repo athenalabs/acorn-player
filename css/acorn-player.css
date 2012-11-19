@@ -228,59 +228,70 @@ h1, h2, h3, h4, h5, h6 {
 
 }
 
-#acorn-player > #controls > .control {
+#acorn-player > #controls .control {
   padding-top: 1px;
   padding-bottom: 1px;
+  position: relative;
   height: 28px;
 }
 
-#acorn-player > #controls > .control[disabled=disabled] {
+#acorn-player > #controls .control[disabled=disabled] {
   pointer-events: none;
   opacity: 0.3;
 }
 
-#acorn-player > #controls > .control:hover {
+#acorn-player > #controls .control:hover {
   margin-top: 2px;
 }
 
-#acorn-player > #controls > .control:active {
+#acorn-player > #controls .control:active {
   margin-top: 4px;
 }
 
-#acorn-player > #controls > .control.right {
+#acorn-player > #controls > #acorn-controls {
+  float: right;
+  width: 50%;
+}
+
+#acorn-player > #controls > #acorn-controls > .control {
   float: right;
   padding-right: 1px;
   border-left: 1px solid #ccc;
 }
 
-#acorn-player > #controls > .control.left {
+#acorn-player > #controls > #shell-controls {
+  float: left;
+  width: 50%;
+}
+
+#acorn-player > #controls > #shell-controls > .control {
   float: left;
   padding-left: 1px;
   border-right: 1px solid #ccc;
 }
 
 
-#acorn-player > #controls > #acorn.control {
+#acorn-player > #controls #acorn.control {
   background: no-repeat url("/img/controls/acorn.png") 0px -2px;
 }
 
-#acorn-player > #controls > #fullscreen.control {
+#acorn-player > #controls #fullscreen.control {
   background: no-repeat url("/img/controls/acorn.png") -30px -2px;
 }
 
-#acorn-player > #controls > #edit.control {
+#acorn-player > #controls #edit.control {
   background: no-repeat url("/img/controls/acorn.png") -90px -2px;
 }
 
-#acorn-player > #controls > #left.control {
+#acorn-player > #controls #left.control {
   background: no-repeat url("/img/controls/acorn.png") -150px -2px;
 }
 
-#acorn-player > #controls > #right.control {
+#acorn-player > #controls #right.control {
   background: no-repeat url("/img/controls/acorn.png") -120px -2px;
 }
 
-#acorn-player > #controls > #list.control {
+#acorn-player > #controls #list.control {
   background: no-repeat url("/img/controls/acorn.png") -180px -2px;
 }
 
