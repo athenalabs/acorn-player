@@ -58,6 +58,9 @@ var MultiShell = acorn.shells.MultiShell = Shell.extend({
 
     // Right provides a way to go forwards to the next subshell.
     'RightControlView',
+
+    // SubshellControlsView provides a space for subshell controls
+    'SubshellControlsView',
   ],
 
   initialize: function() {
@@ -207,6 +210,7 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
     if (!this.currentView.el.parentNode) {
       this.currentView.render();
+      this.setSubshellControls();
       this.$el.append(this.currentView.el);
     };
 
@@ -214,6 +218,19 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
     // announce changes
     this.trigger('change:subview');
+  },
+
+  setSubshellControls: function() {
+    // bail if controls view has not yet been set
+    if (!this.controlsView) {
+      return;
+    };
+
+    // duplicate of player.setShellControls
+    assert(this.currentView && this.subshellControls, 'subshell ContentView ' +
+        'and SubshellControlsView must be rendered');
+
+    this.currentView.setControlsView(this.subshellControls);
   },
 
   updateControls: function() {
@@ -260,6 +277,10 @@ MultiShell.ContentView = Shell.ContentView.extend({
   // -- MultiShell Events
 
   onControlsSet: function() {
+    this.subshellControls =
+        this.controlsView.controlWithId('subshell-controls');
+
+    this.setSubshellControls();
     this.updateControls();
   },
 

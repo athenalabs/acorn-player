@@ -72,12 +72,18 @@ player.ControlsSubview = player.PlayerSubview.extend({
     this.controlViews = _(this.controls).chain()
       .map(function (ctrl) { return player[ctrl]; })
       .filter(function (cls) { return self.validControl(cls); })
-      .map(function (cls) { return new cls({controls: self}); })
+      .map(function (cls) {
+        return new cls({controls: self, player: self.player});
+      })
       .value();
   },
 
   validControl: function(ControlView) {
-    return acorn.util.derives(ControlView, player.ControlItemView);
+    var valid =
+        acorn.util.derives(ControlView, player.ControlItemView) ||
+        ControlView === player.SubshellControlsView;
+
+    return valid;
   },
 
   controlWithId: function(id) {
@@ -125,6 +131,19 @@ player.ShellControlsView = player.ControlsSubview.extend({
     // re-render
     this.render();
   },
+
+});
+
+
+// ** player.SubshellControlsView ** view with control buttons for subshell
+//
+// This view can be used to subdivide ControlsView. It is passed into
+// ControlsView as though it were an individual control.
+// ------------------------------------------------------------------------
+
+player.SubshellControlsView = player.ShellControlsView.extend({
+
+  id: 'subshell-controls',
 
 });
 
