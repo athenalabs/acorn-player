@@ -483,6 +483,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside > form > .control-group.time {
+  display: inline-block;
+}
+
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
     div.thumbnailside .input-prepend:first-child .add-on {
   margin-left: 0px;
 }
