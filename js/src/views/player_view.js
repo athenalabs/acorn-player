@@ -172,7 +172,6 @@ player.PlayerView = Backbone.View.extend({
   },
 
   onFullscreen: function() {
-    console.log('fullscreen triggered');
     var elem = this.$el[0];
     if (elem.requestFullscreen) {
       elem.requestFullscreen();
