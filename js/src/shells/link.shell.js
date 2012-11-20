@@ -274,16 +274,6 @@ LinkShell.EditView = Shell.EditView.extend({
       this.$el.find('button#add').hide();
   },
 
-  onClickDelete: function() {
-    this.trigger('delete:shell');
-  },
-
-  onDeleteShell: function() {
-    if (!this.isSubShellView()) {
-      this.link('');
-    };
-  },
-
   onFocusLinkField: function() {
     this.trigger('edit:link');
   },
@@ -322,6 +312,16 @@ LinkShell.EditView = Shell.EditView.extend({
       console.log('invalid link');
 
     this.link(value);
+  },
+
+  onDeleteShell: function() {
+    if (!this.isSubShellView()) {
+      this.link('');
+    };
+  },
+
+  onClickDelete: function() {
+    this.trigger('delete:shell');
   },
 
   // **onClickAdd** add another link
