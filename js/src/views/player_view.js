@@ -22,7 +22,7 @@ player.PlayerView = Backbone.View.extend({
   //
   // * show:content - fired when ContentView should be shown
   // * show:edit    - fired when EditView should be shown
-  // * close:edit   - fired when EditView shold be closed
+  // * close:edit   - fired when EditView should be closed
   //
   // * fullscreen   - fired when acorn should display in fullscreen
   // * acorn-site   - fired to go to the acorn website
