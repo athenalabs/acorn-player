@@ -410,10 +410,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
-    div.thumbnailside > div#link {
-  width: 350px;
+    div.thumbnailside > input#link {
+  width: 345px;
   float: left;
-  margin-right: 15px;
+  margin-right: 10px;
 }
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
