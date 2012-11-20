@@ -321,13 +321,12 @@ h1, h2, h3, h4, h5, h6 {
   bottom: 20px;
   left: 20px;
   right: 20px;
-  overflow: scroll;
   z-index: 40;
 }
 
 #acorn-player > #edit > .content > #toolbar {
   position: relative;
-  width: 100%;
+  width: 558px;
   height: 40px;
   padding-bottom: 5px;
   border-bottom: 1px solid #ccc;
@@ -362,7 +361,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #acorn-player > #edit > .content > #form {
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   margin-top: 56px;
   padding: 10px;
 }
@@ -381,6 +381,10 @@ h1, h2, h3, h4, h5, h6 {
 #acorn-player > #edit > .content > #form .acorn-shell-edit.selected,
 #acorn-player > #content .acorn-shell-summary.selected {
   background-color: #dff0d8;
+}
+
+#acorn-player > #edit > .content > #form > .acorn-shell-edit {
+  width: 538px;
 }
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div {
@@ -410,15 +414,35 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside {
+  width: 423px;
+}
+
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
     div.thumbnailside #link-field {
+  height: 28px;
   margin-bottom: 9px;
 }
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
     div.thumbnailside input#link {
-  width: 270px;
-  float: left;
-  margin-right: 5px;
+  position: absolute;
+  width: 269px;
+  right: 144px;
+}
+
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside button#delete {
+  position: absolute;
+  width: 58px;
+  right: 81px;
+}
+
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside button#duplicate {
+  position: absolute;
+  width: 76px;
+  right: 0px;
 }
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
@@ -497,11 +521,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #acorn-player > #edit > .content > #form > .acorn-shell-edit > button#add {
-  margin-left: 120px;
-  margin-top: 10px;
-  margin-bottom: 30px;
+  display: block;
+  margin: 10px auto 30px;
   padding: 5px;
-  width: 420px;
+  width: 378px;
 }
 
 /* jquery ui hacks to match boostrap */
