@@ -247,11 +247,11 @@ LinkShell.EditView = Shell.EditView.extend({
 
       // if the shellid has changed, we need to swap shells entirely.
       if (s.shellid != this.shell.data.shell)
-        this.trigger('swap:shell', s.data);
+        this.trigger('swap:shell', s.data, this);
 
       // else, announce that the shell has changed.
       else
-        this.trigger('change:shell', this.shell);
+        this.trigger('change:shell', this.shell, this);
     }
     return this.shell.link();
   },
@@ -321,7 +321,7 @@ LinkShell.EditView = Shell.EditView.extend({
   },
 
   onClickDelete: function() {
-    this.trigger('delete:shell');
+    this.trigger('delete:shell', this);
   },
 
   // **onClickAdd** add another link
@@ -331,7 +331,7 @@ LinkShell.EditView = Shell.EditView.extend({
     var multiShell = new acorn.shells.MultiShell();
     multiShell.addShell(this.shell);
     multiShell.addShell(new acorn.shellForLink(''));
-    this.trigger('swap:shell', multiShell.data);
+    this.trigger('swap:shell', multiShell.data, this);
   },
 
 });

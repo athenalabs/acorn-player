@@ -232,7 +232,7 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
         self.inputChanged(ui.values);
       },
       stop: function(e, ui) {
-        self.trigger('change:shell', self.shell);
+        self.trigger('change:shell', self.shell, this);
       },
     });
 
@@ -245,7 +245,7 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
       timeStringToSeconds(this.$el.find('#start').val()),
       timeStringToSeconds(this.$el.find('#end').val())
     ]);
-    this.trigger('change:shell', this.shell);
+    this.trigger('change:shell', this.shell, this);
   },
 
   inputChanged: function(values) {
