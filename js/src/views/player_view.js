@@ -96,9 +96,24 @@ player.PlayerView = Backbone.View.extend({
       this.contentView.render();
       this.controlsView.render();
 
+      // give shellView a handle to shellControls
+      this.setShellControls();
+
       this.$el.append(this.contentView.el);
       this.$el.append(this.controlsView.el);
     }
+  },
+
+  setShellControls: function() {
+    var shellView, shellControls;
+
+    shellView = this.contentView.shellView;
+    shellControls = this.controlsView.shellControls;
+
+    assert(shellControls && shellView, 'ContentView and ControlsView must be ' +
+        'rendered');
+
+    shellView.setControlsView(shellControls);
   },
 
   onAcornSave: function() {
