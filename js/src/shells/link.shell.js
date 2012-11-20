@@ -218,9 +218,11 @@ LinkShell.EditView = Shell.EditView.extend({
     <div>\
       <img id="thumbnail" />\
       <div class="thumbnailside">\
-        <input type="text" id="link" placeholder="Enter Link" />\
-        <button class="btn" id="delete">delete</button>\
-        <button class="btn" id="duplicate">duplicate</button>\
+        <div id="link-field">\
+          <input type="text" id="link" placeholder="Enter Link" />\
+          <button class="btn" id="delete">delete</button>\
+          <button class="btn" id="duplicate">duplicate</button>\
+        </div>\
       </div>\
     </div>\
     <button class="btn btn-large" id="add">Add Link</button>\

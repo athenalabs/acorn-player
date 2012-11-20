@@ -410,7 +410,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
-    div.thumbnailside > input#link {
+    div.thumbnailside #link-field {
+  margin-bottom: 9px;
+}
+
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside input#link {
   width: 270px;
   float: left;
   margin-right: 5px;
@@ -431,11 +436,38 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 5px;
 }
 
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside #slider-block {
+  position: relative;
+}
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
     div.thumbnailside #slider {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin: 10px 7px 10px 0px;
+  width: 355px;
+}
+
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside #time {
+  position: absolute;
+  left: 365px;
+  top: -6px;
+  width: 46px;
+  height: 18px;
+  padding: 3px 5px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  text-shadow: 0 1px 0 white;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #EEE;
+  border: 1px solid #CCC;
+}
+
+#acorn-player > #edit > .content > #form .acorn-shell-edit > div >
+    div.thumbnailside .input-prepend:first-child .add-on {
+  margin-left: 0px;
 }
 
 #acorn-player .ui-slider-handle {
