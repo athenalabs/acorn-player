@@ -406,13 +406,14 @@ h1, h2, h3, h4, h5, h6 {
   left: 100px;
 
   margin-left: 15px;
-  margin-right: 10px;
   height: 80px;
 }
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >
     div.thumbnailside > div#link {
-  width: 100%;
+  width: 350px;
+  float: left;
+  margin-right: 15px;
 }
 
 #acorn-player > #edit > .content > #form .acorn-shell-edit > div >

@@ -207,6 +207,7 @@ LinkShell.ContentView = Shell.ContentView.extend({
 LinkShell.EditView = Shell.EditView.extend({
 
   events: {
+    'click button#delete' : 'onClickDelete',
     'click button#add': 'onClickAdd',
   },
 
@@ -215,6 +216,7 @@ LinkShell.EditView = Shell.EditView.extend({
       <img id="thumbnail" />\
       <div class="thumbnailside">\
         <div id="link"></div>\
+        <button class="btn" id="delete">delete</button>\
       </div>\
     </div>\
     <button class="btn btn-large" id="add">Add Link</button>\
@@ -228,11 +230,9 @@ LinkShell.EditView = Shell.EditView.extend({
       placeholder: 'Enter Link',
       validate: _.bind(this.validateLink, this),
       addToggle: true,
-      deleteFn: _.bind(this.triggerDelete, this),
     });
 
     this.on('delete:shell', this.onDeleteShell);
-
   },
 
   validateLink: function(link) {
@@ -281,7 +281,7 @@ LinkShell.EditView = Shell.EditView.extend({
       this.$el.find('button#add').hide();
   },
 
-  triggerDelete: function() {
+  onClickDelete: function() {
     this.trigger('delete:shell');
   },
 
