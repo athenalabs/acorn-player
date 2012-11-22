@@ -348,7 +348,7 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
 
   timeError: function() {
     // 2 seconds of error display
-    var timeControls = this.$('form').children('.control-group-time');
+    var timeControls = this.$('form').children('.control-group.time');
     timeControls.addClass('error');
     setTimeout(function() { timeControls.removeClass('error'); }, 2000);
   },
