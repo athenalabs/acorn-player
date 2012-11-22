@@ -109,6 +109,7 @@ player.AcornControlsView = player.ControlsSubview.extend({
     this.controls = [
       'FullscreenControlView',
       'AcornControlView',
+      'SourcesControlView',
       'EditControlView',
     ];
   },
