@@ -22,7 +22,7 @@ player.PlayerView = Backbone.View.extend({
   //
   // * show:content - fired when ContentView should be shown
   // * show:edit    - fired when EditView should be shown
-  // * close:edit   - fired when EditView shold be closed
+  // * close:edit   - fired when EditView should be closed
   //
   // * fullscreen   - fired when acorn should display in fullscreen
   // * acorn-site   - fired to go to the acorn website
@@ -96,9 +96,24 @@ player.PlayerView = Backbone.View.extend({
       this.contentView.render();
       this.controlsView.render();
 
+      // give shellView a handle to shellControls
+      this.setShellControls();
+
       this.$el.append(this.contentView.el);
       this.$el.append(this.controlsView.el);
     }
+  },
+
+  setShellControls: function() {
+    var shellView, shellControls;
+
+    shellView = this.contentView.shellView;
+    shellControls = this.controlsView.shellControls;
+
+    assert(shellControls && shellView, 'ContentView and ControlsView must be ' +
+        'rendered');
+
+    shellView.setControlsView(shellControls);
   },
 
   onAcornSave: function() {
@@ -172,7 +187,6 @@ player.PlayerView = Backbone.View.extend({
   },
 
   onFullscreen: function() {
-    console.log('fullscreen triggered');
     var elem = this.$el[0];
     if (elem.requestFullscreen) {
       elem.requestFullscreen();

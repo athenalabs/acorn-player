@@ -10,8 +10,6 @@ player.ListControlView = player.ControlItemView.extend({
 
   id: 'list',
 
-  className: 'control left',
-
   onClick: function() {
     this.controls.player.trigger('controls:list');
   },

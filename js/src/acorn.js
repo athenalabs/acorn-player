@@ -437,7 +437,7 @@
     if (!isObject(obj)) return obj;
     return isArray(obj) ? obj.slice() : extend({}, obj);
   };
-  acorn.util.clone;
+  acorn.util.clone = clone;
 
 
   // Originally from backbone.js 0.9.1:

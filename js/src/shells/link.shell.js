@@ -176,7 +176,7 @@ var LinkShell = acorn.shells.LinkShell = Shell.extend(LinkShellAPI);
 
 
 // ContentView -- Simply displays the link text for now.
-// ---------------------------------------------------------
+// -----------------------------------------------------
 
 LinkShell.ContentView = Shell.ContentView.extend({
 

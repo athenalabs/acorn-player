@@ -51,13 +51,16 @@ var MultiShell = acorn.shells.MultiShell = Shell.extend({
   controls: [
 
     // Left provides a way to go back to the previous subshell.
-    'Left',
+    'LeftControlView',
 
     // List provides a way to toggle the playlist showing all subshells.
-    'List',
+    'ListControlView',
 
     // Right provides a way to go forwards to the next subshell.
-    'Right',
+    'RightControlView',
+
+    // SubshellControlsView provides a space for subshell controls
+    'SubshellControlsView',
   ],
 
   initialize: function() {
@@ -144,6 +147,14 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
   },
 
+  remove: function() {
+    this.parent.off('controls:left', this.onShowPrevious);
+    this.parent.off('controls:list', this.onTogglePlaylist);
+    this.parent.off('controls:right', this.onShowNext);
+
+    Shell.ContentView.prototype.remove.call(this);
+  },
+
   // **render** construct and keep all the shellViews in memory, but
   // only show one at a time.
   render: function() {
@@ -199,6 +210,7 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
     if (!this.currentView.el.parentNode) {
       this.currentView.render();
+      this.setSubshellControls();
       this.$el.append(this.currentView.el);
     };
 
@@ -206,6 +218,38 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
     // announce changes
     this.trigger('change:subview');
+  },
+
+  setSubshellControls: function() {
+    // bail if controls view has not yet been set
+    if (!this.controlsView) {
+      return;
+    };
+
+    // duplicate of player.setShellControls
+    assert(this.currentView && this.subshellControls, 'subshell ContentView ' +
+        'and SubshellControlsView must be rendered');
+
+    this.currentView.setControlsView(this.subshellControls);
+  },
+
+  updateControls: function() {
+    if (!this.controlsView) {
+      return;
+    };
+
+    var left = this.controlsView.controlWithId('left');
+    var list = this.controlsView.controlWithId('list');
+    var right = this.controlsView.controlWithId('right');
+
+    left.$el.removeAttr('disabled');
+    right.$el.removeAttr('disabled');
+
+    if (this.currentView == _.first(this.shellViews))
+      left.$el.attr('disabled', 'disabled');
+
+    if (this.currentView == _.last(this.shellViews))
+      right.$el.attr('disabled', 'disabled');
   },
 
   // **togglePlaylist** toggle a container with subview summaries
@@ -232,22 +276,16 @@ MultiShell.ContentView = Shell.ContentView.extend({
 
   // -- MultiShell Events
 
+  onControlsSet: function() {
+    this.subshellControls =
+        this.controlsView.controlWithId('subshell-controls');
+
+    this.setSubshellControls();
+    this.updateControls();
+  },
+
   onChangedSubview: function() {
-    var contentView = this.parent;
-    var controlsView = contentView.player.controlsView;
-
-    var left = controlsView.controlWithId('left');
-    var list = controlsView.controlWithId('list');
-    var right = controlsView.controlWithId('right');
-
-    left.$el.removeAttr('disabled');
-    right.$el.removeAttr('disabled');
-
-    if (this.currentView == _.first(this.shellViews))
-      left.$el.attr('disabled', 'disabled');
-
-    if (this.currentView == _.last(this.shellViews))
-      right.$el.attr('disabled', 'disabled');
+    this.updateControls();
   },
 
   triggerPlaybackStop: function() {
