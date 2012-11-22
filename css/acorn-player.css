@@ -300,7 +300,7 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 40;
 }
 
-#acorn-player > #edit > .content > #toolbar {
+#acorn-player .overlay > .content > #toolbar {
   position: relative;
   width: 538px;
   height: 40px;
@@ -310,17 +310,17 @@ h1, h2, h3, h4, h5, h6 {
   margin-left: 0px;
 }
 
-#acorn-player > #edit > .content > #toolbar > * {
+#acorn-player .overlay > .content > #toolbar > * {
   position: absolute;
   width: 50%;
   height: 100%;
 }
 
-#acorn-player > #edit > .content > #toolbar > h1 {
+#acorn-player .overlay > .content > #toolbar > h1 {
   left: 0px;
 }
 
-#acorn-player > #edit > .content > #toolbar > #actions {
+#acorn-player .overlay > .content > #toolbar > #actions {
   right: 0px;
   height: 35px;
   text-align: right;
