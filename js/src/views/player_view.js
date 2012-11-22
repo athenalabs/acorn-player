@@ -23,6 +23,8 @@ player.PlayerView = Backbone.View.extend({
   // * show:content - fired when ContentView should be shown
   // * show:edit    - fired when EditView should be shown
   // * close:edit   - fired when EditView should be closed
+  // * show:sources - fired when SourcesView should be shown
+  // * close:sources - fired when SourcesView should be closed
   //
   // * fullscreen   - fired when acorn should display in fullscreen
   // * acorn-site   - fired to go to the acorn website
@@ -65,6 +67,9 @@ player.PlayerView = Backbone.View.extend({
 
     this.on('show:edit', this.onShowEdit);
     this.on('close:edit', this.onCloseEdit);
+
+    this.on('show:sources', this.onShowSources);
+    this.on('close:sources', this.onCloseSources);
 
     this.on('fullscreen', this.onFullscreen);
     this.on('acorn-site', this.onAcornSite);
@@ -184,6 +189,26 @@ player.PlayerView = Backbone.View.extend({
 
   triggerEdit: function() {
     this.trigger('show:edit');
+  },
+
+  onShowSources: function() {
+    if (this.sourcesView)
+      return;
+
+    this.sourcesView = new player.SourcesView({ player: this });
+    this.sourcesView.render();
+    this.$el.append(this.sourcesView.el);
+
+    this.trigger('playback:stop');
+  },
+
+  onCloseSources: function() {
+    if (!this.sourcesView)
+      return;
+
+    this.sourcesView.$el.hide();
+    this.sourcesView.remove();
+    this.sourcesView = undefined;
   },
 
   onFullscreen: function() {
