@@ -161,15 +161,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #acorn-player > #content > .acorn-multishell > #acorn-multishell-playlist >
-    .content {
-  overflow: scroll;
-}
-
-#acorn-player > #content > .acorn-multishell > #acorn-multishell-playlist >
     .content > #close {
   position: absolute;
   top: 0px;
   right: 0px;
+}
+
+#acorn-player > #content > .acorn-multishell > #acorn-multishell-playlist >
+    .content > #summaries {
+  position: absolute;
+  margin-top: 41px;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  overflow: scroll;
 }
 
 #acorn-player > #controls {
@@ -351,6 +357,12 @@ h1, h2, h3, h4, h5, h6 {
 #acorn-player > #edit > .content > #form .acorn-shell-edit.selected,
 #acorn-player > #content .acorn-shell-summary.selected {
   background-color: #dff0d8;
+}
+
+#acorn-player > #edit > .content > #form .acorn-shell-edit.selected,
+#acorn-player > #content .acorn-shell-summary:last-child {
+  margin-bottom: 0px;
+  padding-bottom: 0px;
 }
 
 #acorn-player > #edit > .content > #form > .acorn-shell-edit {
