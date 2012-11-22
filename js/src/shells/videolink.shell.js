@@ -134,6 +134,7 @@ VideoLinkShell.ContentView = LinkShell.ContentView.extend({
 
   onPlaybackTick: function() {
     // get shell options
+    // TODO: handle looping correctly
     var loop = this.shell.data.loop || false;
     var end = this.shell.data.time_end || this.totalTime();
     var start = this.shell.data.time_start || 0;
@@ -167,27 +168,47 @@ VideoLinkShell.ContentView = LinkShell.ContentView.extend({
 VideoLinkShell.EditView = LinkShell.EditView.extend({
 
   events: _.extend({}, LinkShell.EditView.prototype.events, {
-    'change input':  'timeInputChanged',
-    'blur input':  'timeInputChanged',
+    'change input#start':  'startTimeInputChanged',
+    'blur input#start':  'startTimeInputChanged',
+    'change input#end':  'endTimeInputChanged',
+    'blur input#end':  'endTimeInputChanged',
+    'click button.loop': 'onClickLoopButton',
+    'change input.loop-n': 'onChangeLoopN',
+    'blur input.loop-n': 'onChangeLoopN',
   }),
 
   timeRangeTemplate: _.template('\
-  <div id="slider" class="fader"></div>\
+  <div id="slider-block">\
+    <div id="slider" class="fader"></div>\
+    <div id="time"></div>\
+  </div>\
   <form class="form-inline">\
-    <div class="input-prepend">\
-      <span class="add-on">start:</span>\
-      <input id="start" size="16" type="text" class="time">\
-      <!--<span class="add-on">sec</span>-->\
+    <div class="control-group time">\
+      <div class="input-prepend">\
+        <span class="add-on">start:</span>\
+        <input id="start" size="16" type="text" class="time">\
+        <!--<span class="add-on">sec</span>-->\
+      </div>\
     </div>\
-    <div class="input-prepend">\
-      <span class="add-on">end:</span>\
-      <input id="end" size="16" type="text" class="time">\
-      <!--<span class="add-on">sec</span>-->\
+    <div class="control-group time">\
+      <div class="input-prepend">\
+        <span class="add-on">end:</span>\
+        <input id="end" size="16" type="text" class="time">\
+        <!--<span class="add-on">sec</span>-->\
+      </div>\
     </div>\
-    total time: <span id="time"></span>\
-    <label class="checkbox right" id="loop-label">\
-      <input id="loop" type="checkbox"> Loop\
-    </label>\
+    <div class="input-prepend input-append loop loop-none">\
+      <button class="btn loop" type="button">loop:</button>\
+      <span class="add-on loop-none">∅</span>\
+    </div>\
+    <div class="input-prepend input-append loop loop-infinity">\
+      <button class="btn loop" type="button">loop:</button>\
+      <span class="add-on loop-infinity">∞</span>\
+    </div>\
+    <div class="input-prepend loop loop-n">\
+      <button class="btn loop" type="button">loop:</button>\
+      <input size="16" type="text" class="loop-n">\
+    </div>\
   </form>\
   '),
 
@@ -196,13 +217,10 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
 
     var timeRange = $(this.timeRangeTemplate());
 
-    // update with the correct values.
-    if (this.shell.data.loop)
-      timeRange.find('#loop').attr('checked', 'checked');
-
     this.$el.find('.thumbnailside').append(timeRange);
     this.$el.find('#slider').css('opacity', '0.0');
     this.setupSlider();
+    this.setupLoopButton();
 
     var metaDataCache = this.shell.metaData();
     metaDataCache.sync({
@@ -214,12 +232,13 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
   },
 
   setupSlider: function() {
-    var data = this.shell.data;
+    var data, max, self, start, end;
 
-    var max = this.shell.duration();
+    data = this.shell.data;
+    max = this.shell.duration();
 
     // setup slider
-    var self = this;
+    self = this;
     this.$el.find('#slider').slider('destroy');
     this.$el.find('#slider').slider({
       min: 0,
@@ -227,53 +246,168 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
       range: true,
       values: [ data.time_start || 0, data.time_end || max],
       slide: function(e, ui) {
-        self.inputChanged(ui.values);
+        start = ui.values[0];
+        end = ui.values[1];
+        self.inputChanged({start: start, end: end});
       },
       stop: function(e, ui) {
-        self.trigger('change:shell', self.shell);
+        self.trigger('change:shell', self.shell, this);
       },
     });
 
-    this.inputChanged([ data.time_start, data.time_end ]);
-
+    this.inputChanged({start: data.time_start, end: data.time_end});
   },
 
-  timeInputChanged: function() {
-    this.inputChanged([
-      timeStringToSeconds(this.$el.find('#start').val()),
-      timeStringToSeconds(this.$el.find('#end').val())
-    ]);
-    this.trigger('change:shell', this.shell);
+  setupLoopButton: function() {
+    switch(this.shell.data.loop) {
+      case 'none':
+        this.showLoop('none');
+        break;
+
+      case 'infinity':
+        this.showLoop('infinity');
+        break;
+
+      default:
+        // set internal loopN value and add it to DOM before showing loop widget
+        this.loopN(this.shell.data.loop);
+        this.$('input.loop-n').val(this.loopN());
+        this.showLoop('n');
+    };
   },
 
-  inputChanged: function(values) {
-    var clip = function(min, val, max) {
-      return Math.max(min, Math.min(val || 0, max));
+  startTimeInputChanged: function() {
+    this.timeInputChanged('start');
+  },
+
+  endTimeInputChanged: function() {
+    this.timeInputChanged('end');
+  },
+
+  timeInputChanged: function(changed) {
+    this.inputChanged({
+      start: timeStringToSeconds(this.$el.find('#start').val()),
+      end: timeStringToSeconds(this.$el.find('#end').val()),
+      lock: changed,
+    });
+
+    this.trigger('change:shell', this.shell, this);
+  },
+
+  // Args, contained in a single object:
+  // @number start - current start time in seconds
+  // @number end - current end time in seconds
+  // @string [lock] - name the time nob ('start' or 'end') to lock down if the
+  //     times are incompatible (e.g. start = 46, end = 19). by default, start
+  //     will be locked
+  inputChanged: function(params) {
+    var offset, max, bound, floatOrDefault, start, end, timeControls, diff,
+        time;
+
+    offset = 10;
+    max = this.shell.data.time_total || this.shell.duration();
+
+    bound = function(val) {
+      return Math.max(0, Math.min(val || 0, max));
     };
 
-    var floatOrDefault = function(num, def) {
+    floatOrDefault = function(num, def) {
       return (_.isNumber(num) && !_.isNaN(num)) ? parseFloat(num) : def;
     };
 
-    var max = this.shell.data.time_total || this.shell.duration();
-    values[0] = floatOrDefault(values[0], 0);
-    values[1] = floatOrDefault(values[1], max);
+    start = floatOrDefault(params.start, 0);
+    end = floatOrDefault(params.end, max);
 
-    var start = clip(0, values[0], values[1]);
-    var end = clip(start, values[1], max);
-    var loop = !!this.$el.find('#loop').attr('checked');
+    start = bound(start);
+    end = bound(end);
 
-    var diff = (end - start);
-    var time = (isNaN(diff) ? '--' : secondsToTimeString(diff));
+    // prohibit negative length
+    if (end < start) {
+      if (params.lock === 'end')
+        start = bound(end - offset);
+      else
+        end = bound(start + offset);
+
+      // after rerender(s), display time error
+      setTimeout(this.timeError, 0);
+    };
+
+    diff = (end - start);
+    time = (isNaN(diff) ? '--' : secondsToTimeString(diff,
+        {forceMinutes: true}));
 
     this.shell.data.time_start = start;
     this.shell.data.time_end = end;
-    this.shell.data.loop = loop;
 
-    this.$el.find('#start').val(secondsToTimeString(start));
-    this.$el.find('#end').val(secondsToTimeString(end));
+    this.$el.find('#start').val(secondsToTimeString(start,
+        {forceMinutes: true}));
+    this.$el.find('#end').val(secondsToTimeString(end, {forceMinutes: true}));
     this.$el.find('#time').text(time);
     this.$el.find('#slider').slider({ max: max, values: [start, end] });
+  },
+
+  timeError: function() {
+    // 2 seconds of error display
+    var timeControls = this.$('form').children('.control-group.time');
+    timeControls.addClass('error');
+    setTimeout(function() { timeControls.removeClass('error'); }, 2000);
+  },
+
+  loopN: function(n) {
+    // force integer or NaN - don't interpret whitespace as 0
+    var int = Math.floor(n);
+    if (int === 0 && n !== 0)
+      int = NaN;
+
+    if (int >= 0)
+      this._lastLoopN = int;
+    else if (!_.isNumber(this._lastLoopN))
+      this._lastLoopN = 2;
+
+    return this._lastLoopN;
+  },
+
+  showLoop: function(type) {
+    var active = this.$('div.loop-' + type);
+
+    this.$('div.loop').addClass('hidden');
+    active.removeClass('hidden');
+
+    if (this._selectInputOnShow) {
+      active.find('input').select();
+      this._selectInputOnShow = false;
+    };
+  },
+
+  onClickLoopButton: function() {
+    switch (this.shell.data.loop) {
+      case 'none':
+        this.shell.data.loop = 'infinity';
+        break;
+
+      case 'infinity':
+        this.shell.data.loop = this.loopN();
+        this._selectInputOnShow = true;
+        break;
+
+      default:
+        this.shell.data.loop = 'none';
+    };
+
+    this.trigger('change:shell', this.shell, this);
+  },
+
+  onChangeLoopN: function() {
+    var value, newLoopN;
+
+    value = this.$('input.loop-n').val();
+    newLoopN = this.loopN(value);
+    this.$('input.loop-n').val(newLoopN);
+
+    if (this.shell.data.loop !== newLoopN) {
+      this.shell.data.loop = newLoopN;
+      this.trigger('change:shell', this.shell, this);
+    };
   },
 
 });

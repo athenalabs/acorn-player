@@ -499,18 +499,10 @@ MultiShell.EditView = Shell.EditView.extend({
     });
 
     // listen to events of shell EditView
-    shellView.on('swap:shell', function(data) {
-      this.onSwapSubShell(data, shellView);
-    }, this);
-
-    shellView.on('change:shell', function(data) {
-      this.onChangeSubShell(data, shellView);
-    }, this);
-
-    shellView.on('delete:shell', function() {
-      this.onDeleteSubShell(shellView);
-    }, this);
-
+    shellView.on('swap:shell', this.onSwapSubShell);
+    shellView.on('change:shell', this.onChangeSubShell);
+    shellView.on('delete:shell', this.onDeleteSubShell);
+    shellView.on('duplicate:shell', this.onDuplicateSubShell);
     shellView.on('change:editState', this.onChangeEditState);
 
     return shellView;
@@ -607,6 +599,32 @@ MultiShell.EditView = Shell.EditView.extend({
     shellView.remove();
   },
 
+  onDuplicateSubShell: function(shellView) {
+    var index, shellData, shells, duplicateShellView;
+
+    // get next index and duplicate data
+    index = this.indexOfView(shellView) + 1;
+    shellData = this.duplicateShellData(shellView.shell.data);
+
+    // add duplicate to `this.shells`
+    shells = this.shells();
+    shells.splice(index, 0, shellData);
+    this.shells(shells);
+
+    // add duplicate to `this.shellViews`
+    duplicateShellView = this.constructView(shellData);
+    this.shellViews.splice(index, 0, duplicateShellView);
+
+    // add duplicate to DOM
+    duplicateShellView.render();
+    shellView.$el.after(duplicateShellView.el);
+  },
+
+  duplicateShellData: function(data) {
+    // for now, all data is shallow and a simple clone is sufficient
+    return _.clone(data);
+  },
+
   // get/setter for shells value
   shells: function(shells) {
     if (shells !== undefined) {
@@ -614,11 +632,11 @@ MultiShell.EditView = Shell.EditView.extend({
 
       // if there is at most 1 shell, swap.
       if (shells.length <= 1)
-        this.trigger('swap:shell', shells[0] || {});
+        this.trigger('swap:shell', shells[0] || {}, this);
 
       // else, announce that the shell has changed.
       else
-        this.trigger('change:shell', this.shell);
+        this.trigger('change:shell', this.shell, this);
     }
     return this.shell.data.shells;
   },
