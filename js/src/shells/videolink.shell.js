@@ -253,7 +253,6 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
 
     // setup slider
     self = this;
-    this.$el.find('#slider').slider('destroy');
     this.$el.find('#slider').slider({
       min: 0,
       max: max,
