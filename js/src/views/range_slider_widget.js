@@ -344,22 +344,14 @@ $.widget("ui.rangeslider", $.ui.mouse, {
   _start: function(event, index) {
     var uiHash = {
       handle: this.handles[index],
-      values: this.values(),
+      values: this.orderedValues(),
     };
 
     return this._trigger("start", event, uiHash);
   },
 
   _slide: function(event, index, newVal) {
-    var otherVal, valuesCrossed, newValues, allowed;
-
-    otherVal = this.values(index ? 0 : 1);
-
-    valuesCrossed = index === 0 && newVal > otherVal ||
-        index === 1 && newVal < otherVal;
-
-    if (valuesCrossed)
-      newVal = otherVal;
+    var newValues, allowed;
 
     if (newVal !== this.values(index)) {
       newValues = this.values();
@@ -367,7 +359,7 @@ $.widget("ui.rangeslider", $.ui.mouse, {
       // A slide can be canceled by returning false from the slide callback
       allowed = this._trigger("slide", event, {
         handle: this.handles[index],
-        values: newValues
+        values: newValues.sort(function(a, b) { return a - b; }),
       });
       if (allowed !== false) {
         this.values(index, newVal, true);
@@ -378,7 +370,7 @@ $.widget("ui.rangeslider", $.ui.mouse, {
   _stop: function(event, index) {
     var uiHash = {
       handle: this.handles[index],
-      values: this.values(),
+      values: this.orderedValues(),
     };
 
     this._trigger("stop", event, uiHash);
@@ -388,7 +380,7 @@ $.widget("ui.rangeslider", $.ui.mouse, {
     if (!this._keySliding && !this._mouseSliding) {
       var uiHash = {
         handle: this.handles[index],
-        values: this.values(),
+        values: this.orderedValues(),
       };
 
       // store the last changed value index for reference when handles overlap
@@ -423,6 +415,10 @@ $.widget("ui.rangeslider", $.ui.mouse, {
     } else {
       return this._values();
     };
+  },
+
+  orderedValues: function() {
+    return this._values().sort(function(a, b) { return a - b; });
   },
 
   _setOption: function(key, value) {
@@ -520,43 +516,39 @@ $.widget("ui.rangeslider", $.ui.mouse, {
   },
 
   _refreshValues: function() {
-    var lastValPercent, valPercent, o, animate, _set = {}, that = this;
+    var o, animation, indexLower, indexHigher, indices, position, dimension,
+        pos = {}, dim = {}, i, index, handle, valPercent, lastValPercent,
+        that = this;
 
     o = this.options;
-    animate = (!this._animateOff) ? o.animate : false;
+    animation = !this._animateOff && o.animate ? "animate" : "css";
 
-    this.handles.each(function(i) {
-      valPercent = (that.values(i) - that._valueMin()) /
+    // use lower value then higher value in upcoming loop
+    indexLower = this.values(1) < this.values(0) ? 1 : 0;
+    indexHigher = 1 - indexLower;
+    indices = [indexLower, indexHigher];
+
+    position = this.orientation === "horizontal" ? "left" : "bottom";
+    dimension = this.orientation === "horizontal" ? "width" : "height";
+
+    for (i = 0; i < 2; i++) {
+      index = indices[i];
+      handle = this.handles[index];
+      valPercent = (that.values(index) - that._valueMin()) /
           (that._valueMax() - that._valueMin()) * 100;
-      _set[that.orientation === "horizontal" ? "left" : "bottom"] =
-          valPercent + "%";
-      $(this).stop(1, 1)[animate ? "animate" : "css"](_set,
-          o.animate);
-      if (that.orientation === "horizontal") {
-        if (i === 0) {
-          that.range.stop(1, 1)[animate ? "animate" : "css"](
-              { left: valPercent + "%" },
-              o.animate);
-        };
-        if (i === 1) {
-          that.range[animate ? "animate" : "css"](
-              { width: (valPercent - lastValPercent) + "%" },
-              { queue: false, duration: o.animate });
-        };
+      pos[position] = valPercent + "%";
+
+      // adjust handle and range displays
+      $(handle).stop(1, 1)[animation](pos, o.animate);
+      if (i === 0) {
+        that.range.stop(1, 1)[animation](pos, o.animate);
       } else {
-        if (i === 0) {
-          that.range.stop(1, 1)[animate ? "animate" : "css"](
-              { bottom: (valPercent) + "%" },
-              o.animate);
-        };
-        if (i === 1) {
-          that.range[animate ? "animate" : "css"](
-              { height: (valPercent - lastValPercent) + "%" },
-              { queue: false, duration: o.animate });
-        };
+        dim[dimension] = (valPercent - lastValPercent) + "%";
+        that.range[animation](dim, { queue: false, duration: o.animate });
       };
+
       lastValPercent = valPercent;
-    });
+    };
   },
 
 });
