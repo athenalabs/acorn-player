@@ -233,44 +233,56 @@ $.widget("ui.rangeslider", $.ui.mouse, {
 
     position = { x: event.pageX, y: event.pageY };
     normValue = this._normValueFromMouse(position);
-    distance = this._valueMax() - this._valueMin() + 1;
+    mouseOverHandle = this.handles.hasClass("ui-state-hover");
+    values = this.orderedValues();
+    reverseOrdered = values[0] !== this.values(0);
 
-    this.handles.each(function(i) {
-      var thisDistance = Math.abs(normValue - that.values(i));
+    if (mouseOverHandle) {
+      if ($(this.handles[0]).hasClass("ui-state-hover"))
+        index = 0;
+      else
+        index = 1;
 
-      if ((distance > thisDistance) ||
-        (distance === thisDistance &&
-          (i === that._lastChangedValue || that.values(i) === o.min))) {
-        distance = thisDistance;
-        closestHandle = $(this);
-        index = i;
-      };
-    });
+    } else if (normValue > values[0] && normValue < values[1]) {
+      index = "bar";
+
+    } else {
+      if (normValue < values[0])
+        index = reverseOrdered ? 1 : 0;
+      else
+        index = reverseOrdered ? 0 : 1;
+    };
 
     allowed = this._start(event, index);
     if (allowed === false) {
       return false;
     };
-    this._mouseSliding = true;
 
+    this._mouseSliding = true;
     this._handleIndex = index;
 
-    closestHandle.addClass("ui-state-active").focus();
+    if (index === "bar") {
+      this._lastNormValue = normValue;
 
-    offset = closestHandle.offset();
-    mouseOverHandle = this.handles.hasClass("ui-state-hover");
-    this._clickOffset = !mouseOverHandle ? { left: 0, top: 0 } : {
-      left: event.pageX - offset.left - (closestHandle.outerWidth() / 2),
-      top: event.pageY - offset.top -
-        (closestHandle.outerHeight() / 2) -
-        (parseInt(closestHandle.css("borderTopWidth"), 10) || 0) -
-        (parseInt(closestHandle.css("borderBottomWidth"), 10) || 0) +
-        (parseInt(closestHandle.css("marginTop"), 10) || 0),
+    } else {
+      closestHandle = $(this.handles[index]);
+      closestHandle.addClass("ui-state-active").focus();
+
+      offset = closestHandle.offset();
+      this._clickOffset = !mouseOverHandle ? { left: 0, top: 0 } : {
+        left: event.pageX - offset.left - (closestHandle.outerWidth() / 2),
+        top: event.pageY - offset.top -
+          (closestHandle.outerHeight() / 2) -
+          (parseInt(closestHandle.css("borderTopWidth"), 10) || 0) -
+          (parseInt(closestHandle.css("borderBottomWidth"), 10) || 0) +
+          (parseInt(closestHandle.css("marginTop"), 10) || 0),
+      };
+
+      if (!mouseOverHandle) {
+        this._slide(event, index, normValue);
+      };
     };
 
-    if (!mouseOverHandle) {
-      this._slide(event, index, normValue);
-    };
     this._animateOff = true;
     return true;
   },
@@ -280,25 +292,44 @@ $.widget("ui.rangeslider", $.ui.mouse, {
   },
 
   _mouseDrag: function(event) {
-    var position, normValue;
+    var position, normValue, diff, values, lowerBound, upperBound, newValues;
     
     position = { x: event.pageX, y: event.pageY };
     normValue = this._normValueFromMouse(position);
 
-    this._slide(event, this._handleIndex, normValue);
+    if (this._handleIndex === "bar") {
+      diff = normValue - this._lastNormValue;
+      if (diff !== 0) {
+        values = this.orderedValues();
+        lowerBound = this._valueMin() - values[0];
+        upperBound = this._valueMax() - values[1];
+        diff = Math.max(lowerBound, Math.min(upperBound, diff));
+
+        this._lastNormValue = this._lastNormValue + diff;
+
+        newValues = [values[0] + diff, values[1] + diff];
+        this._slide(event, newValues);
+      };
+
+    } else {
+      this._slide(event, this._handleIndex, normValue);
+    };
 
     return false;
   },
 
   _mouseStop: function(event) {
+    var index = this._handleIndex === 1 ? 1 : 0;
+
     this.handles.removeClass("ui-state-active");
     this._mouseSliding = false;
 
-    this._stop(event, this._handleIndex);
-    this._change(event, this._handleIndex);
+    this._stop(event, index);
+    this._change(event, index);
 
     this._handleIndex = null;
     this._clickOffset = null;
+    this._lastNormValue = null;
     this._animateOff = false;
 
     return false;
