@@ -319,13 +319,11 @@ $.widget("ui.rangeslider", $.ui.mouse, {
   },
 
   _mouseStop: function(event) {
-    var index = this._handleIndex === 1 ? 1 : 0;
-
     this.handles.removeClass("ui-state-active");
     this._mouseSliding = false;
 
-    this._stop(event, index);
-    this._change(event, index);
+    this._stop(event, this._handleIndex);
+    this._change(event, this._handleIndex);
 
     this._handleIndex = null;
     this._clickOffset = null;
@@ -374,7 +372,7 @@ $.widget("ui.rangeslider", $.ui.mouse, {
 
   _start: function(event, index) {
     var uiHash = {
-      handle: this.handles[index],
+      change: typeof(index) === "number" ? this.handles[index] : this.handles,
       values: this.orderedValues(),
     };
 
@@ -396,7 +394,6 @@ $.widget("ui.rangeslider", $.ui.mouse, {
         return;
       newValues[0] = index[0];
       newValues[1] = index[1];
-      index = 0;
 
     } else {
       return false;
@@ -404,7 +401,7 @@ $.widget("ui.rangeslider", $.ui.mouse, {
 
     // A slide can be canceled by returning false from the slide callback
     allowed = this._trigger("slide", event, {
-      handle: this.handles[index],
+      change: typeof(index) === "number" ? this.handles[index] : this.handles,
       values: newValues.slice().sort(function(a, b) { return a - b; }),
     });
     if (allowed !== false) {
@@ -414,7 +411,7 @@ $.widget("ui.rangeslider", $.ui.mouse, {
 
   _stop: function(event, index) {
     var uiHash = {
-      handle: this.handles[index],
+      change: typeof(index) === "number" ? this.handles[index] : this.handles,
       values: this.orderedValues(),
     };
 
@@ -424,12 +421,12 @@ $.widget("ui.rangeslider", $.ui.mouse, {
   _change: function(event, index) {
     if (!this._keySliding && !this._mouseSliding) {
       var uiHash = {
-        handle: this.handles[index],
+        change: typeof(index) === "number" ? this.handles[index] : this.handles,
         values: this.orderedValues(),
       };
 
       // store the last changed value index for reference when handles overlap
-      this._lastChangedValue = index;
+      this._lastChangedValue = typeof(index) === "number" ? index : 0;
 
       this._trigger("change", event, uiHash);
     };
