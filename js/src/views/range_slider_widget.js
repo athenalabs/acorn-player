@@ -258,7 +258,7 @@ $.widget("ui.rangeslider", $.ui.mouse, {
     closestHandle.addClass("ui-state-active").focus();
 
     offset = closestHandle.offset();
-    mouseOverHandle = $(event.target).parents().andSelf().is(".ui-slider-handle");
+    mouseOverHandle = this.handles.hasClass("ui-state-hover");
     this._clickOffset = !mouseOverHandle ? { left: 0, top: 0 } : {
       left: event.pageX - offset.left - (closestHandle.outerWidth() / 2),
       top: event.pageY - offset.top -
@@ -268,7 +268,7 @@ $.widget("ui.rangeslider", $.ui.mouse, {
         (parseInt(closestHandle.css("marginTop"), 10) || 0),
     };
 
-    if (!this.handles.hasClass("ui-state-hover")) {
+    if (!mouseOverHandle) {
       this._slide(event, index, normValue);
     };
     this._animateOff = true;
