@@ -251,7 +251,7 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
         self.inputChanged({start: start, end: end});
       },
       stop: function(e, ui) {
-        self.trigger('change:shell', self.shell, this);
+        self.trigger('change:shell', self.shell, self);
       },
     });
 
