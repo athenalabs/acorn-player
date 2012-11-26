@@ -44,8 +44,8 @@ $.widget("ui.rangeslider", $.ui.mouse, {
         o = this.options,
         existingHandles = this.element.find(".ui-slider-handle").
             addClass("ui-state-default ui-corner-all"),
-        handle = "<a class='ui-slider-handle ui-state-default ui-corner-all' " +
-            "href='#'></a>",
+        handle = "<div class='ui-slider-handle ui-state-default " +
+            "ui-corner-all'></div>",
         handles = [];
 
     this._keySliding = false;
@@ -92,7 +92,7 @@ $.widget("ui.rangeslider", $.ui.mouse, {
 
     this.handle = this.handles.eq(0);
 
-    this.handles.add(this.range).filter("a")
+    this.handles.add(this.range).filter(".ui-slider-handle")
         .click(function(event) {
           event.preventDefault();
         })
