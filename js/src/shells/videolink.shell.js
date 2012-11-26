@@ -303,7 +303,7 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
       end: timeStringToSeconds(this.$el.find('#end').val()),
     };
 
-    this.inputChanged(data, {lock: changed});
+    this.inputChanged(data, {lock: changed, updateSlider: true});
 
     this.trigger('change:shell', this.shell, this);
   },
@@ -315,9 +315,10 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
   //     times are incompatible (e.g. start = 46, end = 19). by default, start
   //     will be locked
   inputChanged: function(data, options) {
-    var offset, max, bound, floatOrDefault, start, end, timeControls, diff,
+    var offset, max, bound, floatOrDefault, start, end, invalidTimes, diff,
         time;
 
+    _.isObject(options) || (options = {});
     offset = 10;
     max = this.shell.data.time_total || this.shell.duration();
 
@@ -336,7 +337,9 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     end = bound(end);
 
     // prohibit negative length
-    if (end < start) {
+    invalidTimes = end < start;
+
+    if (invalidTimes) {
       if (options.lock === 'end')
         start = bound(end - offset);
       else
@@ -357,7 +360,9 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
         {forceMinutes: true}));
     this.$el.find('#end').val(secondsToTimeString(end, {forceMinutes: true}));
     this.$el.find('#time').text(time);
-    this.$el.find('#slider').rangeslider({ max: max, values: [start, end] });
+
+    if (options.updateSlider || invalidTimes)
+      this.$el.find('#slider').rangeslider({values: [start, end]});
   },
 
   timeError: function() {
