@@ -239,7 +239,7 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
 
     // setup slider
     self = this;
-    this.$el.find('#slider').slider({
+    this.$el.find('#slider').rangeslider({
       min: 0,
       max: max,
       range: true,
@@ -342,7 +342,7 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
         {forceMinutes: true}));
     this.$el.find('#end').val(secondsToTimeString(end, {forceMinutes: true}));
     this.$el.find('#time').text(time);
-    this.$el.find('#slider').slider({ max: max, values: [start, end] });
+    this.$el.find('#slider').rangeslider({ max: max, values: [start, end] });
   },
 
   timeError: function() {
