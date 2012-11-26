@@ -350,20 +350,34 @@ $.widget("ui.rangeslider", $.ui.mouse, {
     return this._trigger("start", event, uiHash);
   },
 
+  // call with `event, index, newVal` or `event, newValues`
   _slide: function(event, index, newVal) {
-    var newValues, allowed;
+    var newValues = this.values(), allowed;
 
-    if (newVal !== this.values(index)) {
-      newValues = this.values();
+    // assume call pattern based on index type
+    if (typeof(index) === "number") {
+      if (newValues[index] === newVal)
+        return;
       newValues[index] = newVal;
-      // A slide can be canceled by returning false from the slide callback
-      allowed = this._trigger("slide", event, {
-        handle: this.handles[index],
-        values: newValues.sort(function(a, b) { return a - b; }),
-      });
-      if (allowed !== false) {
-        this.values(index, newVal, true);
-      };
+
+    } else if ($.isArray(index)) {
+      if (newValues[0] = index[0] && newValues[1] === index[1])
+        return;
+      newValues[0] = index[0];
+      newValues[1] = index[1];
+      index = 0;
+
+    } else {
+      return false;
+    };
+
+    // A slide can be canceled by returning false from the slide callback
+    allowed = this._trigger("slide", event, {
+      handle: this.handles[index],
+      values: newValues.slice().sort(function(a, b) { return a - b; }),
+    });
+    if (allowed !== false) {
+      this.values(newValues);
     };
   },
 
