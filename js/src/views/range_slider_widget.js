@@ -258,11 +258,11 @@ $.widget("ui.rangeslider", $.ui.mouse, {
     closestHandle.addClass("ui-state-active").focus();
 
     offset = closestHandle.offset();
-    mouseOverHandle = !$(event.target).parents().andSelf().is(".ui-slider-handle");
-    this._clickOffset = mouseOverHandle ? { left: 0, top: 0 } : {
-      left: event.pageX - offset.left - (closestHandle.width() / 2),
+    mouseOverHandle = $(event.target).parents().andSelf().is(".ui-slider-handle");
+    this._clickOffset = !mouseOverHandle ? { left: 0, top: 0 } : {
+      left: event.pageX - offset.left - (closestHandle.outerWidth() / 2),
       top: event.pageY - offset.top -
-        (closestHandle.height() / 2) -
+        (closestHandle.outerHeight() / 2) -
         (parseInt(closestHandle.css("borderTopWidth"), 10) || 0) -
         (parseInt(closestHandle.css("borderBottomWidth"), 10) || 0) +
         (parseInt(closestHandle.css("marginTop"), 10) || 0),
