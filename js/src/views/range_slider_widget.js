@@ -613,10 +613,13 @@ $.widget("ui.rangeslider", $.ui.mouse, {
     position = this.orientation === "horizontal" ? "left" : "bottom";
     dimension = this.orientation === "horizontal" ? "width" : "height";
 
+    // element.outerWidth/Height isn't counting the border
+    borderWidth = parseInt(this.element.css('border-width'), 10);
+
     // rescale values by the the percent of the slider that they can fit in
     // without overflow, i.e. slider width/height minus one handle width/height
-    rangeScalar = (this.elementSize[dimension] - this.handleSize[dimension]) /
-        this.elementSize[dimension] * 100;
+    rangeScalar = (this.elementSize[dimension] + (2 * borderWidth) -
+        this.handleSize[dimension]) / this.elementSize[dimension] * 100;
 
     for (i = 0; i < 2; i++) {
       index = indices[i];

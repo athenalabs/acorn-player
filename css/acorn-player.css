@@ -524,7 +524,7 @@ h1, h2, h3, h4, h5, h6 {
 
 #acorn-player .ui-slider-handle {
   width: 0.8em;
-  margin-left: 0px;
+  margin-left: -1px;
 }
 
 #acorn-player > #edit > .content > #form > .acorn-shell-edit > button#add {
