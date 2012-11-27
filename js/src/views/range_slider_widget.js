@@ -40,13 +40,12 @@ $.widget("ui.rangeslider", $.ui.mouse, {
   },
 
   _create: function() {
-    var i, handleCount,
-        o = this.options,
-        existingHandles = this.element.find(".ui-slider-handle").
-            addClass("ui-state-default ui-corner-all"),
-        handle = "<div class='ui-slider-handle ui-state-default " +
-            "ui-corner-all'></div>",
-        handles = [];
+    var i, handleCount, o = this.options, existingHandles, handle, handles = [];
+
+    existingHandles = this.element.find(".ui-slider-handle").
+        addClass("ui-state-default ui-corner-all");
+    handle = "<div class='ui-slider-handle ui-state-default " +
+        "ui-corner-all'></div>";
 
     this._keySliding = false;
     this._mouseSliding = false;
@@ -124,8 +123,9 @@ $.widget("ui.rangeslider", $.ui.mouse, {
 
     this._on(this.handles, {
       keydown: function(event) {
-        var allowed, curVal, newVal, step,
-            index = $(event.target).data("ui-slider-handle-index");
+        var allowed, curVal, newVal, step, index;
+
+        index = $(event.target).data("ui-slider-handle-index");
 
         switch (event.keyCode) {
           case $.ui.keyCode.HOME:
