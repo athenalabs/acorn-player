@@ -40,7 +40,8 @@ $.widget("ui.rangeslider", $.ui.mouse, {
   },
 
   _create: function() {
-    var i, handleCount, o = this.options, existingHandles, handle, handles = [];
+    var i, handleCount, o = this.options, existingHandles, handle, handles = [],
+        that = this;
 
     existingHandles = this.element.find(".ui-slider-handle").
         addClass("ui-state-default ui-corner-all");
@@ -196,7 +197,12 @@ $.widget("ui.rangeslider", $.ui.mouse, {
       },
     });
 
-    this._refreshValues();
+    // if not yet in DOM, wait til call stack clears before trying to display
+    // slider values
+    if (this._inDOM())
+      this._refreshValues();
+    else
+      setTimeout(function() { that._refreshValues(); }, 0);
 
     this._animateOff = false;
   },
@@ -235,6 +241,10 @@ $.widget("ui.rangeslider", $.ui.mouse, {
     this.elementSize = {
       width: this.element.outerWidth(),
       height: this.element.outerHeight(),
+    };
+    this.handleSize = {
+      width: $(this.handles[0]).outerWidth(),
+      height: $(this.handles[0]).outerHeight(),
     };
     this.gotDimensions = true;
 
@@ -365,13 +375,19 @@ $.widget("ui.rangeslider", $.ui.mouse, {
     var pixelTotal, pixelMouse, percentMouse, valueTotal, valueMouse;
 
     if (this.orientation === "horizontal") {
-      pixelTotal = this.elementSize.width;
-      pixelMouse = position.x - this.elementOffset.left - (this._clickOffset ?
-          this._clickOffset.left : 0);
+      pixelTotal = this.elementSize.width - this.handleSize.width;
+      pixelMouse =
+          position.x -
+          this.elementOffset.left -
+          (this.handleSize.width / 2) -
+          (this._clickOffset ? this._clickOffset.left : 0);
     } else {
-      pixelTotal = this.elementSize.height;
-      pixelMouse = position.y - this.elementOffset.top - (this._clickOffset ?
-          this._clickOffset.top : 0);
+      pixelTotal = this.elementSize.height - this.handleSize.height;
+      pixelMouse =
+          position.y -
+          this.elementOffset.top -
+          (this.handleSize.height / 2) -
+          (this._clickOffset ? this._clickOffset.top : 0);
     };
 
     percentMouse = (pixelMouse / pixelTotal);
@@ -583,6 +599,9 @@ $.widget("ui.rangeslider", $.ui.mouse, {
         pos = {}, dim = {}, i, index, handle, valPercent, lastValPercent,
         that = this;
 
+    if (!this.gotDimensions && !this._getDimensions())
+      return;
+
     o = this.options;
     animation = !this._animateOff && o.animate ? "animate" : "css";
 
@@ -594,11 +613,16 @@ $.widget("ui.rangeslider", $.ui.mouse, {
     position = this.orientation === "horizontal" ? "left" : "bottom";
     dimension = this.orientation === "horizontal" ? "width" : "height";
 
+    // rescale values by the the percent of the slider that they can fit in
+    // without overflow, i.e. slider width/height minus one handle width/height
+    rangeScalar = (this.elementSize[dimension] - this.handleSize[dimension]) /
+        this.elementSize[dimension] * 100;
+
     for (i = 0; i < 2; i++) {
       index = indices[i];
       handle = this.handles[index];
       valPercent = (that.values(index) - that._valueMin()) /
-          (that._valueMax() - that._valueMin()) * 100;
+          (that._valueMax() - that._valueMin()) * rangeScalar;
       pos[position] = valPercent + "%";
 
       // adjust handle and range displays
