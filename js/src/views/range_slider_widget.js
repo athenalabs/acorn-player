@@ -59,6 +59,7 @@ $.widget("ui.rangeslider", $.ui.mouse, {
         .addClass(
           "ui-slider" +
           " ui-slider-" + this.orientation +
+          " ui-range-slider" +
           " ui-widget" +
           " ui-widget-content" +
           " ui-corner-all"
