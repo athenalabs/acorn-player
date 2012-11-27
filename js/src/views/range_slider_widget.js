@@ -217,6 +217,17 @@ $.widget("ui.rangeslider", $.ui.mouse, {
     this._mouseDestroy();
   },
 
+  _inDOM: function() {
+    var element = this.element[0];
+
+    while (element = element.parentNode) {
+      if (element === document) {
+        return true;
+      };
+    };
+    return false;
+  },
+
   _mouseCapture: function(event) {
     var position, normValue, distance, closestHandle, index, allowed, offset,
         mouseOverHandle, that = this, o = this.options;
@@ -225,10 +236,6 @@ $.widget("ui.rangeslider", $.ui.mouse, {
       return false;
     };
 
-    this.elementSize = {
-      width: this.element.outerWidth(),
-      height: this.element.outerHeight()
-    };
     this.elementOffset = this.element.offset();
 
     position = { x: event.pageX, y: event.pageY };
@@ -343,12 +350,14 @@ $.widget("ui.rangeslider", $.ui.mouse, {
   _normValueFromMouse: function(position) {
     var pixelTotal, pixelMouse, percentMouse, valueTotal, valueMouse;
 
+    assert(this._inDOM(), 'rangeslider must be in DOM to get mouse distance');
+
     if (this.orientation === "horizontal") {
-      pixelTotal = this.elementSize.width;
+      pixelTotal = this.element.outerWidth();
       pixelMouse = position.x - this.elementOffset.left - (this._clickOffset ?
           this._clickOffset.left : 0);
     } else {
-      pixelTotal = this.elementSize.height;
+      pixelTotal = this.element.outerHeight();
       pixelMouse = position.y - this.elementOffset.top - (this._clickOffset ?
           this._clickOffset.top : 0);
     };
