@@ -217,6 +217,30 @@ $.widget("ui.rangeslider", $.ui.mouse, {
     this._mouseDestroy();
   },
 
+  _inDOM: function() {
+    var element = this.element[0];
+
+    while (element = element.parentNode) {
+      if (element === document) {
+        return true;
+      };
+    };
+    return false;
+  },
+
+  _getDimensions: function() {
+    if (!this._inDOM())
+      return false;
+
+    this.elementSize = {
+      width: this.element.outerWidth(),
+      height: this.element.outerHeight(),
+    };
+    this.gotDimensions = true;
+
+    return true;
+  },
+
   _mouseCapture: function(event) {
     var position, normValue, distance, closestHandle, index, allowed, offset,
         mouseOverHandle, that = this, o = this.options;
@@ -225,10 +249,7 @@ $.widget("ui.rangeslider", $.ui.mouse, {
       return false;
     };
 
-    this.elementSize = {
-      width: this.element.outerWidth(),
-      height: this.element.outerHeight()
-    };
+    this.gotDimensions || this._getDimensions();
     this.elementOffset = this.element.offset();
 
     position = { x: event.pageX, y: event.pageY };
