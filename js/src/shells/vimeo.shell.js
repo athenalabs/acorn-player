@@ -7,7 +7,7 @@ var VimeoShell = acorn.shells.VimeoShell = VideoLinkShell.extend({
     VideoLinkShell.prototype.initialize.apply(this, arguments);
 
     // setting metaData URL; see LinkShell.metaData
-    this.metaData.url = 'http://vimeo.com/api/v2/video/' +
+    this.metaDataUrl = 'http://vimeo.com/api/v2/video/' +
                         this.vimeoId() + '.json?' + '&callback=?';
   },
 
