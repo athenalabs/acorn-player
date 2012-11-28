@@ -135,7 +135,7 @@ VideoLinkShell.ContentView = LinkShell.ContentView.extend({
   onPlaybackTick: function() {
     // get shell options
     // TODO: handle looping correctly
-    var loop = this.shell.data.loop || false;
+    var loops = this.shell.data.loops || false;
     var end = this.shell.data.time_end || this.totalTime();
     var start = this.shell.data.time_start || 0;
 
@@ -150,7 +150,7 @@ VideoLinkShell.ContentView = LinkShell.ContentView.extend({
 
     // if current playback is after the end time, pause (or loop)
     if (playing && now >= end) {
-      if (loop) {
+      if (loops) {
         this.seek(start);
       } else {
         this.stop();
@@ -172,9 +172,9 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     'blur input#start':  'startTimeInputChanged',
     'change input#end':  'endTimeInputChanged',
     'blur input#end':  'endTimeInputChanged',
-    'click button.loop': 'onClickLoopButton',
-    'change input.loop-n': 'onChangeLoopN',
-    'blur input.loop-n': 'onChangeLoopN',
+    'click button.loops': 'onClickLoopsButton',
+    'change input.n-loops': 'onChangeNLoops',
+    'blur input.n-loops': 'onChangeNLoops',
   }),
 
   timeRangeTemplate: _.template('\
@@ -197,17 +197,17 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
         <!--<span class="add-on">sec</span>-->\
       </div>\
     </div>\
-    <div class="input-prepend input-append loop loop-none">\
-      <button class="btn loop" type="button">loop:</button>\
-      <span class="add-on loop-none">∅</span>\
+    <div class="input-prepend input-append loops one-loops">\
+      <button class="btn loops" type="button">loops:</button>\
+      <span class="add-on one-loops">1</span>\
     </div>\
-    <div class="input-prepend input-append loop loop-infinity">\
-      <button class="btn loop" type="button">loop:</button>\
-      <span class="add-on loop-infinity">∞</span>\
+    <div class="input-prepend input-append loops infinity-loops">\
+      <button class="btn loops" type="button">loops:</button>\
+      <span class="add-on infinity-loops">∞</span>\
     </div>\
-    <div class="input-prepend loop loop-n">\
-      <button class="btn loop" type="button">loop:</button>\
-      <input size="16" type="text" class="loop-n">\
+    <div class="input-prepend loops n-loops">\
+      <button class="btn loops" type="button">loops:</button>\
+      <input size="16" type="text" class="n-loops">\
     </div>\
   </form>\
   '),
@@ -220,7 +220,7 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     this.$el.find('.thumbnailside').append(timeRange);
     this.$el.find('#slider').css('opacity', '0.0');
     this.setupSlider();
-    this.setupLoopButton();
+    this.setupLoopsButton();
 
     var metaDataCache = this.shell.metaData();
     metaDataCache.sync({
@@ -258,21 +258,21 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     this.inputChanged({start: data.time_start, end: data.time_end});
   },
 
-  setupLoopButton: function() {
-    switch(this.shell.data.loop) {
-      case 'none':
-        this.showLoop('none');
+  setupLoopsButton: function() {
+    switch(this.shell.data.loops) {
+      case 'one':
+        this.showLoops('one');
         break;
 
       case 'infinity':
-        this.showLoop('infinity');
+        this.showLoops('infinity');
         break;
 
       default:
-        // set internal loopN value and add it to DOM before showing loop widget
-        this.loopN(this.shell.data.loop);
-        this.$('input.loop-n').val(this.loopN());
-        this.showLoop('n');
+        // set nLoops value internally and in DOM before showing loop widget
+        this.nLoops(this.shell.data.loops);
+        this.$('input.n-loops').val(this.nLoops());
+        this.showLoops('n');
     };
   },
 
@@ -353,24 +353,24 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     setTimeout(function() { timeControls.removeClass('error'); }, 2000);
   },
 
-  loopN: function(n) {
+  nLoops: function(n) {
     // force integer or NaN - don't interpret whitespace as 0
     var int = Math.floor(n);
     if (int === 0 && n !== 0)
       int = NaN;
 
     if (int >= 0)
-      this._lastLoopN = int;
-    else if (!_.isNumber(this._lastLoopN))
-      this._lastLoopN = 2;
+      this._lastNLoops = int;
+    else if (!_.isNumber(this._lastNLoops))
+      this._lastNLoops = 2;
 
-    return this._lastLoopN;
+    return this._lastNLoops;
   },
 
-  showLoop: function(type) {
-    var active = this.$('div.loop-' + type);
+  showLoops: function(type) {
+    var active = this.$('div.' + type + '-loops');
 
-    this.$('div.loop').addClass('hidden');
+    this.$('div.loops').addClass('hidden');
     active.removeClass('hidden');
 
     if (this._selectInputOnShow) {
@@ -379,33 +379,33 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
     };
   },
 
-  onClickLoopButton: function() {
-    switch (this.shell.data.loop) {
-      case 'none':
-        this.shell.data.loop = 'infinity';
+  onClickLoopsButton: function() {
+    switch (this.shell.data.loops) {
+      case 'one':
+        this.shell.data.loops = 'infinity';
         break;
 
       case 'infinity':
-        this.shell.data.loop = this.loopN();
+        this.shell.data.loops = this.nLoops();
         this._selectInputOnShow = true;
         break;
 
       default:
-        this.shell.data.loop = 'none';
+        this.shell.data.loops = 'one';
     };
 
     this.trigger('change:shell', this.shell, this);
   },
 
-  onChangeLoopN: function() {
-    var value, newLoopN;
+  onChangeNLoops: function() {
+    var value, newNLoops;
 
-    value = this.$('input.loop-n').val();
-    newLoopN = this.loopN(value);
-    this.$('input.loop-n').val(newLoopN);
+    value = this.$('input.n-loops').val();
+    newNLoops = this.nLoops(value);
+    this.$('input.n-loops').val(newNLoops);
 
-    if (this.shell.data.loop !== newLoopN) {
-      this.shell.data.loop = newLoopN;
+    if (this.shell.data.loops !== newNLoops) {
+      this.shell.data.loops = newNLoops;
       this.trigger('change:shell', this.shell, this);
     };
   },
