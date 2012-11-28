@@ -134,8 +134,7 @@ VideoLinkShell.ContentView = LinkShell.ContentView.extend({
 
   onPlaybackTick: function() {
     // get shell options
-    // TODO: handle looping correctly
-    var loops = this.shell.data.loops || false;
+    var loops = this.shell.data.loops;
     var end = this.shell.data.time_end || this.totalTime();
     var start = this.shell.data.time_start || 0;
 
@@ -148,15 +147,30 @@ VideoLinkShell.ContentView = LinkShell.ContentView.extend({
       this.seek(start);
     }
 
-    // if current playback is after the end time, pause (or loop)
+    // if current playback is after the end time, pause or loop. when looping,
+    // set `restarting` flag to avoid decrementing the loop count multiple
+    // times before the restart has completed
     if (playing && now >= end) {
-      if (loops) {
+      if (this.restarting)
+        return;
+
+      if (_.isNumber(loops)) {
+        this.looped = this.looped || 0;
+        this.looped++;
+      };
+
+      if (loops === 'infinity' || (_.isNumber(loops) && loops > this.looped)) {
         this.seek(start);
+        this.restarting = true;
+
       } else {
         this.stop();
         this.trigger('playback:ended');
-      }
-    }
+      };
+
+    } else {
+      this.restarting = false;
+    };
   },
 
 });
