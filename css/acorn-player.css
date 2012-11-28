@@ -522,8 +522,14 @@ h1, h2, h3, h4, h5, h6 {
   margin-left: 0px;
 }
 
+#acorn-player .ui-range-slider {
+  height: 12px;
+}
+
 #acorn-player .ui-range-slider .ui-slider-handle {
-  width: 0.8em;
+  width: 12px;
+  height: 18px;
+  top: -4px;
   margin-left: -1px;
 }
 
