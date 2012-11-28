@@ -239,8 +239,7 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
 
     // setup slider
     self = this;
-    this.$el.find('#slider').slider('destroy');
-    this.$el.find('#slider').slider({
+    this.$el.find('#slider').rangeslider({
       min: 0,
       max: max,
       range: true,
@@ -285,11 +284,12 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
   },
 
   timeInputChanged: function(changed) {
-    this.inputChanged({
+    var data = {
       start: timeStringToSeconds(this.$el.find('#start').val()),
       end: timeStringToSeconds(this.$el.find('#end').val()),
-      lock: changed,
-    });
+    };
+
+    this.inputChanged(data, {lock: changed, updateSlider: true});
 
     this.trigger('change:shell', this.shell, this);
   },
@@ -300,10 +300,11 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
   // @string [lock] - name the time nob ('start' or 'end') to lock down if the
   //     times are incompatible (e.g. start = 46, end = 19). by default, start
   //     will be locked
-  inputChanged: function(params) {
-    var offset, max, bound, floatOrDefault, start, end, timeControls, diff,
+  inputChanged: function(data, options) {
+    var offset, max, bound, floatOrDefault, start, end, invalidTimes, diff,
         time;
 
+    _.isObject(options) || (options = {});
     offset = 10;
     max = this.shell.data.time_total || this.shell.duration();
 
@@ -315,15 +316,17 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
       return (_.isNumber(num) && !_.isNaN(num)) ? parseFloat(num) : def;
     };
 
-    start = floatOrDefault(params.start, 0);
-    end = floatOrDefault(params.end, max);
+    start = floatOrDefault(data.start, 0);
+    end = floatOrDefault(data.end, max);
 
     start = bound(start);
     end = bound(end);
 
     // prohibit negative length
-    if (end < start) {
-      if (params.lock === 'end')
+    invalidTimes = end < start;
+
+    if (invalidTimes) {
+      if (options.lock === 'end')
         start = bound(end - offset);
       else
         end = bound(start + offset);
@@ -343,7 +346,9 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
         {forceMinutes: true}));
     this.$el.find('#end').val(secondsToTimeString(end, {forceMinutes: true}));
     this.$el.find('#time').text(time);
-    this.$el.find('#slider').slider({ max: max, values: [start, end] });
+
+    if (options.updateSlider || invalidTimes)
+      this.$el.find('#slider').rangeslider({values: [start, end]});
   },
 
   timeError: function() {
