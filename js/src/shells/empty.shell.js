@@ -1,12 +1,15 @@
-// EmptyShell --  A shell that handles an empty link.
-// ----------------------------------------------------------------
+// EmptyShell --  A shell that handles an empty acorn.
+// ---------------------------------------------------
+//
+// * TODO: remove EmptyShell from LinkShell inheritance chain. For this to
+//   happen, EditViews need to be refactored to accept non-LinkShells.
 
 var EmptyShell = acorn.shells.EmptyShell = LinkShell.extend({
 
   shellid: 'acorn.EmptyShell',
 
   // The canonical type of this media. One of `acorn.types`.
-  type: 'link', // TODO: type: 'empty'? something else?
+  type: 'empty',
 
   // valid if link is empty
   isValidLink: function(link) {
@@ -21,7 +24,7 @@ var EmptyShell = acorn.shells.EmptyShell = LinkShell.extend({
 // Shell.ContentView -- informs viewers that this acorn is currently empty
 // -----------------------------------------------------------------------
 
-EmptyShell.ContentView =  LinkShell.ContentView.extend({
+EmptyShell.ContentView =  Shell.ContentView.extend({
 
   emptyMessage: function () {
     var messageText = 'this acorn is currently empty';
