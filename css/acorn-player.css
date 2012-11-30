@@ -458,21 +458,21 @@ h1, h2, h3, h4, h5, h6 {
   margin-right: 5px;
   text-align: center;
 }
-#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop.hidden {
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loops.hidden {
   display: none;
 }
 
-#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-none span,
-#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-infinity span,
-#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-n input {
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.one-loops span,
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.infinity-loops span,
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.n-loops input {
   width: 30px;
   margin-left: -4px;
   margin-right: 5px;
   text-align: center;
 }
 
-#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-none span,
-#acorn-player > #edit .acorn-shell-edit .thumbnailside div.loop-infinity span {
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.one-loops span,
+#acorn-player > #edit .acorn-shell-edit .thumbnailside div.infinity-loops span {
   background-color: #F4F4F4;
 }
 
