@@ -352,36 +352,43 @@ MultiShell.ContentView = Shell.ContentView.extend({
 // It highlights the currently shown shell, and provides a button to jump
 // to each subshell.
 
-
-MultiShell.PlaylistView = ShellView.extend({
+MultiShell.PlaylistView = acorn.OverlayView.extend({
 
   id: 'acorn-multishell-playlist',
 
   template: _.template('\
-    <div class="clear-cover"></div>\
-    <div class="background"></div>\
-    <div class="content">\
-      <h1 id="title"></h1>\
-      <button id="close" class="btn">\
-        <i class="icon-ban-circle"></i> Close\
-      </button>\
-      <div id="summaries"></div>\
-    </div>\
+    <h1 id="title"></h1>\
+    <button id="close" class="btn">\
+      <i class="icon-ban-circle"></i> Close\
+    </button>\
+    <div id="summaries"></div>\
   '),
 
-  events: {
+  events: _.extend({}, acorn.OverlayView.prototype.events, {
     'click button#close': 'onClickClose',
     'click button#view': 'onClickView',
+  }),
+
+  initialize: function() {
+    acorn.OverlayView.prototype.initialize.apply(this, arguments);
+
+    this.parent = this.options.parent;
+    this.shell = this.options.shell;
+
+    assert(this.parent, 'no parent provided to MultiShell.PlaylistView.');
+    assert(this.shell, 'no shell provided to MultiShell.PlaylistView.');
   },
 
   render: function() {
-    this.$el.empty();
-    this.$el.html(this.template());
+    acorn.OverlayView.prototype.render.apply(this, arguments);
+
+    this.content.empty();
+    this.content.html(this.template());
 
     var title = this.shell.title();
-    this.$el.find('#title').text(title);
+    this.content.find('#title').text(title);
 
-    var summaries = this.$el.find('#summaries');
+    var summaries = this.content.find('#summaries');
     _.map(this.parent.shells, function(shell, idx) {
 
       var summary = new shell.shellClass.SummaryView({
@@ -417,7 +424,7 @@ MultiShell.PlaylistView = ShellView.extend({
   },
 
   updateSelected: function() {
-    var summaries = this.$el.find('#summaries');
+    var summaries = this.content.find('#summaries');
     var currentIndex = this.parent.currentViewIndex();
     var selector = "[data-index='"+currentIndex+"']:not('button')";
 
@@ -448,7 +455,6 @@ MultiShell.PlaylistView = ShellView.extend({
 
 // The MultiShell.EditView shows each subshell.EditView in a list.
 // It allows editing of all subshells in the same list.
-
 
 MultiShell.EditView = Shell.EditView.extend({
 

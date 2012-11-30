@@ -4,37 +4,36 @@ var player = acorn.player;
 
 // ** player.EditView ** a view to house all editing controls
 // ----------------------------------------------------------------
-player.EditView = player.PlayerSubview.extend({
+player.EditView = acorn.OverlayView.extend({
 
   template: _.template('\
-    <div class="clear-cover"></div>\
-    <div class="background"></div>\
-    <div class="content">\
-      <div class="row" id="toolbar">\
-        <h1>acornid:<span id="acornid"></span></h1>\
-        <div id="actions">\
-          <button id="cancel" type="submit" class="btn">\
-            <i class="icon-ban-circle"></i> Cancel\
-          </button>\
-          <button id="save" type="submit" class="btn btn-success">\
-            <i class="icon-ok-circle icon-white"></i> Save\
-          </button>\
-          <div id="save-click-capture"></div>\
-        </div>\
+    <div class="row" id="toolbar">\
+      <h1>acornid:<span id="acornid"></span></h1>\
+      <div id="actions">\
+        <button id="cancel" type="submit" class="btn">\
+          <i class="icon-ban-circle"></i> Cancel\
+        </button>\
+        <button id="save" type="submit" class="btn btn-success">\
+          <i class="icon-ok-circle icon-white"></i> Save\
+        </button>\
+        <div id="save-click-capture"></div>\
       </div>\
-      <div id="form"></div>\
     </div>\
+    <div id="form"></div>\
   '),
 
   id: 'edit',
 
-  events: {
+  events: _.extend({}, acorn.OverlayView.prototype.events, {
     'click button#cancel': 'onCancel',
     'click button#save': 'onSave',
-  },
+  }),
 
   initialize: function() {
-    player.PlayerSubview.prototype.initialize.call(this);
+    acorn.OverlayView.prototype.initialize.apply(this, arguments);
+
+    this.player = this.options.player;
+    assert(this.player, 'no player provided to player.EditView.');
 
     this.setShell(this.player.shell.clone());
   },
@@ -60,17 +59,19 @@ player.EditView = player.PlayerSubview.extend({
   },
 
   render: function() {
-    this.$el.empty();
+    acorn.OverlayView.prototype.render.apply(this, arguments);
 
-    this.$el.html(this.template());
-    this.$el.find('#acornid').text(this.player.model.acornid());
+    this.content.empty();
+
+    this.content.html(this.template());
+    this.content.find('#acornid').text(this.player.model.acornid());
 
     if (this.shellView) {
       this.shellView.render();
-      this.$el.find('#form').append(this.shellView.$el);
+      this.content.find('#form').append(this.shellView.el);
     }
 
-    this.$el.find('#save-click-capture').tooltip({
+    this.content.find('#save-click-capture').tooltip({
       title: 'Finish editing<br/>before saving!',
       placement: 'bottom'
     });
