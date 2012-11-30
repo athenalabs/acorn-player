@@ -148,15 +148,15 @@ VideoLinkShell.ContentView = LinkShell.ContentView.extend({
     }
 
     // if current playback is after the end time, pause or loop. when looping,
-    // avoid decrementing the loop count multiple times before successfully
-    // restarting
+    // set `restarting` flag to avoid decrementing the loop count multiple
+    // times before the restart has completed
     if (playing && now >= end) {
       if (this.restarting)
         return;
 
       if (_.isNumber(loops)) {
         this.looped = this.looped || 0;
-        this.looped ++;
+        this.looped++;
       };
 
       if (loops === 'infinity' || (_.isNumber(loops) && loops > this.looped)) {
