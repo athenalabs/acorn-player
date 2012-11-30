@@ -8,7 +8,7 @@ var YouTubeShell = acorn.shells.YouTubeShell = VideoLinkShell.extend({
     VideoLinkShell.prototype.initialize.apply(this, arguments);
 
     // setting metaData URL; see LinkShell.metaData
-    this.metaData.url = 'http://gdata.youtube.com/feeds/api/videos/' +
+    this.metaDataUrl = 'http://gdata.youtube.com/feeds/api/videos/' +
                         this.youtubeId() + '?v=2' + '&alt=jsonc';
   },
 

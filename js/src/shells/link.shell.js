@@ -149,9 +149,9 @@ var LinkShellAPI = {
 
   // **metaData** returns a remoteResource object whose data() function
   // caches and returns this LinkShell's associated metadata.
-  metaData: function metaData() {
+  metaData: function() {
     // url property to be set by derived classes of LinkShell
-    var url = metaData.url; // currently undefined
+    var url = this.metaDataUrl; // currently undefined
 
     if (url && !this._metaData) {
       this._metaData = common.remoteResource({
