@@ -89,6 +89,8 @@ player.PlayerView = Backbone.View.extend({
   },
 
   render: function() {
+    this._rendering = true;
+
     this.$el.empty();
 
     if (this.options.autohideControls)
@@ -166,8 +168,15 @@ player.PlayerView = Backbone.View.extend({
   },
 
   onShowEdit: function() {
-    if (this.editView)
+    if (!this._rendering)
       return;
+
+    if (this.editView) {
+      if (!acorn.util.elementInDom(this.editView.el))
+        this.$el.append(this.editView.el);
+
+      return;
+    };
 
     this.editView = new player.EditView({ player: this });
     this.editView.$el.css('opacity', 0.0);
