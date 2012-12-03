@@ -200,7 +200,7 @@ $.widget("ui.rangeslider", $.ui.mouse, {
 
     // if not yet in DOM, wait til call stack clears before trying to display
     // slider values
-    if (this._inDOM())
+    if (acorn.util.elementInDom(this.element[0]))
       this._refreshValues();
     else
       setTimeout(function() { that._refreshValues(); }, 0);
@@ -222,17 +222,6 @@ $.widget("ui.rangeslider", $.ui.mouse, {
     );
 
     this._mouseDestroy();
-  },
-
-  _inDOM: function() {
-    var element = this.element[0];
-
-    while (element = element.parentNode) {
-      if (element === document) {
-        return true;
-      };
-    };
-    return false;
   },
 
   _mouseCapture: function(event) {
@@ -357,7 +346,8 @@ $.widget("ui.rangeslider", $.ui.mouse, {
   _normValueFromMouse: function(position) {
     var pixelTotal, pixelMouse, percentMouse, valueTotal, valueMouse;
 
-    assert(this._inDOM(), 'rangeslider must be in DOM to get mouse distance');
+    assert(acorn.util.elementInDom(this.element[0]), 'rangeslider must be in ' +
+        'DOM to get mouse distance');
 
     if (this.orientation === "horizontal") {
       pixelTotal = this.element.outerWidth() - this.handles.outerWidth();
@@ -586,7 +576,7 @@ $.widget("ui.rangeslider", $.ui.mouse, {
         that = this;
 
     // requires in-DOM element dimensions
-    if (!this._inDOM())
+    if (!acorn.util.elementInDom(this.element[0]))
       return;
 
     o = this.options;

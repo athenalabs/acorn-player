@@ -442,6 +442,29 @@
   };
   acorn.util.clone = clone;
 
+  // **elementInDom** check if element is in the DOM
+  // inspired by StackOverflow: http://stackoverflow.com/questions/5629684/
+  var elementInDom = function(element) {
+    if (element instanceof $)
+      return util.$elementsInDom(element);
+
+    while (element = element.parentNode) {
+      if (element === document) {
+        return true;
+      };
+    };
+    return false;
+  };
+  acorn.util.elementInDom = elementInDom;
+
+  // **$elementsInDom** check that each element in a jQuery object is in the DOM
+  var $elementsInDom = function($elements) {
+    util.assert($elements instanceof $, '$elementsInDom expects jQuery object');
+
+    return _.all($elements, util.elementInDom);
+  };
+  acorn.util.$elementsInDom = $elementsInDom;
+
 
   // Originally from backbone.js 0.9.1:
 
