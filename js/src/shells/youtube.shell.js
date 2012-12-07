@@ -1,3 +1,6 @@
+(function() {
+
+var VideoLinkShell = acorn.shells.VideoLinkShell;
 
 // acorn.shells.YouTubeShell -- links to youtube video and embeds it.
 // ------------------------------------------------------------------
@@ -22,7 +25,7 @@ var YouTubeShell = acorn.shells.YouTubeShell = VideoLinkShell.extend({
     var link = this.link();
 
     var re = this.urlMatches(link);
-    assert(re, 'Incorrect youtube link, no video id found.');
+    acorn.util.assert(re, 'Incorrect youtube link, no video id found.');
 
     var videoid = re.exec(link)[3];
     return videoid;
@@ -83,11 +86,11 @@ var YouTubeShell = acorn.shells.YouTubeShell = VideoLinkShell.extend({
 
   // **validRegexes** list of valid LinkRegexes
   validRegexes: [
-    urlRegExp('(www\.)?youtube\.com\/v\/([A-Za-z0-9\-_]+).*'),
-    urlRegExp('(www\.)?youtube\.com\/embed\/([A-Za-z0-9\-_]+).*'),
-    urlRegExp('(www\.)?youtube\.com\/watch\?.*v=([A-Za-z0-9\-_]+).*'),
-    urlRegExp('(www\.)?y2u.be\/([A-Za-z0-9\-_]+)'),
-    urlRegExp('(www\.)?youtu\.be\/([A-Za-z0-9\-_]+).*'),
+    acorn.util.urlRegExp('(www\.)?youtube\.com\/v\/([A-Za-z0-9\-_]+).*'),
+    acorn.util.urlRegExp('(www\.)?youtube\.com\/embed\/([A-Za-z0-9\-_]+).*'),
+    acorn.util.urlRegExp('(www\.)?youtube\.com\/watch\?.*v=([A-Za-z0-9\-_]+).*'),
+    acorn.util.urlRegExp('(www\.)?y2u.be\/([A-Za-z0-9\-_]+)'),
+    acorn.util.urlRegExp('(www\.)?youtu\.be\/([A-Za-z0-9\-_]+).*'),
   ],
 
 });
@@ -107,7 +110,7 @@ YouTubeShell.ContentView = VideoLinkShell.ContentView.extend({
 
     // add the YouTube player iframe
     var link = this.shell.embedLink();
-    this.$el.append(iframe(link, 'ytplayer'));
+    this.$el.append(acorn.util.iframe(link, 'ytplayer'));
   },
 
 
@@ -239,3 +242,5 @@ YouTubeShell.ContentView = VideoLinkShell.ContentView.extend({
 
 // Register the shell with the acorn object.
 acorn.registerShell(YouTubeShell);
+
+}).call(this);

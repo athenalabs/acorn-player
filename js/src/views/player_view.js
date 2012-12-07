@@ -115,8 +115,8 @@ player.PlayerView = Backbone.View.extend({
     shellView = this.contentView.shellView;
     shellControls = this.controlsView.shellControls;
 
-    assert(shellControls && shellView, 'ContentView and ControlsView must be ' +
-        'rendered');
+    acorn.util.assert(shellControls && shellView,
+                      'ContentView and ControlsView must be rendered');
 
     shellView.setControlsView(shellControls);
   },

@@ -32,7 +32,7 @@ player.SourcesView = acorn.OverlayView.extend({
     acorn.OverlayView.prototype.initialize.apply(this, arguments);
 
     this.player = this.options.player;
-    assert(this.player, 'no player provided to player.SourcesView.');
+    acorn.util.assert(this.player, 'no player provided to player.SourcesView.');
   },
 
   render: function() {

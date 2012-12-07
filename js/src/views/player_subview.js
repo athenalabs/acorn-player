@@ -11,7 +11,7 @@ var PlayerSubview = player.PlayerSubview = Backbone.View.extend({
     _.defaults(this.options, this.defaults || {});
 
     this.player = this.options.player;
-    assert(this.player, 'no player provided to PlayerSubview.');
+    acorn.util.assert(this.player, 'no player provided to PlayerSubview.');
   },
 
 });

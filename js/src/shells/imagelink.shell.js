@@ -1,3 +1,7 @@
+(function() {
+
+var LinkShell = acorn.shells.LinkShell;
+
 // ImageLinkShell --  A shell that links to images and embeds them.
 // ----------------------------------------------------------------
 
@@ -11,7 +15,7 @@ var ImageLinkShell = acorn.shells.ImageLinkShell = LinkShell.extend({
   // **validRegexes** list of valid LinkRegexes for images
   // .jpg, .png, .gif, etc.
   validRegexes: [
-    urlRegExp('.*\.(jpg|jpeg|gif|png|svg)'),
+    acorn.util.urlRegExp('.*\.(jpg|jpeg|gif|png|svg)'),
   ],
 
 });
@@ -20,7 +24,7 @@ var ImageLinkShell = acorn.shells.ImageLinkShell = LinkShell.extend({
 // Shell.ContentView -- renders the image within the bounds of the player.
 // -----------------------------------------------------------------------
 
-ImageLinkShell.ContentView =  LinkShell.ContentView.extend({
+ImageLinkShell.ContentView = LinkShell.ContentView.extend({
 
   template: _.template('\
     <div class="wrapper"></div>\
@@ -40,3 +44,5 @@ ImageLinkShell.ContentView =  LinkShell.ContentView.extend({
 
 // Register the shell with the acorn object.
 acorn.registerShell(ImageLinkShell);
+
+}).call(this);

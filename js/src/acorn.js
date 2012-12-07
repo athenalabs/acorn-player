@@ -28,12 +28,6 @@ var $ = root.jQuery || root.Zepto || root.ender;
 // extracting extend from util for use in this file
 var extend = acorn.util.extend;
 
-// Current version.
-acorn.VERSION = '0.0.0';
-
-// API Version
-acorn.APIVERSION = '0.0.1';
-
 // Initialize collections
 acorn.options = {};
 acorn.types = {};
@@ -71,7 +65,7 @@ acorn.util.sync = function(method, model, options) {
 
   // Ensure that we have a URL.
   if (!options.url) {
-    params.url = getValue(model, 'apiurl') || UrlError();
+    params.url = acorn.util.getValue(model, 'apiurl') || UrlError();
   };
 
   // Ensure that we have the appropriate request data.
@@ -173,7 +167,7 @@ extend(acorn.Model.prototype, {
 
   // Retrieve all data.
   data: function() {
-    return clone(this._data);
+    return acorn.util.clone(this._data);
   },
 
   // return whether this acorn is editable by this user.
@@ -195,7 +189,7 @@ extend(acorn.Model.prototype, {
 
   // Function to retrieve model data.
   fetch: function(options) {
-    options = options ? clone(options) : {};
+    options = options ? acorn.util.clone(options) : {};
 
     var model = this;
     var success = options.success;
@@ -223,7 +217,7 @@ extend(acorn.Model.prototype, {
 
   // Function to store model data.
   save: function(options) {
-    options = options ? clone(options) : {};
+    options = options ? acorn.util.clone(options) : {};
 
     var model = this;
     var success = options.success;

@@ -1,3 +1,7 @@
+(function() {
+
+var VideoLinkShell = acorn.shells.VideoLinkShell;
+
 // acorn.shells.VimeoShell -- links to vimeo video and embeds it.
 // --------------------------------------------------------------
 
@@ -21,7 +25,7 @@ var VimeoShell = acorn.shells.VimeoShell = VideoLinkShell.extend({
     var link = this.link();
 
     var re = this.urlMatches(link);
-    assert(re, 'Incorrect vimeo link, no vimeo id found');
+    acorn.util.assert(re, 'Incorrect vimeo link, no vimeo id found');
 
     var videoid = re.exec(link)[5];
     return videoid;
@@ -79,7 +83,7 @@ var VimeoShell = acorn.shells.VimeoShell = VideoLinkShell.extend({
 
   // **validRegexes** list of valid LinkRegexes
   validRegexes: [
-    urlRegExp('(www\.)?(player\.)?vimeo\.com\/(video\/)?([0-9]+).*'),
+    acorn.util.urlRegExp('(www\.)?(player\.)?vimeo\.com\/(video\/)?([0-9]+).*'),
   ],
 
 });
@@ -101,7 +105,7 @@ VimeoShell.ContentView = VideoLinkShell.ContentView.extend({
 
     // add the Vimeo player iframe
     var link = this.shell.embedLink();
-    this.$el.append(iframe(link, 'vimeoplayer'));
+    this.$el.append(acorn.util.iframe(link, 'vimeoplayer'));
   },
 
   // Vimeo API - communication between the Vimeo js API and the shell.
@@ -214,3 +218,5 @@ VimeoShell.ContentView = VideoLinkShell.ContentView.extend({
 
 // Register the shell with the acorn object.
 acorn.registerShell(VimeoShell);
+
+}).call(this);

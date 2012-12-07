@@ -61,7 +61,7 @@ util.url = function() {
 // **util.apiurl** returns an acorn api url
 util.apiurl = function() {
   var path = Array.prototype.slice.call(arguments);
-  var apiurl = util.url() + '/api/v' + APIVERSION;
+  var apiurl = util.url() + '/api/v' + config.APIVERSION;
   if (path.length > 0)
     apiurl += '/' + path.join('/');
 

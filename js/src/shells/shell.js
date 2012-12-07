@@ -1,3 +1,4 @@
+(function() {
 
 // local handles
 var extend = acorn.util.extend;
@@ -59,7 +60,8 @@ var Shell = acorn.shells.Shell = function(options) {
 
   if (!this.data.shell)
     this.data.shell = this.shellid;
-  assert(this.data.shell == this.shellid, "Shell data has incorrect type.");
+  acorn.util.assert(this.data.shell == this.shellid,
+                    'Shell data has incorrect type.');
   this.shellClass = acorn.shellRegistry[this.shellid];
   this.initialize();
 };
@@ -129,8 +131,8 @@ var ShellView = Shell.ShellView = Backbone.View.extend({
     this.shell = this.options.shell;
     this.parent = this.options.parent;
 
-    assert(this.shell, 'No shell provided to ShellView.');
-    assert(this.parent, 'No parent provided to ShellView')
+    acorn.util.assert(this.shell, 'No shell provided to ShellView.');
+    acorn.util.assert(this.parent, 'No parent provided to ShellView')
   },
 
   // **isSubShellView** whether this shellview is the child of another
@@ -319,3 +321,5 @@ Shell.EditView = ShellView.extend({
 
 // Register the shell with the acorn object.
 acorn.registerShell(Shell);
+
+}).call(this);
