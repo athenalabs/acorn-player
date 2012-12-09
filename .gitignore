@@ -7,4 +7,6 @@ supervisord.log
 data/
 venv/
 *.swp
-node_modules
+build/
+node_modules/
+lib/closure/compiler.jar
