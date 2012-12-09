@@ -7,3 +7,4 @@ supervisord.log
 data/
 venv/
 *.swp
+node_modules
