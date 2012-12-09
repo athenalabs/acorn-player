@@ -1,3 +1,7 @@
+(function() {
+
+var LinkShell = acorn.shells.LinkShell;
+
 // EmptyShell --  A shell that handles an empty link.
 // ----------------------------------------------------------------
 
@@ -10,7 +14,7 @@ var EmptyShell = acorn.shells.EmptyShell = LinkShell.extend({
 
   // valid if link is empty
   isValidLink: function(link) {
-    var emptyUrl = parseUrl('');
+    var emptyUrl = acorn.util.parseUrl('');
     var isEmpty = link.toString() === emptyUrl.toString();
     return isEmpty;
   },
@@ -21,7 +25,7 @@ var EmptyShell = acorn.shells.EmptyShell = LinkShell.extend({
 // Shell.ContentView -- informs viewers that this acorn is currently empty
 // -----------------------------------------------------------------------
 
-EmptyShell.ContentView =  LinkShell.ContentView.extend({
+EmptyShell.ContentView = LinkShell.ContentView.extend({
 
   emptyMessage: function () {
     var messageText = 'this acorn is currently empty';
@@ -44,3 +48,5 @@ EmptyShell.ContentView =  LinkShell.ContentView.extend({
 
 // Register the shell with the acorn object.
 acorn.registerShell(EmptyShell);
+
+}).call(this);

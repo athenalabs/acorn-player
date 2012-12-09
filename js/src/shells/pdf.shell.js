@@ -1,3 +1,6 @@
+(function() {
+
+var LinkShell = acorn.shells.LinkShell;
 
 // acorn.shells.PDFLinkShell
 // ----------------------
@@ -28,10 +31,12 @@ var PDFLinkShell = acorn.shells.PDFLinkShell = LinkShell.extend({
 
   // **validRegexes** regex to match links to PDFs
   validRegexes: [
-    urlRegExp('.*\.pdf'),
+    acorn.util.urlRegExp('.*\.pdf'),
   ],
 
 });
 
 // Register the shell with the acorn object.
 acorn.registerShell(PDFLinkShell);
+
+}).call(this);
