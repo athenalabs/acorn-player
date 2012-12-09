@@ -1,3 +1,4 @@
+(function() {
 
 // LinkRegExp -- Regular
 
@@ -25,6 +26,8 @@
 //   'i'
 // );
 //
+
+var Shell = acorn.shells.Shell;
 
 
 var LinkRegExp =
@@ -65,11 +68,11 @@ acorn.util.isValidLink =
 
 acorn.shellForLink = function(link, options) {
 
-  var location = parseUrl(link);
+  var location = acorn.util.parseUrl(link);
 
   // filter out shells that don't derive from LinkShell.
   var linkShells = _(acorn.shells).filter(function (shell) {
-    return derives(shell, acorn.shells.LinkShell);
+    return acorn.util.derives(shell, acorn.shells.LinkShell);
   });
 
   // filter out shells that don't match this link.
@@ -79,7 +82,7 @@ acorn.shellForLink = function(link, options) {
 
   // reduce to the most specific shell (in terms of inheritance).
   var bestShell = _(matchingShells).reduce(function(bestShell, shell) {
-    return derives(bestShell, shell) ? bestShell : shell;
+    return acorn.util.derives(bestShell, shell) ? bestShell : shell;
   }, acorn.shells.LinkShell);
 
   // if all else fails, use LinkShell.
@@ -183,18 +186,19 @@ LinkShell.ContentView = Shell.ContentView.extend({
   initialize: function() {
     Shell.ContentView.prototype.initialize.call(this);
 
-    assert(this.shell.link, 'No link provided to LinkShell.');
+    acorn.util.assert(this.shell.link, 'No link provided to LinkShell.');
 
-    this.location = this.options.location || parseUrl(this.shell.link());
+    this.location = this.options.location ||
+                    acorn.util.parseUrl(this.shell.link());
 
-    assert(this.shell.isValidLink(this.location),
+    acorn.util.assert(this.shell.isValidLink(this.location),
       'Link provided does not match ' + this.shell.type);
 
   },
 
   render: function() {
     var link = this.shell.link();
-    this.$el.append(iframe(link, 'link-iframe'));
+    this.$el.append(acorn.util.iframe(link, 'link-iframe'));
   },
 
 });
@@ -236,7 +240,7 @@ LinkShell.EditView = Shell.EditView.extend({
   },
 
   validateLink: function(link) {
-    parsedLink = parseUrl(link).toString();
+    parsedLink = acorn.util.parseUrl(link).toString();
     if (acorn.util.isValidLink(parsedLink) || link === '')
       return false;
 
@@ -245,7 +249,7 @@ LinkShell.EditView = Shell.EditView.extend({
 
   link: function(link) {
     if (link || link === '') {
-      link = link === '' ? '' : parseUrl(link).toString();
+      link = link === '' ? '' : acorn.util.parseUrl(link).toString();
       this.shell.link(link);
       var s = acorn.shellForLink(link, {shell: this.shell});
 
@@ -347,3 +351,5 @@ LinkShell.EditView = Shell.EditView.extend({
 
 // Register the shell with the acorn object.
 acorn.registerShell(LinkShell);
+
+}).call(this);

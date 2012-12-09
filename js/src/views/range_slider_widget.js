@@ -357,7 +357,8 @@ $.widget("ui.rangeslider", $.ui.mouse, {
   _normValueFromMouse: function(position) {
     var pixelTotal, pixelMouse, percentMouse, valueTotal, valueMouse;
 
-    assert(this._inDOM(), 'rangeslider must be in DOM to get mouse distance');
+    acorn.util.assert(this._inDOM(),
+                      'rangeslider must be in DOM to get mouse distance');
 
     if (this.orientation === "horizontal") {
       pixelTotal = this.element.outerWidth() - this.handles.outerWidth();

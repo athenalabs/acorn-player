@@ -1,3 +1,7 @@
+(function() {
+
+var Shell = acorn.shells.Shell;
+
 // acorn.shells.MultiShell -- one shell to contain them all.
 // ---------------------------------------------------------
 
@@ -227,8 +231,9 @@ MultiShell.ContentView = Shell.ContentView.extend({
     };
 
     // duplicate of player.setShellControls
-    assert(this.currentView && this.subshellControls, 'subshell ContentView ' +
-        'and SubshellControlsView must be rendered');
+    acorn.util.assert(this.currentView && this.subshellControls,
+                      'subshell ContentView and SubshellControlsView must be ' +
+                      'rendered');
 
     this.currentView.setControlsView(this.subshellControls);
   },
@@ -375,8 +380,10 @@ MultiShell.PlaylistView = acorn.OverlayView.extend({
     this.parent = this.options.parent;
     this.shell = this.options.shell;
 
-    assert(this.parent, 'no parent provided to MultiShell.PlaylistView.');
-    assert(this.shell, 'no shell provided to MultiShell.PlaylistView.');
+    acorn.util.assert(this.parent,
+                      'no parent provided to MultiShell.PlaylistView.');
+    acorn.util.assert(this.shell,
+                      'no shell provided to MultiShell.PlaylistView.');
   },
 
   render: function() {
@@ -667,3 +674,5 @@ MultiShell.EditView = Shell.EditView.extend({
 
 // Register the shell with the acorn object.
 acorn.registerShell(MultiShell);
+
+}).call(this);

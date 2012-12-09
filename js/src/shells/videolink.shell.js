@@ -1,3 +1,7 @@
+(function() {
+
+var LinkShell = acorn.shells.LinkShell;
+var secondsToTimeString = acorn.util.secondsToTimeString;
 
 // VideoPlaybackInterface -- defines methods all video shells must support.
 // ------------------------------------------------------------------------
@@ -77,7 +81,7 @@ var VideoLinkShell = acorn.shells.VideoLinkShell = LinkShell.extend({
   // **validRegexes** list of valid LinkRegexes for videos
   // .avi, .mov, .wmv, etc.
   validRegexes: [
-    urlRegExp('.*\.(avi|mov|wmv)'),
+    acorn.util.urlRegExp('.*\.(avi|mov|wmv)'),
   ],
 
   // **description** returns a simple description of the shell
@@ -434,3 +438,5 @@ VideoLinkShell.EditView = LinkShell.EditView.extend({
 
 // Register the shell with the acorn object.
 acorn.registerShell(VideoLinkShell);
+
+}).call(this);
