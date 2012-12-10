@@ -5,8 +5,10 @@ goog.require 'acorn.util'
 class acorn.Model extends Backbone.Model
 
   initialize: =>
+    super()
     if not @acornid()
       @acornid 'new'
+    @
 
   defaults: =>
     shell: {shell: 'acorn.LinkShell'}
