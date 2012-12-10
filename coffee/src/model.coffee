@@ -76,4 +76,4 @@ class acorn.Model extends Backbone.Model
     new @ data
 
   @withShell = (shell) =>
-    new @ shell: shell.data
+    new @(shell: shell.data)
