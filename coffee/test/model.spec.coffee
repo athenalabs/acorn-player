@@ -1,0 +1,61 @@
+goog.provide 'acorn.specs.Model'
+
+goog.require 'acorn.config'
+goog.require 'acorn.Model'
+
+describe 'acorn.Model', ->
+  Model = acorn.Model
+
+  it 'should be part of acorn', ->
+    expect(acorn.Model).toBeDefined()
+
+  it 'should derive from Backbone.Model', ->
+    expect(athena.lib.util.derives Model, Backbone.Model).toBe true
+
+  it 'should have acornid idAttribute', ->
+    expect(Model::idAttribute).toBe 'acornid'
+
+  it 'should have config-based urls', ->
+    m = new Model({acornid:'hi'})
+    expect(m.url()).toBe "#{acorn.config.url.base}/#{m.acornid()}"
+    expect(m.apiurl()).toBe "#{acorn.config.url.api}/#{m.acornid()}"
+    expect(m.embedurl()).toBe "#{acorn.config.url.base}/embed/#{m.acornid()}"
+
+  describe 'acorn.Model.acornid property', ->
+
+    it 'acornid should be a property', ->
+      expect(new Model().acornid()).toBe 'new'
+      expect(new Model(acornid: 'hi').acornid()).toBe 'hi'
+
+    it 'acornid should be changeable', ->
+      model = new Model()
+      _.each ['hello', 'I', 'love', 'you'], (id) ->
+        expect(model.acornid()).not.toBe id
+        expect(model.acornid(id)).toBe id
+        expect(model.acornid()).toBe id
+
+    it 'acornid should match the id Backbone.Model property', ->
+      model = new Model()
+      _.each ['wont', 'you', 'tell', 'me', 'your', 'name'], (id) ->
+        expect(model.acornid()).not.toBe id
+        expect(model.id).not.toBe id
+
+        expect(model.acornid(id)).toBe id
+        expect(model.acornid()).toBe id
+        expect(model.id).toBe id
+
+  describe 'acorn.Model.shellData property', ->
+
+    it 'shellData should be a property', ->
+      expect(new Model(shell: {shell: 'S'}).shellData()).toEqual {shell: 'S'}
+
+    it 'shellData should default to LinkShell', ->
+      expect(new Model().shellData()).toEqual {shell: 'acorn.LinkShell'}
+
+    it 'shellData should be changeable', ->
+      model = new Model()
+      _.each ['hello', 'I', 'love', 'you'], (type) ->
+        sd = {shell: type}
+        expect(model.shellData()).not.toBe sd
+        expect(model.shellData(sd)).toBe sd
+        expect(model.shellData()).toBe sd
