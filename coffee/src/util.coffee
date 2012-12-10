@@ -61,6 +61,16 @@ acorn.util.property = (defaultValue, validate) ->
       storedValue = validate value
     storedValue
 
+# requests full screen with given elem
+acorn.util.fullscreen = (elem) ->
+  elem = elem[0] if elem.jquery?
+  if elem.requestFullscreen
+    elem.requestFullscreen()
+  else if elem.webkitRequestFullScreen
+    elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT)
+  else if elem.mozRequestFullScreen
+    elem.mozRequestFullScreen()
+
 # converts human-readable timeString to seconds and back
 # human-readable format is: [[hh:]mm:]ss[.SSS]
 
