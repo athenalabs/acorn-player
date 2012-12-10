@@ -10,7 +10,7 @@ class acorn.Model extends Backbone.Model
       @acornid 'new'
     @
 
-  defaults: =>
+  defaults: ->
     shell: {shell: 'acorn.LinkShell'}
 
   idAttribute: 'acornid'
