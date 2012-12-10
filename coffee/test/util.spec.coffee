@@ -1,4 +1,4 @@
-goog.provide 'acorn.util.spec'
+goog.provide 'acorn.specs.util'
 
 goog.require 'acorn.util'
 

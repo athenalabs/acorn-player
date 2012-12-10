@@ -1,4 +1,4 @@
-goog.provide 'acorn.player.EditView.spec'
+goog.provide 'acorn.specs.player.EditView'
 
 goog.require 'acorn.player.EditView'
 

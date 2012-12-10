@@ -1,4 +1,4 @@
-goog.provide 'acorn.player.PlayerView.spec'
+goog.provide 'acorn.specs.player.PlayerView'
 
 goog.require 'acorn.player.PlayerView'
 

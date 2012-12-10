@@ -1,4 +1,4 @@
-goog.provide 'acorn.player.SplashView.spec'
+goog.provide 'acorn.specs.player.SplashView'
 
 goog.require 'acorn.player.SplashView'
 
