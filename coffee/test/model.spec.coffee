@@ -59,3 +59,24 @@ describe 'acorn.Model', ->
         expect(model.shellData()).not.toBe sd
         expect(model.shellData(sd)).toBe sd
         expect(model.shellData()).toBe sd
+
+
+  describe 'acorn.Model.sync', ->
+
+    #TODO expand this into comprehensive tests.
+    #TODO find a way to mock the server in the future.
+
+    it 'should be able to sync', ->
+      nyfskeqlyx = new acorn.Model(acornid:'nyfskeqlyx')
+      spy = new athena.lib.util.test.EventSpy nyfskeqlyx, 'change'
+
+      runs ->
+        nyfskeqlyx.fetch()
+
+      waitsFor (-> spy.triggered), 'fetch should complete', 5000
+
+      runs ->
+        'got it!'
+        shell = nyfskeqlyx.shellData()
+        expect(shell.shell).toBe 'acorn.YouTubeShell'
+        expect(shell.link).toBe 'https://www.youtube.com/watch?v=yYAw79386WI'
