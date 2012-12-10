@@ -76,7 +76,6 @@ describe 'acorn.Model', ->
       waitsFor (-> spy.triggered), 'fetch should complete', 5000
 
       runs ->
-        'got it!'
         shell = nyfskeqlyx.shellData()
         expect(shell.shell).toBe 'acorn.YouTubeShell'
         expect(shell.link).toBe 'https://www.youtube.com/watch?v=yYAw79386WI'
