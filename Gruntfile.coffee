@@ -21,11 +21,11 @@ module.exports = (grunt) ->
 
     # libraries to load in the frontend
     frontend_libs: [
+      'lib/closure/library/closure/goog/base.js'     # for dependencies
       'node_modules/jquery-browser/lib/jquery.js'    # for dom manipulation
       'node_modules/underscore/underscore.js'        # for utilities
       'node_modules/backbone/backbone.js'            # for mvc apps
-      'lib/bootstrap/bootstrap.min.js'               # for style
-      'lib/closure/library/closure/goog/base.js'     # for dependencies
+      'node_modules/grunt-jasmine-spec-server/lib/bootstrap/bootstrap.min.js'
       'lib/athena.lib.min.js'                        # for athena utils
     ]
 
