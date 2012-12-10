@@ -8,5 +8,6 @@ data/
 venv/
 *.swp
 build/
+js/
 node_modules/
 lib/closure/compiler.jar
