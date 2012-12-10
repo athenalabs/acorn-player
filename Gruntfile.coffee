@@ -10,7 +10,7 @@ module.exports = (grunt) ->
 
     # javascript sources
     js_dir: 'js'
-    js_src: 'js/**/*.js'
+    js_src: 'js/src/**/*.js'
     js_specs: 'js/test/**/*.spec.js'
 
     # build directory
@@ -41,7 +41,7 @@ module.exports = (grunt) ->
     deps: "#{paths.js_dir}/deps.js"
 
     # main entry point
-    main: "#{paths.js_dir}/src/main.js"
+    main: "#{paths.js_src}/main.js"
 
     # output file for the compiler
     compiled: paths.minified
