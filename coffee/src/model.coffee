@@ -64,16 +64,16 @@ class acorn.Model extends Backbone.Model
     $.ajax _.extend params, options
 
 
-  @withLink = (link) =>
+  @withLink: (link) =>
     link ?= ''
     @withShell acorn.LinkShell.shellForLink link
 
-  @withData = (data) =>
+  @withData: (data) =>
     if not data?
       data = acornid: 'new'
     else if _.isString data
       data = acornid: data.trim().split('/').pop()
     new @ data
 
-  @withShell = (shell) =>
+  @withShell: (shell) =>
     new @(shell: shell.data)
