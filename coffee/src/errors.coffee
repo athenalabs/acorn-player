@@ -9,9 +9,6 @@ NotSupportedError = (method, extra) ->
 ParameterError = (param) ->
   throw new Error "Parameter error: #{param} must be specified."
 
-GetKeyOrSetObjError = ->
-  ParameterError 'key to retrieve or object with new key-value pairs to set'
-
 UrlError = ->
   ParameterError '"url" property or function'
 
@@ -28,7 +25,6 @@ acorn.errors.UrlError = UrlError
 acorn.errors.APIError = APIError
 acorn.errors.ParameterError = ParameterError
 acorn.errors.NotSupportedError = NotSupportedError
-acorn.errors.GetKeyOrSetObjError = GetKeyOrSetObjError
 acorn.errors.UndefinedShellError = UndefinedShellError
 acorn.errors.NotImplementedError = NotImplementedError
 acorn.errors.AssertionFailed = AssertionFailed
