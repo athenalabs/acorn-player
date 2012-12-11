@@ -41,4 +41,4 @@ describe 'acorn.player.ContentView', ->
     view.render()
     $player.append view.el
 
-    view.shellView.$el.append $('<img>').attr 'src', '/static/img/acorn.png'
+    view.shellView.$el.append $('<img>').attr 'src', acorn.config.img.acorn

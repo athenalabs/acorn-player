@@ -19,8 +19,8 @@ describe 'acorn.player.SplashView', ->
 
     # add a SplashView into the DOM to see how it looks.
     model = new Backbone.Model
-      thumbnail: '/static/img/acorn.png'
-      type: 'multimedia'
+      thumbnail: acorn.config.img.acorn
+      type: 'image'
 
     view = new SplashView model: model
     view.$el.width 600
