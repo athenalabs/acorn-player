@@ -7,33 +7,27 @@ goog.require 'acorn.errors'
 goog.require 'athena.lib.View'
 
 
-class acorn.shells.ShellModel extends Backbone.Model
+Shell = acorn.shells.Shell
 
-  constructor: (options) ->
-    @options = _.extend {}, @defaults ? {}, options
-    @data = JSON.parse JSON.stringify @options.data
-    @data.shell ?= @shellid
-    acorn.util.assert @data.shell == @shellid,
-                      'Shell data has incorrect type.'
-    @initialize()
+# The unique `shell` name of an acorn Shell.
+# The convention is to namespace by vendor. e.g. `acorn.Document`.
+Shell.id = 'acorn.Shell'
+
+# Returns a simple title of the shell
+# Override it with your own shell-specific code.
+Shell.title = 'Shell'
+
+# Shell specific controls to use (e.g. play, pause)
+Shell.controls = []
+
+# Description of the shell
+description = ''
+
+
+class Shell.Model extends Backbone.Model
 
   defaults: =>
     autoplay: false # whether playable media automatically starts playing.
-
-  # The unique `shell` name of an acorn Shell.
-  # The convention is to namespace by vendor. e.g. `acorn.Document`.
-  shellid: 'acorn.Shell',
-
-  # The shell-specific control components to use.
-  controls: [],
-
-  # Returns a simple title of the shell
-  # Override it with your own shell-specific code.
-  title: => NotImplementedError 'Shell::title'
-
-  # Returns a simple description of the shell
-  # Override it with your own shell-specific code.
-  description: => ''
 
   # Returns a remoteResource object whose data() function
   # Caches and returns this Shell's thumbnail link. Stub implementation --
@@ -61,20 +55,6 @@ class acorn.shells.ShellModel extends Backbone.Model
 
 
 
-# Shell.ShellView -- top level view for acorn shells
-# --------------------------------------------------
-
-class acorn.shells.ShellView extends athena.lib.View
-
-  initialize: =>
-    super()
-    @shell = @options.shell
-    @
-
-    acorn.util.assert @shell, 'No shell provided to ShellView'
-
-
-
 # acorn Player:
 # ------------------------------------------------------------------
 # |                                                                |
@@ -96,7 +76,7 @@ class acorn.shells.ShellView extends athena.lib.View
 # |                       Player Controls                          |
 # ------------------------------------------------------------------
 
-class acorn.shells.ContentView extends acorn.shells.ShellView
+class Shell.ContentView extends athena.lib.View
 
   className: 'acorn-shell'
 
@@ -135,7 +115,7 @@ class acorn.shells.ContentView extends acorn.shells.ShellView
 # SummaryView. The title and description are now overridable functions
 # in Shell.
 
-class acorn.shells.SummaryView extends acorn.shells.ShellView
+class Shell.SummaryView extends athena.lib.View
 
   className: 'acorn-shell-summary'
 
@@ -161,7 +141,7 @@ class acorn.shells.SummaryView extends acorn.shells.ShellView
 # Shell.EditView -- uniform view to edit shell data.
 # --------------------------------------------------
 
-class acorn.shells.EditView extends acorn.shells.EditView
+class Shell.EditView extends athena.lib.View
 
   className: 'acorn-shell-edit'
 
