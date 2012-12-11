@@ -10,8 +10,8 @@ class acorn.player.ContentView extends athena.lib.View
     @shellView?.destroy()
     @$el.empty()
 
-    @shellView = new @model.shell.ContentView
-      model: @model
+    @shellView = new @model.shellModel.shell.ContentView
+      model: @model.shellModel
       eventhub: @eventhub
 
     @shellView.render()

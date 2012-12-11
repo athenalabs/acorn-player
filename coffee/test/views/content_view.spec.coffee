@@ -5,13 +5,18 @@ goog.require 'acorn.player.ContentView'
 describe 'acorn.player.ContentView', ->
   ContentView = acorn.player.ContentView
 
-  # options for ContentView contruction
-  options =
-    model: new Backbone.Model
+  # model for ContentView contruction
+  model =
+    acornModel: new Backbone.Model
+    shellModel: new Backbone.Model
 
   # emulate shell, object with a ContentView property
-  options.model.shell =
-      ContentView: athena.lib.View
+  shell = ContentView: athena.lib.View
+  model.shellModel.shell = shell
+
+  # options for ContentView contruction
+  options = model: model
+
 
   it 'should be part of acorn.player', ->
     expect(acorn.player.ContentView).toBeDefined()
@@ -25,7 +30,7 @@ describe 'acorn.player.ContentView', ->
     expect(view.shellView).not.toBeDefined()
     view.render()
     expect(view.shellView).toBeDefined()
-    expect(view.shellView instanceof options.model.shell.ContentView).toBe true
+    expect(view.shellView instanceof shell.ContentView).toBe true
     expect(view.shellView.rendering).toBe true
     expect(view.shellView.el.parentNode).toEqual view.el
 
