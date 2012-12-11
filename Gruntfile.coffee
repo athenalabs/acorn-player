@@ -109,6 +109,7 @@ module.exports = (grunt) ->
            # warning_level: 'verbose',
            # jscomp_off: ['checkTypes', 'fileoverviewTags'],
            # summary_detail_level: 3,
+           formatting: 'PRETTY_PRINT'
            js_output_file: paths.closure.compiled
            output_wrapper: '"(function(){%output%}).call(this);"'
 
