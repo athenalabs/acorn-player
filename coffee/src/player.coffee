@@ -13,10 +13,10 @@ class acorn.player.Player
     @initialize()
 
   initialize: =>
-    @acorn = @options.acorn #todo initialize from id or data
-    @shell = acorn.shellWithAcorn @acorn
+    @acornModel = @options.acorn # TODO initialize from id or data
+    @shellModel = acorn.shellWithAcorn @acorn
 
     @view = new acorn.player.PlayerView
-      model: @acorn
+      model: {acornModel: @acornModel, shellModel: @shellModel}
       player: @
       eventhub: @
