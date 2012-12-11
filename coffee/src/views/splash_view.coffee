@@ -7,7 +7,7 @@ class acorn.player.SplashView extends athena.lib.View
   className: 'splash-view'
 
   events: => _.extend super(),
-    'click image': 'onClickImage'
+    'click #image': => @eventhub.trigger 'show:splash'
 
   template: _.template '''
     <img id="image" src="<%= image %>" class="splash-image" />
@@ -29,5 +29,3 @@ class acorn.player.SplashView extends athena.lib.View
     setTimeout (-> @$('#image').objectFit 'contain'), 200
 
     @
-
-  onClickImage: => @eventhub.trigger 'Splash:Advance'
