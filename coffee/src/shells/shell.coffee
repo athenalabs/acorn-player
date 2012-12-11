@@ -17,9 +17,6 @@ Shell.id = 'acorn.Shell'
 # Override it with your own shell-specific code.
 Shell.title = 'Shell'
 
-# Shell specific controls to use (e.g. play, pause)
-Shell.controls = []
-
 # Description of the shell
 description = 'base shell'
 
@@ -80,6 +77,8 @@ class Shell.ContentView extends athena.lib.View
 
   className: 'acorn-shell'
 
+  controls = []
+
   initialize: =>
     super()
     @eventhub.on 'playback:play', @onPlaybackPlay
@@ -93,7 +92,7 @@ class Shell.ContentView extends athena.lib.View
 
   setControlsView: (controlsView) =>
     @controlsView = controlsView
-    @controlsView.setControls _.clone(@shell.controls)
+    @controlsView.setControls _.clone(@controls)
     @onControlSet()
 
   onControlsSet: =>
