@@ -70,6 +70,15 @@ acorn.util.fullscreen = (elem) ->
   else if elem.mozRequestFullScreen
     elem.mozRequestFullScreen()
 
+# add acorn css
+acorn.util.appendCss = (srcs) ->
+  srcs ?= ['/static/css/acorn-player.css', '/static/css/acorn.css']
+  _.each _.toArray(srcs), (src) ->
+    css = $('<link>')
+    css.attr 'rel', 'stylesheet'
+    css.attr 'href', src
+    $('body').append css
+
 # converts human-readable timeString to seconds and back
 # human-readable format is: [[hh:]mm:]ss[.SSS]
 
