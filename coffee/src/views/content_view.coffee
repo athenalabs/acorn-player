@@ -3,10 +3,18 @@ goog.provide 'acorn.player.ContentView'
 # View to experience an acorn. Renders shells' ContentViews, and the controls.
 class acorn.player.ContentView extends athena.lib.View
 
-  className: 'acorn-player-content'
+  className: 'content-view'
 
-  template: _.template '''
-    '''
+  render: =>
+    super()
+    @shellView?.destroy()
+    @$el.empty()
 
-  initialize: =>
-    @player = @options.player
+    @shellView = new @model.shell.ContentView
+      model: @model
+      eventhub: @eventhub
+
+    @shellView.render()
+    @$el.append @shellView.el
+
+    #TODO add controls
