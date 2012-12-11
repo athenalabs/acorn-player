@@ -22,9 +22,6 @@ description = 'base shell'
 
 class Shell.Model extends Backbone.Model
 
-  defaults: =>
-    autoplay: false # whether playable media automatically starts playing.
-
   # Returns a remoteResource object whose data() function
   # Caches and returns this Shell's thumbnail link. Stub implementation --
   # Intended to be overriden by derived classes.
