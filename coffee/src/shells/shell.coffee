@@ -44,7 +44,7 @@ class Shell.Model extends Backbone.Model
     unless shellClass?
       UndefinedShellError data.shell
 
-    new shellClass.Model data: data
+    new shellClass.Model _.clone data
 
 
 
