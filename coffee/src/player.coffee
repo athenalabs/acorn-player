@@ -18,5 +18,4 @@ class acorn.player.Player
 
     @view = new acorn.player.PlayerView
       model: {acornModel: @acornModel, shellModel: @shellModel}
-      player: @
       eventhub: @
