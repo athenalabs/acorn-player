@@ -18,15 +18,20 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     @eventhub.on 'show:splash', => @content @splashView()
     @eventhub.on 'show:content', => @content @contentView()
 
-  # retrieves (and may initialize and render) subviews
-  subview: (name, cls, options) =>
-    options ?= {}
-    key = "_#{name}"
-    if not @[key]
-      @[key] = new cls _.extend {eventhub: @, model: @model}, options
-      @[key].render()
-    @[key]
+  contentView: =>
+    @_contentView ?= new acorn.player.ContentView
+      eventhub: @eventhub
+      model: @model
+    @_contentView
 
-  contentView: (opts) => @subview 'contentView', player.ContentView, opts
-  splashView: (opts) => @subview 'splashView', player.SplashView, opts
-  editView: (opts) => @subview 'editView', player.EditView, opts
+  splashView: =>
+    @_splashView ?= new acorn.player.SplashView
+      eventhub: @eventhub
+      model: @model.acornModel
+    @_splashView
+
+  editView: =>
+    @_editView ?= new acorn.player.EditView
+      eventhub: @eventhub
+      model: @model
+    @_editView
