@@ -10,7 +10,8 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
 
   className: 'player-view'
 
-  intitialize: =>
+  initialize: =>
+    super()
     @player = @options.player
 
     @eventhub.on 'show:edit', @onShow
