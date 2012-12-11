@@ -1,7 +1,6 @@
 goog.provide 'acorn.util'
 
 goog.require 'acorn.config'
-goog.require 'athena.lib.util'
 
 acorn.util.assert = (condition, description) ->
   if not condition
