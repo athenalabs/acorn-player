@@ -47,6 +47,9 @@ class Shell.Model extends Backbone.Model
     new shellClass.Model _.clone data
 
 
+# register convenience construction functions globally.
+acorn.shellWithAcorn = Shell.Model.withAcorn
+acorn.shellWithData = Shell.Model.withData
 
 # acorn Player:
 # ------------------------------------------------------------------
