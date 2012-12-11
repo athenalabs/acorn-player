@@ -1,3 +1,6 @@
+if typeof acorn is 'undefined'
+  acorn = {}
+
 goog.provide 'acorn.config'
 
 _.extend acorn.config,
