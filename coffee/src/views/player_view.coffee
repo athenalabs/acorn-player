@@ -4,10 +4,11 @@ goog.require 'acorn.player.EditView'
 goog.require 'acorn.player.SplashView'
 goog.require 'acorn.player.ContentView'
 
+
 # Main view. Container for the other three main views.
 class acorn.player.PlayerView extends athena.lib.ContainerView
 
-  className: 'acorn-player'
+  className: 'player-view'
 
   intitialize: =>
     @player = @options.player
