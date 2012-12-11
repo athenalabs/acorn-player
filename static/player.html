@@ -3,86 +3,93 @@
 <head>
   <meta charset="UTF-8">
 
-  <title>acorn:</title>
-
-  <base href="/" />
-
+  <title>acorn-player</title>
   <link rel="shortcut icon" href="/img/favicon.ico">
 
   <!--[if lt IE 9]>
   <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 
-  <link rel="stylesheet" href="/css/acorn.css" />
-  <link rel="stylesheet" href="/css/acorn-player.css" />
-  <link rel="stylesheet" href="/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/css/bootstrap-responsive.min.css" />
-  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/themes/base/jquery-ui.css" />
+  <script src="/node_modules/jquery-browser/lib/jquery.js"></script>
+  <script src="/node_modules/underscore/underscore.js"></script>
+  <script src="/node_modules/backbone/backbone.js"></script>
+  <script src="/lib/jquery/jquery.object-fit.js"></script>
+  <script src="/node_modules/grunt-jasmine-spec-server/lib/bootstrap/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href="/node_modules/grunt-jasmine-spec-server/lib/bootstrap/css/bootstrap.min.css">
+
+
+  <link rel="stylesheet" href="/static/css/acorn-player.css" />
+
+  <script src="/lib/athena.lib.min.js"></script>
+  <script src="/build/acornplayer.min.js"></script>
+
+  <script type="text/javascript">
+
+  var player;
+
+  var showAcorn = function(acornModel) {
+    if (player && player.view)
+      player.view.destroy();
+
+    player = new acorn.player.Player({acornModel: acornModel});
+    player.view.setElement($('.acorn-player'));
+    player.view.render();
+  };
+
+  var loadAcorn = function() {
+    var acornid = $('input#acornid').val().trim();
+    console.log('looking up acornid:' + acornid);
+
+    var acornModel = acorn(acornid);
+    acornModel.fetch({
+      success: function() {
+        console.log(acornModel.toJSON());
+        showAcorn(acornModel);
+      },
+      error: function() {
+        console.log('error');
+      }
+    });
+  };
+
+  $('input#acornid').blur(loadAcorn);
+
+  $(document).ready(function() {
+    loadAcorn();
+  });
+
+  </script>
+
+
+  <style>
+  body {
+    text-align: center;
+  }
+
+  input#acornid {
+    margin: 100px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .acorn-player {
+    width: 100%;
+    height: 700px;
+    text-align: center;
+  }
+  </style>
 
 </head>
 <body>
 
-<div id="acorn-player">
+<div class="container">
+  <div class="span12" id="box">
+
+    <input type="text" id="acornid" placeholder="acornid" value="crbnxowheg" />
+    <div class="acorn-player"></div>
+
+  </div>
 </div>
-
-<script src="/js/libs/jquery/jquery.min.js"></script>
-<script src="/js/libs/underscore/underscore-min.js"></script>
-<script src="/js/libs/backbone/backbone-min.js"></script>
-<script src="/js/libs/bootstrap/js/bootstrap.min.js"></script>
-<script src="/js/libs/components/editabletext.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-
-<script src="/js/src/config.js"></script>
-<script src="/js/src/util.js"></script>
-<script src="/js/src/errors.js"></script>
-<script src="/js/src/acorn.js"></script>
-
-<!-- common-js submodule -->
-<script src="/js/src/common/remote_resource.js"></script>
-
-<script src='/js/src/views/overlay_view.js'></script>
-<script src='/js/src/views/range_slider_widget.js'></script>
-
-<script src="/js/src/shells/shell.js"></script>
-<script src="/js/src/shells/link.shell.js"></script>
-<script src="/js/src/shells/videolink.shell.js"></script>
-<script src="/js/src/shells/vimeo.shell.js"></script>
-<script src="/js/src/shells/youtube.shell.js"></script>
-<script src="/js/src/shells/pdf.shell.js"></script>
-<script src="/js/src/shells/multi.shell.js"></script>
-<script src="/js/src/shells/imagelink.shell.js"></script>
-<script src="/js/src/shells/empty.shell.js"></script>
-
-<script src="/js/src/player.js"></script>
-<script src='/js/src/views/player_view.js'></script>
-<script src='/js/src/views/player_subview.js'></script>
-<script src='/js/src/views/content_view.js'></script>
-<script src='/js/src/views/sources_view.js'></script>
-<script src='/js/src/views/edit_view.js'></script>
-<script src='/js/src/views/thumbnail_view.js'></script>
-<script src='/js/src/views/controls_view.js'></script>
-<script src='/js/src/views/controls/control_item_view.js'></script>
-<script src='/js/src/views/controls/fullscreen_control_view.js'></script>
-<script src='/js/src/views/controls/acorn_control_view.js'></script>
-<script src='/js/src/views/controls/sources_control_view.js'></script>
-<script src='/js/src/views/controls/edit_control_view.js'></script>
-<script src='/js/src/views/controls/left_control_view.js'></script>
-<script src='/js/src/views/controls/right_control_view.js'></script>
-<script src='/js/src/views/controls/list_control_view.js'></script>
-
-<script src='/js/src/player_main.js'></script>
-
-<script type="text/javascript">
-
-// onLoad entry point
-$(document).ready(function() {
-
-  // Initialize routing
-  new acorn.player.Router();
-  Backbone.history.start({pushState: true});
-
-});
-
-</script>
 </body>
 </html>
