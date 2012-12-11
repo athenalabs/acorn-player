@@ -1,17 +1,5 @@
 goog.provide 'acorn.errors'
 
-NotImplementedError = (method) ->
-  throw new Error "#{method} not implemented. Did you override it?"
-
-NotSupportedError = (method, extra) ->
-  throw new Error "#{method} not supported. #{extra ? ''}"
-
-UrlError = ->
-  ParameterError '"url" property or function'
-
-UndefinedShellError = (shell) ->
-  throw new Error "Attempt to construct undefined shell #{shell}"
-
 APIError = (description) ->
   throw new Error "Acorn API Error: #{description}"
 
@@ -21,10 +9,22 @@ AssertionFailed = (description) ->
 MissingParameterError = (prefix, parameter) ->
   throw new Error "#{prefix}: Required parameter `#{parameter}` is missing."
 
-acorn.errors.UrlError = UrlError
+NotImplementedError = (method) ->
+  throw new Error "#{method} not implemented. Did you override it?"
+
+NotSupportedError = (method, extra) ->
+  throw new Error "#{method} not supported. #{extra ? ''}"
+
+UndefinedShellError = (shell) ->
+  throw new Error "Attempt to construct undefined shell #{shell}"
+
+UrlError = ->
+  ParameterError '"url" property or function'
+
 acorn.errors.APIError = APIError
-acorn.errors.NotSupportedError = NotSupportedError
-acorn.errors.UndefinedShellError = UndefinedShellError
-acorn.errors.NotImplementedError = NotImplementedError
 acorn.errors.AssertionFailed = AssertionFailed
 acorn.errors.MissingParameterError = MissingParameterError
+acorn.errors.NotImplementedError = NotImplementedError
+acorn.errors.NotSupportedError = NotSupportedError
+acorn.errors.UndefinedShellError = UndefinedShellError
+acorn.errors.UrlError = UrlError
