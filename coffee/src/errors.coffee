@@ -15,6 +15,9 @@ NotImplementedError = (method) ->
 NotSupportedError = (method, extra) ->
   throw new Error "#{method} not supported. #{extra ? ''}"
 
+TypeError = (variable, expectedType) ->
+  throw new Error "Type error: `#{variable}` is not of type #{expectedType}."
+
 UndefinedShellError = (shell) ->
   throw new Error "Attempt to construct undefined shell #{shell}"
 
@@ -26,5 +29,6 @@ acorn.errors.AssertionFailed = AssertionFailed
 acorn.errors.MissingParameterError = MissingParameterError
 acorn.errors.NotImplementedError = NotImplementedError
 acorn.errors.NotSupportedError = NotSupportedError
+acorn.errors.TypeError = TypeError
 acorn.errors.UndefinedShellError = UndefinedShellError
 acorn.errors.URLError = URLError
