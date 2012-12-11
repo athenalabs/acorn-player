@@ -14,9 +14,9 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     super()
     @player = @options.player
 
-    @eventhub.on 'show:edit', @onShow
-    @eventhub.on 'show:splash', @onShow
-    @eventhub.on 'show:content', @onShow
+    @eventhub.on 'show:edit', => @content @editView()
+    @eventhub.on 'show:splash', => @content @splashView()
+    @eventhub.on 'show:content', => @content @contentView()
 
   # retrieves (and may initialize and render) subviews
   subview: (name, cls, options) =>
@@ -30,9 +30,3 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
   contentView: (opts) => @subview 'contentView', player.ContentView, opts
   splashView: (opts) => @subview 'splashView', player.SplashView, opts
   editView: (opts) => @subview 'editView', player.EditView, opts
-
-  onShow: (eventName) =>
-    switch eventName
-      when 'show:edit' then @content @editView()
-      when 'show:splash' then @content @splashView()
-      when 'show:content' then @content @contentView()
