@@ -1,6 +1,7 @@
 goog.provide 'acorn.player.Player'
 
 goog.require 'acorn.player.PlayerView'
+goog.require 'acorn.shells.Shell'
 
 # The main class, represents the entire player object.
 # Also serves as the eventhub.
