@@ -4,7 +4,6 @@ goog.provide 'acorn.shells.Shell'
 goog.require 'acorn.Model'
 goog.require 'acorn.util'
 goog.require 'acorn.errors'
-goog.require 'athena.lib.View'
 
 
 Shell = acorn.shells.Shell
