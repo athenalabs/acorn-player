@@ -4,3 +4,5 @@ goog.require 'acorn.player.Player'
 goog.require 'acorn.config'
 goog.require 'acorn.util'
 goog.require 'acorn'
+
+(exports ? this).acorn = acorn
