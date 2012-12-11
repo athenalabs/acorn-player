@@ -3,6 +3,7 @@ goog.provide 'acorn.specs.player.Player'
 goog.require 'acorn.Model'
 goog.require 'acorn.shells.Shell'
 goog.require 'acorn.player.Player'
+goog.require 'acorn.config'
 
 describe 'acorn.player.Player', ->
   Player = acorn.player.Player
