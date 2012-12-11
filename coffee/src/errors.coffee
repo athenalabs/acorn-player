@@ -6,9 +6,6 @@ NotImplementedError = (method) ->
 NotSupportedError = (method, extra) ->
   throw new Error "#{method} not supported. #{extra ? ''}"
 
-ParameterError = (param) ->
-  throw new Error "Parameter error: #{param} must be specified."
-
 UrlError = ->
   ParameterError '"url" property or function'
 
@@ -26,7 +23,6 @@ MissingParameterError = (prefix, parameter) ->
 
 acorn.errors.UrlError = UrlError
 acorn.errors.APIError = APIError
-acorn.errors.ParameterError = ParameterError
 acorn.errors.NotSupportedError = NotSupportedError
 acorn.errors.UndefinedShellError = UndefinedShellError
 acorn.errors.NotImplementedError = NotImplementedError
