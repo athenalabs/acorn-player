@@ -18,7 +18,7 @@ NotSupportedError = (method, extra) ->
 UndefinedShellError = (shell) ->
   throw new Error "Attempt to construct undefined shell #{shell}"
 
-UrlError = ->
+URLError = ->
   ParameterError '"url" property or function'
 
 acorn.errors.APIError = APIError
@@ -27,4 +27,4 @@ acorn.errors.MissingParameterError = MissingParameterError
 acorn.errors.NotImplementedError = NotImplementedError
 acorn.errors.NotSupportedError = NotSupportedError
 acorn.errors.UndefinedShellError = UndefinedShellError
-acorn.errors.UrlError = UrlError
+acorn.errors.URLError = URLError
