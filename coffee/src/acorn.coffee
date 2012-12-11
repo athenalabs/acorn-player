@@ -10,8 +10,8 @@ goog.provide 'acorn'
 
 goog.require 'acorn.Model'
 
-acorn_ = (acorn) ->
-  acorn.Model.withData acorn
+acorn_ = (data) ->
+  acorn.Model.withData data
 
 # patch the global `acorn` object as this function
 _.extend acorn_, acorn
