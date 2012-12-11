@@ -7,7 +7,7 @@ goog.require 'acorn.player.PlayerView'
 class acorn.player.Player
 
   # mixin Backbone.Events (not a class)
-  _.extend @, Backbone.Events
+  _.extend @prototype, Backbone.Events
 
   constructor: (@options) ->
     @initialize()

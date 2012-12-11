@@ -10,6 +10,6 @@ describe 'acorn.player.Player', ->
 
   it 'should mixin Backbone.Events', ->
     _.each Backbone.Events, (val, key) ->
-      expect(Player[key]).toBeDefined()
-      expect(typeof Player[key]).toBe(typeof val)
+      expect(Player::[key]).toBeDefined()
+      expect(typeof Player::[key]).toBe(typeof val)
 
