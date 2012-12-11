@@ -39,7 +39,7 @@ class Shell.Model extends Backbone.Model
 
   @withData: (data) =>
     shellClass = _(acorn.shells).find (shell) ->
-      shell.shellid == data.shell
+      shell.id == data.shell
 
     unless shellClass?
       UndefinedShellError data.shell
