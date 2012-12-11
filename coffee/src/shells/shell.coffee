@@ -21,7 +21,7 @@ Shell.title = 'Shell'
 Shell.controls = []
 
 # Description of the shell
-description = ''
+description = 'base shell'
 
 
 class Shell.Model extends Backbone.Model
