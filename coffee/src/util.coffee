@@ -72,8 +72,9 @@ acorn.util.fullscreen = (elem) ->
 
 # add acorn css
 acorn.util.appendCss = (srcs) ->
-  srcs ?= ['/static/css/acorn-player.css', '/static/css/acorn.css']
-  _.each _.toArray(srcs), (src) ->
+  srcs ?= '/static/css/acorn-player.css'
+  srcs = [srcs] unless _.isArray(srcs)
+  _.each srcs, (src) ->
     css = $('<link>')
     css.attr 'rel', 'stylesheet'
     css.attr 'href', src
