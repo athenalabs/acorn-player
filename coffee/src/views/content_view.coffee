@@ -5,6 +5,11 @@ class acorn.player.ContentView extends athena.lib.View
 
   className: 'content-view'
 
+  initialize: =>
+    # should these go here?
+    # @model.shellModel.on 'change', @render
+    # @model.acornModel.on 'change', @render
+
   render: =>
     super()
     @shellView?.destroy()
