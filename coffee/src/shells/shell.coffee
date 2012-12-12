@@ -17,7 +17,7 @@ Shell.id = 'acorn.Shell'
 Shell.title = 'Shell'
 
 # Description of the shell
-description = 'base shell'
+Shell.description = 'base shell'
 
 
 class Shell.Model extends Backbone.Model

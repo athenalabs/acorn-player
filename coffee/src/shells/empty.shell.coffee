@@ -16,7 +16,7 @@ EmptyShell.id = 'acorn.EmptyShell'
 EmptyShell.title = 'EmptyShell'
 
 # Description of the shell
-description = 'an empty, nutless shell'
+EmptyShell.description = 'an empty, nutless shell'
 
 
 class EmptyShell.Model extends Shell.Model
