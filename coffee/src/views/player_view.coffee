@@ -1,6 +1,6 @@
 goog.provide 'acorn.player.PlayerView'
 
-goog.require 'acorn.player.EditView'
+goog.require 'acorn.player.EditorView'
 goog.require 'acorn.player.SplashView'
 goog.require 'acorn.player.ContentView'
 
@@ -13,7 +13,7 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
   initialize: =>
     super()
 
-    @eventhub.on 'show:edit', => @content @editView()
+    @eventhub.on 'show:edit', => @content @editorView()
     @eventhub.on 'show:splash', => @content @splashView()
     @eventhub.on 'show:content', => @content @contentView()
 
@@ -31,11 +31,11 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
       model: @model.acornModel
     @_splashView
 
-  editView: =>
-    @_editView ?= new acorn.player.EditView
+  editorView: =>
+    @_editorView ?= new acorn.player.EditorView
       eventhub: @eventhub
       model:
         # clone models to edit safely.
         acornModel: @model.acornModel.clone()
         shellModel: @model.shellModel.clone()
-    @_editView
+    @_editorView
