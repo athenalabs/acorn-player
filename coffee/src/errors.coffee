@@ -21,6 +21,9 @@ TypeError = (variable, expectedType) ->
 UndefinedShellError = (shell) ->
   throw new Error "Attempt to construct undefined shell #{shell}"
 
+ShellRegistryError = (shell, error) ->
+  throw new Error "Error registering shell #{shell}. #{error ? ''}"
+
 URLError = ->
   ParameterError '"url" property or function'
 

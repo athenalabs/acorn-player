@@ -37,6 +37,10 @@ class acorn.shells.Registry
     _.each class_properties, (property) ->
       shellModule[property].shell = shellModule
 
+    # ensure this module isn't already registered
+    if @modules[shellModule.id]?
+      ShellRegistryError shellModule.id, 'Shell.id already registered.'
+
     # register shell
     @modules[shellModule.id] = shellModule
 
