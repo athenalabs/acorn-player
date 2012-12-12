@@ -145,10 +145,10 @@ class Shell.SummaryView extends athena.lib.View
 
 
 
-# Shell.EditView -- uniform view to edit shell data.
+# Shell.RemixView -- uniform view to edit shell data.
 # --------------------------------------------------
 
-class Shell.EditView extends athena.lib.View
+class Shell.RemixView extends athena.lib.View
 
   className: 'acorn-shell-edit'
 
