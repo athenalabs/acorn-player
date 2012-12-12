@@ -32,3 +32,5 @@ class EmptyShell.ContentView extends Shell.ContentView
   render: =>
     @$el.empty()
     @$el.append('this acorn is empty :(')
+
+acorn.registerShellModule EmptyShell

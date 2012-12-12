@@ -169,3 +169,6 @@ class Shell.EditView extends athena.lib.View
     @shouldSave false
 
   finalizeEdit: =>
+
+
+acorn.registerShellModule Shell
