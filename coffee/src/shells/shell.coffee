@@ -1,6 +1,6 @@
-goog.provide 'acorn.shells'
 goog.provide 'acorn.shells.Shell'
 
+goog.require 'acorn.shells.Registry'
 goog.require 'acorn.Model'
 goog.require 'acorn.util'
 goog.require 'acorn.errors'
