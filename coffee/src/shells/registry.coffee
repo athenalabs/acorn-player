@@ -24,7 +24,7 @@ class acorn.shells.Registry
     # populate shellModule with default properties from Shell
     _.each acorn.shells.Shell, (value, key) ->
       unless shellModule[key]?
-        shellModule[key] = _.clone value
+        class shellModule[key] extends value
 
     # validate shellModule's Model and View properties
     class_properties = [ 'Model', 'ContentView', 'SummaryView', 'EditView']
