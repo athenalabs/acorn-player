@@ -37,6 +37,15 @@ class acorn.Model extends Backbone.Model
     'delete': 'DELETE'
     'read':   'GET'
 
+  # ensure clone is deeply-copied, as acorn data is a multilevel object
+  # this approach to deep-copy is ok because all our data should be
+  # JSON serializable.
+  #
+  # See https://github.com/documentcloud/underscore/issues/162 as to why
+  # underscore does not implement deep copy.
+  clone: ->
+    return new @.constructor JSON.parse JSON.stringify @toJSON()
+
   # Model persistence through CRUD style RPC
   sync: (method, model, options) =>
     requestType = @crudMethodMap[method]

@@ -16,10 +16,21 @@ describe 'acorn.Model', ->
     expect(Model::idAttribute).toBe 'acornid'
 
   it 'should have config-based urls', ->
-    m = new Model({acornid:'hi'})
+    m = new Model {acornid:'hi'}
     expect(m.url()).toBe "#{acorn.config.url.base}/#{m.acornid()}"
     expect(m.apiurl()).toBe "#{acorn.config.url.api}/#{m.acornid()}"
     expect(m.embedurl()).toBe "#{acorn.config.url.base}/embed/#{m.acornid()}"
+
+  it 'should be clonable (with deep-copies)', ->
+    deep = {'a': 5}
+    m = new Model {acornid:'deep', a: b: c: deep}
+    expect(m.clone().attributes.a.b.c).toEqual deep
+    expect(m.clone().attributes.a.b.c).not.toBe deep
+
+    # ensure the same thing breaks on Backbone's non-deep copy
+    b = new Backbone.Model {acornid:'deep', a: b: c: deep}
+    expect(b.clone().attributes.a.b.c).toEqual deep
+    expect(b.clone().attributes.a.b.c).toBe deep
 
   describe 'acorn.Model.acornid property', ->
 

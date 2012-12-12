@@ -32,6 +32,15 @@ class Shell.Model extends Backbone.Model
   # disable Backbone's sync functionality
   sync: => NotSupportedError 'Backbone::sync'
 
+  # ensure clone is deeply-copied, as acorn data is a multilevel object
+  # this approach to deep-copy is ok because all our data should be
+  # JSON serializable.
+  #
+  # See https://github.com/documentcloud/underscore/issues/162 as to why
+  # underscore does not implement deep copy.
+  clone: ->
+    return new @.constructor JSON.parse JSON.stringify @toJSON()
+
 
   # --factory constructors --
 
