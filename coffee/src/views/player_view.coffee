@@ -34,5 +34,8 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
   editView: =>
     @_editView ?= new acorn.player.EditView
       eventhub: @eventhub
-      model: @model
+      model:
+        # clone models to edit safely.
+        acornModel: @model.acornModel.clone()
+        shellModel: @model.shellModel.clone()
     @_editView
