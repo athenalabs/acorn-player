@@ -18,5 +18,8 @@ class acorn.player.Player
     @shellModel = acorn.shellWithAcorn @acornModel
 
     @view = new acorn.player.PlayerView
-      model: {acornModel: @acornModel, shellModel: @shellModel}
+      model:
+        shellid: 'acorn.Shell',
+        acornModel: @acornModel,
+        shellModel: @shellModel
       eventhub: @
