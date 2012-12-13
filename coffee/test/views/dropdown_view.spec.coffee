@@ -6,11 +6,11 @@ describe 'acorn.player.DropdownView', ->
   DropdownView = acorn.player.DropdownView
   EventSpy = athena.lib.util.test.EventSpy
 
+  describeView = athena.lib.util.test.describeView
+  describeView DropdownView, athena.lib.View, items: ['Item']
+
   it 'should be part of acorn.player', ->
     expect(DropdownView).toBeDefined()
-
-  it 'should derive from athena.lib.View', ->
-    expect(athena.lib.util.derives DropdownView, athena.lib.View).toBe true
 
   it 'should ensure it gets at least one item', ->
     expect(-> new DropdownView()).toThrow()

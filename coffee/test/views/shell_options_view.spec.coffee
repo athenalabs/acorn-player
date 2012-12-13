@@ -15,8 +15,14 @@ describe 'acorn.player.ShellOptionsView', ->
   it 'should be part of acorn.player', ->
     expect(acorn.player.ShellOptionsView).toBeDefined()
 
-  it 'should derive from athena.lib.View', ->
-    expect(athena.lib.util.derives ShellOptionsView, athena.lib.View).toBe true
+  describeView = athena.lib.util.test.describeView
+  describeView ShellOptionsView, athena.lib.View, options
+
+  athena.lib.util.test.describeSubview
+    View: ShellOptionsView
+    Subview: acorn.player.DropdownView
+    subviewAttr: 'dropdownView'
+    viewOptions: options
 
   describe 'ShellOptionsView::dropdownView subview', ->
 

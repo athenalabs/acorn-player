@@ -10,16 +10,15 @@ class acorn.player.ContentView extends athena.lib.View
     # @model.shellModel.on 'change', @render
     # @model.acornModel.on 'change', @render
 
-  render: =>
-    super
-    @shellView?.destroy()
-    @$el.empty()
-
     @shellView = new @model.shellModel.shell.ContentView
       model: @model.shellModel
       eventhub: @eventhub
 
-    @shellView.render()
-    @$el.append @shellView.el
+  render: =>
+    super
+    @$el.empty()
+
+    @$el.append @shellView.render().el
 
     #TODO add controls
+    @

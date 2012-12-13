@@ -21,34 +21,15 @@ describe 'acorn.player.ContentView', ->
   it 'should be part of acorn.player', ->
     expect(acorn.player.ContentView).toBeDefined()
 
-  it 'should derive from athena.lib.View', ->
-    expect(athena.lib.util.derives ContentView, athena.lib.View).toBe true
+  describeView = athena.lib.util.test.describeView
+  describeView ContentView, athena.lib.View, options
 
-  describe 'ContentView::shellView subview', ->
+  athena.lib.util.test.describeSubview
+    View: ContentView
+    Subview: shell.ContentView
+    subviewAttr: 'shellView'
+    viewOptions: options
 
-    it 'should NOT be defined on init', ->
-      view = new ContentView options
-      expect(view.shellView).not.toBeDefined()
-
-    it 'should be defined on render', ->
-      view = new ContentView options
-      view.render()
-      expect(view.shellView).toBeDefined()
-
-    it 'should be an instanceof shell.ContentView', ->
-      view = new ContentView options
-      view.render()
-      expect(view.shellView instanceof shell.ContentView).toBe true
-
-    it 'should be rendering with its parent', ->
-      view = new ContentView options
-      view.render()
-      expect(view.shellView.rendering).toBe true
-
-    it 'should be a DOM child of its parent', ->
-      view = new ContentView options
-      view.render()
-      expect(view.shellView.el.parentNode).toEqual view.el
 
   it 'should look good', ->
     # setup DOM

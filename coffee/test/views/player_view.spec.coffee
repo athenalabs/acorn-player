@@ -24,8 +24,8 @@ describe 'acorn.player.PlayerView', ->
   it 'should be part of acorn.player', ->
     expect(acorn.player.PlayerView).toBeDefined()
 
-  it 'should derive from athena.lib.ContainerView', ->
-    expect(derives PlayerView, athena.lib.ContainerView).toBe true
+  describeView = athena.lib.util.test.describeView
+  describeView PlayerView, athena.lib.View, options
 
   it 'should look good', ->
     # setup DOM

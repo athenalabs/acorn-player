@@ -1,10 +1,11 @@
 goog.provide 'acorn.specs.player.EditorView'
 
-goog.require 'acorn.player.AcornOptionsView'
 goog.require 'acorn.player.EditorView'
 
 describe 'acorn.player.EditorView', ->
   EditorView = acorn.player.EditorView
+  describeView = athena.lib.util.test.describeView
+  describeSubview = athena.lib.util.test.describeSubview
 
   # model for EditorView contruction
   model =
@@ -18,59 +19,23 @@ describe 'acorn.player.EditorView', ->
   # options for EditorView contruction
   options = model: model
 
+
   it 'should be part of acorn.player', ->
-    expect(acorn.player.EditorView).toBeDefined()
+    expect(EditorView).toBeDefined()
 
-  it 'should derive from athena.lib.View', ->
-    expect(athena.lib.util.derives EditorView, athena.lib.View).toBe true
+  describeView EditorView, athena.lib.View, options
 
-  describe 'EditorView::acornOptionsView subview', ->
+  describeSubview
+    View: EditorView
+    Subview: acorn.player.AcornOptionsView
+    subviewAttr: 'acornOptionsView'
+    viewOptions: options
 
-    it 'should be defined on init', ->
-      view = new EditorView options
-      expect(view.acornOptionsView).toBeDefined()
-
-    it 'should be an instanceof AcornOptionsView', ->
-      view = new EditorView options
-      expect(view.acornOptionsView instanceof acorn.player.AcornOptionsView)
-
-    it 'should not be rendering initially', ->
-      view = new EditorView options
-      expect(view.acornOptionsView.rendering).toBe false
-
-    it 'should be rendering with EditorView', ->
-      view = new EditorView options
-      view.render()
-      expect(view.acornOptionsView.rendering).toBe true
-
-    it 'should be a DOM child of the EditorView', ->
-      view = new EditorView options
-      view.render()
-      expect(view.acornOptionsView.el.parentNode).toEqual view.el
-
-  describe 'EditorView::shellOptionsView subview', ->
-
-    it 'should be defined on init', ->
-      view = new EditorView options
-      expect(view.shellOptionsView).toBeDefined()
-
-    it 'should be an instanceof ShellOptionsView', ->
-      view = new EditorView options
-      expect(view.shellOptionsView instanceof acorn.player.ShellOptionsView)
-
-    it 'should not be rendering initially', ->
-      view = new EditorView options
-      expect(view.shellOptionsView.rendering).toBe false
-
-    it 'should be rendering with EditorView', ->
-      view = new EditorView options
-      view.render()
-      expect(view.shellOptionsView.rendering).toBe true
-
-    it 'should be a DOM child of the EditorView', ->
-      view = new EditorView options
-      view.render()
-      expect(view.shellOptionsView.el.parentNode).toEqual view.el
+  describeSubview
+    View: EditorView
+    Subview: acorn.player.ShellOptionsView
+    subviewAttr: 'shellOptionsView'
+    viewOptions: options
 
   it 'should look good', ->
     # setup DOM

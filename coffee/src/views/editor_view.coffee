@@ -53,3 +53,5 @@ class acorn.player.EditorView extends athena.lib.View
 
     @$el.append @acornOptionsView.render().el
     @$el.append @shellOptionsView.render().el
+
+    @
