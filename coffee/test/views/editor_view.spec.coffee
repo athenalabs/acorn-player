@@ -47,6 +47,30 @@ describe 'acorn.player.EditorView', ->
       view.render()
       expect(view.acornOptionsView.el.parentNode).toEqual view.el
 
+  describe 'EditorView::shellOptionsView subview', ->
+
+    it 'should be defined on init', ->
+      view = new EditorView options
+      expect(view.shellOptionsView).toBeDefined()
+
+    it 'should be an instanceof ShellOptionsView', ->
+      view = new EditorView options
+      expect(view.shellOptionsView instanceof acorn.player.ShellOptionsView)
+
+    it 'should not be rendering initially', ->
+      view = new EditorView options
+      expect(view.shellOptionsView.rendering).toBe false
+
+    it 'should be rendering with EditorView', ->
+      view = new EditorView options
+      view.render()
+      expect(view.shellOptionsView.rendering).toBe true
+
+    it 'should be a DOM child of the EditorView', ->
+      view = new EditorView options
+      view.render()
+      expect(view.shellOptionsView.el.parentNode).toEqual view.el
+
   it 'should look good', ->
     # setup DOM
     acorn.util.appendCss()
