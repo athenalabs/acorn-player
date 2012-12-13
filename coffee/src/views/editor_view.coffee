@@ -33,7 +33,7 @@ goog.require 'acorn.player.AcornOptionsView'
 # View to edit an acorn. Renders shells' EditorViews.
 class acorn.player.EditorView extends athena.lib.View
 
-  className: 'editor-view'
+  className: 'editor-view span8'
 
   initialize: =>
     super()

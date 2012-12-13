@@ -13,11 +13,11 @@ class acorn.player.AcornOptionsView extends athena.lib.View
   className: 'acorn-options-view'
 
   template: _.template '''
-    <div class="row">
-      <div class="thumbnail-view span4">
+    <div class="row-fluid">
+      <div class="thumbnail-view span2">
         <img class="img-rounded" src="<%= thumbnail %>" />
       </div>
-      <div class="span4">
+      <div class="span10">
         <h4 id="acornid">acornid:<%= acornid %></h4>
         <input id="title" type="text" value="<%= title %>"
           placeholder="Title" class="large" />

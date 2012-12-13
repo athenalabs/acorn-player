@@ -8,7 +8,7 @@ goog.require 'acorn.player.ContentView'
 # Main view. Container for the other three main views.
 class acorn.player.PlayerView extends athena.lib.ContainerView
 
-  className: 'player-view'
+  className: 'player-view row-fluid'
 
   initialize: =>
     super()

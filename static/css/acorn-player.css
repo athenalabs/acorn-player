@@ -1,3 +1,11 @@
+
+/* center the content inside the player (some isn't full-width) */
+.acorn-player > div[class*="row"] > div,
+.acorn-player > div[class*="row"] > div:first-child {
+  margin: 0 auto;
+  float:none;
+}
+
 .acorn-player .splash-view {
   position: relative;
   text-align: center;
@@ -28,7 +36,13 @@
   left: 20px;
 }
 
+.acorn-player .editor-view {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
 .acorn-player .thumbnail-view {
+  display: inline-cell;
   width: 80px;
   height: 80px;
 }
