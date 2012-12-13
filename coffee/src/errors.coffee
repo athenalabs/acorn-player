@@ -18,8 +18,8 @@ NotSupportedError = (method, extra) ->
 TypeError = (variable, expectedType) ->
   throw new Error "Type error: `#{variable}` is not of type #{expectedType}."
 
-UndefinedShellError = (shell) ->
-  throw new Error "Attempt to construct undefined shell #{shell}"
+UnregisteredShellError = (shell) ->
+  throw new Error "Attempt to construct unregistered shell #{shell}"
 
 ShellRegistryError = (shell, error) ->
   throw new Error "Error registering shell #{shell}. #{error ? ''}"
@@ -33,5 +33,5 @@ acorn.errors.MissingParameterError = MissingParameterError
 acorn.errors.NotImplementedError = NotImplementedError
 acorn.errors.NotSupportedError = NotSupportedError
 acorn.errors.TypeError = TypeError
-acorn.errors.UndefinedShellError = UndefinedShellError
+acorn.errors.UnregisteredShellError = UnregisteredShellError
 acorn.errors.URLError = URLError

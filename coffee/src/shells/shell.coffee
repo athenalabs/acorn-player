@@ -51,7 +51,7 @@ class Shell.Model extends Backbone.Model
       shell.id == data.shell
 
     unless shellClass?
-      UndefinedShellError data.shell
+      UnregisteredShellError data.id
 
     new shellClass.Model _.clone data
 
