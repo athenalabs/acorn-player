@@ -66,5 +66,5 @@ describe 'acorn.shells.Shell', ->
 
   describe 'acorn.shells.Shell.RemixView', ->
     it 'should derive from athena.lib.View', ->
-      expect(athena.lib.util.derives Shell.RemixView),
+      expect(athena.lib.util.derives Shell.RemixView,
              athena.lib.View).toBe true
