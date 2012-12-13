@@ -44,8 +44,8 @@ class Shell.Model extends Backbone.Model
   @withAcorn: (acornModel) => @withData acornModel.shellData()
 
   @withData: (data) =>
-    shellClass = _(acorn.shells).find (shell) ->
-      shell.id == data.shell
+    shellClass = _.find acorn.shells, (shell) ->
+      shell.id == data.id
 
     unless shellClass?
       UnregisteredShellError data.id
