@@ -13,6 +13,7 @@ describe 'acorn.player.EditorView', ->
       acornid: 'nyfskeqlyx'
       title: 'The Differential'
     shellModel: new Backbone.Model
+      shellid: 'acorn.Shell'
 
   # options for EditorView contruction
   options = model: model

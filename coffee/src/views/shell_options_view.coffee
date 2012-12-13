@@ -17,8 +17,10 @@ class acorn.player.ShellOptionsView extends athena.lib.View
 
   initialize: =>
     super
-    placeholder = ['Playlist', 'Spliced Video', 'Video Collage']
-    @dropdownView = new acorn.player.DropdownView items: placeholder
+    placeholder = _.keys acorn.shells.Registry.modules
+    @dropdownView = new acorn.player.DropdownView
+      items: placeholder
+      selected: @model.get('shellid')
 
   render: =>
     super

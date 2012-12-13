@@ -7,6 +7,7 @@ describe 'acorn.player.ShellOptionsView', ->
 
   # shell model for ShellOptionsView contruction
   model = new Backbone.Model
+    shellid: 'acorn.Shell'
 
   # options for ShellOptionsView contruction
   options = model: model
