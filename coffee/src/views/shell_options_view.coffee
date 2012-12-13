@@ -1,5 +1,7 @@
 goog.provide 'acorn.player.ShellOptionsView'
 
+goog.require 'acorn.shells.Registry'
+goog.require 'acorn.shells.Shell'
 goog.require 'acorn.player.DropdownView'
 
 # acorn player ShellOptionsView:
