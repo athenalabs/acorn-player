@@ -1,5 +1,6 @@
 goog.provide 'acorn.specs.player.EditorView'
 
+goog.require 'acorn.player.AcornOptionsView'
 goog.require 'acorn.player.EditorView'
 
 describe 'acorn.player.EditorView', ->
@@ -25,6 +26,30 @@ describe 'acorn.player.EditorView', ->
 
   it 'should derive from athena.lib.View', ->
     expect(athena.lib.util.derives EditorView, athena.lib.View).toBe true
+
+  describe 'EditorView::acornOptionsView subview', ->
+
+    it 'should be defined on init', ->
+      view = new EditorView options
+      expect(view.acornOptionsView).toBeDefined()
+
+    it 'should be an instanceof AcornOptionsView', ->
+      view = new EditorView options
+      expect(view.acornOptionsView instanceof acorn.player.AcornOptionsView)
+
+    it 'should not be rendering initially', ->
+      view = new EditorView options
+      expect(view.acornOptionsView.rendering).toBe false
+
+    it 'should be rendering with EditorView', ->
+      view = new EditorView options
+      view.render()
+      expect(view.acornOptionsView.rendering).toBe true
+
+    it 'should be a DOM child of the EditorView', ->
+      view = new EditorView options
+      view.render()
+      expect(view.acornOptionsView.el.parentNode).toEqual view.el
 
   it 'should look good', ->
     # setup DOM

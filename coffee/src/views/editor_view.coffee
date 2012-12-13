@@ -1,5 +1,7 @@
 goog.provide 'acorn.player.EditorView'
 
+goog.require 'acorn.player.AcornOptionsView'
+
 # acorn player EditorView:
 # ------------------------------------------------
 # |  ----------                                  |
@@ -31,10 +33,18 @@ goog.provide 'acorn.player.EditorView'
 # View to edit an acorn. Renders shells' EditorViews.
 class acorn.player.EditorView extends athena.lib.View
 
-  className: 'acorn-player-edit'
-
-  template: _.template '''
-    '''
+  className: 'editor-view'
 
   initialize: =>
-    @player = @options.player
+    super()
+
+    @acornOptionsView = new acorn.player.AcornOptionsView
+      model: @model.acornModel
+      eventhub: @eventhub
+
+  render: =>
+    super()
+    @$el.empty()
+
+    @acornOptionsView.render()
+    @$el.append @acornOptionsView.el
