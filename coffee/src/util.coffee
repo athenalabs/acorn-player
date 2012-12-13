@@ -80,6 +80,20 @@ acorn.util.appendCss = (srcs) ->
     css.attr 'href', src
     $('body').append css
 
+# Preserve image aspect ratio but contain it wholly
+# See https://github.com/schmidsi/jquery-object-fit
+# setTimeout bypasses https://github.com/schmidsi/jquery-object-fit/issues/3
+fixObjectFit = ->
+  objectFit_ = $.fn.objectFit
+  $.fn.objectFit = ->
+    args = arguments
+    setTimeout (=> objectFit_.apply @, args), 200
+    @
+
+fixObjectFit()
+
+
+
 # converts human-readable timeString to seconds and back
 # human-readable format is: [[hh:]mm:]ss[.SSS]
 

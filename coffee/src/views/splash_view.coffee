@@ -23,9 +23,6 @@ class acorn.player.SplashView extends athena.lib.View
       logo: "#{acorn.config.url.img}/acorn.png"
       image: @model.get 'thumbnail'
 
-    # Preserve image aspect ratio but contain it wholly
-    # See https://github.com/schmidsi/jquery-object-fit
-    # setTimeout bypasses https://github.com/schmidsi/jquery-object-fit/issues/3
-    setTimeout (-> @$('#image').objectFit 'contain'), 200
+    @$('#image').objectFit 'contain'
 
     @
