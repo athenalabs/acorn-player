@@ -7,7 +7,7 @@ describe 'acorn.shells.Shell', ->
   Shell = acorn.shells.Shell
 
   it 'should be part of acorn.shells', ->
-    expect(acorn.shells.Shell).toBeDefined()
+    expect(Shell).toBeDefined()
 
   it 'should contain required properties', ->
     required_properties = [ 'id', 'title', 'description' ]
