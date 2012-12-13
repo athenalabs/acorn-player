@@ -6,7 +6,7 @@ goog.require 'acorn.player.EditorView'
 describe 'acorn.player.EditorView', ->
   EditorView = acorn.player.EditorView
 
-  # model for ContentView contruction
+  # model for EditorView contruction
   model =
     acornModel: new Backbone.Model
       thumbnail: acorn.config.img.acorn
@@ -14,11 +14,7 @@ describe 'acorn.player.EditorView', ->
       title: 'The Differential'
     shellModel: new Backbone.Model
 
-  # emulate shell, object with a ContentView property
-  shell = ContentView: athena.lib.View
-  model.shellModel.shell = shell
-
-  # options for ContentView contruction
+  # options for EditorView contruction
   options = model: model
 
   it 'should be part of acorn.player', ->
