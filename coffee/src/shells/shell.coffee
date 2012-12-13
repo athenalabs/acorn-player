@@ -101,7 +101,7 @@ class Shell.ContentView extends athena.lib.View
   setControlsView: (controlsView) =>
     @controlsView = controlsView
     @controlsView.setControls _.clone(@controls)
-    @onControlSet()
+    @onControlsSet()
 
   onControlsSet: =>
   onPlaybackPlay: =>
