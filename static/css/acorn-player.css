@@ -53,6 +53,15 @@
   object-fit: contain;
 }
 
-.acorn-player .acorn-options-view # {
+.acorn-player .dropdown-view {
+  position: relative;
+}
 
+.acorn-player .dropdown-view > .dropdown-toggle {
+  text-align: left;
+  width: 100%;
+}
+
+.acorn-player .dropdown-view > .dropdown-menu {
+  width: 100%;
 }
