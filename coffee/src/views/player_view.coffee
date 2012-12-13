@@ -4,6 +4,7 @@ goog.require 'acorn.player.EditorView'
 goog.require 'acorn.player.SplashView'
 goog.require 'acorn.player.ContentView'
 goog.require 'acorn.player.ControlsView'
+goog.require 'acorn.player.OverlayView'
 
 
 # Main view. Container for the other three main views.
