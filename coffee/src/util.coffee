@@ -6,11 +6,11 @@ acorn.util.assert = (condition, description) ->
   if not condition
     throw new Error(description)
 
-acorn.util.urlRegExp = (url) ->
+acorn.util.urlRegEx = (url) ->
   ///^(https?:\/\/)?#{url}$///
 
 acorn.util.isUrl = (url) ->
-  acorn.util.urlRegExp.test url
+  acorn.util.urlRegEx.test url
 
 # helpers to construct acorn urls TODO: delete these?
 acorn.util.url = ->
