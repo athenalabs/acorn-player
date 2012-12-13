@@ -37,7 +37,7 @@ class Shell.Model extends Backbone.Model
   clone: => return new @constructor JSON.parse JSON.stringify @toJSON()
 
 
-  # --factory constructors --
+  # -- factory constructors --
 
   @withAcorn: (acornModel) => @withData acornModel.shellData()
 
