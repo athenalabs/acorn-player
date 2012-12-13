@@ -11,7 +11,7 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
   className: 'player-view row-fluid'
 
   initialize: =>
-    super()
+    super
 
     @eventhub.on 'show:edit', => @content @editorView()
     @eventhub.on 'show:splash', => @content @splashView()

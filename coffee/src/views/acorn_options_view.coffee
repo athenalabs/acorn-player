@@ -26,6 +26,6 @@ class acorn.player.AcornOptionsView extends athena.lib.View
     '''
 
   render: =>
-    super()
+    super
     @$el.empty()
     @$el.html @template @model.attributes

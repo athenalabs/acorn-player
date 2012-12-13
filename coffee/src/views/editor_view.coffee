@@ -36,14 +36,14 @@ class acorn.player.EditorView extends athena.lib.View
   className: 'editor-view span8'
 
   initialize: =>
-    super()
+    super
 
     @acornOptionsView = new acorn.player.AcornOptionsView
       model: @model.acornModel
       eventhub: @eventhub
 
   render: =>
-    super()
+    super
     @$el.empty()
 
     @acornOptionsView.render()

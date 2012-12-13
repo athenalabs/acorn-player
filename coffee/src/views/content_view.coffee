@@ -11,7 +11,7 @@ class acorn.player.ContentView extends athena.lib.View
     # @model.acornModel.on 'change', @render
 
   render: =>
-    super()
+    super
     @shellView?.destroy()
     @$el.empty()
 

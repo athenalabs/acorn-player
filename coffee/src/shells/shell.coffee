@@ -83,7 +83,7 @@ class Shell.ContentView extends athena.lib.View
   controls = []
 
   initialize: =>
-    super()
+    super
     @eventhub.on 'playback:play', @onPlaybackPlay
     @eventhub.on 'playback:stop', @onPlaybackStop
     @
@@ -91,7 +91,7 @@ class Shell.ContentView extends athena.lib.View
   remove: =>
     @eventhub.off 'playback:play', @onPlaybackPlay
     @eventhub.off 'playback:stop', @onPlaybackStop
-    super()
+    super
 
   setControlsView: (controlsView) =>
     @controlsView = controlsView
@@ -116,7 +116,7 @@ class Shell.RemixView extends athena.lib.View
   template: _.template('')
 
   initialize: =>
-    super()
+    super
     @eventhub.on 'change:shell', this.OnChangeShell
     @eventhub.on 'swap.shell', this.onSwapShell
     @

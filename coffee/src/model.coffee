@@ -5,7 +5,7 @@ goog.require 'acorn.util'
 class acorn.Model extends Backbone.Model
 
   initialize: =>
-    super()
+    super
     if not @acornid()
       @acornid 'new'
     @
