@@ -18,6 +18,9 @@ NotSupportedError = (method, extra) ->
 TypeError = (variable, expectedType) ->
   throw new Error "Type error: `#{variable}` is not of type #{expectedType}."
 
+ValueError = (variable, error) ->
+  throw new Error "Value error: `#{variable}` #{error}."
+
 UnregisteredShellError = (shell) ->
   throw new Error "Attempt to construct unregistered shell #{shell}"
 
