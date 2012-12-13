@@ -27,8 +27,6 @@ class Shell.Model extends Backbone.Model
   # Intended to be overriden by derived classes.
   thumbnailLink: => NotImplementedError 'Shell::thumbnailLink'
 
-  clone: => new @()
-
   # disable Backbone's sync functionality
   sync: => NotSupportedError 'Backbone::sync'
 
@@ -38,8 +36,7 @@ class Shell.Model extends Backbone.Model
   #
   # See https://github.com/documentcloud/underscore/issues/162 as to why
   # underscore does not implement deep copy.
-  clone: ->
-    return new @.constructor JSON.parse JSON.stringify @toJSON()
+  clone: => return new @constructor JSON.parse JSON.stringify @toJSON()
 
 
   # --factory constructors --
