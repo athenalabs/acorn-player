@@ -27,7 +27,7 @@ class acorn.shells.Registry
         class shellModule[key] extends value
 
     # validate shellModule's Model and View properties
-    class_properties = [ 'Model', 'ContentView', 'SummaryView', 'RemixView']
+    class_properties = [ 'Model', 'ContentView', 'RemixView']
     _.each class_properties, (property) ->
       unless _.isFunction shellModule[property]
         TypeError property, 'class'
