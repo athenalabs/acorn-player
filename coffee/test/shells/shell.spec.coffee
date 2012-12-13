@@ -10,50 +10,50 @@ describe 'acorn.shells.Shell', ->
     expect(Shell).toBeDefined()
 
   it 'should contain required properties', ->
-    required_properties = [ 'id', 'title', 'description' ]
-    _.each required_properties, (property) ->
+    requiredProperties = [ 'id', 'title', 'description' ]
+    _.each requiredProperties, (property) ->
       expect(Shell[property]).toBeDefined()
       expect(_.isString Shell[property]).toBe true
   
   it 'should contain required Model and View classes', ->
-    required_classes = [ 'Model', 'ContentView', 'RemixView' ]
-    _.each required_classes, (property) ->
+    requiredClasses = [ 'Model', 'ContentView', 'RemixView' ]
+    _.each requiredClasses, (property) ->
       expect(Shell[property]).toBeDefined()
       expect(_.isFunction Shell[property]).toBe true
 
   describe 'acorn.shells.Shell.Model class', ->
 
-    model_instance = new Shell.Model { a: 1, b: 2 }
+    modelInstance = new Shell.Model { a: 1, b: 2 }
 
     it 'should derive from Backbone.Model', ->
       expect(athena.lib.util.derives Shell.Model, Backbone.Model).toBe true
 
     it 'should correctly assign attributes', ->
-      expect(model_instance.get 'a').toBe 1
-      expect(model_instance.get 'b').toBe 2
+      expect(modelInstance.get 'a').toBe 1
+      expect(modelInstance.get 'b').toBe 2
 
     it 'should correctly support setting of attributes', ->
-      model_instance.set 'a', 2
-      model_instance.set 'b', 3
-      expect(model_instance.get 'a').toBe 2
-      expect(model_instance.get 'b').toBe 3
+      modelInstance.set 'a', 2
+      modelInstance.set 'b', 3
+      expect(modelInstance.get 'a').toBe 2
+      expect(modelInstance.get 'b').toBe 3
 
     it 'should throw an exception on save/sync', ->
-      expect(model_instance.save).toThrow()
-      expect(model_instance.sync).toThrow()
+      expect(modelInstance.save).toThrow()
+      expect(modelInstance.sync).toThrow()
 
     it 'should correctly support clone', ->
-      model_clone = model_instance.clone()
-      model_clone.set 'a', 42
-      expect(model_instance.get 'a').toBe 2
-      expect(model_clone.get 'a').toBe 42
+      modelClone = modelInstance.clone()
+      modelClone.set 'a', 42
+      expect(modelInstance.get 'a').toBe 2
+      expect(modelClone.get 'a').toBe 42
 
   describe 'acorn.shells.Shell.Model factory constructors', ->
 
     it 'should correctly construct a model from data', ->
-      model_instance = Shell.Model.withData { id: 'acorn.Shell' }
-      expect(model_instance).toBeDefined()
-      expect(model_instance.get 'id').toBe 'acorn.Shell'
+      modelInstance = Shell.Model.withData { id: 'acorn.Shell' }
+      expect(modelInstance).toBeDefined()
+      expect(modelInstance.get 'id').toBe 'acorn.Shell'
 
     it 'should throw an error on attempts to construct unregistered shells', ->
       fn = -> Shell.Model.withData { id: 'foobar' }
