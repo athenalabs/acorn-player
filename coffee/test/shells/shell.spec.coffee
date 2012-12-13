@@ -6,7 +6,7 @@ goog.require 'acorn.shells.Shell'
 describe 'acorn.shells.Shell', ->
   Shell = acorn.shells.Shell
 
-  it 'should be part of acorn.specs', ->
+  it 'should be part of acorn.shells', ->
     expect(acorn.shells.Shell).toBeDefined()
   
   it 'should derive from Backbone.Model', ->
