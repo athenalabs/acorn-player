@@ -37,6 +37,12 @@ describe 'acorn.player.EditorView', ->
     subviewAttr: 'shellOptionsView'
     viewOptions: options
 
+  describeSubview
+    View: EditorView
+    Subview: athena.lib.ToolbarView
+    subviewAttr: 'toolbarView'
+    viewOptions: options
+
   it 'should look good', ->
     # setup DOM
     acorn.util.appendCss()

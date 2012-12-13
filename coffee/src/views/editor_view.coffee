@@ -36,6 +36,10 @@ class acorn.player.EditorView extends athena.lib.View
 
   className: 'editor-view span8'
 
+  events: => _.extend super,
+    'click #editor-cancel-btn': => @trigger 'Editor:Cancel', @
+    'click #editor-save-btn': => @trigger 'Editor:Save', @
+
   initialize: =>
     super
 
@@ -47,11 +51,19 @@ class acorn.player.EditorView extends athena.lib.View
       model: @model.shellModel
       eventhub: @eventhub
 
+    cancel = text: 'Cancel', id: 'editor-cancel-btn'
+    save = text: 'Save', id: 'editor-save-btn', className: 'btn-success'
+
+    @toolbarView = new athena.lib.ToolbarView
+      buttons: [cancel, save]
+      eventhub: @eventhub
+
   render: =>
     super
     @$el.empty()
 
     @$el.append @acornOptionsView.render().el
     @$el.append @shellOptionsView.render().el
+    @$el.append @toolbarView.render().el
 
     @
