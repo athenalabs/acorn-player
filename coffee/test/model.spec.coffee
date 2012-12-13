@@ -48,12 +48,16 @@ describe 'acorn.Model', ->
     it 'acornid should match the id Backbone.Model property', ->
       model = new Model()
       _.each ['wont', 'you', 'tell', 'me', 'your', 'name'], (id) ->
+        # initialy, acornid() should not be the given id
         expect(model.acornid()).not.toBe id
         expect(model.id).not.toBe id
+        expect(model.id).toBe model.acornid()
 
+        # after setting it, both should be the given id
         expect(model.acornid(id)).toBe id
         expect(model.acornid()).toBe id
         expect(model.id).toBe id
+        expect(model.id).toBe model.acornid()
 
   describe 'acorn.Model.shellData property', ->
 
