@@ -10,12 +10,12 @@ class acorn.player.DropdownView extends athena.lib.View
       <% if (selected.icon) { %>
         <i class="icon-<%= selected.icon %>"></i>
       <% } %>
-      <%= selected.name %>
+      <span class="dropdown-selected"><%= selected.name %></span>
       <span class="caret" style="float: right;"></span>
     </button>
     <ul class="dropdown-menu">
       <% _.each(items, function(item) { %>
-        <li><a href="#">
+        <li><a class="dropdown-link" href="#">
           <% if (item.icon) { %>
             <i class="icon-<%= item.icon %>"></i>
           <% } %>
@@ -28,20 +28,39 @@ class acorn.player.DropdownView extends athena.lib.View
     </ul>
     '''
 
+  events: => _.extend super,
+    'click a.dropdown-link': (event) => @selected $(event.target).text()
+
   initialize: =>
     super
     unless @options.items.length > 0
       ValueError 'options.items', 'must have at least one item'
 
+    @items = _.map @options.items, @formatItem
+    @_selected = @options.selected ? @items[0].name
+
   render: =>
     super
     @$el.empty()
 
-    # transform strings into proper objects
-    items = _.map @options.items, (item) ->
-      if _.isString item then {'name': item} else item
-
     @$el.html @template
-      selected: (@options.selected ? items[0])
-      items: items
+      selected: @itemWithValue @selected()
+      items: @items
+
     @
+
+  selected: (value) =>
+    if value?
+      value = String(value).trim()
+      unless @itemWithValue(value)
+        ValueError('value', 'not in items')
+      @_selected = value
+      @softRender()
+      @trigger 'Dropdown:Selected', @, @_selected
+    @_selected ? @items[0]
+
+  itemWithValue: (value) =>
+    _.find(@items, (item) => item.name == value)
+
+  formatItem: (item) ->
+    if _.isString item then {'name': item} else item
