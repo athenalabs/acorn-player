@@ -27,3 +27,18 @@
   float: left;
   left: 20px;
 }
+
+.acorn-player .thumbnail-view {
+  width: 80px;
+  height: 80px;
+}
+
+.acorn-player .thumbnail-view > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.acorn-player .acorn-options-view # {
+
+}
