@@ -15,6 +15,11 @@ describe 'acorn.shells.Registry', ->
       expect(_.isObject Registry.modules).toBe true
 
   describe 'Registry.registerModule', ->
+
+    # -- helpers --
+
+    modulesClone = null
+
     shellModule =
       id: 'ApertureScience.GladOS'
       title: 'Portal into GladOS\'s internal psychological state'
@@ -25,9 +30,15 @@ describe 'acorn.shells.Registry', ->
 
     register_fn = -> Registry.registerModule shellModule
 
-    # helper functions
     assertObjectSize = (object, size) => expect(_.keys(object).length).toBe size
     unregisterAllShells = => Registry.modules = {}
+
+    # -- setup and teardown --
+
+    beforeEach -> modulesClone = _.clone Registry.modules
+    afterEach -> Registry.modules = modulesClone
+
+    # -- test cases --
 
     it 'should be a function', ->
       expect(_.isFunction Registry.registerModule).toBe true
@@ -70,6 +81,8 @@ describe 'acorn.shells.Registry', ->
           assertObjectSize Registry.modules, 0
 
       it 'should throw error if properties are of incorrect types', ->
+        unregisterAllShells()
+
         stringProperties = [ 'id', 'title', ]
         _.each stringProperties, (property) ->
           moduleClone = _.clone shellModule
@@ -113,3 +126,4 @@ describe 'acorn.shells.Registry', ->
 
           # unregister all shells
           unregisterAllShells()
+
