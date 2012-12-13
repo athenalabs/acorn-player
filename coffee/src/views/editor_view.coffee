@@ -37,8 +37,8 @@ class acorn.player.EditorView extends athena.lib.View
   className: 'editor-view span8'
 
   events: => _.extend super,
-    'click #editor-cancel-btn': => @trigger 'Editor:Cancel', @
-    'click #editor-save-btn': => @trigger 'Editor:Save', @
+    'click #editor-cancel-btn': => @eventhub.trigger 'Editor:Cancel', @
+    'click #editor-save-btn': => @save()
 
   initialize: =>
     super
@@ -65,5 +65,25 @@ class acorn.player.EditorView extends athena.lib.View
     @$el.append @acornOptionsView.render().el
     @$el.append @shellOptionsView.render().el
     @$el.append @toolbarView.render().el
+
+    @
+
+  save: =>
+    # TODO add validation first
+
+    # update acornModel with edited shellModel data
+    @model.acornModel.shellData @model.shellModel.attributes
+
+    @$('#editor-save-btn').attr 'disabled', 'disabled'
+    @$('#editor-save-btn').text 'Saving...'
+
+    @model.acornModel.save
+      success: =>
+        @$('#editor-save-btn').text 'Saved!'
+        @eventhub.trigger 'Editor:Saved', @
+
+      error: =>
+        @$('#editor-save-btn').text 'Error Saving. Click to try again.'
+        @$('#editor-save-btn').removeAttr 'disabled'
 
     @

@@ -17,6 +17,10 @@ describe 'acorn.player.EditorView', ->
     shellModel: new Backbone.Model
       shellid: 'acorn.Shell'
 
+  # patch the models for testing
+  model.acornModel.shellData = -> _.clone model.shellModel.attributes
+  model.acornModel.save = (opts) -> opts.error()
+
   # options for EditorView contruction
   options = model: model
 
@@ -47,7 +51,7 @@ describe 'acorn.player.EditorView', ->
 
   it 'should trigger event `Editor:Cancel` on clicking Cancel', ->
     view = new EditorView options
-    spy = new EventSpy view, 'Editor:Cancel'
+    spy = new EventSpy view.eventhub, 'Editor:Cancel'
     view.render()
     expect(spy.triggerCount).toBe 0
     view.$('#editor-cancel-btn').trigger 'click'
@@ -55,15 +59,82 @@ describe 'acorn.player.EditorView', ->
     view.$('#editor-cancel-btn').trigger 'click'
     expect(spy.triggerCount).toBe 2
 
-  it 'should trigger event `Editor:Save` on clicking Save', ->
+  it 'should call `save` on clicking Save', ->
     view = new EditorView options
-    spy = new EventSpy view, 'Editor:Save'
+    spy = spyOn view, 'save'
     view.render()
-    expect(spy.triggerCount).toBe 0
+    expect(spy).not.toHaveBeenCalled()
     view.$('#editor-save-btn').trigger 'click'
-    expect(spy.triggerCount).toBe 1
-    view.$('#editor-save-btn').trigger 'click'
-    expect(spy.triggerCount).toBe 2
+    expect(spy).toHaveBeenCalled()
+
+  describe '.save', ->
+
+    it 'should update acornModel with shellModel attributes', ->
+      view = new EditorView options
+      spy = spyOn model.acornModel, 'shellData'
+      view.render()
+      expect(spy).not.toHaveBeenCalled()
+
+      view.save()
+      expect(spy).toHaveBeenCalled()
+      expect(spy).toHaveBeenCalledWith(model.shellModel.attributes)
+
+    it 'should call save on acornModel', ->
+      view = new EditorView options
+      spy = spyOn model.acornModel, 'save'
+      view.render()
+      expect(spy).not.toHaveBeenCalled()
+
+      view.save()
+      expect(spy).toHaveBeenCalled()
+
+    it 'should disable `Save` button on calling save', ->
+      view = new EditorView options
+      spy = spyOn model.acornModel, 'save'
+
+      view.render()
+      expect(view.$('#editor-save-btn').attr 'disabled').toBe undefined
+      view.save()
+      expect(view.$('#editor-save-btn').attr 'disabled').toBe 'disabled'
+
+    it 'should trigger `Editor:Saved` event on save success', ->
+      view = new EditorView options
+
+      saveSpy = spyOn model.acornModel, 'save'
+      saveSpy.andCallFake (opts) -> opts.success()
+      eventSpy = new EventSpy view.eventhub, 'Editor:Saved'
+
+      expect(saveSpy).not.toHaveBeenCalled()
+      expect(eventSpy.triggered).toBe false
+      view.render()
+      view.save()
+      expect(saveSpy).toHaveBeenCalled()
+      expect(eventSpy.triggered).toBe true
+
+    it 'should NOT re-enable `Save` button on save success', ->
+      view = new EditorView options
+      spy = spyOn model.acornModel, 'save'
+      spy.andCallFake (opts) -> opts.success()
+
+      view.render()
+      expect(view.$('#editor-save-btn').attr 'disabled').toBe undefined
+
+      view.save()
+      expect(spy).toHaveBeenCalled()
+      expect(view.$('#editor-save-btn').attr 'disabled').toBe 'disabled'
+
+
+    it 'should re-enable `Save` button on save error', ->
+      view = new EditorView options
+      spy = spyOn model.acornModel, 'save'
+      spy = spy.andCallFake (opts) -> opts.error()
+
+      view.render()
+      expect(view.$('#editor-save-btn').attr 'disabled').toBe undefined
+
+      view.save()
+      expect(spy).toHaveBeenCalled()
+      expect(view.$('#editor-save-btn').attr 'disabled').toBe undefined
 
 
   it 'should look good', ->
