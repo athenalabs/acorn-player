@@ -3,6 +3,7 @@ goog.provide 'acorn.specs.player.EditorView'
 goog.require 'acorn.player.EditorView'
 
 describe 'acorn.player.EditorView', ->
+  EventSpy = athena.lib.util.test.EventSpy
   EditorView = acorn.player.EditorView
   describeView = athena.lib.util.test.describeView
   describeSubview = athena.lib.util.test.describeSubview
@@ -42,6 +43,28 @@ describe 'acorn.player.EditorView', ->
     Subview: athena.lib.ToolbarView
     subviewAttr: 'toolbarView'
     viewOptions: options
+
+
+  it 'should trigger event `Editor:Cancel` on clicking Cancel', ->
+    view = new EditorView options
+    spy = new EventSpy view, 'Editor:Cancel'
+    view.render()
+    expect(spy.triggerCount).toBe 0
+    view.$('#editor-cancel-btn').trigger 'click'
+    expect(spy.triggerCount).toBe 1
+    view.$('#editor-cancel-btn').trigger 'click'
+    expect(spy.triggerCount).toBe 2
+
+  it 'should trigger event `Editor:Save` on clicking Save', ->
+    view = new EditorView options
+    spy = new EventSpy view, 'Editor:Save'
+    view.render()
+    expect(spy.triggerCount).toBe 0
+    view.$('#editor-save-btn').trigger 'click'
+    expect(spy.triggerCount).toBe 1
+    view.$('#editor-save-btn').trigger 'click'
+    expect(spy.triggerCount).toBe 2
+
 
   it 'should look good', ->
     # setup DOM
