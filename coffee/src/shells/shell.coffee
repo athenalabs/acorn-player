@@ -22,8 +22,6 @@ Shell.description = 'base shell'
 
 class Shell.Model extends Backbone.Model
 
-  # Returns a remoteResource object whose data() function
-  # Caches and returns this Shell's thumbnail link. Stub implementation --
   # Intended to be overriden by derived classes.
   thumbnailLink: => NotImplementedError 'Shell::thumbnailLink'
 
