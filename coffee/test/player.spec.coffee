@@ -11,7 +11,7 @@ describe 'acorn.player.Player', ->
   # sample acorn to test with
   acornModel = new acorn.Model
     shell:
-      shell: 'acorn.Shell'
+      id: 'acorn.Shell'
       thumbnail: acorn.config.img.acorn
 
   it 'should be part of acorn.player', ->
