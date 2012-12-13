@@ -22,9 +22,6 @@ Shell.description = 'base shell'
 
 class Shell.Model extends Backbone.Model
 
-  # Intended to be overriden by derived classes.
-  thumbnailLink: => NotImplementedError 'Shell::thumbnailLink'
-
   # disable Backbone's sync functionality
   sync: => NotSupportedError 'Backbone::sync'
 
