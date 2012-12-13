@@ -34,7 +34,7 @@ goog.require 'acorn.player.ShellOptionsView'
 # View to edit an acorn. Renders shells' EditorViews.
 class acorn.player.EditorView extends athena.lib.View
 
-  className: 'editor-view span8'
+  className: @::className + ' editor-view span8'
 
   events: => _.extend super,
     'click #editor-cancel-btn': => @eventhub.trigger 'Editor:Cancel', @

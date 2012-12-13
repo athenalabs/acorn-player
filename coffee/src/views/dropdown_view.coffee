@@ -3,7 +3,7 @@ goog.provide 'acorn.player.DropdownView'
 # View to select options.
 class acorn.player.DropdownView extends athena.lib.View
 
-  className: 'dropdown-view span12'
+  className: @::className + ' dropdown-view span12'
 
   template: _.template '''
     <button class="btn dropdown-toggle" data-toggle="dropdown" href="#">

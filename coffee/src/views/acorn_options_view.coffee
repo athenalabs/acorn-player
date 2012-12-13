@@ -10,7 +10,7 @@ goog.provide 'acorn.player.AcornOptionsView'
 # View to edit acorn options.
 class acorn.player.AcornOptionsView extends athena.lib.View
 
-  className: 'acorn-options-view'
+  className: @::className + ' acorn-options-view'
 
   template: _.template '''
     <div class="row-fluid">

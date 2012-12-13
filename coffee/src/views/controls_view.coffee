@@ -4,7 +4,7 @@ goog.provide 'acorn.player.ControlsView'
 # ---------------------------------------------------------
 class acorn.player.ControlsView extends athena.lib.View
 
-  className: 'controls'
+  className: @::className + ' controls'
 
   initialize: =>
     super

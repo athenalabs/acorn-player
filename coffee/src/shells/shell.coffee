@@ -76,7 +76,7 @@ acorn.shellWithData = Shell.Model.withData
 
 class Shell.ContentView extends athena.lib.View
 
-  className: 'acorn-shell'
+  className: @::className + ' acorn-shell'
 
   controls = []
 
@@ -107,7 +107,7 @@ class Shell.ContentView extends athena.lib.View
 
 class Shell.RemixView extends athena.lib.View
 
-  className: 'acorn-shell-edit'
+  className: @::className + ' acorn-shell-edit'
 
   # Defines the html template for this view.
   # To be overridden in derived classes.

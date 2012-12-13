@@ -3,7 +3,7 @@ goog.provide 'acorn.player.ContentView'
 # View to experience an acorn. Renders shells' ContentViews, and the controls.
 class acorn.player.ContentView extends athena.lib.View
 
-  className: 'content-view'
+  className: @::className + ' content-view'
 
   initialize: =>
     # should these go here?

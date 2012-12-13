@@ -15,7 +15,7 @@ goog.provide 'acorn.player.SummaryView'
 
 class Shell.SummaryView extends athena.lib.View
 
-  className: 'acorn-shell-summary'
+  className: @::className + ' acorn-shell-summary'
 
   template: _.template '''
     <img id="thumbnail" />

@@ -10,7 +10,7 @@ class acorn.player.OverlayView extends athena.lib.View
     <div class="content"></div>
     '''
 
-  className: 'overlay'
+  className: @::className + ' overlay'
 
   render: =>
     @$el.empty()
