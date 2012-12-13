@@ -173,3 +173,10 @@ acorn.util.parseUrl = (url) ->
       result[key + '_'] = val.toLowerCase()
 
   return result
+
+
+# -- regular expressions
+
+acorn.util.LINK_REGEX = /// ^
+  https?://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]
+///
