@@ -19,7 +19,7 @@ describe 'acorn.player.ContentView', ->
 
 
   it 'should be part of acorn.player', ->
-    expect(acorn.player.ContentView).toBeDefined()
+    expect(ContentView).toBeDefined()
 
   describeView = athena.lib.util.test.describeView
   describeView ContentView, athena.lib.View, options

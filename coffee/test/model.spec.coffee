@@ -7,7 +7,7 @@ describe 'acorn.Model', ->
   Model = acorn.Model
 
   it 'should be part of acorn', ->
-    expect(acorn.Model).toBeDefined()
+    expect(Model).toBeDefined()
 
   it 'should derive from Backbone.Model', ->
     expect(athena.lib.util.derives Model, Backbone.Model).toBe true
@@ -82,7 +82,7 @@ describe 'acorn.Model', ->
     #TODO find a way to mock the server in the future.
 
     it 'should be able to sync', ->
-      nyfskeqlyx = new acorn.Model(acornid:'nyfskeqlyx')
+      nyfskeqlyx = new Model(acornid:'nyfskeqlyx')
       spy = new athena.lib.util.test.EventSpy nyfskeqlyx, 'change'
 
       runs ->

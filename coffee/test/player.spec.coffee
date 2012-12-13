@@ -15,7 +15,7 @@ describe 'acorn.player.Player', ->
       thumbnail: acorn.config.img.acorn
 
   it 'should be part of acorn.player', ->
-    expect(acorn.player.Player).toBeDefined()
+    expect(Player).toBeDefined()
 
   it 'should mixin Backbone.Events', ->
     _.each Backbone.Events, (val, key) ->

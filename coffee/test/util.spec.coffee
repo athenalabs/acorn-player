@@ -6,7 +6,7 @@ goog.require 'acorn.util'
 describe 'acorn.util.Time', ->
   Time = acorn.util.Time
   it 'should exist', ->
-    expect(acorn.util.Time).toBeDefined()
+    expect(Time).toBeDefined()
     expect(typeof Time).toBe('function')
 
   pairs =
@@ -67,8 +67,10 @@ describe 'acorn.util.Time', ->
 
 
 describe 'acorn.util.parseUrl', ->
+  parseUrl = acorn.util.parseUrl
+
   it 'should exist', ->
-    expect(typeof acorn.util.parseUrl).toBe('function')
+    expect(typeof parseUrl).toBe('function')
 
   urls =
     'athena.ai':
@@ -97,6 +99,6 @@ describe 'acorn.util.parseUrl', ->
 
   it 'should properly parse urls', ->
     _.each urls, (vars, url) ->
-      parsed = acorn.util.parseUrl url
+      parsed = parseUrl url
       _.each vars, (val, key) ->
         expect(parsed[key]).toBe(val)

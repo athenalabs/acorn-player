@@ -15,7 +15,7 @@ describe 'acorn.player.AcornOptionsView', ->
   describeView AcornOptionsView, athena.lib.View, options
 
   it 'should be part of acorn.player', ->
-    expect(acorn.player.AcornOptionsView).toBeDefined()
+    expect(AcornOptionsView).toBeDefined()
 
   it 'should look good', ->
     # setup DOM

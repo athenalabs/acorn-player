@@ -13,7 +13,7 @@ describe 'acorn.player.ShellOptionsView', ->
   options = model: model
 
   it 'should be part of acorn.player', ->
-    expect(acorn.player.ShellOptionsView).toBeDefined()
+    expect(ShellOptionsView).toBeDefined()
 
   describeView = athena.lib.util.test.describeView
   describeView ShellOptionsView, athena.lib.View, options

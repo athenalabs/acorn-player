@@ -12,7 +12,7 @@ describe 'acorn.player.SplashView', ->
 
 
   it 'should be part of acorn.player', ->
-    expect(acorn.player.SplashView).toBeDefined()
+    expect(SplashView).toBeDefined()
 
   describeView = athena.lib.util.test.describeView
   describeView SplashView, athena.lib.View, options

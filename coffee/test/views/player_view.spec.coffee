@@ -22,7 +22,7 @@ describe 'acorn.player.PlayerView', ->
 
 
   it 'should be part of acorn.player', ->
-    expect(acorn.player.PlayerView).toBeDefined()
+    expect(PlayerView).toBeDefined()
 
   describeView = athena.lib.util.test.describeView
   describeView PlayerView, athena.lib.View, options
