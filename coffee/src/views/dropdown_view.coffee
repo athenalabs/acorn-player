@@ -44,3 +44,4 @@ class acorn.player.DropdownView extends athena.lib.View
     @$el.html @template
       selected: (@options.selected ? items[0])
       items: items
+    @
