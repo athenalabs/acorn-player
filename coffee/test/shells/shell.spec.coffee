@@ -51,12 +51,12 @@ describe 'acorn.shells.Shell', ->
   describe 'acorn.shells.Shell.Model factory constructors', ->
 
     it 'should correctly construct a model from data', ->
-      modelInstance = Shell.Model.withData { id: 'acorn.Shell' }
+      modelInstance = Shell.Model.withData { shellid: 'acorn.Shell' }
       expect(modelInstance).toBeDefined()
-      expect(modelInstance.get 'id').toBe 'acorn.Shell'
+      expect(modelInstance.get 'shellid').toBe 'acorn.Shell'
 
     it 'should throw an error on attempts to construct unregistered shells', ->
-      fn = -> Shell.Model.withData { id: 'foobar' }
+      fn = -> Shell.Model.withData { shellid: 'foobar' }
       expect(fn).toThrow()
 
   describe 'acorn.shells.Shell.ContentView', ->

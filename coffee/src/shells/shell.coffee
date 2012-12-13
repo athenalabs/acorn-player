@@ -40,10 +40,10 @@ class Shell.Model extends Backbone.Model
 
   @withData: (data) =>
     shellClass = _.find acorn.shells, (shell) ->
-      shell.id == data.id
+      shell.id == data.shellid
 
     unless shellClass?
-      UnregisteredShellError data.id
+      UnregisteredShellError data.shellid
 
     new shellClass.Model _.clone data
 
