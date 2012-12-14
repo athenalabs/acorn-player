@@ -98,3 +98,18 @@
 .acorn-player .dropdown-view > .dropdown-menu {
   width: 100%;
 }
+
+.acorn-player .remixer-view > div > .dropdown-view > .dropdown-toggle > .caret {
+  float: none;
+}
+
+.acorn-player .remixer-view > .input-prepend > input {
+}
+
+/* bootstrap fixes */
+
+.acorn-player select,
+.acorn-player textarea,
+.acorn-player input {
+  height: auto;
+}

@@ -2,6 +2,7 @@ goog.provide 'acorn.player.EditorView'
 
 goog.require 'acorn.player.AcornOptionsView'
 goog.require 'acorn.player.ShellOptionsView'
+goog.require 'acorn.player.RemixerView'
 
 # acorn player EditorView:
 # ------------------------------------------------
