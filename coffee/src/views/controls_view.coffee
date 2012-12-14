@@ -31,9 +31,13 @@ class acorn.player.ControlsView extends athena.lib.View
 # a subcomponent view for ControlsView
 class acorn.player.ControlsSubview extends athena.lib.View
 
+  initialize: =>
+    super
+    @initializeControlViews()
+    @
+
   render: =>
     @$el.empty()
-    @constructControlViews()
 
     _.each @controlViews, (cv) =>
       cv.delegateEvents()
@@ -41,7 +45,7 @@ class acorn.player.ControlsSubview extends athena.lib.View
 
     @
 
-  constructControlViews: =>
+  initializeControlViews: =>
     @controls ?= []
 
     @controlViews = _(@controls).chain()
@@ -84,6 +88,7 @@ class acorn.player.ShellControlsView extends acorn.player.ControlsSubview
   #api function enabling a shell to set its controls
   setControls: (controls) =>
     @controls = _.clone controls if _.isArray controls
+    @initializeControlViews()
 
     @softRender()
 

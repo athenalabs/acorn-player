@@ -52,8 +52,8 @@ describe 'acorn.player.ControlsSubview', ->
   it 'should derive from athena.lib.View', ->
     expect(athena.lib.util.derives ControlsSubview, athena.lib.View).toBe true
 
-  it 'should have method "constructControlViews"', ->
-    expect(typeof ControlsSubview::constructControlViews).toBe 'function'
+  it 'should have method "initializeControlViews"', ->
+    expect(typeof ControlsSubview::initializeControlViews).toBe 'function'
 
   it 'should have method "validControl"', ->
     expect(typeof ControlsSubview::validControl).toBe 'function'
@@ -63,7 +63,7 @@ describe 'acorn.player.ControlsSubview', ->
 
   # TODO: test functionality
   # this is waiting on the construction of ControlViews
-  xit '.constructControlViews() should construct control views', ->
+  xit '.initializeControlViews() should initialize control views', ->
   xit '.validControl(ControlView) should validate a ControlView class', ->
   xit '.controlWithId(id) should return control with id if it exists', ->
   xit 'should render a control panel', ->
@@ -128,12 +128,30 @@ describe 'acorn.player.Shell.ControlsView', ->
       'BopIt'
     ]
 
+    # TODO: un-stub initializeControlViews. necessary until ControlViews exist
     scv = new ShellControlsView()
+    spyOn(scv, 'initializeControlViews')
     scv.setControls controls
 
     expect(scv.controls.length).toBe controls.length
     _.each scv.controls, (ctrl) ->
       expect(_.contains controls, ctrl).toBe true
+
+  it 'should initialize control views when controls are set', ->
+    controls = [
+      'TwistIt'
+      'PullIt'
+      'FlickIt'
+      'SpinIt'
+      'BopIt'
+    ]
+
+    scv = new ShellControlsView()
+    spy = spyOn(scv, 'initializeControlViews')
+    scv.setControls controls
+
+    # TODO: test functionality, not just that function was called
+    expect(spy).toHaveBeenCalled()
 
   # TODO: test render functionality
   # this is waiting on the construction of ControlViews
