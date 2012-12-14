@@ -2,8 +2,7 @@ goog.provide 'acorn.player.SourcesView'
 
 goog.require 'acorn.player.OverlayView'
 
-# ** player.SourcesView ** a view to display all sources
-# ------------------------------------------------------
+# a view to display all sources
 class acorn.player.SourcesView extends acorn.player.OverlayView
 
   template: _.template '''

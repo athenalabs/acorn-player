@@ -1,7 +1,6 @@
 goog.provide 'acorn.player.ControlsView'
 
-# ** player.ControlsView ** view with media control buttons
-# ---------------------------------------------------------
+# view with media control buttons
 class acorn.player.ControlsView extends athena.lib.View
 
   className: @::className + ' controls'
@@ -12,8 +11,6 @@ class acorn.player.ControlsView extends athena.lib.View
     @acornControls = new acorn.player.AcornControlsView eventhub: @eventhub
     @shellControls = new acorn.player.ShellControlsView eventhub: @eventhub
     @controlSubviews = [@acornControls, @shellControls]
-
-    @
 
   render: =>
     @$el.empty()
@@ -31,9 +28,7 @@ class acorn.player.ControlsView extends athena.lib.View
     undefined
 
 
-# ** player.ControlsSubview ** a subcomponent view for ControlsView
-# -----------------------------------------------------------------
-
+# a subcomponent view for ControlsView
 class acorn.player.ControlsSubview extends athena.lib.View
 
   render: =>
@@ -48,25 +43,22 @@ class acorn.player.ControlsSubview extends athena.lib.View
 
   constructControlViews: =>
     @controls ?= []
-    self = @
 
     @controlViews = _(@controls).chain()
-      .map (ctrl) -> acorn.player[ctrl]
-      .filter (ctrl) -> self.validControl ctrl
-      .map (ctrl) -> new ctrl {controls: self, eventhub: self.eventhub}
+      .map((ctrl) => acorn.player[ctrl])
+      .filter((ctrl) => @validControl ctrl)
+      .map((ctrl) => new ctrl controls: @, eventhub: @eventhub)
       .value()
 
   validControl: (ControlView) =>
-    acorn.lib.util.derives ControlView, acorn.player.ControlItemView ||
+    athena.lib.util.derives ControlView, acorn.player.ControlItemView ||
       ControlView == acorn.player.SubshellControlsView
 
   controlWithId: (id) =>
     _.find @controlViews, (cv) ->
       cv.id == id
 
-# ** player.AcornControlsView ** view with acorn control buttons
-# --------------------------------------------------------------
-
+# view with acorn control buttons
 class acorn.player.AcornControlsView extends acorn.player.ControlsSubview
 
   class: 'acorn-controls'
@@ -84,9 +76,7 @@ class acorn.player.AcornControlsView extends acorn.player.ControlsSubview
   ]
 
 
-# ** player.ShellControlsView ** view with shell control buttons
-# --------------------------------------------------------------
-
+# view with shell control buttons
 class acorn.player.ShellControlsView extends acorn.player.ControlsSubview
 
   class: 'shell-controls'
@@ -98,12 +88,10 @@ class acorn.player.ShellControlsView extends acorn.player.ControlsSubview
     @softRender()
 
 
-# ** player.SubshellControlsView ** view with control buttons for subshell
+# view with control buttons for subshell
 #
 # This view can be used to subdivide ControlsView. It is passed into
 # ControlsView as though it were an individual control.
-# ------------------------------------------------------------------------
-
 class acorn.player.SubshellControlsView extends acorn.player.ShellControlsView
 
   class: 'subshell-controls'

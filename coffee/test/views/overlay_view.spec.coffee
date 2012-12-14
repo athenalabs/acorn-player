@@ -11,8 +11,9 @@ describe 'acorn.player.OverlayView', ->
   it 'should be part of acorn.player', ->
     expect(OverlayView).toBeDefined()
 
-  it 'should derive from athena.lib.View', ->
-    expect(athena.lib.util.derives OverlayView, athena.lib.View).toBe true
+
+  describeView = athena.lib.util.test.describeView
+  describeView OverlayView, athena.lib.View
 
   it 'should set content property to point to content div on render', ->
     ov = new OverlayView()

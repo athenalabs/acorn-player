@@ -11,9 +11,8 @@ describe 'acorn.player.SourcesView', ->
   it 'should be part of acorn.player', ->
     expect(SourcesView).toBeDefined()
 
-  it 'should derive from acorn.player.OverlayView', ->
-    expect(athena.lib.util.derives SourcesView, acorn.player.OverlayView)
-        .toBe true
+  describeView = athena.lib.util.test.describeView
+  describeView SourcesView, acorn.player.OverlayView, {shell: 'dummy'}
 
   it 'should require shell parameter on construction', ->
     expect(-> new SourcesView {shell: 'dummy'}).not.toThrow()

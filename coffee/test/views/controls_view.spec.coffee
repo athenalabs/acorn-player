@@ -11,8 +11,8 @@ describe 'acorn.player.ControlsView', ->
   it 'should be part of acorn.player', ->
     expect(ControlsView).toBeDefined()
 
-  it 'should derive from athena.lib.View', ->
-    expect(athena.lib.util.derives ControlsView, athena.lib.View).toBe true
+  describeView = athena.lib.util.test.describeView
+  describeView ControlsView, athena.lib.View
 
   describe 'should subdivide itself into acorn controls and shell controls, ' +
       'and', ->

@@ -1,11 +1,10 @@
 goog.provide 'acorn.player.SummaryView'
 
-# Shell.SummaryView -- uniform view to summarize a shell.
-# -------------------------------------------------------
+# uniform view to summarize an acorn or shell.
 #
 # +-----------+
-# |           |   Title of This Wonderful Shell
-# |   thumb   |   A short description of this particular shell.
+# |           |   Title of This Wonderful Thing
+# |   thumb   |   A short description of this particular thing.
 # |           |   [ action ] [ action ] ...
 # +-----------+
 #
@@ -13,7 +12,7 @@ goog.provide 'acorn.player.SummaryView'
 # SummaryView. The title and description are now overridable functions
 # in Shell.
 
-class Shell.SummaryView extends athena.lib.View
+class acorn.player.SummaryView extends athena.lib.View
 
   className: @::className + ' acorn-shell-summary'
 
@@ -30,6 +29,8 @@ class Shell.SummaryView extends athena.lib.View
     @$el.empty()
     @$el.html @template()
 
-    @$el.find('#title').text @shell.title()
-    @$el.find('#description').text @shell.description()
-    @$el.find('#thumbnail').attr 'src', @shell.thumbnailLink()
+    @$('#title').text @shell.title()
+    @$('#description').text @shell.description()
+    @$('#thumbnail').attr 'src', @shell.thumbnailLink()
+
+    @
