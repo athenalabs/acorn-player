@@ -44,20 +44,24 @@ How to use:
   <script type="text/javascript">
 
   var player;
+  var container;
+  var inputData;
+  var inputId;
 
   var showAcorn = function(acornModel) {
     if (player && player.view)
       player.view.destroy();
 
-    $('#acorndata').val(JSON.stringify(acornModel.toJSON(), null, 2));
-    $('input#acornid').val(acornModel.acornid());
+    inputData.val(JSON.stringify(acornModel.toJSON(), null, 2));
+    inputId.val(acornModel.acornid());
+    container.empty();
 
     player = new acorn.player.Player({acornModel: acornModel});
-    player.appendTo('.acorn-player-container');
+    player.appendTo(container);
   };
 
-  var loadAcorn = function() {
-    var acornid = $('input#acornid').val().trim();
+  var loadAcornId = function() {
+    var acornid = inputId.val().trim();
     console.log('looking up acornid:' + acornid);
 
     var acornModel = acorn(acornid);
@@ -72,8 +76,8 @@ How to use:
     });
   };
 
-  var rewriteAcorn = function() {
-    var data = $('#acorndata').val();
+  var loadAcornData = function() {
+    var data = inputData.val();
     data = JSON.parse(data);
     console.log("constructing acorn: ");
     console.log(data);
@@ -83,10 +87,14 @@ How to use:
   };
 
   $(document).ready(function() {
-    rewriteAcorn();
+    container = $('.acorn-player-container');
+    inputData = $('textarea#acorndata');
+    inputId = $('input#acornid');
 
-    $('input#acornid').blur(loadAcorn);
-    $('#acorndata').blur(rewriteAcorn);
+    loadAcornData();
+
+    inputId.blur(loadAcornId);
+    inputData.blur(loadAcornData);
   });
 
   </script>
