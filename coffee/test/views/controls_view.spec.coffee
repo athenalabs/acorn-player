@@ -26,7 +26,7 @@ describe 'acorn.player.ControlsView', ->
       expect(cv.shellControls instanceof acorn.player.ShellControlsView)
           .toBe true
 
-    it 'should contain both control views in a "controlSubviews" property', ->
+    it 'should contain both controls views in a "controlSubviews" property', ->
       csvs = [cv.acornControls, cv.shellControls]
 
       expect(cv.controlSubviews.length).toBe csvs.length
