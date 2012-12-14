@@ -30,6 +30,31 @@ describe 'acorn.player.ContentView', ->
     subviewAttr: 'shellView'
     viewOptions: options
 
+  it 'should create a controlsView', ->
+    contentView = new ContentView options
+    expect(contentView.controlsView instanceof
+        acorn.player.ControlsView).toBe true
+
+  it 'should create a shellView with a shellControlsView', ->
+    spy = spyOn(shell, 'ContentView')
+    contentView = new ContentView options
+
+    expect(contentView.shellView).toBeDefined()
+    expect(spy.mostRecentCall.args[0].controlsView)
+        .toBe contentView.controlsView.shellControls
+
+  it 'should render controlsView before shellView', ->
+    contentView = new ContentView options
+    callStack = []
+
+    controlsSpy = spyOn(contentView.controlsView, 'render')
+        .andCallFake(-> callStack.push 'controlsView.render')
+    shellSpy = spyOn(contentView.shellView, 'render')
+        .andCallFake(-> callStack.push 'shellView.render')
+
+    contentView.render()
+    expect(callStack[0]).toBe 'controlsView.render'
+    expect(callStack[1]).toBe 'shellView.render'
 
   it 'should look good', ->
     # setup DOM

@@ -60,9 +60,23 @@ describe 'acorn.shells.Shell', ->
       expect(fn).toThrow()
 
   describe 'acorn.shells.Shell.ContentView', ->
+    ContentView = Shell.ContentView
+
     it 'should derive from athena.lib.View', ->
       expect(athena.lib.util.derives Shell.ContentView,
              athena.lib.View).toBe true
+
+    it 'should require controlsView parameter', ->
+      controlsView = setControls: ->
+
+      expect(-> new ContentView()).toThrow()
+      expect(-> new ContentView controlsView: controlsView).not.toThrow()
+
+    it 'should set controlsView controls on initialize', ->
+      controlsView = setControls: jasmine.createSpy 'setControls'
+      new ContentView controlsView: controlsView
+
+      expect(controlsView.setControls).toHaveBeenCalled()
 
   describe 'acorn.shells.Shell.RemixView', ->
     it 'should derive from athena.lib.View', ->
