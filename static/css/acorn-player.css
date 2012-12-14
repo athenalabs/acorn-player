@@ -91,6 +91,10 @@
   width: 100%;
 }
 
+.acorn-player .dropdown-view > .dropdown-toggle > .caret {
+  float: right;
+}
+
 .acorn-player .dropdown-view > .dropdown-menu {
   width: 100%;
 }
