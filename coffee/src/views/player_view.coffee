@@ -16,11 +16,9 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
   initialize: =>
     super
 
-    @eventhub.on 'show:edit', => @content @editorView()
+    @eventhub.on 'show:editor', => @content @editorView()
     @eventhub.on 'show:splash', => @content @splashView()
     @eventhub.on 'show:content', => @content @contentView()
-
-    @content @splashView()
 
   contentView: =>
     @_contentView ?= new acorn.player.ContentView
