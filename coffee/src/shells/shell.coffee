@@ -78,7 +78,7 @@ class Shell.ContentView extends athena.lib.View
 
   className: @::className + ' acorn-shell'
 
-  controls = []
+  controls: []
 
   initialize: =>
     super
