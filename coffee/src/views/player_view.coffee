@@ -20,6 +20,12 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     @eventhub.on 'show:splash', => @content @splashView()
     @eventhub.on 'show:content', => @content @contentView()
 
+    @eventhub.on 'Editor:Save', @onSave
+    @eventhub.on 'Editor:Cancel', =>
+      @_editorView?.destroy()
+      @_editorView = undefined
+      @content @contentView()
+
   contentView: =>
     @_contentView ?= new acorn.player.ContentView
       eventhub: @eventhub
@@ -40,3 +46,17 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
         acornModel: @model.acornModel.clone()
         shellModel: @model.shellModel.clone()
     @_editorView
+
+
+  onSave: =>
+    @model.acornModel.set @_editorView.model.acornModel.attributes
+    @model.shellModel.set @model.acornModel.shellData()
+
+    # clear previous contentView to force reload, then show
+    @_contentView?.destroy()
+    @_contentView = undefined
+    @content @contentView()
+
+    # clear editorView
+    @_editorView?.destroy()
+    @_editorView = undefined
