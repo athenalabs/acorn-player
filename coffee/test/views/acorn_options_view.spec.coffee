@@ -17,6 +17,14 @@ describe 'acorn.player.AcornOptionsView', ->
   it 'should be part of acorn.player', ->
     expect(AcornOptionsView).toBeDefined()
 
+  it 'should change model.title on title blur', ->
+    view = new AcornOptionsView options
+    view.render()
+    expect(view.model.get 'title').toBe 'The Differential'
+    view.$('#title').val 'Not The Differential'
+    view.$('#title').trigger 'blur'
+    expect(view.model.get 'title').toBe 'Not The Differential'
+
   it 'should look good', ->
     # setup DOM
     acorn.util.appendCss()

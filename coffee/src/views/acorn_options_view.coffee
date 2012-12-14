@@ -12,6 +12,9 @@ class acorn.player.AcornOptionsView extends athena.lib.View
 
   className: @::className + ' acorn-options-view'
 
+  events: => _.extend super,
+    'blur #title': => @model.set title: @$('#title').val()
+
   template: _.template '''
     <div class="row-fluid">
       <div class="span3">
