@@ -116,8 +116,8 @@ class Shell.RemixView extends athena.lib.View
 
   initialize: =>
     super
-    @eventhub.on 'change:shell', this.OnChangeShell
-    @eventhub.on 'swap.shell', this.onSwapShell
+    @eventhub.on 'change:shell', @OnChangeShell
+    @eventhub.on 'swap.shell', @onSwapShell
 
   render: =>
     @$el.html @template()

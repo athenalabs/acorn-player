@@ -7,15 +7,8 @@ goog.require 'acorn.config'
 Shell = acorn.shells.Shell
 EmptyShell = acorn.shells.EmptyShell
 
-# The unique `shell` name of an acorn Shell.
-# The convention is to namespace by vendor. e.g. `acorn.Document`.
 EmptyShell.id = 'acorn.EmptyShell'
-
-# Returns a simple title of the shell
-# Override it with your own shell-specific code.
 EmptyShell.title = 'EmptyShell'
-
-# Description of the shell
 EmptyShell.description = 'an empty, nutless shell'
 
 
