@@ -4,7 +4,7 @@ goog.provide 'acorn.player.SplashView'
 # Meant to load quickly, to make many Players cheap to render.
 class acorn.player.SplashView extends athena.lib.View
 
-  className: @::className + ' splash-view'
+  className: @classNameExtend 'splash-view'
 
   events: => _.extend super,
     'click #image': => @eventhub.trigger 'show:content'

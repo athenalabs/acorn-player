@@ -15,7 +15,7 @@ goog.require 'acorn.player.DropdownView'
 # View to edit shell options.
 class acorn.player.ShellOptionsView extends athena.lib.View
 
-  className: @::className + ' shell-options-view row-fluid'
+  className: @classNameExtend 'shell-options-view row-fluid'
 
   initialize: =>
     super

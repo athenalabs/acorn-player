@@ -10,7 +10,7 @@ goog.provide 'acorn.player.AcornOptionsView'
 # View to edit acorn options.
 class acorn.player.AcornOptionsView extends athena.lib.View
 
-  className: @::className + ' acorn-options-view'
+  className: @classNameExtend 'acorn-options-view'
 
   events: => _.extend super,
     'blur #title': => @model.set title: @$('#title').val()

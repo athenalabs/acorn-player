@@ -35,7 +35,7 @@ goog.require 'acorn.player.RemixerView'
 # View to edit an acorn. Renders shells' EditorViews.
 class acorn.player.EditorView extends athena.lib.View
 
-  className: @::className + ' editor-view span8'
+  className: @classNameExtend 'editor-view span8'
 
   events: => _.extend super,
     'click #editor-cancel-btn': => @eventhub.trigger 'Editor:Cancel', @

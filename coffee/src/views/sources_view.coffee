@@ -21,7 +21,7 @@ class acorn.player.SourcesView extends acorn.player.OverlayView
     <div class="source"><%= source %></div>
     '''
 
-  className: @::className + ' sources'
+  className: @classNameExtend 'sources'
 
   events: => _.extend super,
     'click button#close': 'onClickClose'
