@@ -3,7 +3,7 @@ goog.provide 'acorn.player.ControlsView'
 # view with media control buttons
 class acorn.player.ControlsView extends athena.lib.View
 
-  className: @classNameExtend 'controls'
+  className: @classNameExtend 'controls-view'
 
   initialize: =>
     super
@@ -30,6 +30,8 @@ class acorn.player.ControlsView extends athena.lib.View
 
 # a subcomponent view for ControlsView
 class acorn.player.ControlsSubview extends athena.lib.View
+
+  className: @classNameExtend 'controls-subview'
 
   initialize: =>
     super
@@ -64,7 +66,7 @@ class acorn.player.ControlsSubview extends athena.lib.View
 # view with acorn control buttons
 class acorn.player.AcornControlsView extends acorn.player.ControlsSubview
 
-  class: 'acorn-controls'
+  className: @classNameExtend 'acorn-controls-view'
 
   initialize: =>
     super
@@ -82,7 +84,7 @@ class acorn.player.AcornControlsView extends acorn.player.ControlsSubview
 # view with shell control buttons
 class acorn.player.ShellControlsView extends acorn.player.ControlsSubview
 
-  class: 'shell-controls'
+  className: @classNameExtend 'shell-controls-view'
 
   #api function enabling a shell to set its controls
   setControls: (controls) =>
@@ -98,4 +100,4 @@ class acorn.player.ShellControlsView extends acorn.player.ControlsSubview
 # ControlsView as though it were an individual control.
 class acorn.player.SubshellControlsView extends acorn.player.ShellControlsView
 
-  class: 'subshell-controls'
+  className: @classNameExtend 'subshell-controls-view'
