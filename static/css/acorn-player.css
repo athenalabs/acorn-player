@@ -1,4 +1,8 @@
 
+.acorn-player {
+  border: 1px solid #DDD;
+}
+
 /* center the content inside the player (some isn't full-width) */
 .acorn-player > div[class*="row"] > div,
 .acorn-player > div[class*="row"] > div:first-child {
