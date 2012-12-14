@@ -118,7 +118,7 @@ describe 'acorn.player.PlayerView', ->
       hub.trigger 'Editor:Cancel'
       expect(view.content() instanceof acorn.player.ContentView).toBe true
 
-    it 'should show contentView on `Editor:Save`', ->
+    it 'should show contentView on `Editor:Saved`', ->
       hub = new athena.lib.View
       view = new PlayerView model: model, eventhub: hub
       view.render()
@@ -126,7 +126,7 @@ describe 'acorn.player.PlayerView', ->
       hub.trigger 'show:editor'
       expect(view.content() instanceof acorn.player.EditorView).toBe true
       expect(view._editorView).toBeDefined()
-      hub.trigger 'Editor:Save'
+      hub.trigger 'Editor:Saved'
       expect(view.content() instanceof acorn.player.ContentView).toBe true
 
     it 'should destroy EditorView on `Editor:Cancel`', ->
@@ -144,7 +144,7 @@ describe 'acorn.player.PlayerView', ->
       expect(view._editorView).not.toBeDefined()
       expect(spy).toHaveBeenCalled()
 
-    it 'should destroy EditorView on `Editor:Save`', ->
+    it 'should destroy EditorView on `Editor:Saved`', ->
       hub = new athena.lib.View
       view = new PlayerView model: model, eventhub: hub
       view.render()
@@ -155,11 +155,11 @@ describe 'acorn.player.PlayerView', ->
       expect(view._editorView).toBeDefined()
 
       spy = spyOn(view._editorView, 'destroy').andCallThrough()
-      hub.trigger 'Editor:Save'
+      hub.trigger 'Editor:Saved'
       expect(view._editorView).not.toBeDefined()
       expect(spy).toHaveBeenCalled()
 
-    it 'should destroy and replace existing ContentView on `Editor:Save`', ->
+    it 'should destroy and replace existing ContentView on `Editor:Saved`', ->
       hub = new athena.lib.View
       view = new PlayerView model: model, eventhub: hub
       view.render()
@@ -173,7 +173,7 @@ describe 'acorn.player.PlayerView', ->
       expect(view.content() instanceof acorn.player.EditorView).toBe true
       expect(view._editorView).toBeDefined()
 
-      hub.trigger 'Editor:Save'
+      hub.trigger 'Editor:Saved'
       expect(spy).toHaveBeenCalled()
       expect(view._contentView).toBeDefined()
       expect(view._contentView).not.toBe contentView
@@ -210,7 +210,7 @@ describe 'acorn.player.PlayerView', ->
       expect(view.model.acornModel.attributes).toEqual acornData
       expect(view.model.shellModel.attributes).toEqual shellData
 
-    it 'should modify acornModel and shellModel on `Editor:Save`', ->
+    it 'should modify acornModel and shellModel on `Editor:Saved`', ->
       hub = new athena.lib.View
       view = new PlayerView model: model, eventhub: hub
       view.render()
@@ -235,7 +235,7 @@ describe 'acorn.player.PlayerView', ->
 
       # need to fake the consolidation _editorView.save does
       editorData.acornModel.shellData editorData.shellModel.attributes
-      hub.trigger 'Editor:Save'
+      hub.trigger 'Editor:Saved'
 
       # player data should be changed
       expect(view.model.acornModel.get 'acornid').toEqual 'otheracornid'

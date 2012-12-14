@@ -20,7 +20,7 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     @eventhub.on 'show:splash', => @content @splashView()
     @eventhub.on 'show:content', => @content @contentView()
 
-    @eventhub.on 'Editor:Save', @onSave
+    @eventhub.on 'Editor:Saved', @onSave
     @eventhub.on 'Editor:Cancel', =>
       @_editorView?.destroy()
       @_editorView = undefined
