@@ -32,6 +32,12 @@ describe 'acorn.Model', ->
     expect(b.clone().attributes.a.b.c).toEqual deep
     expect(b.clone().attributes.a.b.c).toBe deep
 
+  it 'should have a toJSONString function', ->
+    expect(typeof Model::toJSONString).toBe 'function'
+    m = new Model {acornid:'deep', a: b: c: {'a': 5}}
+    s = m.toJSONString()
+    expect(JSON.stringify m.attributes).toEqual s
+
   describe 'acorn.Model.acornid property', ->
 
     it 'acornid should be a property', ->

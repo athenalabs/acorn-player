@@ -48,6 +48,13 @@ describe 'acorn.shells.Shell', ->
       expect(modelInstance.get 'a').toBe 2
       expect(modelClone.get 'a').toBe 42
 
+    it 'should have a toJSONString function', ->
+      expect(typeof Shell.Model::toJSONString).toBe 'function'
+      m = new Shell.Model {shellid:'Shell', a: b: c: {'a': 5}}
+      s = m.toJSONString()
+      expect(JSON.stringify m.attributes).toEqual s
+
+
   describe 'acorn.shells.Shell.Model factory constructors', ->
 
     it 'should correctly construct a model from data', ->

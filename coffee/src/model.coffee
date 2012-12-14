@@ -42,8 +42,9 @@ class acorn.Model extends Backbone.Model
   #
   # See https://github.com/documentcloud/underscore/issues/162 as to why
   # underscore does not implement deep copy.
-  clone: ->
-    return new @.constructor JSON.parse JSON.stringify @toJSON()
+  clone: => return new @.constructor JSON.parse @toJSONString()
+
+  toJSONString: => return JSON.stringify @toJSON()
 
   # Model persistence through CRUD style RPC
   sync: (method, model, options) =>
