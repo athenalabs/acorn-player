@@ -11,7 +11,7 @@ goog.require 'acorn.player.SourcesView'
 # Main view. Container for the other three main views.
 class acorn.player.PlayerView extends athena.lib.ContainerView
 
-  className: @::className + ' player-view row-fluid'
+  className: @::className + ' acorn-player player-view row-fluid'
 
   initialize: =>
     super
