@@ -5,6 +5,7 @@ goog.require 'acorn.Model'
 
 describe 'acorn.Model', ->
   Model = acorn.Model
+  EventSpy = athena.lib.util.test.EventSpy
 
   it 'should be part of acorn', ->
     expect(Model).toBeDefined()
@@ -87,16 +88,49 @@ describe 'acorn.Model', ->
     #TODO expand this into comprehensive tests.
     #TODO find a way to mock the server in the future.
 
-    it 'should be able to sync', ->
-      nyfskeqlyx = new Model(acornid:'nyfskeqlyx')
-      spy = new athena.lib.util.test.EventSpy nyfskeqlyx, 'change'
+    it 'should be able to fetch', ->
+      nyfskeqlyx = new Model acornid:'nyfskeqlyx'
+      spy = new EventSpy nyfskeqlyx, 'change'
 
-      runs ->
-        nyfskeqlyx.fetch()
-
+      runs -> nyfskeqlyx.fetch()
       waitsFor (-> spy.triggered), 'fetch should complete', 5000
 
       runs ->
         shell = nyfskeqlyx.shellData()
         expect(shell.shell).toBe 'acorn.YouTubeShell'
         expect(shell.link).toBe 'https://www.youtube.com/watch?v=yYAw79386WI'
+
+    it 'should be able to save', ->
+      nyfskeqlyx1 = new Model acornid:'nyfskeqlyx'
+      nyfskeqlyx2 = new Model acornid:'nyfskeqlyx'
+      changeSpy = new EventSpy nyfskeqlyx1, 'change'
+      date = new Date().toString()
+
+      runs -> nyfskeqlyx1.fetch()
+
+      waitsFor (-> changeSpy.triggered), 'fetch should complete', 5000
+      runs ->
+        expect(nyfskeqlyx1.get 'updated').not.toEqual date
+        nyfskeqlyx1.set({updated: date})
+        nyfskeqlyx1.synced = false
+        nyfskeqlyx1.save {},
+          success: => nyfskeqlyx1.synced = true
+          error: (jqXHR, response, error) =>
+            console.log response
+            console.log error
+            nyfskeqlyx1.synced = true
+
+      waitsFor (=> nyfskeqlyx1.synced), 'sync should complete', 10000
+      runs ->
+        expect(nyfskeqlyx1.get 'updated').toEqual date
+        expect(nyfskeqlyx2.get 'updated').not.toEqual date
+        expect(nyfskeqlyx2.get 'updated').not.toEqual nyfskeqlyx1.get 'updated'
+
+        changeSpy = new EventSpy nyfskeqlyx2, 'change'
+        nyfskeqlyx2.fetch()
+
+      waitsFor (-> changeSpy.triggered), 'fetch should complete', 5000
+      runs ->
+        expect(nyfskeqlyx1.get 'updated').toEqual date
+        expect(nyfskeqlyx2.get 'updated').toEqual date
+        expect(nyfskeqlyx2.get 'updated').toEqual nyfskeqlyx1.get 'updated'
