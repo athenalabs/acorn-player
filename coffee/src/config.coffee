@@ -4,7 +4,7 @@ if typeof acorn is 'undefined'
 goog.provide 'acorn.config'
 
 _.extend acorn.config,
-  domain: 'acorn.athena.ai'
+  domain: 'staging.acorn.athena.ai'
   version: '0.0.0'
   api:
     version: '0.0.1'
