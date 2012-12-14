@@ -19,7 +19,7 @@ describe 'acorn.player.EditorView', ->
 
   # patch the models for testing
   model.acornModel.shellData = -> _.clone model.shellModel.attributes
-  model.acornModel.save = (opts) -> opts.error()
+  model.acornModel.save = (attrs, opts) -> opts.error()
 
   # options for EditorView contruction
   options = model: model
@@ -101,7 +101,7 @@ describe 'acorn.player.EditorView', ->
       view = new EditorView options
 
       saveSpy = spyOn model.acornModel, 'save'
-      saveSpy.andCallFake (opts) -> opts.success()
+      saveSpy.andCallFake (attrs, opts) -> opts.success()
       eventSpy = new EventSpy view.eventhub, 'Editor:Saved'
 
       expect(saveSpy).not.toHaveBeenCalled()
@@ -114,7 +114,7 @@ describe 'acorn.player.EditorView', ->
     it 'should NOT re-enable `Save` button on save success', ->
       view = new EditorView options
       spy = spyOn model.acornModel, 'save'
-      spy.andCallFake (opts) -> opts.success()
+      spy.andCallFake (attrs, opts) -> opts.success()
 
       view.render()
       expect(view.$('#editor-save-btn').attr 'disabled').toBe undefined
@@ -127,7 +127,7 @@ describe 'acorn.player.EditorView', ->
     it 'should re-enable `Save` button on save error', ->
       view = new EditorView options
       spy = spyOn model.acornModel, 'save'
-      spy = spy.andCallFake (opts) -> opts.error()
+      spy = spy.andCallFake (attrs, opts) -> opts.error()
 
       view.render()
       expect(view.$('#editor-save-btn').attr 'disabled').toBe undefined

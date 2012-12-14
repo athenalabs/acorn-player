@@ -77,7 +77,7 @@ class acorn.player.EditorView extends athena.lib.View
     @$('#editor-save-btn').attr 'disabled', 'disabled'
     @$('#editor-save-btn').text 'Saving...'
 
-    @model.acornModel.save
+    @model.acornModel.save {},
       success: =>
         @$('#editor-save-btn').text 'Saved!'
         @eventhub.trigger 'Editor:Saved', @
