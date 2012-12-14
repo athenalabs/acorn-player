@@ -46,6 +46,9 @@ class acorn.Model extends Backbone.Model
 
   toJSONString: => return JSON.stringify @toJSON()
 
+  isNew: =>
+    @acornid() == 'new' or super
+
   # Model persistence through CRUD style RPC
   sync: (method, model, options) =>
     requestType = @crudMethodMap[method]
