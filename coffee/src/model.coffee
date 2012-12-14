@@ -54,6 +54,8 @@ class acorn.Model extends Backbone.Model
     params =
       type: requestType
       dataType: 'json'
+      crossDomain: true
+      processData: false
 
     # Ensure that we have a URL.
     if not options.url
@@ -62,7 +64,7 @@ class acorn.Model extends Backbone.Model
     # Ensure that we have the appropriate request data.
     if (not options.data) and model and method in ['create', 'update']
       params.contentType = 'application/json'
-      params.data = model.json()
+      params.data = model.toJSONString()
 
     # Don't process data on a non-GET request.
     if not params.type is 'GET'
@@ -72,7 +74,7 @@ class acorn.Model extends Backbone.Model
 
     error = options.error
     options.error = (xhr, type) ->
-      console.log("sync error: type");
+      console.log("sync error: #{type}");
       error? xhr, type
 
     # Make the request, allowing the user to override any Ajax options.
