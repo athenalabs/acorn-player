@@ -1,5 +1,6 @@
 
 .acorn-player > .player-view {
+  text-align: left;
   border: 1px solid #DDD;
   border-radius: 3px;
   width: auto;
@@ -43,13 +44,17 @@
 }
 
 .acorn-player .editor-view {
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 20px;
+  min-width: 540px;
 }
 
 .acorn-player .editor-view > * {
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+.acorn-player .acorn-options-view input {
+  width: 100%;
 }
 
 .acorn-player .editor-view > .toolbar-view {
@@ -67,8 +72,8 @@
 
 .acorn-player .thumbnail-view {
   display: inline-cell;
-  width: 80px;
-  height: 80px;
+  width: 74px;
+  height: 74px;
 }
 
 .acorn-player .thumbnail-view > img {
