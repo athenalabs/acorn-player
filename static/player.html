@@ -48,16 +48,25 @@ How to use:
   var inputData;
   var inputId;
 
+  var updateInputs = function(acornModel) {
+    inputData.val(JSON.stringify(acornModel.toJSON(), null, 2));
+    inputId.val(acornModel.acornid());
+  };
+
   var showAcorn = function(acornModel) {
     if (player && player.view)
       player.view.destroy();
 
-    inputData.val(JSON.stringify(acornModel.toJSON(), null, 2));
-    inputId.val(acornModel.acornid());
+    updateInputs(acornModel);
     container.empty();
 
+    if (player)
+      player.acornModel.off('change')
     player = new acorn.player.Player({acornModel: acornModel});
     player.appendTo(container);
+    player.acornModel.on('change', function () {
+      updateInputs(player.acornModel);
+    });
   };
 
   var loadAcornId = function() {
@@ -147,6 +156,7 @@ How to use:
     "shellid": "acorn.Shell"
   },
   "acornid": "new",
+  "title": "The Best Acorn Ever",
   "thumbnail": "http://acorn.athena.ai/img/acorn.png"
 }
     </textarea>
