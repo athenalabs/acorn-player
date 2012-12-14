@@ -1,6 +1,8 @@
 
-.acorn-player {
+.acorn-player > .player-view {
   border: 1px solid #DDD;
+  border-radius: 3px;
+  width: auto;
 }
 
 /* center the content inside the player (some isn't full-width) */

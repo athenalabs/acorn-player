@@ -26,3 +26,8 @@ class acorn.player.Player
       eventhub: @eventhub
 
     @eventhub.trigger 'show:splash'
+
+  appendTo: (sel) =>
+    @$el ?= $('<div>').addClass('acorn-player')
+    @$el.append @view.render().el
+    @$el.appendTo $(sel)

@@ -53,8 +53,7 @@ How to use:
     $('input#acornid').val(acornModel.acornid());
 
     player = new acorn.player.Player({acornModel: acornModel});
-    player.view.render();
-    $('.acorn-player-container').append(player.view.el);
+    player.appendTo('.acorn-player-container');
   };
 
   var loadAcorn = function() {
