@@ -32,8 +32,6 @@ class acorn.player.SourcesView extends acorn.player.OverlayView
     @shell = @options.shell
     acorn.errors.MissingParameterError 'SourcesView', 'shell' unless @shell
 
-    @
-
   render: =>
     super
 

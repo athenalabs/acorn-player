@@ -34,7 +34,6 @@ class acorn.player.ControlsSubview extends athena.lib.View
   initialize: =>
     super
     @initializeControlViews()
-    @
 
   render: =>
     @$el.empty()

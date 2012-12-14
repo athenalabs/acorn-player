@@ -8,7 +8,6 @@ class acorn.Model extends Backbone.Model
     super
     if not @acornid()
       @acornid 'new'
-    @
 
   defaults: ->
     shell: {shell: 'acorn.LinkShell'}

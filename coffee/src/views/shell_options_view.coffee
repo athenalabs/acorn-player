@@ -23,7 +23,6 @@ class acorn.player.ShellOptionsView extends athena.lib.View
     @dropdownView = new acorn.player.DropdownView
       items: placeholder
       selected: @model.get('shellid')
-    @
 
   render: =>
     super

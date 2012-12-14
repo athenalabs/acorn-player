@@ -91,8 +91,6 @@ class Shell.ContentView extends athena.lib.View
     @controlsView = @options.controlsView
     @controlsView.setControls _.clone @controls
 
-    @
-
   remove: =>
     @eventhub.off 'playback:play', @onPlaybackPlay
     @eventhub.off 'playback:stop', @onPlaybackStop
@@ -118,10 +116,10 @@ class Shell.RemixView extends athena.lib.View
     super
     @eventhub.on 'change:shell', this.OnChangeShell
     @eventhub.on 'swap.shell', this.onSwapShell
-    @
 
   render: =>
     @$el.html @template()
+    @
 
   isEditing: acorn.util.property false
 
