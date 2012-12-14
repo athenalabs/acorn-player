@@ -14,7 +14,7 @@ describe 'acorn.shells.Shell', ->
     _.each requiredProperties, (property) ->
       expect(Shell[property]).toBeDefined()
       expect(_.isString Shell[property]).toBe true
-  
+
   it 'should contain required Model and View classes', ->
     requiredClasses = [ 'Model', 'ContentView', 'RemixView' ]
     _.each requiredClasses, (property) ->
@@ -42,11 +42,16 @@ describe 'acorn.shells.Shell', ->
       expect(modelInstance.save).toThrow()
       expect(modelInstance.sync).toThrow()
 
-    it 'should correctly support clone', ->
-      modelClone = modelInstance.clone()
-      modelClone.set 'a', 42
-      expect(modelInstance.get 'a').toBe 2
-      expect(modelClone.get 'a').toBe 42
+    it 'should be clonable (with deep-copies)', ->
+      deep = {'a': 5}
+      m = new Shell.Model {shellid:'Shell', a: b: c: deep}
+      expect(m.clone().attributes.a.b.c).toEqual deep
+      expect(m.clone().attributes.a.b.c).not.toBe deep
+
+      # ensure the same thing breaks on Backbone's non-deep copy
+      b = new Backbone.Model {shellid:'Shell', a: b: c: deep}
+      expect(b.clone().attributes.a.b.c).toEqual deep
+      expect(b.clone().attributes.a.b.c).toBe deep
 
     it 'should have a toJSONString function', ->
       expect(typeof Shell.Model::toJSONString).toBe 'function'
