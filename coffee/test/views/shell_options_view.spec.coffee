@@ -24,29 +24,12 @@ describe 'acorn.player.ShellOptionsView', ->
     subviewAttr: 'dropdownView'
     viewOptions: options
 
-  describe 'ShellOptionsView::dropdownView subview', ->
-
-    it 'should be defined on init', ->
-      view = new ShellOptionsView options
-      expect(view.dropdownView).toBeDefined()
-
-    it 'should be an instanceof DropdownView', ->
-      view = new ShellOptionsView options
-      expect(view.dropdownView instanceof acorn.player.DropdownView)
-
-    it 'should not be rendering initially', ->
-      view = new ShellOptionsView options
-      expect(view.dropdownView.rendering).toBe false
-
-    it 'should be rendering with DropdownView', ->
-      view = new ShellOptionsView options
-      view.render()
-      expect(view.dropdownView.rendering).toBe true
-
-    it 'should be a DOM child of the DropdownView', ->
-      view = new ShellOptionsView options
-      view.render()
-      expect(view.dropdownView.el.parentNode).toEqual view.el
+  it 'should change shell.shellid on Dropdown:Selected', ->
+    view = new ShellOptionsView options
+    view.render()
+    expect(view.model.get 'shellid').toBe 'acorn.Shell'
+    view.dropdownView.selected('acorn.EmptyShell')
+    expect(view.model.get 'shellid').toBe 'acorn.EmptyShell'
 
   it 'should look good', ->
     # setup DOM
