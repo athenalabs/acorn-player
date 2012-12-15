@@ -75,10 +75,11 @@ acorn.util.appendCss = (srcs) ->
   srcs ?= '/static/css/acorn-player.css'
   srcs = [srcs] unless _.isArray(srcs)
   _.each srcs, (src) ->
-    css = $('<link>')
-    css.attr 'rel', 'stylesheet'
-    css.attr 'href', src
-    $('body').append css
+    unless $("link[rel='stylesheet'][href='#{src}']").length
+      css = $('<link>')
+      css.attr 'rel', 'stylesheet'
+      css.attr 'href', src
+      $('body').append css
 
 # Preserve image aspect ratio but contain it wholly
 # See https://github.com/schmidsi/jquery-object-fit
