@@ -10,7 +10,7 @@ acorn.util.urlRegEx = (url) ->
   ///^(https?:\/\/)?#{url}$///
 
 acorn.util.isUrl = (url) ->
-  acorn.util.urlRegEx.test url
+  acorn.util.urlRegEx().test url
 
 # helpers to construct acorn urls TODO: delete these?
 acorn.util.url = ->
