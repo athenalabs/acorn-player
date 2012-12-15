@@ -165,3 +165,14 @@ describe 'acorn.player.SubshellControlsView', ->
   # TODO: test shell controls subdivision functionality
   # this is waiting on the construction of ControlViews
   xit 'should enable subdivision of shell controls panel', ->
+
+
+describe 'ControlsViews, generally', ->
+  it 'should look good', ->
+    # setup DOM
+    acorn.util.appendCss()
+    $body = $ 'body'
+
+    # add a SplashView into the DOM to see how it looks.
+    view = new acorn.player.ControlsView
+    $body.append view.render().el
