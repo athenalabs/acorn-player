@@ -11,8 +11,8 @@ describe 'acorn.player.ContentView', ->
     shellModel: new Backbone.Model
 
   # emulate shell, object with a ContentView property
-  shell = ContentView: athena.lib.View
-  model.shellModel.shell = shell
+  module = ContentView: athena.lib.View
+  model.shellModel.module = module
 
   # options for ContentView contruction
   options = model: model
@@ -26,7 +26,7 @@ describe 'acorn.player.ContentView', ->
 
   athena.lib.util.test.describeSubview
     View: ContentView
-    Subview: shell.ContentView
+    Subview: module.ContentView
     subviewAttr: 'shellView'
     viewOptions: options
 

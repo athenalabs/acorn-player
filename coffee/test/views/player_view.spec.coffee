@@ -17,8 +17,8 @@ describe 'acorn.player.PlayerView', ->
       type: 'image'
 
   # emulate shell, object with a ContentView property
-  shell = ContentView: athena.lib.View
-  model.shellModel.shell = shell
+  module = ContentView: athena.lib.View
+  model.shellModel.module = module
 
   # options for ContentView contruction
   options = model: model

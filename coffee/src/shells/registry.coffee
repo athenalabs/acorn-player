@@ -38,7 +38,7 @@ class acorn.shells.Registry
     # set the `shell` property of each class within shellModule to point
     # back to the shellModule namespace
     _.each classProperties, (property) ->
-      shellModule[property].shell = shellModule
+      shellModule[property].module = shellModule
 
     # ensure this module isn't already registered
     if @modules[shellModule.id]?

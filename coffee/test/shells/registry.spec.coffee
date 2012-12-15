@@ -51,9 +51,9 @@ describe 'acorn.shells.Registry', ->
       expect(shellModule).toBe Registry.modules['ApertureScience.GladOS']
 
     it 'should correctly create backpointers to the module', ->
-      expect(shellModule.Model.shell).toBe shellModule
-      expect(shellModule.ContentView.shell).toBe shellModule
-      expect(shellModule.RemixView.shell).toBe shellModule
+      expect(shellModule.Model.module).toBe shellModule
+      expect(shellModule.ContentView.module).toBe shellModule
+      expect(shellModule.RemixView.module).toBe shellModule
 
     describe 'Registry.registerModule error handling', ->
       it 'should throw error if shell is already registered', ->

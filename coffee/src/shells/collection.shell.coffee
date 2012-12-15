@@ -71,7 +71,7 @@ class CollectionShell.ContentView extends Shell.ContentView
 
     # keep all subviews in memory - perhaps in the future only keep p<c>n.
     @shellViews = _.map @shellModels, (shellModel) =>
-      view = new shellModel.shell.ContentView eventhub: @eventhub
+      view = new shellModel.module.ContentView eventhub: @eventhub
       # TODO view.on 'playback:ended', @onShellPlaybackEnded
       view
 

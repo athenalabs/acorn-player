@@ -43,8 +43,7 @@ class acorn.player.ContentView extends athena.lib.View
     # @model.shellModel.on 'change', @render
     # @model.acornModel.on 'change', @render
 
-    # construct a shell ContentView
-    @shellView = new @model.shellModel.shell.ContentView
+    @shellView = new @model.shellModel.module.ContentView
       model: @model.shellModel
       eventhub: @eventhub
 
