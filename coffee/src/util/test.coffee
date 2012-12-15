@@ -69,22 +69,32 @@ acorn.util.test.describeShellModule = (Module, tests) =>
     describe "#{Module.id}.ContentView", ->
       ContentView = Module.ContentView
 
+      options =
+        model: new Module.Model
+        controlsView: setControls: ->
+
       it 'should derive from athena.lib.View', ->
         expect(derives ContentView, athena.lib.View).toBe true
 
       it 'should derive from (or be) Shell.ContentView', ->
         expect(isOrDerives ContentView, Shell.ContentView).toBe true
 
-      it 'should require controlsView parameter', ->
-        controlsView = setControls: ->
-        expect(-> new ContentView()).toThrow()
-        expect(-> new ContentView controlsView: controlsView).not.toThrow()
+      it 'should require `model` parameter', ->
+        throwOptions = _.clone options
+        delete throwOptions.model
+        expect(-> new ContentView options).not.toThrow()
+        expect(-> new ContentView throwOptions).toThrow()
+
+      it 'should require `controlsView` parameter', ->
+        throwOptions = _.clone options
+        delete throwOptions.controlsView
+        expect(-> new ContentView options).not.toThrow()
+        expect(-> new ContentView throwOptions).toThrow()
 
       it 'should set controlsView controls on initialize', ->
-        controlsView = setControls: jasmine.createSpy 'setControls'
-        new ContentView controlsView: controlsView
-
-        expect(controlsView.setControls).toHaveBeenCalled()
+        spy = spyOn options.controlsView, 'setControls'
+        new ContentView options
+        expect(spy).toHaveBeenCalled()
 
     describe "#{Module.id}.RemixView", ->
       RemixView = Module.RemixView

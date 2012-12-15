@@ -87,8 +87,11 @@ class Shell.ContentView extends athena.lib.View
     @eventhub.on 'playback:play', @onPlaybackPlay
     @eventhub.on 'playback:stop', @onPlaybackStop
 
+    unless @options.model
+      acorn.errors.MissingParameterError 'Shell.ContentView', 'model'
+
     unless @options.controlsView
-      acorn.errors.MissingParameterError 'ShellContentView', 'controlsView'
+      acorn.errors.MissingParameterError 'Shell.ContentView', 'controlsView'
 
     @controlsView = @options.controlsView
     @controlsView.setControls _.clone @controls
