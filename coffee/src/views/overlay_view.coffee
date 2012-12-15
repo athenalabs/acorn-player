@@ -4,9 +4,9 @@ goog.provide 'acorn.player.OverlayView'
 class acorn.player.OverlayView extends athena.lib.View
 
   overlayTemplate: _.template '''
-    <div class="clear-cover"></div>
-    <div class="background"></div>
-    <div class="content"></div>
+    <div class="background">
+      <div class="content"></div>
+    </div>
     '''
 
   className: @classNameExtend 'overlay-view'
