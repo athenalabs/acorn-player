@@ -1,5 +1,6 @@
 goog.provide 'acorn.player.controls.ControlToolbarView'
 goog.provide 'acorn.player.controls.ControlView'
+goog.provide 'acorn.player.controls.IconControlView'
 
 goog.require 'acorn.config'
 
@@ -37,5 +38,43 @@ class ControlView extends athena.lib.View
     new View
 
 
+class IconControlView extends ControlView
+
+  className: @classNameExtend 'icon-control-view'
+
+  initialize: =>
+    super
+    @icon = @options.icon ? 'play'
+
+  render: =>
+    super
+    @$el.html $('<i>').addClass "icon-#{@icon}"
+    @
+
+  @withIcon: (icon) =>
+    unless _.isString icon
+      TypeError 'icon', 'string'
+
+    new IconControlView icon: icon
+
+
+class FullscreenControlView extends IconControlView
+  defaults:
+    icon: 'Fullscreen'
+
+class EditControlView extends IconControlView
+  defaults:
+    icon: 'Edit'
+
+class SourcesControlView extends IconControlView
+  defaults:
+    icon: 'Globe'
+
+
 acorn.player.controls.ControlToolbarView = ControlToolbarView
 acorn.player.controls.ControlView = ControlView
+
+acorn.player.controls.IconControlView = IconControlView
+acorn.player.controls.EditControlView = EditControlView
+acorn.player.controls.SourcesControlView = SourcesControlView
+acorn.player.controls.FullscreenControlView = FullscreenControlView
