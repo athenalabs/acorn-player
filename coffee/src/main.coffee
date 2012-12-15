@@ -8,5 +8,6 @@ goog.require 'acorn'
 
 goog.require 'acorn.shells.Shell'
 goog.require 'acorn.shells.EmptyShell'
+goog.require 'acorn.shells.CollectionShell'
 
 (exports ? this).acorn = acorn
