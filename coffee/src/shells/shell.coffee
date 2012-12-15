@@ -110,32 +110,5 @@ class Shell.RemixView extends athena.lib.View
 
   className: @classNameExtend 'acorn-shell-edit'
 
-  # Defines the html template for this view.
-  # To be overridden in derived classes.
-  template: _.template('')
-
-  initialize: =>
-    super
-    @eventhub.on 'change:shell', @OnChangeShell
-    @eventhub.on 'swap.shell', @onSwapShell
-
-  render: =>
-    @$el.html @template()
-    @
-
-  isEditing: acorn.util.property false
-
-  # Can prevent saves from happening. For instance, this is useful when
-  # swapping shells. The swapped-out should not save.
-  shouldSave: acorn.util.property false
-
-  onChangeShell: =>
-    @render()
-
-  onSwapShell: =>
-    @shouldSave false
-
-  finalizeEdit: =>
-
 
 acorn.registerShellModule Shell
