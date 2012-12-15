@@ -86,7 +86,8 @@ class acorn.Model extends Backbone.Model
 
   @withLink: (link) =>
     link ?= ''
-    @withShell acorn.LinkShell.shellForLink link
+    shell = acorn.LinkShell.bestMatchingShell(link)
+    @withShellData acorn.LinkShell.shellForLink link
 
   @withData: (data) =>
     if not data?
@@ -95,5 +96,5 @@ class acorn.Model extends Backbone.Model
       data = acornid: data.trim().split('/').pop()
     new @ data
 
-  @withShell: (shell) =>
-    new @(shell: shell.data)
+  @withShellData: (shelldata) =>
+    new @(shell: shelldata.data)
