@@ -92,6 +92,7 @@ class CollectionShell.ContentView extends Shell.ContentView
     super
     @$el.empty()
     @showView @currentIndex
+    @
 
   showView: (index) =>
     unless 0 <= index < @shellViews.length

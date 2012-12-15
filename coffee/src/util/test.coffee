@@ -6,6 +6,8 @@ acorn.util.test.describeShellModule = (Module, tests) =>
   derives = athena.lib.util.derives
   Shell = acorn.shells.Shell
 
+  describeView = athena.lib.util.test.describeView
+
   isOrDerives = (Subclass, Superclass) =>
     Subclass == Superclass or derives Subclass, Superclass
 
@@ -66,11 +68,12 @@ acorn.util.test.describeShellModule = (Module, tests) =>
         s = m.toJSONString()
         expect(JSON.stringify m.attributes).toEqual s
 
-    describe "#{Module.id}.ContentView", ->
-      ContentView = Module.ContentView
+    options =
+      model: new Module.Model
 
-      options =
-        model: new Module.Model
+    describeView Module.ContentView, athena.lib.View, options, ->
+
+      ContentView = Module.ContentView
 
       it 'should derive from athena.lib.View', ->
         expect(derives ContentView, athena.lib.View).toBe true
@@ -84,7 +87,8 @@ acorn.util.test.describeShellModule = (Module, tests) =>
         expect(-> new ContentView options).not.toThrow()
         expect(-> new ContentView throwOptions).toThrow()
 
-    describe "#{Module.id}.RemixView", ->
+    describeView Module.RemixView, athena.lib.View, options, ->
+
       RemixView = Module.RemixView
 
       options =

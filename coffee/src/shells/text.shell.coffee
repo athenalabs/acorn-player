@@ -27,6 +27,7 @@ class TextShell.ContentView extends Shell.ContentView
     super
     @$el.empty()
     @$el.text @model.get 'text'
+    @
 
 # uniform view to edit shell data.
 class TextShell.RemixView extends Shell.RemixView
@@ -40,7 +41,8 @@ class TextShell.RemixView extends Shell.RemixView
   render: =>
     super
     @$el.empty()
-    @$el.html @template @model.attributes
+    @$el.html @template text: @model.get 'text'
+    @
 
 
 acorn.registerShellModule TextShell
