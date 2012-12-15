@@ -34,3 +34,9 @@ describe 'acorn.shells.TextShell', ->
     contentView.$el.width 600
     contentView.render()
     $player.append contentView.el
+
+
+    remixView = new TextShell.RemixView model: model
+    remixView.$el.width 600
+    remixView.render()
+    $player.append remixView.el
