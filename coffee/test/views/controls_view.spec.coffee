@@ -67,6 +67,7 @@ describe 'acorn.player.controls.ControlToolbarView', ->
 
 
 describe 'acorn.player.controls.ControlView', ->
+  EventSpy = athena.lib.util.test.EventSpy
   ControlView = acorn.player.controls.ControlView
   IconControlView = acorn.player.controls.IconControlView
 
@@ -82,8 +83,16 @@ describe 'acorn.player.controls.ControlView', ->
   it 'should construct controls `withId`', ->
     expect(ControlView.withId('Icon') instanceof IconControlView).toBe true
 
+  it 'should trigger event `Control:Click` on click', ->
+    view = new ControlView
+    spy = new EventSpy view, 'Control:Click'
+    view.render()
+    view.$el.trigger 'click'
+    expect(spy.triggered).toBe true
+
 
 describe 'acorn.player.controls.IconControlView', ->
+  EventSpy = athena.lib.util.test.EventSpy
   ControlView = acorn.player.controls.ControlView
   IconControlView = acorn.player.controls.IconControlView
 
@@ -111,6 +120,13 @@ describe 'acorn.player.controls.IconControlView', ->
       expect(-> ControlView.withIcon {}).toThrow()
       expect(-> ControlView.withIcon ->).toThrow()
 
+  it 'should trigger event `IconControl:Click` on click', ->
+    view = new IconControlView
+    spy = new EventSpy view, 'IconControl:Click'
+    view.render()
+    view.$el.trigger 'click'
+    expect(spy.triggered).toBe true
+
   it 'should look good', ->
     # setup DOM
     acorn.util.appendCss()
@@ -125,6 +141,7 @@ describe 'acorn.player.controls.IconControlView', ->
 
 
 describe 'acorn.player.controls.ImageControlView', ->
+  EventSpy = athena.lib.util.test.EventSpy
   ControlView = acorn.player.controls.ControlView
   ImageControlView = acorn.player.controls.ImageControlView
 
@@ -154,6 +171,13 @@ describe 'acorn.player.controls.ImageControlView', ->
       expect(-> ControlView.withIcon ->).toThrow()
       expect(-> ControlView.withIcon 'fdsiojfdpos').toThrow()
       expect(-> ControlView.withIcon 'play').toThrow()
+
+  it 'should trigger event `ImageControl:Click` on click', ->
+    view = new ImageControlView
+    spy = new EventSpy view, 'ImageControl:Click'
+    view.render()
+    view.$el.trigger 'click'
+    expect(spy.triggered).toBe true
 
   it 'should look good', ->
     # setup DOM
