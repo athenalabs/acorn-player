@@ -114,7 +114,7 @@
   height: auto;
 }
 
-.controls-view {
+.acorn-player .controls-view {
   height: 28px;
 
   border-top: 1px solid #cccccc;
@@ -133,16 +133,16 @@
   transition: 0.35s ease;
 }
 
-.controls-subview {
+.acorn-player .controls-subview {
   height: 100%;
 }
 
-.acorn-controls-view {
+.acorn-player .acorn-controls-view {
   float: right;
   width: 120px;
 }
 
-.overlay-view {
+.acorn-player .overlay-view {
   position: absolute;
   top: 0px;
   bottom: 0px;
@@ -154,7 +154,7 @@
   z-index: 10;
 }
 
-.overlay-view > .background {
+.acorn-player .overlay-view > .background {
   position: absolute;
   top: 10px;
   bottom: 10px;
@@ -165,14 +165,14 @@
   box-shadow: 0 2px 5px rgba(34, 25, 25, 0.4);
 }
 
-.overlay-view > .background > .content {
+.acorn-player .overlay-view > .background > .content {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: scroll;
 }
 
-.overlay-view > .background > .content > .header {
+.acorn-player .overlay-view > .background > .content > .header {
   position: relative;
   width: 538px;
   height: 40px;
@@ -181,14 +181,14 @@
   margin-bottom: 0px 0px 10px;
 }
 
-.overlay-view > .background > .content > .header > * {
+.acorn-player .overlay-view > .background > .content > .header > * {
   position: absolute;
   height: 100%;
   width: 100%;
   margin: 0px;
 }
 
-.overlay-view > .background > .content > .header > .actions {
+.acorn-player .overlay-view > .background > .content > .header > .actions {
   height: 35px;
   text-align: right;
   padding-top: 5px;

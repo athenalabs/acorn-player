@@ -35,7 +35,7 @@ describe 'acorn.player.SourcesView', ->
   it 'should look good', ->
     # setup DOM
     acorn.util.appendCss()
-    $body = $ 'body'
+    $player = $('<div>').addClass('acorn-player').appendTo('body')
 
     # add a SplashView into the DOM to see how it looks.
     view = new SourcesView {shell: 'dummy'}
@@ -55,4 +55,4 @@ describe 'acorn.player.SourcesView', ->
       .append($('<div>').attr 'style', 'width: 100%; height: 30px; '+
         'background-color: #bee;')
 
-    $body.append container.append view.el
+    $player.append container.append view.el

@@ -171,8 +171,8 @@ describe 'ControlsViews, generally', ->
   it 'should look good', ->
     # setup DOM
     acorn.util.appendCss()
-    $body = $ 'body'
+    $player = $('<div>').addClass('acorn-player').appendTo('body')
 
     # add a SplashView into the DOM to see how it looks.
     view = new acorn.player.ControlsView
-    $body.append view.render().el
+    $player.append view.render().el
