@@ -3,8 +3,6 @@ goog.provide 'acorn.specs.player.ControlsView'
 goog.require 'acorn.player.ControlsView'
 
 
-# ControlsView
-# ------------
 describe 'acorn.player.ControlsView', ->
   ControlsView = acorn.player.ControlsView
 
@@ -41,8 +39,7 @@ describe 'acorn.player.ControlsView', ->
   xit '.controlWithId(id) should farm query to control subviews', ->
   xit 'should render a control panel with acorn and shell controls', ->
 
-# ControlsSubview
-# ---------------
+
 describe 'acorn.player.ControlsSubview', ->
   ControlsSubview = acorn.player.ControlsSubview
 
@@ -69,9 +66,7 @@ describe 'acorn.player.ControlsSubview', ->
   xit 'should render a control panel', ->
 
 
-# AcornControlsView
-# -----------------
-describe 'acorn.player.Acorn.ControlsView', ->
+describe 'acorn.player.AcornControlsView', ->
   AcornControlsView = acorn.player.AcornControlsView
 
   it 'should be part of acorn.player', ->
@@ -104,9 +99,8 @@ describe 'acorn.player.Acorn.ControlsView', ->
   # this is waiting on the construction of ControlViews
   xit 'should render a control panel with acorn controls', ->
 
-# ShellControlsView
-# -----------------
-describe 'acorn.player.Shell.ControlsView', ->
+
+describe 'acorn.player.ShellControlsView', ->
   ShellControlsView = acorn.player.ShellControlsView
 
   it 'should be part of acorn.player', ->
@@ -157,9 +151,8 @@ describe 'acorn.player.Shell.ControlsView', ->
   # this is waiting on the construction of ControlViews
   xit 'should render a control panel with shell controls', ->
 
-# SubshellControlsView
-# --------------------
-describe 'acorn.player.Subshell.ControlsView', ->
+
+describe 'acorn.player.SubshellControlsView', ->
   SubshellControlsView = acorn.player.SubshellControlsView
 
   it 'should be part of acorn.player', ->
