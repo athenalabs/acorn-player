@@ -31,7 +31,9 @@ class Shell.Model extends Backbone.Model
   #
   # See https://github.com/documentcloud/underscore/issues/162 as to why
   # underscore does not implement deep copy.
-  clone: => return new @.constructor JSON.parse @toJSONString()
+  clone: => return new @constructor @toJSON()
+
+  toJSON: => return JSON.parse JSON.stringify @attributes
 
   toJSONString: => return JSON.stringify @toJSON()
 
