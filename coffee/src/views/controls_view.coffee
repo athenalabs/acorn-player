@@ -60,16 +60,16 @@ class IconControlView extends ControlView
 
 
 class FullscreenControlView extends IconControlView
-  defaults:
-    icon: 'Fullscreen'
+  defaults: => _.extend super,
+    icon: 'fullscreen'
 
 class EditControlView extends IconControlView
-  defaults:
-    icon: 'Edit'
+  defaults: => _.extend super,
+    icon: 'edit'
 
 class SourcesControlView extends IconControlView
-  defaults:
-    icon: 'Globe'
+  defaults: => _.extend super,
+    icon: 'globe'
 
 
 class ImageControlView extends ControlView
@@ -94,7 +94,7 @@ class ImageControlView extends ControlView
 
 
 class AcornControlView extends ImageControlView
-  defaults:
+  defaults: => _.extend super,
     image: acorn.config.img.acorn
 
 
