@@ -155,3 +155,7 @@ class LinkShell.RemixView extends Shell.RemixView
       return
 
     @model.set 'link', link
+
+
+
+acorn.registerShellModule LinkShell
