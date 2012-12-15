@@ -3,6 +3,7 @@ goog.provide 'acorn.specs.player.controls.ControlToolbarView'
 goog.require 'acorn.player.controls.ControlToolbarView'
 goog.require 'acorn.player.controls.ControlView'
 goog.require 'acorn.player.controls.IconControlView'
+goog.require 'acorn.player.controls.ImageControlView'
 
 
 describe 'acorn.player.controls.ControlToolbarView', ->
@@ -103,5 +104,49 @@ describe 'acorn.player.controls.IconControlView', ->
 
     _.each ['backward', 'play', 'pause', 'stop', 'forward'], (icon) ->
       view = IconControlView.withIcon icon
+      view.render()
+      $player.append view.el
+
+
+describe 'acorn.player.controls.ImageControlView', ->
+  ControlView = acorn.player.controls.ControlView
+  ImageControlView = acorn.player.controls.ImageControlView
+
+  describeView = athena.lib.util.test.describeView
+  describeView ImageControlView, ControlView
+
+  it 'should be part of acorn.player.controls', ->
+    expect(ImageControlView).toBeDefined()
+
+  describe 'ImageControlView.withUrl', ->
+    it 'should be a function', ->
+      expect(typeof ImageControlView.withUrl).toBe 'function'
+
+    it 'should construct controls', ->
+      image = ImageControlView.withUrl acorn.config.img.acorn
+      expect(image instanceof ImageControlView).toBe true
+
+    it 'should set the icon property', ->
+      url = acorn.config.img.acorn
+      image = ImageControlView.withUrl url
+      expect(image.url).toBe url
+
+    it 'should ensure param is a string url', ->
+      expect(-> ControlView.withIcon 1).toThrow()
+      expect(-> ControlView.withIcon []).toThrow()
+      expect(-> ControlView.withIcon {}).toThrow()
+      expect(-> ControlView.withIcon ->).toThrow()
+      expect(-> ControlView.withIcon 'fdsiojfdpos').toThrow()
+      expect(-> ControlView.withIcon 'play').toThrow()
+
+  it 'should look good', ->
+    # setup DOM
+    acorn.util.appendCss()
+    $player = $('<div>').addClass('acorn-player').appendTo('body')
+
+    # add into the DOM to see how it looks.
+
+    _.each acorn.config.img, (url) ->
+      view = ImageControlView.withUrl url
       view.render()
       $player.append view.el

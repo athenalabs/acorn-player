@@ -1,6 +1,7 @@
 goog.provide 'acorn.player.controls.ControlToolbarView'
 goog.provide 'acorn.player.controls.ControlView'
 goog.provide 'acorn.player.controls.IconControlView'
+goog.provide 'acorn.player.controls.ImageControlView'
 
 goog.require 'acorn.config'
 
@@ -71,6 +72,34 @@ class SourcesControlView extends IconControlView
     icon: 'Globe'
 
 
+class ImageControlView extends ControlView
+
+  className: @classNameExtend 'image-control-view'
+
+  initialize: =>
+    super
+    @url = @options.url ? acorn.config.img.acorn
+
+  render: =>
+    super
+    @$el.html $('<img>').attr 'src', @url
+    @
+
+  @withUrl: (url) =>
+    unless acorn.util.isUrl(url) or acorn.util.isPath(url)
+      TypeError url, 'string url'
+
+    new ImageControlView url: url
+
+
+
+class AcornControlView extends ImageControlView
+  defaults:
+    image: acorn.config.img.acorn
+
+
+
+
 acorn.player.controls.ControlToolbarView = ControlToolbarView
 acorn.player.controls.ControlView = ControlView
 
@@ -78,3 +107,6 @@ acorn.player.controls.IconControlView = IconControlView
 acorn.player.controls.EditControlView = EditControlView
 acorn.player.controls.SourcesControlView = SourcesControlView
 acorn.player.controls.FullscreenControlView = FullscreenControlView
+
+acorn.player.controls.ImageControlView = ImageControlView
+acorn.player.controls.AcornControlView = AcornControlView
