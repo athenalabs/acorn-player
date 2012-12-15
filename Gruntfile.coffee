@@ -19,6 +19,9 @@ module.exports = (grunt) ->
     # minified target name
     minified: 'build/acornplayer.min.js'
 
+    # jasmine test page to render
+    test_page: 'static/tests.html'
+
     # libraries to load in the frontend
     frontend_libs: [
       'lib/closure/library/closure/goog/base.js'     # for dependencies
@@ -71,6 +74,8 @@ module.exports = (grunt) ->
     # specs to include.
     specs: paths.js_specs
 
+    # view to render
+    view: paths.test_page
 
 
   # Project configuration.
@@ -124,6 +129,7 @@ module.exports = (grunt) ->
       lib: paths.jasmine.lib
       src: paths.jasmine.src
       specs: paths.jasmine.specs
+      view: paths.jasmine.view
 
     # task to watch sources for changes and recompile during development
     watch:
