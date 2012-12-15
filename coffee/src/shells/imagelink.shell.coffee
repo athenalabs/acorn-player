@@ -1,5 +1,6 @@
 goog.provide 'acorn.shells.ImageLinkShell'
 
+goog.require 'acorn.shells.LinkShell'
 goog.require 'acorn.util'
 
 LinkShell = acorn.shells.LinkShell
