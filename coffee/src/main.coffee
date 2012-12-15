@@ -7,6 +7,7 @@ goog.require 'acorn.util.test'
 goog.require 'acorn'
 
 goog.require 'acorn.shells.Shell'
+goog.require 'acorn.shells.TextShell'
 goog.require 'acorn.shells.EmptyShell'
 goog.require 'acorn.shells.CollectionShell'
 
