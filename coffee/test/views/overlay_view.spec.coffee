@@ -35,17 +35,17 @@ describe 'acorn.player.OverlayView', ->
         'margin: 0px;'
 
     # populate a container in order to see it get covered up
-    container = $('<div>').attr 'style',
-        'width: 600px; height: 400px; position: relative;'
-    container.append $('<div>').attr 'style', 'width: 100%; height: 60px; '+
-        'background-color: #abc;'
-    container.append '<p>Have some gibberish: als;dkfjasdf lasdfj dfei f jfi ' +
+    container = $('<div>').attr('style', 'width: 600px; height: 400px; ' +
+        'overflow: hidden; position: relative;')
+      .append($('<div>').attr 'style', 'width: 100%; height: 60px; '+
+        'background-color: #abc;')
+      .append('<p>Have some gibberish: als;dkfjasdf lasdfj dfei f jfi ' +
         'dkf k<br/>ke eid id dfi dfi iekkei dkiekjdie dki li keidjf kaiek di ' +
         'li ei jfi efja; dii kiej kdi. liefjk dki el isljfie ijfl ilei</p><p>' +
-        'kaldf jdf <br/>jkei kdjfi<br/>HEILIEDKJFI</p>'
-    container.append $('<div>').attr 'style', 'width: 100%; height: 70px; '+
-        'background-color: #cab;'
-    container.append $('<div>').attr 'style', 'width: 100%; height: 30px; '+
-        'background-color: #bee;'
+        'kaldf jdf <br/>jkei kdjfi<br/>HEILIEDKJFI</p>')
+      .append($('<div>').attr 'style', 'width: 100%; height: 70px; '+
+        'background-color: #cab;')
+      .append($('<div>').attr 'style', 'width: 100%; height: 30px; '+
+        'background-color: #bee;')
 
     $body.append container.append view.el
