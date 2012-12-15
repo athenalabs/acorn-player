@@ -95,7 +95,7 @@ class ImageControlView extends ControlView
 
 class AcornControlView extends ImageControlView
   defaults: => _.extend super,
-    image: acorn.config.img.acorn
+    image: acorn.config.img.acornIcon
 
 
 

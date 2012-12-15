@@ -17,6 +17,7 @@ acorn.config.url.api =
 
 acorn.config.img = {}
 acorn.config.img.acorn = '/static/img/acorn.png'
+acorn.config.img.acornIcon = '/static/img/acorn.icon.png'
 
 acorn.config.css = [
   '/static/css/acorn-player.css',

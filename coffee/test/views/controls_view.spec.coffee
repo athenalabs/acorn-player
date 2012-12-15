@@ -146,7 +146,7 @@ describe 'acorn.player.controls.ImageControlView', ->
 
     # add into the DOM to see how it looks.
 
-    _.each acorn.config.img, (url) ->
+    _.each [acorn.config.img.acornIcon], (url) ->
       view = ImageControlView.withUrl url
       view.render()
       $player.append view.el
