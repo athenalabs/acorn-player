@@ -12,6 +12,9 @@ acorn.util.urlRegEx = (url) ->
 acorn.util.isUrl = (url) ->
   acorn.util.urlRegEx().test url
 
+acorn.util.isPath = (path) ->
+  /^[A-Za-z\/.-_]+$/.test path
+
 # helpers to construct acorn urls TODO: delete these?
 acorn.util.url = ->
   path = _.toArray(arguments).join '/'
