@@ -161,6 +161,6 @@ module.exports = (grunt) ->
   # Register tasks
   grunt.registerTask 'compile', ['coffee', 'exec:mkbuild', 'closureCompiler']
   grunt.registerTask 'deps', ['coffee', 'closureDepsWriter']
-  grunt.registerTask 'test', ['deps', 'jasmine', 'clean:test']
+  grunt.registerTask 'test', ['clean', 'deps', 'jasmine', 'clean:test']
   grunt.registerTask 'server', ['deps', 'jasmineSpecServer', 'watch']
   grunt.registerTask 'default', ['compile']
