@@ -84,8 +84,6 @@ class Shell.ContentView extends athena.lib.View
 
   initialize: =>
     super
-    @eventhub.on 'playback:play', @onPlaybackPlay
-    @eventhub.on 'playback:stop', @onPlaybackStop
 
     unless @options.model
       acorn.errors.MissingParameterError 'Shell.ContentView', 'model'
@@ -95,14 +93,6 @@ class Shell.ContentView extends athena.lib.View
 
     @controlsView = @options.controlsView
     @controlsView.setControls _.clone @controls
-
-  remove: =>
-    @eventhub.off 'playback:play', @onPlaybackPlay
-    @eventhub.off 'playback:stop', @onPlaybackStop
-    super
-
-  onPlaybackPlay: =>
-  onPlaybackStop: =>
 
 
 
