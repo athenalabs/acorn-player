@@ -103,6 +103,11 @@ class Shell.RemixView extends athena.lib.View
 
   className: @classNameExtend 'shell-remix-view'
 
+  initialize: =>
+    super
+
+    unless @options.model
+      acorn.errors.MissingParameterError 'Shell.RemixView', 'model'
 
 
 acorn.registerShellModule Shell

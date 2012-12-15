@@ -99,12 +99,20 @@ acorn.util.test.describeShellModule = (Module, tests) =>
     describe "#{Module.id}.RemixView", ->
       RemixView = Module.RemixView
 
+      options =
+        model: new Module.Model
+
       it 'should derive from athena.lib.View', ->
         expect(derives RemixView, athena.lib.View).toBe true
 
       it 'should derive from (or be) Shell.RemixView', ->
         expect(isOrDerives RemixView, Shell.RemixView).toBe true
 
+      it 'should require `model` parameter', ->
+        throwOptions = _.clone options
+        delete throwOptions.model
+        expect(-> new RemixView options).not.toThrow()
+        expect(-> new RemixView throwOptions).toThrow()
 
     tests?()
 
