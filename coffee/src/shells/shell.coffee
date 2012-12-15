@@ -78,7 +78,7 @@ acorn.shellWithData = Shell.Model.withData
 
 class Shell.ContentView extends athena.lib.View
 
-  className: @classNameExtend 'acorn-shell'
+  className: @classNameExtend 'shell-content-view'
 
   controls: []
 
@@ -108,7 +108,8 @@ class Shell.ContentView extends athena.lib.View
 
 class Shell.RemixView extends athena.lib.View
 
-  className: @classNameExtend 'acorn-shell-edit'
+  className: @classNameExtend 'shell-remix-view'
+
 
 
 acorn.registerShellModule Shell
