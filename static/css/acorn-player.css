@@ -59,9 +59,94 @@
 }
 
 .acorn-player .content-view {
+  position: relative;
   height: 100%;
   width: 100%;
 }
+
+.acorn-player .content-view > :first-child {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 28px;
+}
+
+.acorn-player .content-view > .control-toolbar-view {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+
+  display: block;
+  border-top: 1px solid #cccccc;
+  padding: 0px;
+  height: 28px;
+
+  background-color: #ffffff;
+  background-image: linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+
+  -webkit-transition: 0.35s ease;
+  -moz-transition: 0.35s ease;
+  -ms-transition: 0.35s ease;
+  -o-transition: 0.35s ease;
+  transition: 0.35s ease;
+}
+
+.acorn-player .control-toolbar-view {
+  display: inline-block;
+  height: 28px;
+}
+
+
+.acorn-player .content-view > .control-toolbar-view > .acorn-controls {
+  float: right;
+}
+
+.acorn-player .control-toolbar-view > .control-view {
+  display: inline-block;
+  position: relative;
+  font-size: 20px;
+  line-height: 20px;
+  width: 28px;
+  height: 28px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.acorn-player .control-toolbar-view > .control-view > * {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  padding: 6px;
+  opacity: 0.65;
+  width: 16px;
+  height: 16px;
+}
+
+.acorn-player .control-toolbar-view > .control-view[disabled="disabled"] > * {
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+.acorn-player .control-toolbar-view > .control-view:hover > * {
+  opacity: 1.0;
+}
+
+.acorn-player .control-toolbar-view > .control-view:active > * {
+  margin-top: 1px;
+  font-size: 22px;
+  width: 17px;
+  height: 17px;
+}
+
 
 .acorn-player .editor-view > .toolbar-view {
   text-align: right;

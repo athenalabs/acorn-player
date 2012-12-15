@@ -13,6 +13,11 @@ describe 'acorn.player.ContentView', ->
   # emulate shell, object with a ContentView property
   module = ContentView: athena.lib.View
   model.shellModel.module = module
+  module.ContentView::controls = [
+    IconControlView.withIcon 'play',
+    IconControlView.withIcon 'pause',
+    IconControlView.withIcon 'stop',
+  ]
 
   # options for ContentView contruction
   options = model: model
