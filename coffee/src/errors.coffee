@@ -27,9 +27,6 @@ UnregisteredShellError = (shell) ->
 ShellRegistryError = (shell, error) ->
   throw new Error "Error registering shell #{shell}. #{error ? ''}"
 
-URLError = ->
-  ParameterError '"url" property or function'
-
 acorn.errors.APIError = APIError
 acorn.errors.AssertionFailed = AssertionFailed
 acorn.errors.MissingParameterError = MissingParameterError
@@ -37,4 +34,3 @@ acorn.errors.NotImplementedError = NotImplementedError
 acorn.errors.NotSupportedError = NotSupportedError
 acorn.errors.TypeError = TypeError
 acorn.errors.UnregisteredShellError = UnregisteredShellError
-acorn.errors.URLError = URLError
