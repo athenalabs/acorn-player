@@ -9,5 +9,6 @@ venv/
 *.swp
 build/
 js/
+static/css
 node_modules/
 lib/closure/compiler.jar

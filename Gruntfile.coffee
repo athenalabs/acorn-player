@@ -13,6 +13,15 @@ module.exports = (grunt) ->
     js_src: 'js/src/**/*.js'
     js_specs: 'js/test/**/*.spec.js'
 
+    # less sources
+    less_dir: 'static/less'
+    less_src: 'static/less/**/*.less'
+
+    # css sources
+    css_dir: 'static/css'
+    css_src: 'static/css/**/*.css'
+    css_dest: 'static/css/acorn-player.css'
+
     # build directory
     build_dir: 'build'
 
@@ -148,11 +157,27 @@ module.exports = (grunt) ->
       # the generated javascript sources
       js: paths.js_dir
 
+      # the generated css
+      css: paths.css_dir
+
       # the generated build dir
       build: paths.build_dir
 
       # the generated jasmine-runner tester file
       test: ['_SpecRunner.html']
+
+    # task to compile .less stylesheets to .css
+    less:
+      # .less -> .css compilation and minification
+      prod:
+        src: paths.less_src
+        dest: paths.css_dest
+        options:
+          yuicompress: true
+      # .less -> .css compilation only
+      dev:
+        src: paths.less_src
+        dest: paths.css_dest
 
 
 
@@ -160,13 +185,15 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-exec'
   grunt.loadNpmTasks 'grunt-coffee'
   grunt.loadNpmTasks 'grunt-contrib-clean'
+  grunt.loadNpmTasks 'grunt-contrib-less'
   grunt.loadNpmTasks 'grunt-closure-tools'
   grunt.loadNpmTasks 'grunt-jasmine-runner'
   grunt.loadNpmTasks 'grunt-jasmine-spec-server'
 
   # Register tasks
-  grunt.registerTask 'compile', ['coffee', 'exec:mkbuild', 'closureCompiler']
-  grunt.registerTask 'deps', ['coffee', 'closureDepsWriter']
+  grunt.registerTask 'compile', ['coffee', 'less:dev', 'exec:mkbuild',
+      'closureCompiler']
+  grunt.registerTask 'deps', ['coffee', 'less:dev', 'closureDepsWriter']
   grunt.registerTask 'test', ['clean', 'deps', 'jasmine', 'clean:test']
   grunt.registerTask 'server', ['deps', 'jasmineSpecServer', 'watch']
   grunt.registerTask 'default', ['compile']

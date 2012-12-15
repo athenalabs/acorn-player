@@ -32,6 +32,7 @@
     "grunt": "~0.3.17",
     "grunt-coffee": "0.0.6",
     "grunt-contrib-clean": "~0.3.1",
+    "grunt-contrib-less": "~0.3.2",
     "grunt-closure-tools": "0.6.11",
     "grunt-jasmine-runner": "~0.6.0",
     "grunt-jasmine-spec-server": "0.0.2",
