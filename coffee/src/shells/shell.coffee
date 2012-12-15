@@ -88,12 +88,6 @@ class Shell.ContentView extends athena.lib.View
     unless @options.model
       acorn.errors.MissingParameterError 'Shell.ContentView', 'model'
 
-    unless @options.controlsView
-      acorn.errors.MissingParameterError 'Shell.ContentView', 'controlsView'
-
-    @controlsView = @options.controlsView
-    @controlsView.setControls _.clone @controls
-
 
 
 # Shell.RemixView -- uniform view to edit shell data.

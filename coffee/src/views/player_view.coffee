@@ -3,10 +3,8 @@ goog.provide 'acorn.player.PlayerView'
 goog.require 'acorn.player.EditorView'
 goog.require 'acorn.player.SplashView'
 goog.require 'acorn.player.ContentView'
-goog.require 'acorn.player.ControlsView'
 goog.require 'acorn.player.OverlayView'
 goog.require 'acorn.player.SourcesView'
-
 
 # Main view. Container for the other three main views.
 class acorn.player.PlayerView extends athena.lib.ContainerView

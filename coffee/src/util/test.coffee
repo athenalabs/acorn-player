@@ -71,7 +71,6 @@ acorn.util.test.describeShellModule = (Module, tests) =>
 
       options =
         model: new Module.Model
-        controlsView: setControls: ->
 
       it 'should derive from athena.lib.View', ->
         expect(derives ContentView, athena.lib.View).toBe true
@@ -84,17 +83,6 @@ acorn.util.test.describeShellModule = (Module, tests) =>
         delete throwOptions.model
         expect(-> new ContentView options).not.toThrow()
         expect(-> new ContentView throwOptions).toThrow()
-
-      it 'should require `controlsView` parameter', ->
-        throwOptions = _.clone options
-        delete throwOptions.controlsView
-        expect(-> new ContentView options).not.toThrow()
-        expect(-> new ContentView throwOptions).toThrow()
-
-      it 'should set controlsView controls on initialize', ->
-        spy = spyOn options.controlsView, 'setControls'
-        new ContentView options
-        expect(spy).toHaveBeenCalled()
 
     describe "#{Module.id}.RemixView", ->
       RemixView = Module.RemixView

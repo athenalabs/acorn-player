@@ -10,13 +10,12 @@ class acorn.player.ContentView extends athena.lib.View
     # @model.shellModel.on 'change', @render
     # @model.acornModel.on 'change', @render
 
-    @controlsView = new acorn.player.ControlsView
-      eventhub: @eventhub
-
     @shellView = new @model.shellModel.shell.ContentView
       model: @model.shellModel
-      controlsView: @controlsView.shellControls
       eventhub: @eventhub
+
+    # temporary
+    @controlsView = new athena.lib.View
 
   render: =>
     super
