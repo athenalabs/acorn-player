@@ -83,12 +83,6 @@ class acorn.Model extends Backbone.Model
     # Make the request, allowing the user to override any Ajax options.
     $.ajax _.extend params, options
 
-
-  @withLink: (link) =>
-    link ?= ''
-    shell = acorn.LinkShell.bestMatchingShell(link)
-    @withShellData acorn.LinkShell.shellForLink link
-
   @withData: (data) =>
     if not data?
       data = acornid: 'new'
