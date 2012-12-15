@@ -6,9 +6,9 @@ goog.require 'acorn.player.OverlayView'
 class acorn.player.SourcesView extends acorn.player.OverlayView
 
   template: _.template '''
-    <div class="row" id="toolbar">
+    <div class="header">
       <h1>sources</h1>
-      <div id="actions">
+      <div class="actions">
         <button id="close" type="submit" class="btn">
           <i class="icon-ban-circle"></i> Close
         </button>

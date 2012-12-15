@@ -171,3 +171,25 @@
   height: 100%;
   overflow: scroll;
 }
+
+.overlay-view > .background > .content > .header {
+  position: relative;
+  width: 538px;
+  height: 40px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 0px 0px 10px;
+}
+
+.overlay-view > .background > .content > .header > * {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+}
+
+.overlay-view > .background > .content > .header > .actions {
+  height: 35px;
+  text-align: right;
+  padding-top: 5px;
+}
