@@ -37,9 +37,6 @@ class Shell.Model extends Backbone.Model
 
   toJSONString: => return JSON.stringify @toJSON()
 
-  # alias to the Class.module
-  module: @module
-
   # -- factory constructors --
 
   @withAcorn: (acornModel) => @withData acornModel.shellData()
