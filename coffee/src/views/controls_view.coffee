@@ -23,6 +23,9 @@ class ControlToolbarView extends athena.lib.ToolbarView
       unless btn instanceof ControlToolbarView or btn instanceof ControlView
         TypeError 'button', "ControlToolbarView or ControlView"
 
+    # forward all events from buttons
+    _.each @buttons, (btn) =>
+      btn.on 'all', (eventName) => @trigger eventName
 
 class ControlView extends athena.lib.View
 

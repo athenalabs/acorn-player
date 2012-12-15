@@ -7,6 +7,7 @@ goog.require 'acorn.player.controls.ImageControlView'
 
 
 describe 'acorn.player.controls.ControlToolbarView', ->
+  EventSpy = athena.lib.util.test.EventSpy
   ControlView = acorn.player.controls.ControlView
   IconControlView = acorn.player.controls.IconControlView
   ControlToolbar = acorn.player.controls.ControlToolbarView
@@ -35,6 +36,21 @@ describe 'acorn.player.controls.ControlToolbarView', ->
     expect(-> new ControlToolbarView buttons: [{text: 'Button'}]).toThrow()
     expect(-> new ControlToolbarView buttons: [$('body')]).toThrow()
     expect(-> new ControlToolbarView buttons: [1]).toThrow()
+
+  it 'should forward all button events', ->
+    btns = [new ControlView, new ControlView, new ControlView]
+    tbar = new ControlToolbarView buttons: btns
+    spy = new EventSpy tbar, 'all'
+    btns[0].trigger 'hi'
+    expect(spy.triggerCount).toBe 1
+    btns[1].trigger 'hello'
+    expect(spy.triggerCount).toBe 2
+    btns[2].trigger 'i'
+    expect(spy.triggerCount).toBe 3
+    btns[1].trigger 'am'
+    expect(spy.triggerCount).toBe 4
+    btns[0].trigger 'pah'
+    expect(spy.triggerCount).toBe 5
 
   it 'should look good', ->
     # setup DOM
