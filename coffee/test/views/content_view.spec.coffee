@@ -30,8 +30,25 @@ describe 'acorn.player.ContentView', ->
     subviewAttr: 'shellView'
     viewOptions: options
 
+  athena.lib.util.test.describeSubview
+    View: ContentView
+    Subview: ControlToolbarView
+    subviewAttr: 'controlsView'
+    viewOptions: options
 
+  athena.lib.util.test.describeSubview
+    View: ContentView
+    Subview: ControlToolbarView
+    subviewAttr: 'acornControlsView'
+    viewOptions: options
+    checkDOM: (childEl, parentEl) -> childEl.parentNode.parentNode is parentEl
 
+  athena.lib.util.test.describeSubview
+    View: ContentView
+    Subview: ControlToolbarView
+    subviewAttr: 'shellControlsView'
+    viewOptions: options
+    checkDOM: (childEl, parentEl) -> childEl.parentNode.parentNode is parentEl
 
   it 'should render controlsView before shellView', ->
     contentView = new ContentView options
