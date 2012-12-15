@@ -40,6 +40,7 @@ class acorn.player.ContentView extends athena.lib.View
   ]
 
   initialize: =>
+    super
     # should these go here?
     # @model.shellModel.on 'change', @render
     # @model.acornModel.on 'change', @render
