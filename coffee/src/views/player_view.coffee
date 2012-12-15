@@ -24,6 +24,12 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
       @_editorView = undefined
       @content @contentView()
 
+    @eventhub.on 'EditControl:Click', => @eventhub.trigger 'show:editor'
+    @eventhub.on 'AcornControl:Click', => @openAcornWebsite()
+    @eventhub.on 'SourcesControl:Click', => @eventhub.trigger 'show:sources'
+    @eventhub.on 'FullscreenControl:Click', => @enterFullscreen()
+
+
   contentView: =>
     @_contentView ?= new acorn.player.ContentView
       eventhub: @eventhub
@@ -58,3 +64,9 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     # clear editorView
     @_editorView?.destroy()
     @_editorView = undefined
+
+
+  enterFullscreen: =>
+    acorn.util.fullscreen @$el.parent()
+
+  openAcornWebsite: =>

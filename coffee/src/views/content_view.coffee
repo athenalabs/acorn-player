@@ -68,6 +68,9 @@ class acorn.player.ContentView extends athena.lib.View
       buttons: [@acornControlsView, @shellControlsView]
       eventhub: @eventhub
 
+    # setup events
+    @acornControlsView.on 'all', (name) => @eventhub.trigger name
+
   render: =>
     super
     @$el.empty()
