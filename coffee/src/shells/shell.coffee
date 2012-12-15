@@ -55,26 +55,6 @@ class Shell.Model extends Backbone.Model
 acorn.shellWithAcorn = Shell.Model.withAcorn
 acorn.shellWithData = Shell.Model.withData
 
-# acorn Player:
-# ------------------------------------------------------------------
-# |                                                                |
-# |                                                                |
-# |                                                                |
-# |                                                                |
-# |                                                                |
-# |                                                                |
-# |                                                                |
-# |                       Content Shell                            |
-# |                                                                |
-# |                                                                |
-# |                                                                |
-# |                                                                |
-# |                                                                |
-# |                                                                |
-# |                                                                |
-# ------------------------------------------------------------------
-# |                       Player Controls                          |
-# ------------------------------------------------------------------
 
 class Shell.ContentView extends athena.lib.View
 
