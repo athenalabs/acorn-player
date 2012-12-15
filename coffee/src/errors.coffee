@@ -27,6 +27,9 @@ UnregisteredShellError = (shell) ->
 ShellRegistryError = (shell, error) ->
   throw new Error "Error registering shell #{shell}. #{error ? ''}"
 
+ControlNotFoundError = (name) ->
+  throw new Error "Control not found: #{name}"
+
 acorn.errors.APIError = APIError
 acorn.errors.AssertionFailed = AssertionFailed
 acorn.errors.MissingParameterError = MissingParameterError
@@ -34,3 +37,4 @@ acorn.errors.NotImplementedError = NotImplementedError
 acorn.errors.NotSupportedError = NotSupportedError
 acorn.errors.TypeError = TypeError
 acorn.errors.UnregisteredShellError = UnregisteredShellError
+acorn.errors.ControlNotFoundError = ControlNotFoundError

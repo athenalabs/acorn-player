@@ -1,5 +1,7 @@
 goog.provide 'acorn.player.ContentView'
 
+goog.require 'acorn.player.controls.ControlToolbarView'
+
 # View to experience an acorn. Renders shells' ContentViews, and the controls.
 class acorn.player.ContentView extends athena.lib.View
 
