@@ -4,24 +4,14 @@ goog.require 'acorn.shells.LinkShell'
 goog.require 'acorn.util'
 
 LinkShell = acorn.shells.LinkShell
-ImageLinkShell = acorn.shells.ImageLinkShell
 
-# -- module properties --
-# Properties in this section should be overriden by all
-# shell modules based on ImageLinkShell
+ImageLinkShell = acorn.shells.ImageLinkShell =
 
-# ImageLinkShell module properties
-ImageLinkShell.id = 'acorn.ImageLinkShell'
-ImageLinkShell.title = 'ImageLinkShell'
-ImageLinkShell.description = 'Shell to contain web based images.'
-ImageLinkShell.icon = 'icon-picture'
-
-# This property lists the set of regular expression patterns
-# that LinkShell matches. It should be extended or overriden
-# in shells that inherit from LinkShell.
-ImageLinkShell.validLinkPatterns = [
-  acorn.util.urlRegEx '.*\.(jpg|jpeg|gif|png|svg)'
-]
+  id: 'acorn.ImageLinkShell'
+  title: 'ImageLinkShell'
+  description: 'Shell to contain web based images.'
+  icon: 'icon-picture'
+  validLinkPatterns: [ acorn.util.urlRegEx '.*\.(jpg|jpeg|gif|png|svg)' ]
 
 
 # -- module classes --
