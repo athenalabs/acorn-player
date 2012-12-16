@@ -37,7 +37,7 @@ LinkShell = acorn.shells.LinkShell =
   # A LinkShell module matches a link whenever it conforms to
   # one or more  the patterns in that modules's top-level
   # `validLinkPatterns` array property.
-  matchingShells: (link) =>
+  matchingShells: (link) ->
     unless link?
       return LinkShell
 
@@ -61,7 +61,7 @@ LinkShell = acorn.shells.LinkShell =
   # From the set of shells returned by matchingShells(),
   # this function returns the most specific one in the
   # inheritence hierarchy.
-  bestMatchingShell: (link) =>
+  bestMatchingShell: (link) ->
     # obtain set of matching shells
     matchingShells = LinkShell.matchingShells(link)
 
