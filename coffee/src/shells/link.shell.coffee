@@ -106,53 +106,11 @@ class LinkShell.RemixView extends Shell.RemixView
 
   className: @classNameExtend 'link-shell'
 
-  initialize: =>
-    super
-    @eventhub.on 'delete:shell', => @.model.set 'link', ''
-    @eventhub.on 'save:link', @onSaveLink
-
-  template: _.template '''
-    <div>
-      <img id="thumbnail" />
-      <div class="thumbnailside">
-        <div id="link-field">
-          <input type="text" id="link" placeholder="Enter Link" />
-          <button class="btn" id="delete">delete</button>
-          <button class="btn" id="duplicate">duplicate</button>
-        </div>
-      </div>
-    </div>
-    <button class="btn btn-large" id="add">Add Link</button>
-    '''
-
-  events: => _.extend super,
-    'focus input#link': => @eventhub.trigger 'edit:link'
-    'blur input#link' : => @eventhub.trigger 'save:link'
-    'keyup input#link' : => @onKeyupLinkField()
-
   render: =>
     super
-    @$el.html @template()
-    @$('input#link').val @model.get 'link'
-    @$('#thumbnail').attr 'src', @model.get 'thumbnail'
+    @$el.empty()
+    @$el.append acorn.util.iframe @model.get('link')
     @
-
-  onKeyupLinkField: (event) =>
-    keys = athena.lib.util.keys
-    switch event.keyCode
-      when keys.ENTER then @$('input#link').blur()
-      when keys.ESC
-        @$('input#link').val @model.get 'link'
-        @$('input#link').blur()
-
-  onSaveLink: =>
-    link= @$('input#link').val()
-    unless LinkShell.linkMatches link, @module.validLinkPatterns
-      console.log 'LinkShell: non-matching link'
-      return
-
-    @model.set 'link', link
-
 
 
 acorn.registerShellModule LinkShell
