@@ -44,11 +44,11 @@ class acorn.player.EditorView extends athena.lib.View
     super
 
     @acornOptionsView = new acorn.player.AcornOptionsView
-      model: @model.acornModel
+      model: @model
       eventhub: @eventhub
 
     @shellEditorView = new acorn.player.ShellEditorView
-      model: @model.shellModel
+      model: acorn.shellWithAcorn @model
       eventhub: @eventhub
 
     @toolbarView = new athena.lib.ToolbarView
@@ -72,12 +72,12 @@ class acorn.player.EditorView extends athena.lib.View
     # TODO add validation first
 
     # update acornModel with edited shellModel data
-    @model.acornModel.shellData @shellEditorView.model.attributes
+    @model.shellData @shellEditorView.model.attributes
 
     @$('#editor-save-btn').attr 'disabled', 'disabled'
     @$('#editor-save-btn').text 'Saving...'
 
-    @model.acornModel.save {},
+    @model.save {},
       success: =>
         @$('#editor-save-btn').text 'Saved!'
         @eventhub.trigger 'Editor:Saved', @

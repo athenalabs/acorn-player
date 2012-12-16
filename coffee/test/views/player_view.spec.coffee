@@ -9,12 +9,15 @@ describe 'acorn.player.PlayerView', ->
 
   # model for PlayerView contruction
   model =
-    shellModel: new acorn.shells.Shell.Model
+    shellModel: acorn.shellWithData
+      shellid: 'acorn.Shell'
     acornModel: acorn.Model.withData
       acornid: 'thebestacornever'
       thumbnail: acorn.config.img.acorn
       title: 'The Best Title Ever'
       type: 'image'
+      shell:
+        shellid: 'acorn.Shell'
 
   # emulate shell, object with a ContentView property
   module = ContentView: athena.lib.View
@@ -189,8 +192,11 @@ describe 'acorn.player.PlayerView', ->
       acornData = JSON.parse view.model.acornModel.toJSONString()
       shellData = JSON.parse view.model.shellModel.toJSONString()
 
+      editorData =
+        acornModel: view._editorView.model
+        shellModel: view._editorView.shellEditorView.model
+
       # make a change to the editor's data
-      editorData = view._editorView.model
       editorData.acornModel.set 'acornid', 'otheracornid'
       editorData.shellModel.set 'shellid', 'othershellid'
 
@@ -220,8 +226,11 @@ describe 'acorn.player.PlayerView', ->
       acornData = JSON.parse view.model.acornModel.toJSONString()
       shellData = JSON.parse view.model.shellModel.toJSONString()
 
+      editorData =
+        acornModel: view._editorView.model
+        shellModel: view._editorView.shellEditorView.model
+
       # make a change to the editor's data
-      editorData = view._editorView.model
       editorData.acornModel.set 'acornid', 'otheracornid'
       editorData.shellModel.set 'shellid', 'othershellid'
 

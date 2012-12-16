@@ -9,17 +9,15 @@ describe 'acorn.player.EditorView', ->
   describeSubview = athena.lib.util.test.describeSubview
 
   # model for EditorView contruction
-  model =
-    acornModel: new Backbone.Model
-      thumbnail: acorn.config.img.acorn
-      acornid: 'nyfskeqlyx'
-      title: 'The Differential'
-    shellModel: new acorn.shells.Shell.Model
+  model = new acorn.Model
+    thumbnail: acorn.config.img.acorn
+    acornid: 'nyfskeqlyx'
+    title: 'The Differential'
+    shell:
       shellid: 'acorn.Shell'
 
-  # patch the models for testing
-  model.acornModel.shellData = -> _.clone model.shellModel.attributes
-  model.acornModel.save = (attrs, opts) -> opts.error()
+  # patch the model for testing
+  model.save = (attrs, opts) -> opts.error()
 
   # options for EditorView contruction
   options = model: model
@@ -71,17 +69,17 @@ describe 'acorn.player.EditorView', ->
 
     it 'should update acornModel with shellModel attributes', ->
       view = new EditorView options
-      spy = spyOn model.acornModel, 'shellData'
+      spy = spyOn model, 'shellData'
       view.render()
       expect(spy).not.toHaveBeenCalled()
 
       view.save()
       expect(spy).toHaveBeenCalled()
-      expect(spy).toHaveBeenCalledWith(model.shellModel.attributes)
+      expect(spy).toHaveBeenCalledWith(view.shellEditorView.model.attributes)
 
     it 'should call save on acornModel', ->
       view = new EditorView options
-      spy = spyOn model.acornModel, 'save'
+      spy = spyOn model, 'save'
       view.render()
       expect(spy).not.toHaveBeenCalled()
 
@@ -90,7 +88,7 @@ describe 'acorn.player.EditorView', ->
 
     it 'should disable `Save` button on calling save', ->
       view = new EditorView options
-      spy = spyOn model.acornModel, 'save'
+      spy = spyOn model, 'save'
 
       view.render()
       expect(view.$('#editor-save-btn').attr 'disabled').toBe undefined
@@ -100,7 +98,7 @@ describe 'acorn.player.EditorView', ->
     it 'should trigger `Editor:Saved` event on save success', ->
       view = new EditorView options
 
-      saveSpy = spyOn model.acornModel, 'save'
+      saveSpy = spyOn model, 'save'
       saveSpy.andCallFake (attrs, opts) -> opts.success()
       eventSpy = new EventSpy view.eventhub, 'Editor:Saved'
 
@@ -113,7 +111,7 @@ describe 'acorn.player.EditorView', ->
 
     it 'should NOT re-enable `Save` button on save success', ->
       view = new EditorView options
-      spy = spyOn model.acornModel, 'save'
+      spy = spyOn model, 'save'
       spy.andCallFake (attrs, opts) -> opts.success()
 
       view.render()
@@ -126,7 +124,7 @@ describe 'acorn.player.EditorView', ->
 
     it 'should re-enable `Save` button on save error', ->
       view = new EditorView options
-      spy = spyOn model.acornModel, 'save'
+      spy = spyOn model, 'save'
       spy = spy.andCallFake (attrs, opts) -> opts.error()
 
       view.render()

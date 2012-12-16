@@ -45,15 +45,12 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
   editorView: =>
     @_editorView ?= new acorn.player.EditorView
       eventhub: @eventhub
-      model:
-        # clone models to edit safely.
-        acornModel: @model.acornModel.clone()
-        shellModel: @model.shellModel.clone()
+      model: @model.acornModel.clone()
     @_editorView
 
 
   onSave: =>
-    @model.acornModel.set @_editorView.model.acornModel.attributes
+    @model.acornModel.set @_editorView.model.attributes
     @model.shellModel.set @model.acornModel.shellData()
 
     # clear previous contentView to force reload, then show
