@@ -91,7 +91,7 @@ class LinkShell.Model extends Shell.Model
 
 
 
-class LinkShell.ContentView extends Shell.ContentView
+class LinkShell.MediaView extends Shell.MediaView
 
   className: @classNameExtend 'link-shell'
 

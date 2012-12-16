@@ -20,7 +20,7 @@ class ImageLinkShell.Model extends LinkShell.Model
 
 
 
-class ImageLinkShell.ContentView extends LinkShell.ContentView
+class ImageLinkShell.MediaView extends LinkShell.MediaView
 
   template: _.template '<div class="wrapper"></div>'
 

@@ -58,7 +58,7 @@ class CollectionShell.Model extends Shell.Model
 # It listens to the 'left', 'list', and 'right' events from the
 # Player.ContentView to navigate.
 
-class CollectionShell.ContentView extends Shell.ContentView
+class CollectionShell.MediaView extends Shell.MediaView
 
   className: @classNameExtend 'collection-shell'
 
@@ -73,7 +73,7 @@ class CollectionShell.ContentView extends Shell.ContentView
 
     # keep all subviews in memory - perhaps in the future only keep p<c>n.
     @shellViews = _.map @shellModels, (shellModel) =>
-      view = new shellModel.module.ContentView eventhub: @eventhub
+      view = new shellModel.module.MediaView eventhub: @eventhub
       # TODO view.on 'playback:ended', @onShellPlaybackEnded
       view
 

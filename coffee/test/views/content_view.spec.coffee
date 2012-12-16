@@ -10,10 +10,10 @@ describe 'acorn.player.ContentView', ->
     acornModel: new Backbone.Model
     shellModel: new Backbone.Model
 
-  # emulate shell, object with a ContentView property
-  module = ContentView: athena.lib.View
+  # emulate shell, object with a MediaView property
+  module = MediaView: athena.lib.View
   model.shellModel.module = module
-  module.ContentView::controls = [
+  module.MediaView::controls = [
     IconControlView.withIcon 'play',
     IconControlView.withIcon 'pause',
     IconControlView.withIcon 'stop',
@@ -31,7 +31,7 @@ describe 'acorn.player.ContentView', ->
 
   athena.lib.util.test.describeSubview
     View: ContentView
-    Subview: module.ContentView
+    Subview: module.MediaView
     subviewAttr: 'shellView'
     viewOptions: options
 

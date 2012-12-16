@@ -21,7 +21,7 @@ class TextShell.Model extends Shell.Model
 
 
 # Renders the text
-class TextShell.ContentView extends Shell.ContentView
+class TextShell.MediaView extends Shell.MediaView
 
   className: @classNameExtend 'text-shell'
 

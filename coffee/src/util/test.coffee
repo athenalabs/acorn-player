@@ -20,7 +20,7 @@ acorn.util.test.describeShellModule = (Module, tests) =>
         expect(_.isString Module[property]).toBe true
 
     it 'should contain required Model and View classes', ->
-      requiredClasses = [ 'Model', 'ContentView', 'RemixView' ]
+      requiredClasses = [ 'Model', 'MediaView', 'RemixView' ]
       _.each requiredClasses, (property) ->
         expect(Module[property]).toBeDefined()
         expect(_.isFunction Module[property]).toBe true
@@ -71,21 +71,21 @@ acorn.util.test.describeShellModule = (Module, tests) =>
     options =
       model: new Module.Model
 
-    describeView Module.ContentView, athena.lib.View, options, ->
+    describeView Module.MediaView, athena.lib.View, options, ->
 
-      ContentView = Module.ContentView
+      MediaView = Module.MediaView
 
       it 'should derive from athena.lib.View', ->
-        expect(derives ContentView, athena.lib.View).toBe true
+        expect(derives MediaView, athena.lib.View).toBe true
 
-      it 'should derive from (or be) Shell.ContentView', ->
-        expect(isOrDerives ContentView, Shell.ContentView).toBe true
+      it 'should derive from (or be) Shell.MediaView', ->
+        expect(isOrDerives MediaView, Shell.MediaView).toBe true
 
       it 'should require `model` parameter', ->
         throwOptions = _.clone options
         delete throwOptions.model
-        expect(-> new ContentView options).not.toThrow()
-        expect(-> new ContentView throwOptions).toThrow()
+        expect(-> new MediaView options).not.toThrow()
+        expect(-> new MediaView throwOptions).toThrow()
 
     describeView Module.RemixView, athena.lib.View, options, ->
 

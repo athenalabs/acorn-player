@@ -30,7 +30,7 @@ class acorn.shells.Registry
           shellModule[key] = _.clone value
 
     # validate shellModule's Model and View properties
-    classProperties = [ 'Model', 'ContentView', 'RemixView']
+    classProperties = [ 'Model', 'MediaView', 'RemixView']
     _.each classProperties, (property) ->
       unless _.isFunction shellModule[property]
         TypeError property, 'class'

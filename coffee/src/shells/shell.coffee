@@ -60,7 +60,7 @@ acorn.shellWithAcorn = Shell.Model.withAcorn
 acorn.shellWithData = Shell.Model.withData
 
 
-class Shell.ContentView extends athena.lib.View
+class Shell.MediaView extends athena.lib.View
 
   className: @classNameExtend 'shell-content-view'
 
@@ -70,7 +70,7 @@ class Shell.ContentView extends athena.lib.View
     super
 
     unless @options.model
-      acorn.errors.MissingParameterError 'Shell.ContentView', 'model'
+      acorn.errors.MissingParameterError 'Shell.MediaView', 'model'
 
 
 

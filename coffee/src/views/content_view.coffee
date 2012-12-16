@@ -14,7 +14,7 @@ ControlToolbarView = acorn.player.controls.ControlToolbarView
 # |                                                                |
 # |                                                                |
 # |                                                                |
-# |                      Shell.ContentView                         |
+# |                       Shell.MediaView                          |
 # |                                                                |
 # |                                                                |
 # |                                                                |
@@ -23,11 +23,11 @@ ControlToolbarView = acorn.player.controls.ControlToolbarView
 # |                                                                |
 # |                                                                |
 # ------------------------------------------------------------------
-# | Shell.ContentView::controlsView     ContentView::acornControls |
+# | Shell.MediaView::controlsView         MediaView::acornControls |
 # ------------------------------------------------------------------
 
 
-# View to experience an acorn. Renders shells' ContentViews, and the controls.
+# View to experience an acorn. Renders shells' MediaViews, and the controls.
 class acorn.player.ContentView extends athena.lib.View
 
   className: @classNameExtend 'content-view'
@@ -45,8 +45,8 @@ class acorn.player.ContentView extends athena.lib.View
     # @model.shellModel.on 'change', @render
     # @model.acornModel.on 'change', @render
 
-    # construct a shell ContentView
-    @shellView = new @model.shellModel.module.ContentView
+    # construct a shell MediaView
+    @shellView = new @model.shellModel.module.MediaView
       model: @model.shellModel
       eventhub: @eventhub
 

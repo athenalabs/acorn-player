@@ -26,7 +26,7 @@ describe 'acorn.shells.Registry', ->
       description: 'Um... self-describing'
       icon: 'icon-play'
       Model: =>
-      ContentView: =>
+      MediaView: =>
       RemixView: =>
 
     register_fn = -> Registry.registerModule shellModule
@@ -53,7 +53,7 @@ describe 'acorn.shells.Registry', ->
 
     it 'should correctly create backpointers to the module', ->
       expect(shellModule.Model.module).toBe shellModule
-      expect(shellModule.ContentView.module).toBe shellModule
+      expect(shellModule.MediaView.module).toBe shellModule
       expect(shellModule.RemixView.module).toBe shellModule
 
     describe 'Registry.registerModule error handling', ->
@@ -97,7 +97,7 @@ describe 'acorn.shells.Registry', ->
           expect(ret).toBe true
           assertObjectSize Registry.modules, 0
 
-        functionProperties = [ 'Model', 'ContentView', 'RemixView' ]
+        functionProperties = [ 'Model', 'MediaView', 'RemixView' ]
         _.each functionProperties, (property) ->
           moduleClone = _.clone shellModule
 
@@ -112,7 +112,7 @@ describe 'acorn.shells.Registry', ->
 
     describe 'Registry.registerModule optional properties', ->
       it 'should be correctly set on the module', ->
-        optionalProperties = [ 'description', 'ContentView', 'RemixView' ]
+        optionalProperties = [ 'description', 'MediaView', 'RemixView' ]
         _.each optionalProperties, (property) ->
           moduleClone = _.clone shellModule
 

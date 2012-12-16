@@ -21,7 +21,7 @@ class EmptyShell.Model extends Shell.Model
   thumbnailLink: => acorn.config.img.acorn
 
 
-class EmptyShell.ContentView extends Shell.ContentView
+class EmptyShell.MediaView extends Shell.MediaView
 
   render: =>
     @$el.empty()

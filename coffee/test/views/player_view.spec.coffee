@@ -19,8 +19,8 @@ describe 'acorn.player.PlayerView', ->
       shell:
         shellid: 'acorn.Shell'
 
-  # emulate shell, object with a ContentView property
-  module = ContentView: athena.lib.View
+  # emulate shell, object with a MediaView property
+  module = MediaView: athena.lib.View
   model.shellModel.module = module
 
   # options for ContentView contruction

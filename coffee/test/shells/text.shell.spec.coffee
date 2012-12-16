@@ -30,7 +30,7 @@ describe 'acorn.shells.TextShell', ->
         - Carl Sagan, Cosmos 1980
         '''
 
-    contentView = new TextShell.ContentView model: model
+    contentView = new TextShell.MediaView model: model
     contentView.$el.width 600
     contentView.render()
     $player.append contentView.el
