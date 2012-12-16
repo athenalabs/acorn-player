@@ -134,11 +134,10 @@ class LinkShell.RemixView extends Shell.RemixView
     @
 
   onKeyupLinkField: (event) =>
-    ENTER = 13
-    ESC = 27
+    keys = athena.lib.util.keys
     switch event.keyCode
-      when ENTER then @$('input#link').blur()
-      when ESC
+      when keys.ENTER then @$('input#link').blur()
+      when keys.ESC
         @$('input#link').val @model.get 'link'
         @$('input#link').blur()
 
