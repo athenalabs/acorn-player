@@ -3,7 +3,6 @@ goog.provide 'acorn.shells.CollectionShell'
 goog.require 'acorn.shells.Shell'
 
 Shell = acorn.shells.Shell
-CollectionShell = acorn.shells.CollectionShell
 
 # CollectionShell -- one shell to contain them all.
 #
@@ -41,10 +40,13 @@ CollectionShell = acorn.shells.CollectionShell
 # Note that the order of the shells in the array is significant, as
 # CollectionShell uses this order to present the subshells.
 
-CollectionShell.id = 'acorn.CollectionShell'
-CollectionShell.title = 'CollectionShell'
-CollectionShell.description = 'Collection shell'
-CollectionShell.icon = 'icon-sitemap'
+CollectionShell = acorn.shells.CollectionShell =
+
+  id: 'acorn.CollectionShell'
+  title: 'CollectionShell'
+  description: 'Collection shell'
+  icon: 'icon-sitemap'
+
 
 class CollectionShell.Model extends Shell.Model
 
