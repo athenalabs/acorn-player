@@ -76,8 +76,8 @@ LinkShell = acorn.shells.LinkShell =
 
 
 # select functions above, attached to acorn namespace
-acorn.matchingShells = LinkShell.matchingShells
-acorn.bestMatchingShell = LinkShell.bestMatchingShell
+acorn.matchingLinkShells = LinkShell.matchingShells
+acorn.bestMatchingLinkShell = LinkShell.bestMatchingShell
 
 
 # -- module classes --
