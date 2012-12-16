@@ -97,6 +97,7 @@ class LinkShell.Model extends Shell.Model
 class LinkShell.ContentView extends Shell.ContentView
 
   render: =>
+    @$el.empty()
     @$el.append acorn.util.iframe @model, 'link-iframe'
     @
 
