@@ -17,8 +17,11 @@
 
 /* acorn-player */
 .acorn-player {
+  position: relative;
+
 
 .player-view {
+  position: relative;
   text-align: left;
   border: 1px solid #DDD;
   border-radius: 3px;
@@ -36,6 +39,7 @@
 .splash-view {
   position: relative;
   text-align: center;
+  .position-absolutely;
 
   > .splash-image {
     width: 100%;
@@ -66,19 +70,26 @@
 
 .editor-view {
   padding: 20px;
-  min-width: 540px;
+  width: 540px;
+  margin: 0 auto;
+  .position-absolutely;
 
   > * {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+
+  > :first-child {
+    margin-top: 0px;
   }
 
   > .toolbar-view {
     text-align: right;
     width: 100%;
+    margin-top: 40px;
 
     > * {
-        min-width: 120px;
+      min-width: 120px;
     }
   }
 }
