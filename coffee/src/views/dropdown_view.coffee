@@ -8,7 +8,7 @@ class acorn.player.DropdownView extends athena.lib.View
   template: _.template '''
     <button class="btn dropdown-toggle" data-toggle="dropdown" href="#">
       <% if (selected.icon) { %>
-        <i class="icon-<%= selected.icon %>"></i>
+        <i class="icon-<%= selected.icon.replace(/^icon-/, '') %>"></i>
       <% } %>
       <span class="dropdown-selected"><%= selected.name %></span>
       <span class="caret"></span>
@@ -17,7 +17,7 @@ class acorn.player.DropdownView extends athena.lib.View
       <% _.each(items, function(item) { %>
         <li><a class="dropdown-link" href="#">
           <% if (item.icon) { %>
-            <i class="icon-<%= item.icon %>"></i>
+            <i class="icon-<%= item.icon.replace(/^icon-/, '') %>"></i>
           <% } %>
           <%= item.name %>
           <% if (item.name == selected.name) { %>
