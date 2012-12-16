@@ -13,7 +13,7 @@ class acorn.player.DropdownView extends athena.lib.View
       <span class="dropdown-selected"><%= selected.name %></span>
       <span class="caret"></span>
     </button>
-    <ul class="dropdown-menu">
+    <ul class="dropdown-menu pull-right">
       <% _.each(items, function(item) { %>
         <li><a class="dropdown-link" href="#">
           <% if (item.icon) { %>
