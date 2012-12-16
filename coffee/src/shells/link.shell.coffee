@@ -7,75 +7,71 @@ goog.require 'acorn.errors'
 goog.require 'acorn.util'
 
 Shell = acorn.shells.Shell
-LinkShell = acorn.shells.LinkShell
+LinkShell = acorn.shells.LinkShell =
+
+  # -- module properties --
+  # Properties in this section should be overriden by all
+  # shell modules based on LinkShell
+
+  id: 'acorn.LinkShell'
+  title: 'LinkShell'
+  description: 'Base shell to contain any web based URL.'
+  icon: 'icon-link'
+
+  # This property lists the set of regular expression patterns
+  # that LinkShell matches. It should be extended or overriden
+  # in shells that inherit from LinkShell.
+  validLinkPatterns: [ acorn.util.LINK_REGEX ]
 
 
-# -- module properties --
-# Properties in this section should be overriden by all
-# shell modules based on LinkShell
+  # -- module level functions --
+  # Functions in this section are useful in dealing with
+  # shells based on LinkShell
 
-# LinkShell module properties
-LinkShell.id = 'acorn.LinkShell'
-LinkShell.title = 'LinkShell'
-LinkShell.description = 'Base shell to contain any web based URL.'
-LinkShell.icon = 'icon-link'
+  # Returns true if `link` matches pattern contained in array `validLinkPatterns`
+  # Returns false otherwise
+  linkMatches: (link, validLinkPatterns) ->
+    (_.find validLinkPatterns, (pattern) -> pattern.test link)?
 
-# This property lists the set of regular expression patterns
-# that LinkShell matches. It should be extended or overriden
-# in shells that inherit from LinkShell.
-LinkShell.validLinkPatterns = [
-  acorn.util.LINK_REGEX
-]
+  # Returns the set of LinkShell modules that match `link`
+  # A LinkShell module matches a link whenever it conforms to
+  # one or more  the patterns in that modules's top-level
+  # `validLinkPatterns` array property.
+  matchingShells: (link) =>
+    unless link?
+      return LinkShell
 
+    # parse link into a location object
+    location = acorn.util.parseUrl(link)
 
-# -- module level functions --
-# Functions in this section are useful in dealing with
-# shells based on LinkShell
+    # filter out shell modules that don't derive from LinkShell
+    shells = _.filter acorn.shells, (shell) ->
+      acorn.util.derives shell.Model, LinkShell.Model
 
-# Returns true if `link` matches pattern contained in array `validLinkPatterns`
-# Returns false otherwise
-LinkShell.linkMatches = (link, validLinkPatterns) ->
-  (_.find validLinkPatterns, (pattern) -> pattern.test link)?
+    # filter out shells that don't match this link
+    shells = _.filter shells, (shell) ->
+      LinkShell.linkMatches link, shell.validLinkPatterns
 
-# Returns the set of LinkShell modules that match `link`
-# A LinkShell module matches a link whenever it conforms to
-# one or more  the patterns in that modules's top-level
-# `validLinkPatterns` array property.
-LinkShell.matchingShells = (link) =>
-  unless link?
-    return LinkShell
+    # if all else fails, use LinkShell
+    if shells.length == 0
+      shells[0] = LinkShell
 
-  # parse link into a location object
-  location = acorn.util.parseUrl(link)
+    shells
 
-  # filter out shell modules that don't derive from LinkShell
-  shells = _.filter acorn.shells, (shell) ->
-    acorn.util.derives shell.Model, LinkShell.Model
+  # From the set of shells returned by matchingShells(),
+  # this function returns the most specific one in the
+  # inheritence hierarchy.
+  bestMatchingShell: (link) =>
+    # obtain set of matching shells
+    matchingShells = LinkShell.matchingShells(link)
 
-  # filter out shells that don't match this link
-  shells = _.filter shells, (shell) ->
-    LinkShell.linkMatches link, shell.validLinkPatterns
+    # reduce function to get the most specific shell (in terms of inheritance)
+    reduceFn = (bestShell, shell) ->
+      if acorn.util.derives bestShell.Model, shell.Model
+        return bestShell
+      else return shell
 
-  # if all else fails, use LinkShell
-  if shells.length == 0
-    shells[0] = LinkShell
-
-  shells
-
-# From the set of shells returned by matchingShells(),
-# this function returns the most specific one in the
-# inheritence hierarchy.
-LinkShell.bestMatchingShell = (link) =>
-  # obtain set of matching shells
-  matchingShells = LinkShell.matchingShells(link)
-
-  # reduce function to get the most specific shell (in terms of inheritance)
-  reduceFn = (bestShell, shell) ->
-    if acorn.util.derives bestShell.Model, shell.Model
-      return bestShell
-    else return shell
-
-  _.reduce(matchingShells, reduceFn, LinkShell)
+    _.reduce(matchingShells, reduceFn, LinkShell)
 
 
 # select functions above, attached to acorn namespace
