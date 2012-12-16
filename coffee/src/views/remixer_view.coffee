@@ -25,7 +25,7 @@ class acorn.player.RemixerView extends athena.lib.View
         {name: 'Video Link', icon: 'play'}
       ]
       selected: 'Link'
-
+      eventhub: @eventhub
 
   render: =>
     super
