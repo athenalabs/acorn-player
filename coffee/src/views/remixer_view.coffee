@@ -18,6 +18,9 @@ class acorn.player.RemixerView extends athena.lib.View
   initialize: =>
     super
 
+    unless @model instanceof acorn.shells.Shell.Model
+      TypeError @model, 'Shell.Model'
+
     @dropdownView = new acorn.player.DropdownView
       items: [
         {id: '', icon: ''},
