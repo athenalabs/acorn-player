@@ -96,14 +96,18 @@ class LinkShell.Model extends Shell.Model
 
 class LinkShell.ContentView extends Shell.ContentView
 
+  className: @classNameExtend 'link-shell'
+
   render: =>
     @$el.empty()
-    @$el.append acorn.util.iframe @model, 'link-iframe'
+    @$el.append acorn.util.iframe @model.get('link')
     @
 
 
 
 class LinkShell.RemixView extends Shell.RemixView
+
+  className: @classNameExtend 'link-shell'
 
   initialize: =>
     super
@@ -131,6 +135,7 @@ class LinkShell.RemixView extends Shell.RemixView
 
   render: =>
     super
+    @$el.html @template()
     @$('input#link').val @model.get 'link'
     @$('#thumbnail').attr 'src', @model.get 'thumbnail'
     @

@@ -31,8 +31,8 @@ acorn.util.imgUrl = ->
 acorn.util.iframeOptions =
   frameborder: 0
   border: 0
-  width: 600
-  height: 400
+  width: '100%'
+  height: '100%'
   allowFullScreen: 'true'
   webkitAllowFullScreen: 'true'
   mozallowfullscreen: 'true'
