@@ -27,13 +27,23 @@ class ControlToolbarView extends athena.lib.ToolbarView
     _.each @buttons, (btn) =>
       btn.on 'all', (eventName) => @trigger eventName
 
+
 class ControlView extends athena.lib.View
   controlName: => 'Control'
 
   className: @classNameExtend 'control-view'
 
+  tooltip: =>
+
   events: => _.extend super,
     'click': => @trigger "#{@controlName()}:Click", @
+
+  render: =>
+    super
+    tooltip = @tooltip()
+    if tooltip
+      @$el.tooltip(tooltip)
+    @
 
   @withId: (id) =>
     cls = "#{id}ControlView"
@@ -66,16 +76,19 @@ class IconControlView extends ControlView
 
 class FullscreenControlView extends IconControlView
   controlName: => 'FullscreenControl'
+  tooltip: => title: 'Fullscreen', delay: show: 1500
   defaults: => _.extend super,
     icon: 'fullscreen'
 
 class EditControlView extends IconControlView
   controlName: => 'EditControl'
+  tooltip: => title: 'Edit', delay: show: 1500
   defaults: => _.extend super,
     icon: 'edit'
 
 class SourcesControlView extends IconControlView
   controlName: => 'SourcesControl'
+  tooltip: => title: 'Sources', delay: show: 1500
   defaults: => _.extend super,
     icon: 'globe'
 
@@ -104,6 +117,7 @@ class ImageControlView extends ControlView
 
 class AcornControlView extends ImageControlView
   controlName: => 'AcornControl'
+  tooltip: => title: 'Website', delay: show: 1500
   defaults: => _.extend super,
     image: acorn.config.img.acornIcon
 
