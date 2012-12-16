@@ -51,7 +51,7 @@ LinkShell = acorn.shells.LinkShell =
 
     # filter out shells that don't match this link
     shells = _.filter shells, (shell) ->
-      LinkShell.linkMatches link, shell.validLinkPatterns
+      @linkMatches link, shell.validLinkPatterns
 
     # if all else fails, use LinkShell
     if shells.length == 0
@@ -64,7 +64,7 @@ LinkShell = acorn.shells.LinkShell =
   # inheritence hierarchy.
   bestMatchingShell: (link) ->
     # obtain set of matching shells
-    matchingShells = LinkShell.matchingShells link
+    matchingShells = @matchingShells link
 
     # reduce function to get the most specific shell (in terms of inheritance)
     reduceFn = (bestShell, shell) ->
