@@ -38,14 +38,8 @@ describe 'acorn.player.EditorView', ->
 
   describeSubview
     View: EditorView
-    Subview: acorn.player.ShellOptionsView
-    subviewAttr: 'shellOptionsView'
-    viewOptions: options
-
-  describeSubview
-    View: EditorView
-    Subview: acorn.player.RemixerView
-    subviewAttr: 'newRemixerView'
+    Subview: acorn.player.ShellEditorView
+    subviewAttr: 'shellEditorView'
     viewOptions: options
 
   describeSubview
