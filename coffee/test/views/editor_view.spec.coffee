@@ -44,6 +44,12 @@ describe 'acorn.player.EditorView', ->
 
   describeSubview
     View: EditorView
+    Subview: acorn.player.RemixerView
+    subviewAttr: 'remixerView'
+    viewOptions: options
+
+  describeSubview
+    View: EditorView
     Subview: athena.lib.ToolbarView
     subviewAttr: 'toolbarView'
     viewOptions: options

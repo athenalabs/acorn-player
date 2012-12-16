@@ -35,7 +35,7 @@ goog.require 'acorn.player.RemixerView'
 # View to edit an acorn. Renders shells' EditorViews.
 class acorn.player.EditorView extends athena.lib.View
 
-  className: @classNameExtend 'editor-view span8'
+  className: @classNameExtend 'editor-view'
 
   events: => _.extend super,
     'click #editor-cancel-btn': => @eventhub.trigger 'Editor:Cancel', @
@@ -55,6 +55,10 @@ class acorn.player.EditorView extends athena.lib.View
     cancel = text: 'Cancel', id: 'editor-cancel-btn'
     save = text: 'Save', id: 'editor-save-btn', className: 'btn-success'
 
+    @remixerView = new acorn.player.RemixerView
+      model: @model.shellModel
+      eventhub: @eventhub
+
     @toolbarView = new athena.lib.ToolbarView
       buttons: [cancel, save]
       eventhub: @eventhub
@@ -65,6 +69,7 @@ class acorn.player.EditorView extends athena.lib.View
 
     @$el.append @acornOptionsView.render().el
     @$el.append @shellOptionsView.render().el
+    @$el.append @remixerView.render().el
     @$el.append @toolbarView.render().el
 
     @
