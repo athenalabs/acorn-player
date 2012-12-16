@@ -3,14 +3,15 @@ goog.provide 'acorn.shells.EmptyShell'
 goog.require 'acorn.shells.Shell'
 goog.require 'acorn.config'
 
-
 Shell = acorn.shells.Shell
-EmptyShell = acorn.shells.EmptyShell
 
-EmptyShell.id = 'acorn.EmptyShell'
-EmptyShell.title = 'EmptyShell'
-EmptyShell.description = 'an empty, nutless shell'
-EmptyShell.icon = 'icon-check-empty'
+EmptyShell = acorn.shells.EmptyShell =
+
+  id: 'acorn.EmptyShell'
+  title: 'EmptyShell'
+  description: 'an empty, nutless shell'
+  icon: 'icon-check-empty'
+
 
 class EmptyShell.Model extends Shell.Model
 
