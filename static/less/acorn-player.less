@@ -7,12 +7,26 @@
 @main-control-padding: 4px 9px;
 
 /* less functions */
-.position-absolutely {
+
+// position-absolutely: call with 0-4 parameters
+.position-absolutely(@top, @right, @bottom, @left) {
   position: absolute;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
+  top: @top;
+  right: @right;
+  bottom: @bottom;
+  left: @left;
+}
+
+.position-absolutely(@top, @right-left, @bottom) {
+  .position-absolutely(@top, @right-left, @bottom, @right-left);
+}
+
+.position-absolutely(@top-bottom, @right-left) {
+  .position-absolutely(@top-bottom, @right-left, @top-bottom, @right-left);
+}
+
+.position-absolutely(@offset: 0px) {
+  .position-absolutely(@offset, @offset, @offset, @offset);
 }
 
 .bordered (@radius:3px) {
@@ -286,11 +300,7 @@ input {
   z-index: 10;
 
   > .background {
-    position: absolute;
-    top: 10px;
-    bottom: 10px;
-    left: 10px;
-    right: 10px;
+    .position-absolutely(10px);
     padding: 20px;
     background: rgba(255, 255, 255, 0.98);
     box-shadow: 0 2px 5px rgba(34, 25, 25, 0.4);
