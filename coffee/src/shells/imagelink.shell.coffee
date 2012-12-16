@@ -14,6 +14,7 @@ ImageLinkShell = acorn.shells.ImageLinkShell
 ImageLinkShell.id = 'acorn.ImageLinkShell'
 ImageLinkShell.title = 'ImageLinkShell'
 ImageLinkShell.description = 'Shell to contain web based images.'
+ImageLinkShell.icon = 'icon-picture'
 
 # This property lists the set of regular expression patterns
 # that LinkShell matches. It should be extended or overriden

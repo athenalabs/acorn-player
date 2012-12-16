@@ -8,6 +8,7 @@ TextShell = acorn.shells.TextShell
 TextShell.id = 'acorn.TextShell'
 TextShell.title = 'TextShell'
 TextShell.description = 'a shell to store text'
+TextShell.icon = 'icon-align-left'
 
 
 class TextShell.Model extends Shell.Model

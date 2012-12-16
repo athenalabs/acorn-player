@@ -24,6 +24,7 @@ describe 'acorn.shells.Registry', ->
       id: 'ApertureScience.GladOS'
       title: 'Portal into GladOS\'s internal psychological state'
       description: 'Um... self-describing'
+      icon: 'icon-play'
       Model: =>
       ContentView: =>
       RemixView: =>
@@ -65,7 +66,7 @@ describe 'acorn.shells.Registry', ->
       it 'should throw error if missing a required property', ->
         unregisterAllShells()
 
-        requiredProperties = [ 'id', 'title', 'Model' ]
+        requiredProperties = [ 'id', 'title', 'icon', 'Model' ]
         _.each requiredProperties, (property) ->
           moduleClone = _.clone shellModule
 
@@ -83,7 +84,7 @@ describe 'acorn.shells.Registry', ->
       it 'should throw error if properties are of incorrect types', ->
         unregisterAllShells()
 
-        stringProperties = [ 'id', 'title', ]
+        stringProperties = [ 'id', 'title', 'icon' ]
         _.each stringProperties, (property) ->
           moduleClone = _.clone shellModule
 

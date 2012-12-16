@@ -9,7 +9,7 @@ class acorn.shells.Registry
   @registerModule: (shellModule) =>
 
     # validate that shellModule contains required String properties
-    requiredProperties = [ 'id', 'title' ]
+    requiredProperties = [ 'id', 'title', 'icon' ]
     _.each requiredProperties, (property) ->
       unless shellModule[property]?
         MissingParameterError "shell registration", property

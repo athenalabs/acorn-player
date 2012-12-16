@@ -19,6 +19,9 @@ Shell.title = 'Shell'
 # Description of the shell
 Shell.description = 'base shell'
 
+# Basic icon to display throughout (using Font Awesome classes)
+Shell.icon = 'icon-sign-blank'
+
 
 class Shell.Model extends Backbone.Model
 

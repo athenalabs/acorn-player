@@ -18,6 +18,7 @@ LinkShell = acorn.shells.LinkShell
 LinkShell.id = 'acorn.LinkShell'
 LinkShell.title = 'LinkShell'
 LinkShell.description = 'Base shell to contain any web based URL.'
+LinkShell.icon = 'icon-link'
 
 # This property lists the set of regular expression patterns
 # that LinkShell matches. It should be extended or overriden

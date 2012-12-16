@@ -44,7 +44,7 @@ CollectionShell = acorn.shells.CollectionShell
 CollectionShell.id = 'acorn.CollectionShell'
 CollectionShell.title = 'CollectionShell'
 CollectionShell.description = 'Collection shell'
-
+CollectionShell.icon = 'icon-sitemap'
 
 class CollectionShell.Model extends Shell.Model
 
