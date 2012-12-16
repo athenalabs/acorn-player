@@ -76,14 +76,36 @@ describe 'acorn.player.DropdownView', ->
     view.selected('d')
     expect(spy.triggerCount).toBe 4
 
+  it 'should render item names, if available', ->
+    items = [{id:'a', name:'Aa'}, {id:'b', name:'Bb'}]
+    view = new DropdownView items: items
+    view.render()
+
+    textInEl = (sel) -> view.$(sel).text().replace(/\s/g, '')
+    expect(view.selected()).toBe 'a'
+    expect(textInEl('.dropdown-selected')).toBe 'Aa'
+    expect(view.selected('b')).toBe 'b'
+    expect(textInEl('.dropdown-selected')).toBe 'Bb'
+    expect(textInEl('.dropdown-menu')).toBe 'AaBb'
+
+  it 'should render item icons, if available', ->
+    items = [{id:'a', icon:'icon-play'}, {id:'b', icon:'icon-stop'}]
+    view = new DropdownView items: items
+    view.render()
+
+    iconsInEl = (sel) -> view.$(sel).children('i:first-child')
+    expect(iconsInEl('.dropdown-toggle').hasClass('icon-play')).toBe true
+    expect(iconsInEl('.dropdown-link').eq(0).hasClass('icon-play')).toBe true
+    expect(iconsInEl('.dropdown-link').eq(1).hasClass('icon-stop')).toBe true
+
   it 'should look good', ->
     # setup DOM
     acorn.util.appendCss()
     $player = $('<div>').addClass('acorn-player').appendTo('body')
 
     view = new DropdownView items: [
-      {name: 'Playlist', icon: 'list'},
-      {name: 'Spliced Video', icon: 'play'}
+      {id: 'playlist', name:'Playlist', icon: 'list'},
+      {id: 'svideo', name:'Spliced Video', icon: 'play'}
     ]
 
     view.$el.width 600

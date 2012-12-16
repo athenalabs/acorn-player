@@ -20,9 +20,9 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @dropdownView = new acorn.player.DropdownView
       items: [
-        {name: '', icon: ''},
-        {name: 'Link', icon: 'share'},
-        {name: 'Video Link', icon: 'play'}
+        {id: '', icon: ''},
+        {id: 'Link', icon: 'share'},
+        {id: 'Video Link', icon: 'play'}
       ]
       selected: 'Link'
       eventhub: @eventhub

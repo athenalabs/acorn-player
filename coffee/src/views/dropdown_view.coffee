@@ -10,17 +10,19 @@ class acorn.player.DropdownView extends athena.lib.View
       <% if (selected.icon) { %>
         <i class="icon-<%= selected.icon.replace(/^icon-/, '') %>"></i>
       <% } %>
-      <span class="dropdown-selected"><%= selected.name %></span>
+      <span class="dropdown-selected">
+        <%= selected.name || selected.id %>
+      </span>
       <span class="caret"></span>
     </button>
     <ul class="dropdown-menu pull-right">
       <% _.each(items, function(item) { %>
-        <li><a class="dropdown-link" href="#">
+        <li><a class="dropdown-link" dropdown-id="<%= item.id %>" href="#">
           <% if (item.icon) { %>
             <i class="icon-<%= item.icon.replace(/^icon-/, '') %>"></i>
           <% } %>
-          <%= item.name %>
-          <% if (item.name == selected.name) { %>
+          <%= item.name || item.id %>
+          <% if (item.id == selected.id) { %>
             <i class="icon-ok"></i>
           <% } %>
         </a></li>
@@ -30,7 +32,7 @@ class acorn.player.DropdownView extends athena.lib.View
 
   events: => _.extend super,
     'click a.dropdown-link': (event) =>
-      @selected $(event.target).text()
+      @selected $(event.target).attr('dropdown-id')
       event.preventDefault()
 
   initialize: =>
@@ -39,30 +41,30 @@ class acorn.player.DropdownView extends athena.lib.View
       ValueError 'options.items', 'must have at least one item'
 
     @items = _.map @options.items, @formatItem
-    @_selected = @options.selected ? @items[0].name
+    @_selected = @options.selected ? @items[0].id
 
   render: =>
     super
     @$el.empty()
 
     @$el.html @template
-      selected: @itemWithValue @selected()
+      selected: @itemWithId @selected()
       items: @items
 
     @
 
-  selected: (value) =>
-    if value?
-      value = String(value).trim()
-      unless @itemWithValue(value)
-        ValueError('value', 'not in items')
-      @_selected = value
+  selected: (id) =>
+    if id?
+      id = String(id).trim()
+      unless @itemWithId(id)
+        ValueError(id, 'not in items')
+      @_selected = id
       @softRender()
       @trigger 'Dropdown:Selected', @, @_selected
     @_selected ? @items[0]
 
-  itemWithValue: (value) =>
-    _.find(@items, (item) => item.name == value)
+  itemWithId: (id) =>
+    _.find(@items, (item) => item.id == id)
 
   formatItem: (item) ->
-    if _.isString item then {'name': item} else item
+    if _.isString item then {'id': item} else item
