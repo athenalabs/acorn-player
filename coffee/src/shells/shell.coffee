@@ -6,21 +6,21 @@ goog.require 'acorn.util'
 goog.require 'acorn.errors'
 
 
-Shell = acorn.shells.Shell
+Shell = acorn.shells.Shell =
 
-# The unique `shell` name of an acorn Shell.
-# The convention is to namespace by vendor. e.g. `acorn.Document`.
-Shell.id = 'acorn.Shell'
+  # The unique `shell` name of an acorn Shell.
+  # The convention is to namespace by vendor. e.g. `acorn.Document`.
+  id: 'acorn.Shell'
 
-# Returns a simple title of the shell
-# Override it with your own shell-specific code.
-Shell.title = 'Shell'
+  # Returns a simple title of the shell
+  # Override it with your own shell-specific code.
+  title: 'Shell'
 
-# Description of the shell
-Shell.description = 'base shell'
+  # Description of the shell
+  description: 'base shell'
 
-# Basic icon to display throughout (using Font Awesome classes)
-Shell.icon = 'icon-sign-blank'
+  # Basic icon to display throughout (using Font Awesome classes)
+  icon: 'icon-sign-blank'
 
 
 class Shell.Model extends Backbone.Model
