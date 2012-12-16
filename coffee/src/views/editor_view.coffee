@@ -55,7 +55,7 @@ class acorn.player.EditorView extends athena.lib.View
     cancel = text: 'Cancel', id: 'editor-cancel-btn'
     save = text: 'Save', id: 'editor-save-btn', className: 'btn-success'
 
-    @remixerView = new acorn.player.RemixerView
+    @newRemixerView = new acorn.player.RemixerView
       model: @model.shellModel
       eventhub: @eventhub
 
@@ -69,7 +69,7 @@ class acorn.player.EditorView extends athena.lib.View
 
     @$el.append @acornOptionsView.render().el
     @$el.append @shellOptionsView.render().el
-    @$el.append @remixerView.render().el
+    @$el.append @newRemixerView.render().el
     @$el.append @toolbarView.render().el
 
     @
