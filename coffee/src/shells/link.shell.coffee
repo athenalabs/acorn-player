@@ -28,7 +28,8 @@ LinkShell = acorn.shells.LinkShell =
   # Functions in this section are useful in dealing with
   # shells based on LinkShell
 
-  # Returns true if `link` matches pattern contained in array `validLinkPatterns`
+  # Returns true if `link` matches pattern contained in array
+  # `validLinkPatterns`
   # Returns false otherwise
   linkMatches: (link, validLinkPatterns) ->
     (_.find validLinkPatterns, (pattern) -> pattern.test link)?
@@ -42,7 +43,7 @@ LinkShell = acorn.shells.LinkShell =
       return LinkShell
 
     # parse link into a location object
-    location = acorn.util.parseUrl(link)
+    location = acorn.util.parseUrl link
 
     # filter out shell modules that don't derive from LinkShell
     shells = _.filter acorn.shells, (shell) ->
@@ -63,7 +64,7 @@ LinkShell = acorn.shells.LinkShell =
   # inheritence hierarchy.
   bestMatchingShell: (link) ->
     # obtain set of matching shells
-    matchingShells = LinkShell.matchingShells(link)
+    matchingShells = LinkShell.matchingShells link
 
     # reduce function to get the most specific shell (in terms of inheritance)
     reduceFn = (bestShell, shell) ->
@@ -71,7 +72,7 @@ LinkShell = acorn.shells.LinkShell =
         return bestShell
       else return shell
 
-    _.reduce(matchingShells, reduceFn, LinkShell)
+    _.reduce matchingShells, reduceFn, LinkShell
 
 
 # select functions above, attached to acorn namespace
