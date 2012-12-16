@@ -17,15 +17,21 @@ class acorn.player.AcornOptionsView extends athena.lib.View
 
   template: _.template '''
     <div class="row-fluid">
-      <div class="span3">
+      <div class="span2">
         <div class="thumbnail-view">
           <img class="img-rounded" src="<%= thumbnail %>" />
         </div>
       </div>
-      <div class="span9">
-        <h4 id="acornid">acornid:<%= acornid %></h4>
+      <div class="span10">
+        <h4 id="acornid">
+          <% if (acornid && acornid != 'new') { %>
+            acornid:<%= acornid %>
+          <% } else { %>
+            create a new acorn
+          <% } %>
+        </h4>
         <input id="title" type="text" value="<%= title %>"
-          placeholder="Title" class="span9" />
+          placeholder="enter a description" class="span9" />
       </div>
     </div>
     '''
