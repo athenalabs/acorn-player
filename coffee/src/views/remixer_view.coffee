@@ -8,9 +8,9 @@ class acorn.player.RemixerView extends athena.lib.View
   className: @::className + ' remixer-view'
 
   template: _.template '''
-    <div class="input-prepend row-fluid">
+    <div class="input-append row-fluid">
+      <input class="span9" id="link" type="text" />
       <div class="btn-group dropdown-view"></div>
-      <input class="span6" id="link" type="text">
     </div>
     <div class="remixer-content"></div>
     '''
