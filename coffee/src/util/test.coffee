@@ -14,7 +14,7 @@ acorn.util.test.describeShellModule = (Module, tests) =>
   describe "#{Module.id} shell module", ->
 
     it 'should contain required properties', ->
-      requiredProperties = [ 'id', 'title', 'description' ]
+      requiredProperties = [ 'id', 'title', 'description', 'icon' ]
       _.each requiredProperties, (property) ->
         expect(Module[property]).toBeDefined()
         expect(_.isString Module[property]).toBe true
