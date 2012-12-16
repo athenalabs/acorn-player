@@ -13,25 +13,27 @@ describe 'acorn.player.RemixerView', ->
   options =
     model: model
 
-  describeView = athena.lib.util.test.describeView
-  describeView RemixerView, athena.lib.View, options
-
   it 'should be part of acorn.player', ->
     expect(RemixerView).toBeDefined()
 
-  describe 'RemixerView::remixerSubview', ->
-    it 'should be fine with no remixerSubview', ->
-      view = new RemixerView options
-      expect(view.remixerSubview).not.toBeDefined()
-      expect(view.render).not.toThrow()
-      expect(view.remixerSubview).not.toBeDefined()
+  describeView = athena.lib.util.test.describeView
+  describeView RemixerView, athena.lib.View, options
 
-    it 'should render and append remixerSubview on render', ->
-      view = new RemixerView options
-      view.remixerSubview = new athena.lib.View
-      view.render()
-      expect(view.remixerSubview.rendering).toBe true
-      expect(view.remixerSubview.el.parentNode.parentNode).toBe view.el
+  describeSubview = athena.lib.util.test.describeSubview
+  describeSubview
+    View: RemixerView
+    Subview: acorn.player.DropdownView
+    subviewAttr: 'dropdownView'
+    viewOptions: options
+    checkDOM: (cEl, pEl) -> cEl.parentNode.parentNode is pEl
+
+  describeSubview = athena.lib.util.test.describeSubview
+  describeSubview
+    View: RemixerView
+    Subview: model.module.RemixView
+    subviewAttr: 'remixSubview'
+    viewOptions: options
+    checkDOM: (cEl, pEl) -> cEl.parentNode.parentNode is pEl
 
 
   it 'should look good', ->

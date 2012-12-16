@@ -30,6 +30,10 @@ class acorn.player.RemixerView extends athena.lib.View
       selected: 'Link'
       eventhub: @eventhub
 
+    @remixSubview = new @model.module.RemixView
+      eventhub: @eventhub
+      model: @model
+
   render: =>
     super
     @$el.empty()
@@ -39,7 +43,6 @@ class acorn.player.RemixerView extends athena.lib.View
     @dropdownView.setElement @$ '.dropdown-view'
     @dropdownView.render()
 
-    if @remixerSubview
-      @$('.remixer-content').append @remixerSubview.render().el
+    @$('.remixer-content').append @remixSubview.render().el
 
     @
