@@ -29,7 +29,9 @@ class acorn.player.DropdownView extends athena.lib.View
     '''
 
   events: => _.extend super,
-    'click a.dropdown-link': (event) => @selected $(event.target).text()
+    'click a.dropdown-link': (event) =>
+      @selected $(event.target).text()
+      event.preventDefault()
 
   initialize: =>
     super
