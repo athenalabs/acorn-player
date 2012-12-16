@@ -14,7 +14,7 @@ describe 'acorn.player.EditorView', ->
       thumbnail: acorn.config.img.acorn
       acornid: 'nyfskeqlyx'
       title: 'The Differential'
-    shellModel: new Backbone.Model
+    shellModel: new acorn.shells.Shell.Model
       shellid: 'acorn.Shell'
 
   # patch the models for testing

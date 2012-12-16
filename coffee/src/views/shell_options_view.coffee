@@ -19,10 +19,13 @@ class acorn.player.ShellOptionsView extends athena.lib.View
 
   initialize: =>
     super
-    placeholder = _.keys acorn.shells.Registry.modules
+
+    modules = _.map acorn.shells.Registry.modules, (module, shellid) =>
+      {id:module.id, name: module.title, icon: module.icon}
+
     @dropdownView = new acorn.player.DropdownView
-      items: placeholder
-      selected: @model.get('shellid')
+      items: modules
+      selected: @model.module.id
 
     @dropdownView.on 'Dropdown:Selected', =>
       @model.set shellid: @dropdownView.selected()
