@@ -109,7 +109,7 @@ class LinkShell.RemixView extends Shell.RemixView
   initialize: =>
     super
     @eventhub.on 'delete:shell', => @.model.set 'link', ''
-    @eventhub.on 'save:link', => @onSaveLink()
+    @eventhub.on 'save:link', @onSaveLink
 
   template: _.template '''
     <div>
