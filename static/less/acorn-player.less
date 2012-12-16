@@ -1,5 +1,11 @@
 @import 'elements.less';
 
+/* variables */
+@main-control-height: 29px;
+@main-control-font-size: 22px;
+@main-control-icon-size: 17px;
+@main-control-padding: 4px 9px;
+
 /* less functions */
 .position-absolutely {
   position: absolute;
@@ -90,7 +96,7 @@
 
   > :first-child {
     .position-absolutely;
-    bottom: 28px;
+    bottom: @main-control-height;
   }
 
   > .control-toolbar-view {
@@ -100,9 +106,9 @@
     display: block;
     border-top: 1px solid #cccccc;
     padding: 0px;
-    height: 28px;
+    height: @main-control-height;
 
-    .gradient(#ffffff, #ffffff, #e6e6e6);
+    .gradient(#ffffff, #e6e6e6, #ffffff);
     .transition(0.35s, ease);
 
     > .acorn-controls {
@@ -111,26 +117,32 @@
   }
 }
 
+
 .control-toolbar-view {
   display: inline-block;
-  height: 28px;
+  height: @main-control-height;
 
   > .control-view {
     display: inline-block;
     position: relative;
-    font-size: 20px;
-    line-height: 20px;
-    width: 28px;
-    height: 28px;
+    font-size: @main-control-font-size;
+    line-height: @main-control-font-size;
+    width: (@main-control-height * 1.2);
+    height: @main-control-height;
     padding: 0px;
     margin: 0px;
+    border-left: 1px solid rgba(204, 204, 204, 0.5);
 
     > * {
       .position-absolutely;
-      padding: 6px;
+      padding: @main-control-padding;
       opacity: 0.65;
-      width: 16px;
-      height: 16px;
+    }
+
+    > img {
+      margin-top: 2px;
+      width: @main-control-icon-size;
+      height: @main-control-icon-size;
     }
   }
 
@@ -139,15 +151,26 @@
     opacity: 0.3;
   }
 
-  > .control-view:hover > * {
-    opacity: 1.0;
+  > .control-view:hover {
+    background: rgba(204, 204, 204, 0.2);
+
+    > * {
+      opacity: 1.0;
+    }
   }
 
-  > .control-view:active > * {
-    margin-top: 1px;
-    font-size: 22px;
-    width: 17px;
-    height: 17px;
+  > .control-view:active {
+    background: rgba(204, 204, 204, 0.1);
+
+    > * {
+      opacity: 0.7;
+      /*
+      margin-left: -1px;
+      font-size: @main-control-font-size + 2;
+      width: @main-control-icon-size + 1;
+      height: @main-control-icon-size + 1;
+      */
+    }
   }
 }
 
