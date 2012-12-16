@@ -3,12 +3,13 @@ goog.provide 'acorn.shells.TextShell'
 goog.require 'acorn.shells.Shell'
 
 Shell = acorn.shells.Shell
-TextShell = acorn.shells.TextShell
 
-TextShell.id = 'acorn.TextShell'
-TextShell.title = 'TextShell'
-TextShell.description = 'a shell to store text'
-TextShell.icon = 'icon-align-left'
+TextShell = acorn.shells.TextShell =
+
+  id: 'acorn.TextShell'
+  title: 'TextShell'
+  description: 'a shell to store text'
+  icon: 'icon-align-left'
 
 
 class TextShell.Model extends Shell.Model
