@@ -6,6 +6,7 @@ describe 'acorn.player.PlayerView', ->
   PlayerView = acorn.player.PlayerView
   EventSpy = athena.lib.util.test.EventSpy
   derives = athena.lib.util.derives
+  Shell = acorn.shells.Shell
 
   # model for PlayerView contruction
   model =
@@ -19,16 +20,47 @@ describe 'acorn.player.PlayerView', ->
       shell:
         shellid: 'acorn.Shell'
 
-  # emulate shell, object with a MediaView property
-  module = MediaView: athena.lib.View
-  model.shellModel.module = module
-
   # options for ContentView contruction
   options = model: model
 
 
   it 'should be part of acorn.player', ->
     expect(PlayerView).toBeDefined()
+
+  describe 'model verification', ->
+
+    it 'should fail to construct if model.acornModel was not passed in', ->
+      m = _.clone model
+      m.acornModel = undefined
+      expect(-> new PlayerView model: m).toThrow()
+
+    it 'should fail to construct if model.shellModel was not passed in', ->
+      m = _.clone model
+      m.shellModel = undefined
+      expect(-> new PlayerView model: m).toThrow()
+
+    it 'should fail to construct if model.acornModel type is incorrect', ->
+      m = _.clone model
+      m.acornModel = new Backbone.Model
+      expect(-> new PlayerView model: m).toThrow()
+      m.acornModel = model.shellModel
+      expect(-> new PlayerView model: m).toThrow()
+
+    it 'should fail to construct if model.shellModel type is incorrect', ->
+      m = _.clone model
+      m.shellModel = new Backbone.Model
+      expect(-> new PlayerView model: m).toThrow()
+      m.shellModel = model.acornModel
+      expect(-> new PlayerView model: m).toThrow()
+
+    it 'should succeed to construct if model.acornModel type is correct', ->
+      expect(model.acornModel instanceof acorn.Model).toBe true
+      expect(-> new PlayerView model: model).not.toThrow()
+
+    it 'should succeed to construct if model.shellModel type is correct', ->
+      expect(model.shellModel instanceof Shell.Model).toBe true
+      expect(-> new PlayerView model: model).not.toThrow()
+
 
   describeView = athena.lib.util.test.describeView
   describeView PlayerView, athena.lib.View, options

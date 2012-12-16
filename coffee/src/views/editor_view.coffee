@@ -43,6 +43,9 @@ class acorn.player.EditorView extends athena.lib.View
   initialize: =>
     super
 
+    unless @model instanceof acorn.Model
+      TypeError @model, 'acorn.Model'
+
     @acornOptionsView = new acorn.player.AcornOptionsView
       model: @model
       eventhub: @eventhub

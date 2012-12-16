@@ -3,6 +3,7 @@ goog.provide 'acorn.specs.player.EditorView'
 goog.require 'acorn.player.EditorView'
 
 describe 'acorn.player.EditorView', ->
+  Shell = acorn.shells.Shell
   EventSpy = athena.lib.util.test.EventSpy
   EditorView = acorn.player.EditorView
   describeView = athena.lib.util.test.describeView
@@ -25,6 +26,19 @@ describe 'acorn.player.EditorView', ->
 
   it 'should be part of acorn.player', ->
     expect(EditorView).toBeDefined()
+
+  describe 'model verification', ->
+
+    it 'should fail to construct if model was not passed in', ->
+      expect(-> new EditorView).toThrow()
+
+    it 'should fail to construct if model type is incorrect', ->
+      expect(-> new EditorView model: new Backbone.Model).toThrow()
+      expect(-> new EditorView model: new Shell.Model).toThrow()
+
+    it 'should succeed to construct if model type is correct', ->
+      expect(model instanceof acorn.Model).toBe true
+      expect(-> new EditorView model: model).not.toThrow()
 
   describeView EditorView, athena.lib.View, options
 

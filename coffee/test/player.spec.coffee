@@ -30,6 +30,19 @@ describe 'acorn.player.Player', ->
     p = new Player acornModel: acornModel
     expect(p.shellModel.toJSON()).toEqual acornModel.shellData()
 
+  describe 'model verification', ->
+
+    it 'should fail to construct if acornModel was not passed in', ->
+      expect(-> new Player).toThrow()
+
+    it 'should fail to construct if model type is incorrect', ->
+      expect(-> new Player acornModel: {bad: value}).toThrow()
+      expect(-> new Player acornModel: new Backbone.Model).toThrow()
+
+    it 'should succeed to construct if model type is correct', ->
+      expect(acornModel instanceof acorn.Model).toBe true
+      expect(-> new Player acornModel: acornModel).not.toThrow()
+
   describe 'acorn.player.Player.view property', ->
 
     it 'should be a property of type PlayerView', ->

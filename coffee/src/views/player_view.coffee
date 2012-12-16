@@ -14,6 +14,12 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
   initialize: =>
     super
 
+    unless @model.acornModel instanceof acorn.Model
+      TypeError @model.acornModel, 'acorn.Model'
+
+    unless @model.shellModel instanceof acorn.shells.Shell.Model
+      TypeError @model.shellModel, 'acorn.Model'
+
     @eventhub.on 'show:editor', => @content @editorView()
     @eventhub.on 'show:splash', => @content @splashView()
     @eventhub.on 'show:content', => @content @contentView()

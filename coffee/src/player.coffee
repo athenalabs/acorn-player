@@ -14,6 +14,10 @@ class acorn.player.Player
     @initialize()
 
   initialize: =>
+
+    unless @options.acornModel instanceof acorn.Model
+      TypeError @options.acornModel, 'acorn.Model'
+
     @acornModel = @options.acornModel # TODO initialize from id or data
     @shellModel = acorn.shellWithAcorn @acornModel
     @eventhub = @

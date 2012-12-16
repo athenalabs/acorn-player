@@ -15,6 +15,12 @@ class acorn.player.SplashView extends athena.lib.View
     <img id="logo" src="<%= logo %>" class="splash-icon" />
     '''
 
+  initialize: =>
+    super
+
+    unless @model instanceof acorn.Model
+      TypeError @model, 'acorn.Model'
+
   render: =>
     @$el.empty()
 
