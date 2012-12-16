@@ -93,6 +93,7 @@
     margin-top: 40px;
 
     > * {
+      margin-left: 10px;
       min-width: 120px;
     }
   }
@@ -189,12 +190,6 @@
   }
 }
 
-.toolbar-view {
-  > * {
-    margin-left: 10px;
-  }
-}
-
 .thumbnail-view {
   display: inline-cell;
   width: 74px;
@@ -227,12 +222,31 @@
 
 .remixer-view {
 
-  > div.input-append {
-    > .dropdown-view {
-      > .dropdown-toggle > .caret {
-        float: none;
+  > .remixer-header {
+
+    .input-append {
+      margin: -1px;
+      margin-right: 10px;
+      width: auto;
+      display: inline-block;
+    }
+
+    input {
+      min-width: 385px;
+      float: left
+    }
+
+    .dropdown-view > .dropdown-toggle {
+      width: 55px;
+      .dropdown-selected {
+        display: none;
       }
     }
+
+    .toolbar-view > * {
+      margin-left: 0px;
+    }
+
   }
 }
 

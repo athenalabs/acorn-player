@@ -25,9 +25,15 @@ describe 'acorn.player.RemixerView', ->
     Subview: acorn.player.DropdownView
     subviewAttr: 'dropdownView'
     viewOptions: options
+    checkDOM: (cEl, pEl) -> cEl.parentNode.parentNode.parentNode is pEl
+
+  describeSubview
+    View: RemixerView
+    Subview: athena.lib.ToolbarView
+    subviewAttr: 'toolbarView'
+    viewOptions: options
     checkDOM: (cEl, pEl) -> cEl.parentNode.parentNode is pEl
 
-  describeSubview = athena.lib.util.test.describeSubview
   describeSubview
     View: RemixerView
     Subview: model.module.RemixView
@@ -35,6 +41,23 @@ describe 'acorn.player.RemixerView', ->
     viewOptions: options
     checkDOM: (cEl, pEl) -> cEl.parentNode.parentNode is pEl
 
+  it 'should trigger `Remixer:Duplicate` on clicking btn', ->
+    view = new RemixerView options
+    spy = new EventSpy view, 'Remixer:Duplicate'
+
+    view.render()
+    expect(spy.triggered).toBe false
+    view.toolbarView.$('button#duplicate').trigger 'click'
+    expect(spy.triggered).toBe true
+
+  it 'should trigger `Remixer:Delete` on clicking btn', ->
+    view = new RemixerView options
+    spy = new EventSpy view, 'Remixer:Delete'
+
+    view.render()
+    expect(spy.triggered).toBe false
+    view.toolbarView.$('button#delete').trigger 'click'
+    expect(spy.triggered).toBe true
 
   it 'should look good', ->
     # setup DOM
