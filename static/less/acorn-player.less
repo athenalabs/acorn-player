@@ -1,3 +1,6 @@
+@import 'elements.less';
+
+/* acorn-player */
 .acorn-player {
 
 .player-view {
@@ -95,19 +98,8 @@
     padding: 0px;
     height: 28px;
 
-    background-color: #ffffff;
-    background-image: linear-gradient(top, #ffffff, #e6e6e6);
-    background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-    background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-    background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-    background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-
-    -webkit-transition: 0.35s ease;
-    -moz-transition: 0.35s ease;
-    -ms-transition: 0.35s ease;
-    -o-transition: 0.35s ease;
-    transition: 0.35s ease;
+    .gradient(#ffffff, #ffffff, #e6e6e6);
+    .transition(0.35s, ease);
 
     > .acorn-controls {
       float: right;
