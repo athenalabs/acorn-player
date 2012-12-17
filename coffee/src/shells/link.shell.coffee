@@ -85,7 +85,7 @@ acorn.bestMatchingLinkShell = LinkShell.bestMatchingShell
 class LinkShell.Model extends Shell.Model
 
   validate: (attrs) =>
-    unless (attrs? or attrs.link == '')
+    if attrs.link? and attrs.link != ''
       unless LinkShell.linkMatches attrs.link, @module.validLinkPatterns
         ValueError 'link', 'doesn\'t match valid link patterns for this shell.'
 
