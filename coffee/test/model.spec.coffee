@@ -93,7 +93,8 @@ describe 'acorn.Model', ->
       spy = new EventSpy nyfskeqlyx, 'change'
 
       runs -> nyfskeqlyx.fetch()
-      waitsFor (-> spy.triggered), 'fetch should complete', 5000
+      waitsFor (-> spy.triggered), 'fetch should complete',
+        acorn.config.test.timeout
 
       runs ->
         shell = nyfskeqlyx.shellData()
@@ -108,7 +109,8 @@ describe 'acorn.Model', ->
 
       runs -> nyfskeqlyx1.fetch()
 
-      waitsFor (-> changeSpy.triggered), 'fetch should complete', 5000
+      waitsFor (-> changeSpy.triggered), 'fetch should complete',
+        acorn.config.test.timeout
       runs ->
         expect(nyfskeqlyx1.get 'updated').not.toEqual date
         nyfskeqlyx1.set({updated: date})
@@ -120,7 +122,8 @@ describe 'acorn.Model', ->
             console.log error
             nyfskeqlyx1.synced = true
 
-      waitsFor (=> nyfskeqlyx1.synced), 'sync should complete', 10000
+      waitsFor (=> nyfskeqlyx1.synced), 'sync should complete',
+        acorn.config.test.timeout
       runs ->
         expect(nyfskeqlyx1.get 'updated').toEqual date
         expect(nyfskeqlyx2.get 'updated').not.toEqual date
@@ -129,7 +132,8 @@ describe 'acorn.Model', ->
         changeSpy = new EventSpy nyfskeqlyx2, 'change'
         nyfskeqlyx2.fetch()
 
-      waitsFor (-> changeSpy.triggered), 'fetch should complete', 5000
+      waitsFor (-> changeSpy.triggered), 'fetch should complete',
+        acorn.config.test.timeout
       runs ->
         expect(nyfskeqlyx1.get 'updated').toEqual date
         expect(nyfskeqlyx2.get 'updated').toEqual date

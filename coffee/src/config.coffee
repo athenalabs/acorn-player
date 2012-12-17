@@ -22,3 +22,9 @@ acorn.config.img.acornIcon = '/static/img/acorn.icon.png'
 acorn.config.css = [
   '/static/css/acorn-player.css',
 ]
+
+
+# TODO: move these config properties to a test specific config file once
+# the build system adequately processes imports
+acorn.config.test = {}
+acorn.config.test.timeout = 10000  # time in miliseconds
