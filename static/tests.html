@@ -48,13 +48,26 @@ iframe {
 .affix {
   position: fixed;
   left: 10px;
+  height: 100%;
+}
+
+.affix-inner {
+  position: absolute;
+  top: 0px;
+  bottom: 30px;
+  overflow: scroll;
+  width: 278px;
 }
 
 body {
   margin-left: 300px;
 }
 
-.affix > .nav.nav-list.sidenav > li > a {
+.affix > .affix-inner > .nav.nav-list.sidenav:first-child {
+  margin-top: 0px;
+}
+
+.affix > .affix-inner > .nav.nav-list.sidenav > li > a {
   font-size: 12px;
   padding: 4px 10px;
 }
@@ -69,17 +82,19 @@ body {
 <body>
 
 <div class="affix">
-<% _.each(['special', 'specs'], function(group) { %>
-  <ul class="nav nav-list sidenav">
-  <% _.each(eval(group), function(name) { %>
-    <li <%= (name == title ? "class='active'" : '') %>>
-      <a href="/<%= group %>/<%= name %>">
-        <i class="icon-chevron-right"></i> <%= name %>
-      </a>
-    </li>
-  <% }); %>
-  </ul>
-<% }); %>
+  <div class="affix-inner">
+    <% _.each(['special', 'specs'], function(group) { %>
+      <ul class="nav nav-list sidenav">
+      <% _.each(eval(group), function(name) { %>
+        <li <%= (name == title ? "class='active'" : '') %>>
+          <a href="/<%= group %>/<%= name %>">
+            <i class="icon-chevron-right"></i> <%= name %>
+          </a>
+        </li>
+      <% }); %>
+      </ul>
+    <% }); %>
+  </div>
 </div>
 
 </body>
