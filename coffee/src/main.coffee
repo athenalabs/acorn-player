@@ -13,4 +13,4 @@ goog.require 'acorn.shells.LinkShell'
 goog.require 'acorn.shells.ImageLinkShell'
 goog.require 'acorn.shells.CollectionShell'
 
-(exports ? this).acorn = acorn
+(exports ? @).acorn = acorn

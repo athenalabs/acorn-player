@@ -79,7 +79,7 @@ class acorn.Model extends Backbone.Model
 
     error = options.error
     options.error = (xhr, type) ->
-      console.log("sync error: #{type}");
+      console.log("sync error: #{type}")
       error? xhr, type
 
     # Make the request, allowing the user to override any Ajax options.

@@ -146,7 +146,7 @@ class acorn.util.Time
 # http://stackoverflow.com/questions/736513
 
 acorn.util.parseUrl = (url) ->
-  # simple `url` validation;
+  # simple `url` validation
   # should extend to perform more comprehensive tests
   if url == ''
     ValueError 'url', 'should not be the empty string.'
