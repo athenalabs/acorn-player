@@ -45,6 +45,9 @@ class Shell.Model extends athena.lib.Model
     thumbnail: acorn.config.img.acorn
 
 
+  toString: =>
+    "#{@shellid()} #{@title()}"
+
   # -- factory constructors --
 
   @withAcorn: (acornModel) => @withData acornModel.shellData()
