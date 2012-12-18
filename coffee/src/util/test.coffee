@@ -30,6 +30,8 @@ acorn.util.test =
           expect(Module[property]).toBeDefined()
           expect(_.isFunction Module[property]).toBe true
 
+      viewOptions = -> model: new Module.Model
+
       describe "#{Module.id}.Model", ->
         Model = Module.Model
 
@@ -73,10 +75,7 @@ acorn.util.test =
           s = m.toJSONString()
           expect(JSON.stringify m.attributes).toEqual s
 
-      options =
-        model: new Module.Model
-
-      describeView Module.MediaView, athena.lib.View, options, ->
+      describeView Module.MediaView, athena.lib.View, viewOptions(), ->
 
         MediaView = Module.MediaView
 
@@ -87,17 +86,14 @@ acorn.util.test =
           expect(isOrDerives MediaView, Shell.MediaView).toBe true
 
         it 'should require `model` parameter', ->
-          throwOptions = _.clone options
+          throwOptions = viewOptions()
           delete throwOptions.model
-          expect(-> new MediaView options).not.toThrow()
+          expect(-> new MediaView viewOptions()).not.toThrow()
           expect(-> new MediaView throwOptions).toThrow()
 
-      describeView Module.RemixView, athena.lib.View, options, ->
+      describeView Module.RemixView, athena.lib.View, viewOptions(), ->
 
         RemixView = Module.RemixView
-
-        options =
-          model: new Module.Model
 
         it 'should derive from athena.lib.View', ->
           expect(derives RemixView, athena.lib.View).toBe true
@@ -106,9 +102,9 @@ acorn.util.test =
           expect(isOrDerives RemixView, Shell.RemixView).toBe true
 
         it 'should require `model` parameter', ->
-          throwOptions = _.clone options
+          throwOptions = viewOptions()
           delete throwOptions.model
-          expect(-> new RemixView options).not.toThrow()
+          expect(-> new RemixView viewOptions()).not.toThrow()
           expect(-> new RemixView throwOptions).toThrow()
 
       tests?()
