@@ -67,6 +67,27 @@ class CollectionShell.Model extends Shell.Model
     @shells shells
     @
 
+  # removes the given shell
+  removeShell: (shellOrIndex) =>
+
+    if shellOrIndex instanceof Shell.Model
+      shells = _.reject @shells(),
+        (shellData) -> _.isEqual shellData, shellOrIndex.attributes
+
+    else if _.isObject(shellOrIndex) and shellOrIndex.shellid
+      shells = _.without @shells(), shellOrIndex
+
+    else if _.isNumber(shellOrIndex) and shellOrIndex % 1 == 0
+      shells = _.clone @shells()
+      shells.splice shellOrIndex, 1
+
+    else
+      TypeError shellOrIndex, 'Shell.Model, shell data, or integer'
+
+    # re-assignment triggers change event.
+    @shells shells
+    @
+
 
 # Render each subshell in sequence. Shows each shell individually, keeping
 # track of the current shell (through currentView). Rendering of the media
