@@ -53,7 +53,7 @@ class CollectionShell.Model extends Shell.Model
   shells: (shells) =>
     if shells?
       @set shells: shells
-    @get 'shells'
+    @get('shells') || []
 
 
 # Render each subshell in sequence. Shows each shell individually, keeping

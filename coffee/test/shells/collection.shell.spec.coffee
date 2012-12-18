@@ -28,6 +28,11 @@ describe 'acorn.shells.CollectionShell', ->
         expect(m.shells()).toBe shells
         expect(m.attributes.shells).toBe shells
 
+      it 'should return empty array when unitialized', ->
+        m = new Model shellid: CollectionShell.id
+        expect(m.attributes.shells).not.toBeDefined()
+        expect(m.shells()).toEqual []
+
       it 'should modify internal state correctly', ->
         shells = []
         m = new Model shellid: CollectionShell.id, shells: shells
