@@ -6,6 +6,9 @@ acorn.util.test.describeShellModule = (Module, tests) =>
   derives = athena.lib.util.derives
   Shell = acorn.shells.Shell
 
+  acorn.util.assert Shell, 'goog.require \'acorn.shells.Shell\' before ' +
+    'calling acorn.util.test.describeShellModule'
+
   describeView = athena.lib.util.test.describeView
 
   isOrDerives = (Subclass, Superclass) =>
