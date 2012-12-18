@@ -28,9 +28,8 @@ LinkShell = acorn.shells.LinkShell =
   # Functions in this section are useful in dealing with
   # shells based on LinkShell
 
-  # Returns true if `link` matches pattern contained in array
-  # `validLinkPatterns`
-  # Returns false otherwise
+  # If `link` matches a pattern contained in array, returns that pattern, else
+  # returns false
   linkMatches: (link, validLinkPatterns) ->
     (_.find validLinkPatterns, (pattern) -> pattern.test link)?
 
