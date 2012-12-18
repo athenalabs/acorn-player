@@ -89,12 +89,12 @@ acorn.util =
   # human-readable format is: [[hh:]mm:]ss[.SSS]
   Time: class Time
     constructor: (time) ->
-      @time = @constructor.timestring_to_seconds time
+      @time = @constructor.timestringToSeconds time
 
     seconds: => @time
-    timestring: => @constructor.seconds_to_timestring @time
+    timestring: => @constructor.secondsToTimestring @time
 
-    @timestring_to_seconds: (timestring) =>
+    @timestringToSeconds: (timestring) =>
       timestring = String(timestring ? 0)
 
       # handle subsec [.SSS]
@@ -108,7 +108,7 @@ acorn.util =
       # convert to seconds
       (hrs * 60 * 60) + (min * 60) + sec + subsec
 
-    @seconds_to_timestring: (seconds) =>
+    @secondsToTimestring: (seconds) =>
       sec = parseInt seconds, 10
 
       hrs = parseInt sec / (60 * 60), 10

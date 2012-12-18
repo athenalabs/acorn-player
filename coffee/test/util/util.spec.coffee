@@ -31,15 +31,15 @@ describe 'acorn.util.Time', ->
     '111:11:11.111': 400271.111
     '123:46:07.89': 445567.89
 
-  it 'should have a working, static `timestring_to_seconds` function', ->
-    expect(typeof Time.timestring_to_seconds).toBe('function')
+  it 'should have a working, static `timestringToSeconds` function', ->
+    expect(typeof Time.timestringToSeconds).toBe('function')
     _.each pairs, (sec, str) ->
-      expect(Time.timestring_to_seconds str).toBe(sec)
+      expect(Time.timestringToSeconds str).toBe(sec)
 
-  it 'should have a working, static `seconds_to_timestring` function', ->
-    expect(typeof Time.seconds_to_timestring).toBe('function')
+  it 'should have a working, static `secondsToTimestring` function', ->
+    expect(typeof Time.secondsToTimestring).toBe('function')
     _.each pairs, (sec, str) ->
-      expect(Time.seconds_to_timestring sec).toBe(str)
+      expect(Time.secondsToTimestring sec).toBe(str)
 
   it 'constructing the object should work', ->
     t = new Time(0)
@@ -58,10 +58,10 @@ describe 'acorn.util.Time', ->
       expect(new Time(sec).timestring()).toBe(str)
       expect(new Time(str).timestring()).toBe(str)
 
-  it 'should have a working, static `seconds_to_timestring`', ->
-    expect(typeof Time.seconds_to_timestring).toBe('function')
+  it 'should have a working, static `secondsToTimestring`', ->
+    expect(typeof Time.secondsToTimestring).toBe('function')
     _.each pairs, (sec, str) ->
-      expect(Time.seconds_to_timestring sec).toBe(str)
+      expect(Time.secondsToTimestring sec).toBe(str)
 
   # TODO write tests that should fail
 
