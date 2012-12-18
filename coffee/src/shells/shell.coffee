@@ -25,6 +25,14 @@ Shell = acorn.shells.Shell =
 
 class Shell.Model extends athena.lib.Model
 
+  initialize: =>
+    super
+
+    # Ensure that the model instance shellid property
+    # reflects the module's shellid
+    @property 'shellid'
+    @shellid @module.id
+
   # disable Backbone's sync functionality
   sync: => NotSupportedError 'Backbone::sync'
 
