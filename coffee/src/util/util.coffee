@@ -9,8 +9,7 @@ goog.require 'acorn.config'
 fixObjectFit = ->
   objectFit_ = $.fn.objectFit
   $.fn.objectFit = ->
-    args = arguments
-    setTimeout (=> objectFit_.apply @, args), 200
+    setTimeout (=> objectFit_ arguments...), 200
     @
 fixObjectFit()
 
@@ -18,8 +17,7 @@ fixObjectFit()
 acorn.util =
 
 assert: (condition, description) ->
-  if not condition
-    throw new Error(description)
+  throw new Error description if not condition
 
 urlRegEx: (url) ->
   ///^(https?:\/\/)?#{url}$///
@@ -74,8 +72,7 @@ property: (defaultValue, validate) ->
   validate ?= (x) -> x
 
   (value) ->
-    if value?
-      storedValue = validate value
+    storedValue = validate value if value?
     storedValue
 
 # requests full screen with given elem
@@ -101,7 +98,6 @@ appendCss: (srcs) ->
 
 # converts human-readable timeString to seconds and back
 # human-readable format is: [[hh:]mm:]ss[.SSS]
-
 Time: class Time
   constructor: (time) ->
     @time = @constructor.timestring_to_seconds time
@@ -109,7 +105,7 @@ Time: class Time
   seconds: => @time
   timestring: => @constructor.seconds_to_timestring @time
 
-  @timestring_to_seconds = (timestring) =>
+  @timestring_to_seconds: (timestring) =>
     timestring = String(timestring ? 0)
 
     # handle subsec [.SSS]
@@ -123,7 +119,7 @@ Time: class Time
     # convert to seconds
     (hrs * 60 * 60) + (min * 60) + sec + subsec
 
-  @seconds_to_timestring = (seconds) =>
+  @seconds_to_timestring: (seconds) =>
     sec = parseInt seconds, 10
 
     hrs = parseInt sec / (60 * 60), 10
@@ -149,8 +145,7 @@ Time: class Time
 parseUrl: (url) ->
   # simple `url` validation
   # should extend to perform more comprehensive tests
-  if url == ''
-    ValueError 'url', 'should not be the empty string.'
+  ValueError 'url', 'should not be the empty string.' if url == ''
 
   result = {}
 
@@ -158,8 +153,7 @@ parseUrl: (url) ->
   url = $.trim url
 
   # if no protocol is found, prepend http
-  if not /:\/\//.test url
-    url = "http://#{url}"
+  url = "http://#{url}" unless /:\/\//.test url
 
   anchor = document.createElement 'a'
   anchor.href = url
@@ -168,21 +162,19 @@ parseUrl: (url) ->
   (result[key] = anchor[key]) for key in keys.split ' '
 
   # port-fix for phantomjs
-  if result.port == '0'
-    result.port = ''
+  result.port = '' if result.port == '0'
 
   result.toString = -> result.href
   result.resource = result.pathname + result.search
   result.extension = result.pathname.split('.').pop()
 
-  result.head = ->
-    throw new Error('head not supported. Yet.')
+  result.head = -> throw new Error('head not supported. Yet.')
 
   _.each result, (val, key) ->
     if (not /_$/.test key) and (typeof(val) is 'string')
       result[key + '_'] = val.toLowerCase()
 
-  return result
+  result
 
 
 # -- regular expressions
