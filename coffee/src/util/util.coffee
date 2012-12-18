@@ -16,169 +16,169 @@ fixObjectFit()
 
 acorn.util =
 
-assert: (condition, description) ->
-  throw new Error description if not condition
+  assert: (condition, description) ->
+    throw new Error description if not condition
 
-urlRegEx: (url) ->
-  ///^(https?:\/\/)?#{url}$///
+  urlRegEx: (url) ->
+    ///^(https?:\/\/)?#{url}$///
 
-isUrl: (url) ->
-  @urlRegEx().test url
+  isUrl: (url) ->
+    @urlRegEx().test url
 
-isPath: (path) ->
-  /^[A-Za-z\/.-_]+$/.test path
+  isPath: (path) ->
+    /^[A-Za-z\/.-_]+$/.test path
 
-# helpers to construct acorn urls TODO: delete these?
-url: ->
-  path = _.toArray(arguments).join '/'
-  "http://#{acorn.config.domain}/#{path}"
+  # helpers to construct acorn urls TODO: delete these?
+  url: ->
+    path = _.toArray(arguments).join '/'
+    "http://#{acorn.config.domain}/#{path}"
 
-apiUrl: ->
-  apiPath = "api/v#{acorn.config.api.version}".split '/'
-  @url.apply(@, apiPath.concat _.toArray arguments)
+  apiUrl: ->
+    apiPath = "api/v#{acorn.config.api.version}".split '/'
+    @url.apply(@, apiPath.concat _.toArray arguments)
 
-imgUrl: ->
-  @url.apply(@, ['img'].concat _.toArray arguments)
+  imgUrl: ->
+    @url.apply(@, ['img'].concat _.toArray arguments)
 
-# construct an <iframe> element, with `src` and `id`
-iframeOptions:
-  frameborder: 0
-  border: 0
-  width: '100%'
-  height: '100%'
-  allowFullScreen: 'true'
-  webkitAllowFullScreen: 'true'
-  mozallowfullscreen: 'true'
-  scrolling: 'no'
+  # construct an <iframe> element, with `src` and `id`
+  iframeOptions:
+    frameborder: 0
+    border: 0
+    width: '100%'
+    height: '100%'
+    allowFullScreen: 'true'
+    webkitAllowFullScreen: 'true'
+    mozallowfullscreen: 'true'
+    scrolling: 'no'
 
-# construct an <iframe> element, with `src` and `id`
-iframe: (src, id) ->
-  f = $ '<iframe>'
-  _.map @iframeOptions, (val, key) ->
-    f.attr key, val
-  f.attr 'src', src
-  f.attr 'id', id if id?
-  f
+  # construct an <iframe> element, with `src` and `id`
+  iframe: (src, id) ->
+    f = $ '<iframe>'
+    _.map @iframeOptions, (val, key) ->
+      f.attr key, val
+    f.attr 'src', src
+    f.attr 'id', id if id?
+    f
 
-# get the acorn variable in given <iframe> element
-acornInIframe: (iframe) ->
-  iframe = iframe.get 0 if iframe.jquery?
-  win = iframe.contentWindow ? iframe.contentDocument.defaultView
-  win.acorn
+  # get the acorn variable in given <iframe> element
+  acornInIframe: (iframe) ->
+    iframe = iframe.get 0 if iframe.jquery?
+    win = iframe.contentWindow ? iframe.contentDocument.defaultView
+    win.acorn
 
-# creates and returns a get/setter with a closured variable
-property: (defaultValue, validate) ->
-  storedValue = defaultValue
-  validate ?= (x) -> x
+  # creates and returns a get/setter with a closured variable
+  property: (defaultValue, validate) ->
+    storedValue = defaultValue
+    validate ?= (x) -> x
 
-  (value) ->
-    storedValue = validate value if value?
-    storedValue
+    (value) ->
+      storedValue = validate value if value?
+      storedValue
 
-# requests full screen with given elem
-fullscreen: (elem) ->
-  elem = elem[0] if elem.jquery?
-  if elem.requestFullscreen
-    elem.requestFullscreen()
-  else if elem.webkitRequestFullScreen
-    elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT)
-  else if elem.mozRequestFullScreen
-    elem.mozRequestFullScreen()
+  # requests full screen with given elem
+  fullscreen: (elem) ->
+    elem = elem[0] if elem.jquery?
+    if elem.requestFullscreen
+      elem.requestFullscreen()
+    else if elem.webkitRequestFullScreen
+      elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT)
+    else if elem.mozRequestFullScreen
+      elem.mozRequestFullScreen()
 
-# add acorn css
-appendCss: (srcs) ->
-  srcs ?= acorn.config.css
-  srcs = [srcs] unless _.isArray(srcs)
-  _.each srcs, (src) ->
-    unless $("link[rel='stylesheet'][href='#{src}']").length
-      css = $('<link>')
-      css.attr 'rel', 'stylesheet'
-      css.attr 'href', src
-      $('body').append css
+  # add acorn css
+  appendCss: (srcs) ->
+    srcs ?= acorn.config.css
+    srcs = [srcs] unless _.isArray(srcs)
+    _.each srcs, (src) ->
+      unless $("link[rel='stylesheet'][href='#{src}']").length
+        css = $('<link>')
+        css.attr 'rel', 'stylesheet'
+        css.attr 'href', src
+        $('body').append css
 
-# converts human-readable timeString to seconds and back
-# human-readable format is: [[hh:]mm:]ss[.SSS]
-Time: class Time
-  constructor: (time) ->
-    @time = @constructor.timestring_to_seconds time
+  # converts human-readable timeString to seconds and back
+  # human-readable format is: [[hh:]mm:]ss[.SSS]
+  Time: class Time
+    constructor: (time) ->
+      @time = @constructor.timestring_to_seconds time
 
-  seconds: => @time
-  timestring: => @constructor.seconds_to_timestring @time
+    seconds: => @time
+    timestring: => @constructor.seconds_to_timestring @time
 
-  @timestring_to_seconds: (timestring) =>
-    timestring = String(timestring ? 0)
+    @timestring_to_seconds: (timestring) =>
+      timestring = String(timestring ? 0)
 
-    # handle subsec [.SSS]
-    [rest, subsec] = timestring.split '.'
-    subsec = parseFloat "0.#{subsec ? '0'}"
+      # handle subsec [.SSS]
+      [rest, subsec] = timestring.split '.'
+      subsec = parseFloat "0.#{subsec ? '0'}"
 
-    # handle [[hh:]mm:]ss
-    rest = rest.split(':').reverse()
-    [sec, min, hrs] = _.map [0, 1, 2], (n) -> parseInt(rest[n], 10) or 0
+      # handle [[hh:]mm:]ss
+      rest = rest.split(':').reverse()
+      [sec, min, hrs] = _.map [0, 1, 2], (n) -> parseInt(rest[n], 10) or 0
 
-    # convert to seconds
-    (hrs * 60 * 60) + (min * 60) + sec + subsec
+      # convert to seconds
+      (hrs * 60 * 60) + (min * 60) + sec + subsec
 
-  @seconds_to_timestring: (seconds) =>
-    sec = parseInt seconds, 10
+    @seconds_to_timestring: (seconds) =>
+      sec = parseInt seconds, 10
 
-    hrs = parseInt sec / (60 * 60), 10
-    sec -= hrs * 60 * 60
+      hrs = parseInt sec / (60 * 60), 10
+      sec -= hrs * 60 * 60
 
-    min = parseInt sec / 60, 10
-    sec -= min * 60
+      min = parseInt sec / 60, 10
+      sec -= min * 60
 
-    subsec = seconds % 1
-    if subsec
-      subsec = Math.round(subsec * 1000) / 1000
-      subsec = String(subsec).substr 1, 4 # remove first 0
-      subsec = subsec.replace /0+$/, ''
+      subsec = seconds % 1
+      if subsec
+        subsec = Math.round(subsec * 1000) / 1000
+        subsec = String(subsec).substr 1, 4 # remove first 0
+        subsec = subsec.replace /0+$/, ''
 
-    hrs = if hrs == 0 then '' else "#{hrs}:"
-    pad = (n) -> if n < 10 then "0#{n}" else "#{n}"
+      hrs = if hrs == 0 then '' else "#{hrs}:"
+      pad = (n) -> if n < 10 then "0#{n}" else "#{n}"
 
-    "#{hrs}#{pad min}:#{pad sec}#{subsec or ''}"
+      "#{hrs}#{pad min}:#{pad sec}#{subsec or ''}"
 
-# Originally from StackOverflow
-# http://stackoverflow.com/questions/736513
+  # Originally from StackOverflow
+  # http://stackoverflow.com/questions/736513
 
-parseUrl: (url) ->
-  # simple `url` validation
-  # should extend to perform more comprehensive tests
-  ValueError 'url', 'should not be the empty string.' if url == ''
+  parseUrl: (url) ->
+    # simple `url` validation
+    # should extend to perform more comprehensive tests
+    ValueError 'url', 'should not be the empty string.' if url == ''
 
-  result = {}
+    result = {}
 
-  # trim out any whitespace
-  url = $.trim url
+    # trim out any whitespace
+    url = $.trim url
 
-  # if no protocol is found, prepend http
-  url = "http://#{url}" unless /:\/\//.test url
+    # if no protocol is found, prepend http
+    url = "http://#{url}" unless /:\/\//.test url
 
-  anchor = document.createElement 'a'
-  anchor.href = url
+    anchor = document.createElement 'a'
+    anchor.href = url
 
-  keys = 'protocol hostname host pathname port search hash href'
-  (result[key] = anchor[key]) for key in keys.split ' '
+    keys = 'protocol hostname host pathname port search hash href'
+    (result[key] = anchor[key]) for key in keys.split ' '
 
-  # port-fix for phantomjs
-  result.port = '' if result.port == '0'
+    # port-fix for phantomjs
+    result.port = '' if result.port == '0'
 
-  result.toString = -> result.href
-  result.resource = result.pathname + result.search
-  result.extension = result.pathname.split('.').pop()
+    result.toString = -> result.href
+    result.resource = result.pathname + result.search
+    result.extension = result.pathname.split('.').pop()
 
-  result.head = -> throw new Error('head not supported. Yet.')
+    result.head = -> throw new Error('head not supported. Yet.')
 
-  _.each result, (val, key) ->
-    if (not /_$/.test key) and (typeof(val) is 'string')
-      result[key + '_'] = val.toLowerCase()
+    _.each result, (val, key) ->
+      if (not /_$/.test key) and (typeof(val) is 'string')
+        result[key + '_'] = val.toLowerCase()
 
-  result
+    result
 
 
-# -- regular expressions
+  # -- regular expressions
 
-LINK_REGEX: /// ^
-  https?://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]
-///
+  LINK_REGEX: /// ^
+    https?://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]
+  ///
