@@ -55,6 +55,18 @@ class CollectionShell.Model extends Shell.Model
       @set shells: shells
     @get('shells') || []
 
+  addShell: (shell, index) =>
+    if shell instanceof Shell.Model
+      shell = shell.toJSON() # deep clone data
+
+    shells = _.clone @shells()
+    index ?= shells.length
+    shells.splice(index, 0, shell)
+
+    # re-assignment triggers change event. (splicing to array doesn't)
+    @shells shells
+    @
+
 
 # Render each subshell in sequence. Shows each shell individually, keeping
 # track of the current shell (through currentView). Rendering of the media
