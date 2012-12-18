@@ -84,17 +84,15 @@ class CollectionShell.Model extends Shell.Model
     unless shell instanceof Shell.Model
       TypeError shell, 'Shell.Model'
 
-    shells = @get 'shells'
-    index = options.index ? shells.length
-
+    options ?= {}
+    index = collection.indexOf shell
     data = shell.toJSON() # deep clone
+
+    shells = _.clone @get 'shells'
     shells.splice index, 0, data
 
     # trigger change events. (splicing array doesn't)
-    if options and not options.silent
-      @_pending.shells = true
-      options.changes = shells: true
-      @change options
+    @set shells: shells, options
 
 
   _onRemoveShell: (shell, collection, options) =>
@@ -104,21 +102,20 @@ class CollectionShell.Model extends Shell.Model
     unless shell instanceof Shell.Model
       TypeError shell, 'Shell.Model'
 
-    shells = @get 'shells'
-    index = options.index ? @_shells.indexOf shell
+    options ?= {}
+    index = collection.indexOf shell
 
+    shells = _.clone @get 'shells'
     shells.splice index, 1
 
     # trigger change events. (splicing array doesn't)
-    if options and not options.silent
-      @_pending.shells = true
-      options.changes = shells: true
-      @change options
+    @set shells: shells, options
 
   _onResetShells: (collection, options) =>
 
+    options ?= {}
     data = collection.map (shell) => shell.toJSON() # deep clone
-    shells = @get 'shells'
+    shells = _.clone @get 'shells'
 
     # if its the same, we're done
     if _.isEqual shells, data
@@ -127,10 +124,7 @@ class CollectionShell.Model extends Shell.Model
     shells.splice 0, shells.length, data
 
     # trigger change events. (splicing array doesn't)
-    if options and not options.silent
-      @_pending.shells = true
-      options.changes = shells: true
-      @change options
+    @set shells: shells, options
 
 
 # Render each subshell in sequence. Shows each shell individually, keeping
