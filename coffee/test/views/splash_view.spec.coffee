@@ -22,7 +22,7 @@ describe 'acorn.player.SplashView', ->
 
     it 'should fail to construct if model type is incorrect', ->
       expect(-> new SplashView model: {bad: value}).toThrow()
-      expect(-> new SplashView model: new Backbone.Model).toThrow()
+      expect(-> new SplashView model: new athena.lib.Model).toThrow()
 
     it 'should succeed to construct if model type is correct', ->
       expect(model instanceof acorn.Model).toBe true

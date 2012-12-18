@@ -6,7 +6,7 @@ describe 'acorn.player.AcornOptionsView', ->
   AcornOptionsView = acorn.player.AcornOptionsView
 
   options =
-    model: new Backbone.Model
+    model: new athena.lib.Model
       thumbnail: acorn.config.img.acorn
       acornid: 'nyfskeqlyx'
       title: 'The Differential'

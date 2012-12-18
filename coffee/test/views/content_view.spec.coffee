@@ -7,8 +7,8 @@ describe 'acorn.player.ContentView', ->
 
   # model for ContentView contruction
   model =
-    acornModel: new Backbone.Model
-    shellModel: new Backbone.Model
+    acornModel: new athena.lib.Model
+    shellModel: new athena.lib.Model
 
   # emulate shell, object with a MediaView property
   module = MediaView: athena.lib.View

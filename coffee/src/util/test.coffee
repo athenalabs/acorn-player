@@ -28,8 +28,8 @@ acorn.util.test.describeShellModule = (Module, tests) =>
     describe "#{Module.id}.Model", ->
       Model = Module.Model
 
-      it 'should derive from Backbone.Model', ->
-        expect(derives Model, Backbone.Model).toBe true
+      it 'should derive from athena.lib.Model', ->
+        expect(derives Model, athena.lib.Model).toBe true
 
       it 'should derive from (or be) Shell.Model', ->
         expect(isOrDerives Model, Shell.Model).toBe true

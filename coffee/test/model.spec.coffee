@@ -10,8 +10,8 @@ describe 'acorn.Model', ->
   it 'should be part of acorn', ->
     expect(Model).toBeDefined()
 
-  it 'should derive from Backbone.Model', ->
-    expect(athena.lib.util.derives Model, Backbone.Model).toBe true
+  it 'should derive from athena.lib.Model', ->
+    expect(athena.lib.util.derives Model, athena.lib.Model).toBe true
 
   it 'should have acornid idAttribute', ->
     expect(Model::idAttribute).toBe 'acornid'
@@ -52,7 +52,7 @@ describe 'acorn.Model', ->
         expect(model.acornid(id)).toBe id
         expect(model.acornid()).toBe id
 
-    it 'acornid should match the id Backbone.Model property', ->
+    it 'acornid should match the id athena.lib.Model property', ->
       model = new Model()
       _.each ['wont', 'you', 'tell', 'me', 'your', 'name'], (id) ->
         # initialy, acornid() should not be the given id

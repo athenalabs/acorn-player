@@ -37,7 +37,7 @@ describe 'acorn.player.ShellOptionsView', ->
     $player = $('<div>').addClass('acorn-player').appendTo('body')
 
     # add a ShellOptionsView into the DOM to see how it looks.
-    model = new Backbone.Model
+    model = new athena.lib.Model
 
     view = new ShellOptionsView options
     view.$el.width 600

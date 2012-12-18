@@ -37,7 +37,7 @@ describe 'acorn.player.Player', ->
 
     it 'should fail to construct if model type is incorrect', ->
       expect(-> new Player acornModel: {bad: value}).toThrow()
-      expect(-> new Player acornModel: new Backbone.Model).toThrow()
+      expect(-> new Player acornModel: new athena.lib.Model).toThrow()
 
     it 'should succeed to construct if model type is correct', ->
       expect(acornModel instanceof acorn.Model).toBe true

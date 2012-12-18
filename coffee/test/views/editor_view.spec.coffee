@@ -33,7 +33,7 @@ describe 'acorn.player.EditorView', ->
       expect(-> new EditorView).toThrow()
 
     it 'should fail to construct if model type is incorrect', ->
-      expect(-> new EditorView model: new Backbone.Model).toThrow()
+      expect(-> new EditorView model: new athena.lib.Model).toThrow()
       expect(-> new EditorView model: new Shell.Model).toThrow()
 
     it 'should succeed to construct if model type is correct', ->

@@ -23,22 +23,10 @@ Shell = acorn.shells.Shell =
   icon: 'icon-sign-blank'
 
 
-class Shell.Model extends Backbone.Model
+class Shell.Model extends athena.lib.Model
 
   # disable Backbone's sync functionality
   sync: => NotSupportedError 'Backbone::sync'
-
-  # ensure clone is deeply-copied, as acorn data is a multilevel object
-  # this approach to deep-copy is ok because all our data should be
-  # JSON serializable.
-  #
-  # See https://github.com/documentcloud/underscore/issues/162 as to why
-  # underscore does not implement deep copy.
-  clone: => return new @constructor @toJSON()
-
-  toJSON: => return JSON.parse JSON.stringify @attributes
-
-  toJSONString: => return JSON.stringify @toJSON()
 
   # -- factory constructors --
 

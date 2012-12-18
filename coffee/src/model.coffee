@@ -2,7 +2,8 @@ goog.provide 'acorn.Model'
 
 goog.require 'acorn.util'
 
-class acorn.Model extends Backbone.Model
+
+class acorn.Model extends athena.lib.Model
 
   initialize: =>
     super
@@ -35,18 +36,6 @@ class acorn.Model extends Backbone.Model
     'update': 'PUT'
     'delete': 'DELETE'
     'read':   'GET'
-
-  # ensure clone is deeply-copied, as acorn data is a multilevel object
-  # this approach to deep-copy is ok because all our data should be
-  # JSON serializable.
-  #
-  # See https://github.com/documentcloud/underscore/issues/162 as to why
-  # underscore does not implement deep copy.
-  clone: => return new @constructor @toJSON()
-
-  toJSON: => return JSON.parse JSON.stringify @attributes
-
-  toJSONString: => return JSON.stringify @toJSON()
 
   isNew: =>
     @acornid() == 'new' or super

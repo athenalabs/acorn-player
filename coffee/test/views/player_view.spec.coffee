@@ -41,14 +41,14 @@ describe 'acorn.player.PlayerView', ->
 
     it 'should fail to construct if model.acornModel type is incorrect', ->
       m = _.clone model
-      m.acornModel = new Backbone.Model
+      m.acornModel = new athena.lib.Model
       expect(-> new PlayerView model: m).toThrow()
       m.acornModel = model.shellModel
       expect(-> new PlayerView model: m).toThrow()
 
     it 'should fail to construct if model.shellModel type is incorrect', ->
       m = _.clone model
-      m.shellModel = new Backbone.Model
+      m.shellModel = new athena.lib.Model
       expect(-> new PlayerView model: m).toThrow()
       m.shellModel = model.acornModel
       expect(-> new PlayerView model: m).toThrow()
