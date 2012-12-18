@@ -55,8 +55,8 @@ describe 'acorn.util.Time', ->
 
   it 'should have a working `timestring` method', ->
     _.each pairs, (sec, str) ->
-      expect(new Time(sec).timestring()).toBe(sec)
-      expect(new Time(str).timestring()).toBe(sec)
+      expect(new Time(sec).timestring()).toBe(str)
+      expect(new Time(str).timestring()).toBe(str)
 
   it 'should have a working, static `seconds_to_timestring`', ->
     expect(typeof Time.seconds_to_timestring).toBe('function')

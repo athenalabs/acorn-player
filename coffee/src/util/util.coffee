@@ -107,7 +107,7 @@ Time: class Time
     @time = @constructor.timestring_to_seconds time
 
   seconds: => @time
-  timestring: => @constructor.timestring_to_seconds @time
+  timestring: => @constructor.seconds_to_timestring @time
 
   @timestring_to_seconds = (timestring) =>
     timestring = String(timestring ? 0)
