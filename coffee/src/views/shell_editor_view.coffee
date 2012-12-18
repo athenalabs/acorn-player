@@ -36,7 +36,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
   className: @classNameExtend 'shell-editor-view'
 
   template: _.template '''
-    <div class="shell-options-view"></div>
+    <div class="shell-options-view row-fluid"></div>
     <div class="remix-views"></div>
     '''
 
