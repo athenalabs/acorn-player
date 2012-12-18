@@ -141,7 +141,6 @@ acorn.util =
 
   # Originally from StackOverflow
   # http://stackoverflow.com/questions/736513
-
   parseUrl: (url) ->
     # simple `url` validation
     # should extend to perform more comprehensive tests
