@@ -67,8 +67,8 @@ describe 'acorn.shells.CollectionShell', ->
         expect(m.shells()).toEqual []
         expect(m.attributes.shells).toEqual []
 
-        shell = {shellid: Shell.id}
-        m.addShell acorn.shellWithData shell
+        shell = acorn.shellWithData(shellid: Shell.id).attributes
+        m.addShell shell
         expect(m.shells()).toEqual [shell]
         expect(m.attributes.shells).toEqual [shell]
 
@@ -77,10 +77,10 @@ describe 'acorn.shells.CollectionShell', ->
         expect(m.shells()).toEqual []
         expect(m.attributes.shells).toEqual []
 
-        shell = {shellid: Shell.id}
-        m.addShell shell
-        expect(m.shells()).toEqual [shell]
-        expect(m.attributes.shells).toEqual [shell]
+        shell = acorn.shellWithData shellid: Shell.id
+        m.addShell shell.attributes
+        expect(m.shells()).toEqual [shell.attributes]
+        expect(m.attributes.shells).toEqual [shell.attributes]
 
       it 'should add shells with index', ->
         shells = [{shellid: CollectionShell.id}, {shellid: TextShell.id}]
@@ -123,8 +123,12 @@ describe 'acorn.shells.CollectionShell', ->
         expect(m.removeShell shell).toBe m
 
       it 'should remove shells by value (shell)', ->
-        shell = {shellid: Shell.id}
-        shells = [{shellid: TextShell.id}, shell, {shellid: Shell.id}]
+        shell = Model.withData shellid: Shell.id
+        shells = [
+          Model.withData(shellid: TextShell.id).attributes
+          shell.attributes
+          Model.withData(shellid: CollectionShell.id).attributes
+        ]
         m = new Model shellid: CollectionShell.id, shells: shells
         expect(m.shells()).toEqual shells
         expect(m.attributes.shells).toEqual shells
@@ -135,20 +139,28 @@ describe 'acorn.shells.CollectionShell', ->
         expect(m.attributes.shells).toEqual shells
 
       it 'should remove shells by value (data)', ->
-        shell = {shellid: Shell.id}
-        shells = [{shellid: TextShell.id}, shell, {shellid: Shell.id}]
+        shell = Model.withData shellid: Shell.id
+        shells = [
+          Model.withData(shellid: TextShell.id).attributes
+          shell.attributes
+          shell.attributes
+        ]
         m = new Model shellid: CollectionShell.id, shells: shells
         expect(m.shells()).toEqual shells
         expect(m.attributes.shells).toEqual shells
 
         shells = [shells[0]]
-        m.removeShell acorn.shellWithData shell
+        m.removeShell shell.attributes
         expect(m.shells()).toEqual shells
         expect(m.attributes.shells).toEqual shells
 
       it 'should remove shells by index', ->
         shell = {shellid: Shell.id}
-        shells = [{shellid: TextShell.id}, shell, {shellid: Shell.id}]
+        shells = [
+          Model.withData(shellid: TextShell.id).attributes
+          shell.attributes
+          Model.withData(shellid: Shell.id).attributes
+        ]
         m = new Model shellid: CollectionShell.id, shells: shells
         expect(m.shells()).toEqual shells
         expect(m.attributes.shells).toEqual shells

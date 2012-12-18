@@ -25,28 +25,24 @@ Shell = acorn.shells.Shell =
 
 class Shell.Model extends athena.lib.Model
 
-  initialize: =>
-    super
+  properties: => _.extend super,
 
     # Ensure that the model instance shellid property
     # reflects the module's shellid
-    @property 'shellid'
-    @shellid @module.id
+    shellid: @module.id
 
-    @properties [
-      'title',          # title of the piece of media
-      'description',    # description of the piece of media
-      'sources'         # contributing sources to the piece of media;
-                        # expected to be of type Array
-    ]
+    # title of the piece of media
+    title: ''
 
+    # description of the piece of media
+    description: ''
 
-  # -- model interface --
-  # To be overriden and implemented by inheriting classes
+    # contributing sources to the piece of media;
+    # expected to be of type Array
+    sources: []
 
-  # Returns a URL that points to the thumbnail
-  # to be used for this piece of media.
-  thumbnail: =>
+    # a URL to a thumbnail for the piece of media
+    thumbnail: acorn.config.img.acorn
 
 
   # -- factory constructors --

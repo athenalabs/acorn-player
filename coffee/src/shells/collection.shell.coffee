@@ -75,7 +75,8 @@ class CollectionShell.Model extends Shell.Model
         (shellData) -> _.isEqual shellData, shellOrIndex.attributes
 
     else if _.isObject(shellOrIndex) and shellOrIndex.shellid
-      shells = _.without @shells(), shellOrIndex
+      shells = _.reject @shells(),
+        (shellData) -> _.isEqual shellData, shellOrIndex
 
     else if _.isNumber(shellOrIndex) and shellOrIndex % 1 == 0
       shells = _.clone @shells()

@@ -12,6 +12,9 @@ describe 'acorn.player.Player', ->
   acornModel = new acorn.Model
     shell:
       shellid: 'acorn.Shell'
+      title: 'Awesome Shell'
+      description: 'The best shell this side of the Kuiper Belt'
+      sources: ['me']
       thumbnail: acorn.config.img.acorn
 
   it 'should be part of acorn.player', ->
