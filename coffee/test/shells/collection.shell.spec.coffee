@@ -19,170 +19,139 @@ describe 'acorn.shells.CollectionShell', ->
     Model = CollectionShell.Model
 
     describe 'Model::shells', ->
-      it 'should be a function', ->
-        expect(typeof Model::shells).toBe 'function'
-
-      it 'should retrieve internal state correctly', ->
-        shells = [{shellid: Shell.id}, {shellid: Shell.id}]
-        m = new Model shellid: CollectionShell.id, shells: shells
-        expect(m.shells()).toBe shells
-        expect(m.attributes.shells).toBe shells
-
-      it 'should return empty array when unitialized', ->
+      it 'should be a Backbone.Collection', ->
         m = new Model shellid: CollectionShell.id
-        expect(m.attributes.shells).not.toBeDefined()
-        expect(m.shells()).toEqual []
+        expect(m.shells() instanceof Backbone.Collection).toBe true
 
-      it 'should modify internal state correctly', ->
+      it 'should be lazily constructed', ->
+        m = new Model shellid: CollectionShell.id
+        expect(m._shells).not.toBeDefined()
+        m.shells()
+        expect(m._shells).toBeDefined()
+
+      it 'should be initialized with proper state', ->
+        shells = [
+          new Model().attributes
+          new Model().attributes
+        ]
+        m = new Model shellid: CollectionShell.id, shells: shells
+        c = m.shells()
+        expect(c.models[0].attributes).toEqual shells[0]
+        expect(c.models[1].attributes).toEqual shells[1]
+
+      it 'adding shells should update internal state', ->
+        m = new Model
+        c = m.shells()
+
+        m2 = new Model
+        m3 = new Model
+
+        c.add m2
+        expect(c.models[0]).toBe m2
+        expect(m.get 'shells').toEqual [m2.attributes]
+
+        c.add m3
+        expect(c.models[1]).toBe m3
+        expect(m.get 'shells').toEqual [m2.attributes, m3.attributes]
+
+      it 'adding shells with indices should work', ->
+        m = new Model
+        c = m.shells()
+
+        m2 = new Model
+        m3 = new Model
+        m4 = new Model
+
+        c.add m2, {at: 0}
+        expect(c.models[0]).toBe m2
+        expect(m.get 'shells').toEqual [m2.attributes]
+
+        c.add m3, {at: 0}
+        expect(c.models[0]).toBe m3
+        expect(m.get 'shells').toEqual [m3.attributes, m2.attributes]
+
+        c.add m4, {at: 1}
+        expect(c.models[1]).toBe m4
+        expect(m.get 'shells').toEqual \
+          [m3.attributes, m4.attributes, m2.attributes]
+
+      it 'removing shells should update internal state', ->
+        shells = [new Model().attributes, new Model().attributes]
+        m = new Model shells: shells
+        c = m.shells()
+
+        m2 = c.models[0]
+        m3 = c.models[1]
+
+        expect(m2.attributes).toEqual shells[0]
+        expect(m3.attributes).toEqual shells[1]
+        expect(m.get 'shells').toEqual [m2.attributes, m3.attributes]
+
+        c.remove(m2)
+        expect(m.get 'shells').toEqual [m3.attributes]
+
+        c.remove(m3)
+        expect(m.get 'shells').toEqual []
+
+
+      it 'removing and adding shells successively should work', ->
+
+        todo = [
+          {add: {shellid: Shell.id}},
+          {add: {shellid: EmptyShell.id}},
+          {remove: 1},
+          {add: {shellid: Shell.id}},
+          {add: {shellid: CollectionShell.id}},
+          {add: {shellid: Shell.id}},
+          {remove: 2},
+          {remove: 2},
+          {remove: 0},
+          {remove: 0}
+        ]
+
+        m = new Model shellid: CollectionShell.id
         shells = []
-        m = new Model shellid: CollectionShell.id, shells: shells
-        expect(m.shells()).toBe shells
-        expect(m.attributes.shells).toBe shells
+        check = ->
+          expect(m.get 'shells').toEqual shells
+          data = m.shells().map (shell) -> shell.attributes
+          expect(data).toEqual shells
 
-        shells = [{shellid: Shell.id}, {shellid: Shell.id}]
-        expect(m.shells shells).toBe shells
-        expect(m.shells()).toBe shells
-        expect(m.attributes.shells).toBe shells
+        _.each todo, (action, shellOrIndex) =>
+          if action is 'add'
+            shells.push shellOrIndex
+            m.shells().add shellOrIndex
+          else
+            shells.splice(shellOrIndex, 0)
+            m.shells().remove m.shells().models[shellOrIndex]
+          check()
 
-      it 'should trigger change events correctly', ->
-        m = new Model shellid: CollectionShell.id, shells: []
+
+      it 'should trigger change events on adding', ->
+        m = new Model
         spy1 = new EventSpy m, 'change'
         spy2 = new EventSpy m, 'change:shells'
 
-        m.shells [{shellid: Shell.id}, {shellid: Shell.id}]
+        c = m.shells()
+        c.add new Model
         expect(spy1.triggered).toBe true
         expect(spy2.triggered).toBe true
 
-    describe 'Model::addShell', ->
-      it 'should be a function', ->
-        expect(typeof Model::addShell).toBe 'function'
-
-      it 'should return @', ->
-        m = new Model shellid: CollectionShell.id, shells: []
-        shell = {shellid: Shell.id}
-        expect(m.addShell shell).toBe m
-
-      it 'should add shells by value (object)', ->
-        m = new Model shellid: CollectionShell.id, shells: []
-        expect(m.shells()).toEqual []
-        expect(m.attributes.shells).toEqual []
-
-        shell = acorn.shellWithData(shellid: Shell.id).attributes
-        m.addShell shell
-        expect(m.shells()).toEqual [shell]
-        expect(m.attributes.shells).toEqual [shell]
-
-      it 'should add shells by value (data)', ->
-        m = new Model shellid: CollectionShell.id, shells: []
-        expect(m.shells()).toEqual []
-        expect(m.attributes.shells).toEqual []
-
-        shell = acorn.shellWithData shellid: Shell.id
-        m.addShell shell.attributes
-        expect(m.shells()).toEqual [shell.attributes]
-        expect(m.attributes.shells).toEqual [shell.attributes]
-
-      it 'should add shells with index', ->
-        shells = [{shellid: CollectionShell.id}, {shellid: TextShell.id}]
-        m = new Model shellid: CollectionShell.id, shells: _.clone shells
-        expect(m.shells()).toEqual shells
-        expect(m.attributes.shells).toEqual shells
-
-        shell = {shellid: Shell.id}
-        shells = [shells[0], shell, shells[1]]
-        m.addShell shell, 1
-        expect(m.shells()).toEqual shells
-        expect(m.attributes.shells).toEqual shells
-
-      it 'should modify internal state correctly', ->
-        m = new Model shellid: CollectionShell.id, shells: []
-        expect(m.shells()).toEqual []
-        expect(m.attributes.shells).toEqual []
-
-        shell = {shellid: Shell.id}
-        m.addShell shell
-        expect(m.shells()).toEqual [shell]
-        expect(m.attributes.shells).toEqual [shell]
-
-      it 'should trigger change events correctly', ->
-        m = new Model shellid: CollectionShell.id, shells: []
+      it 'should trigger change events on removing', ->
+        m = new Model shells: [{shellid: Shell.id}]
         spy1 = new EventSpy m, 'change'
         spy2 = new EventSpy m, 'change:shells'
 
-        m.addShell {shellid: Shell.id}
+        c = m.shells()
+        c.remove c.models[0]
         expect(spy1.triggered).toBe true
         expect(spy2.triggered).toBe true
 
-    describe 'Model::removeShell', ->
-      it 'should be a function', ->
-        expect(typeof Model::removeShell).toBe 'function'
-
-      it 'should return @', ->
-        shell = {shellid: Shell.id}
-        m = new Model shellid: CollectionShell.id, shells: [shell]
-        expect(m.removeShell shell).toBe m
-
-      it 'should remove shells by value (shell)', ->
-        shell = Model.withData shellid: Shell.id
-        shells = [
-          Model.withData(shellid: TextShell.id).attributes
-          shell.attributes
-          Model.withData(shellid: CollectionShell.id).attributes
-        ]
-        m = new Model shellid: CollectionShell.id, shells: shells
-        expect(m.shells()).toEqual shells
-        expect(m.attributes.shells).toEqual shells
-
-        shells = [shells[0], shells[2]]
-        m.removeShell shell
-        expect(m.shells()).toEqual shells
-        expect(m.attributes.shells).toEqual shells
-
-      it 'should remove shells by value (data)', ->
-        shell = Model.withData shellid: Shell.id
-        shells = [
-          Model.withData(shellid: TextShell.id).attributes
-          shell.attributes
-          shell.attributes
-        ]
-        m = new Model shellid: CollectionShell.id, shells: shells
-        expect(m.shells()).toEqual shells
-        expect(m.attributes.shells).toEqual shells
-
-        shells = [shells[0]]
-        m.removeShell shell.attributes
-        expect(m.shells()).toEqual shells
-        expect(m.attributes.shells).toEqual shells
-
-      it 'should remove shells by index', ->
-        shell = {shellid: Shell.id}
-        shells = [
-          Model.withData(shellid: TextShell.id).attributes
-          shell.attributes
-          Model.withData(shellid: Shell.id).attributes
-        ]
-        m = new Model shellid: CollectionShell.id, shells: shells
-        expect(m.shells()).toEqual shells
-        expect(m.attributes.shells).toEqual shells
-
-        shells = [shells[0], shells[2]]
-        m.removeShell 1
-        expect(m.shells()).toEqual shells
-        expect(m.attributes.shells).toEqual shells
-
-      it 'should trigger change events correctly', ->
-        shells = [{shellid: Shell.id}]
-        m = new Model shellid: CollectionShell.id, shells: shells
+      it 'should trigger change events on reseting', ->
+        m = new Model shells: [{shellid: Shell.id}]
         spy1 = new EventSpy m, 'change'
         spy2 = new EventSpy m, 'change:shells'
 
-        m.removeShell 0
+        c = m.shells()
+        c.reset [new Model, new Model, new Model]
         expect(spy1.triggered).toBe true
         expect(spy2.triggered).toBe true
-
-      it 'should error out if passed neither a shell or integer', ->
-        m = new Model shellid: CollectionShell.id, shells: []
-        expect(-> m.removeShell 1.2423).toThrow()
-        expect(-> m.removeShell 'some string').toThrow()
-        expect(-> m.removeShell {some: 'object'}).toThrow()
-        expect(-> m.removeShell [1, 2, 3]).toThrow()
