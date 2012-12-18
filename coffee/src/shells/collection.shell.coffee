@@ -50,6 +50,11 @@ CollectionShell = acorn.shells.CollectionShell =
 
 class CollectionShell.Model extends Shell.Model
 
+  shells: (shells) =>
+    if shells?
+      @set shells: shells
+    @get 'shells'
+
 
 # Render each subshell in sequence. Shows each shell individually, keeping
 # track of the current shell (through currentView). Rendering of the media
