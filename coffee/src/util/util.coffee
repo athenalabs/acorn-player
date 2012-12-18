@@ -2,87 +2,6 @@ goog.provide 'acorn.util'
 
 goog.require 'acorn.config'
 
-acorn.util.assert = (condition, description) ->
-  if not condition
-    throw new Error(description)
-
-acorn.util.urlRegEx = (url) ->
-  ///^(https?:\/\/)?#{url}$///
-
-acorn.util.isUrl = (url) ->
-  acorn.util.urlRegEx().test url
-
-acorn.util.isPath = (path) ->
-  /^[A-Za-z\/.-_]+$/.test path
-
-# helpers to construct acorn urls TODO: delete these?
-acorn.util.url = ->
-  path = _.toArray(arguments).join '/'
-  "http://#{acorn.config.domain}/#{path}"
-
-acorn.util.apiUrl = ->
-  apiPath = "api/v#{acorn.config.api.version}".split '/'
-  acorn.util.url.apply(@, apiPath.concat _.toArray arguments)
-
-acorn.util.imgUrl = ->
-  acorn.util.url.apply(@, ['img'].concat _.toArray arguments)
-
-# construct an <iframe> element, with `src` and `id`
-acorn.util.iframeOptions =
-  frameborder: 0
-  border: 0
-  width: '100%'
-  height: '100%'
-  allowFullScreen: 'true'
-  webkitAllowFullScreen: 'true'
-  mozallowfullscreen: 'true'
-  scrolling: 'no'
-
-# construct an <iframe> element, with `src` and `id`
-acorn.util.iframe = (src, id) ->
-  f = $ '<iframe>'
-  _.map acorn.util.embedIframeOptions, (val, key) ->
-    f.attr key, val
-  f.attr 'src', src
-  f.attr 'id', id if id?
-  f
-
-# get the acorn variable in given <iframe> element
-acorn.util.acornInIframe = (iframe) ->
-  iframe = iframe.get 0 if iframe.jquery?
-  win = iframe.contentWindow ? iframe.contentDocument.defaultView
-  win.acorn
-
-# creates and returns a get/setter with a closured variable
-acorn.util.property = (defaultValue, validate) ->
-  storedValue = defaultValue
-  validate ?= (x) -> x
-
-  (value) ->
-    if value?
-      storedValue = validate value
-    storedValue
-
-# requests full screen with given elem
-acorn.util.fullscreen = (elem) ->
-  elem = elem[0] if elem.jquery?
-  if elem.requestFullscreen
-    elem.requestFullscreen()
-  else if elem.webkitRequestFullScreen
-    elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT)
-  else if elem.mozRequestFullScreen
-    elem.mozRequestFullScreen()
-
-# add acorn css
-acorn.util.appendCss = (srcs) ->
-  srcs ?= acorn.config.css
-  srcs = [srcs] unless _.isArray(srcs)
-  _.each srcs, (src) ->
-    unless $("link[rel='stylesheet'][href='#{src}']").length
-      css = $('<link>')
-      css.attr 'rel', 'stylesheet'
-      css.attr 'href', src
-      $('body').append css
 
 # Preserve image aspect ratio but contain it wholly
 # See https://github.com/schmidsi/jquery-object-fit
@@ -93,15 +12,97 @@ fixObjectFit = ->
     args = arguments
     setTimeout (=> objectFit_.apply @, args), 200
     @
-
 fixObjectFit()
 
 
+acorn.util =
+
+assert: (condition, description) ->
+  if not condition
+    throw new Error(description)
+
+urlRegEx: (url) ->
+  ///^(https?:\/\/)?#{url}$///
+
+isUrl: (url) ->
+  @urlRegEx().test url
+
+isPath: (path) ->
+  /^[A-Za-z\/.-_]+$/.test path
+
+# helpers to construct acorn urls TODO: delete these?
+url: ->
+  path = _.toArray(arguments).join '/'
+  "http://#{acorn.config.domain}/#{path}"
+
+apiUrl: ->
+  apiPath = "api/v#{acorn.config.api.version}".split '/'
+  @url.apply(@, apiPath.concat _.toArray arguments)
+
+imgUrl: ->
+  @url.apply(@, ['img'].concat _.toArray arguments)
+
+# construct an <iframe> element, with `src` and `id`
+iframeOptions:
+  frameborder: 0
+  border: 0
+  width: '100%'
+  height: '100%'
+  allowFullScreen: 'true'
+  webkitAllowFullScreen: 'true'
+  mozallowfullscreen: 'true'
+  scrolling: 'no'
+
+# construct an <iframe> element, with `src` and `id`
+iframe: (src, id) ->
+  f = $ '<iframe>'
+  _.map @embedIframeOptions, (val, key) ->
+    f.attr key, val
+  f.attr 'src', src
+  f.attr 'id', id if id?
+  f
+
+# get the acorn variable in given <iframe> element
+acornInIframe: (iframe) ->
+  iframe = iframe.get 0 if iframe.jquery?
+  win = iframe.contentWindow ? iframe.contentDocument.defaultView
+  win.acorn
+
+# creates and returns a get/setter with a closured variable
+property: (defaultValue, validate) ->
+  storedValue = defaultValue
+  validate ?= (x) -> x
+
+  (value) ->
+    if value?
+      storedValue = validate value
+    storedValue
+
+# requests full screen with given elem
+fullscreen: (elem) ->
+  elem = elem[0] if elem.jquery?
+  if elem.requestFullscreen
+    elem.requestFullscreen()
+  else if elem.webkitRequestFullScreen
+    elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT)
+  else if elem.mozRequestFullScreen
+    elem.mozRequestFullScreen()
+
+# add acorn css
+appendCss: (srcs) ->
+  srcs ?= acorn.config.css
+  srcs = [srcs] unless _.isArray(srcs)
+  _.each srcs, (src) ->
+    unless $("link[rel='stylesheet'][href='#{src}']").length
+      css = $('<link>')
+      css.attr 'rel', 'stylesheet'
+      css.attr 'href', src
+      $('body').append css
 
 # converts human-readable timeString to seconds and back
 # human-readable format is: [[hh:]mm:]ss[.SSS]
 
-class acorn.util.Time
+Time: class Time
   constructor: (time) ->
     @time = @constructor.timestring_to_seconds time
 
@@ -145,7 +146,7 @@ class acorn.util.Time
 # Originally from StackOverflow
 # http://stackoverflow.com/questions/736513
 
-acorn.util.parseUrl = (url) ->
+parseUrl: (url) ->
   # simple `url` validation
   # should extend to perform more comprehensive tests
   if url == ''
@@ -186,6 +187,6 @@ acorn.util.parseUrl = (url) ->
 
 # -- regular expressions
 
-acorn.util.LINK_REGEX = /// ^
+LINK_REGEX: /// ^
   https?://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]
 ///
