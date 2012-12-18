@@ -3,17 +3,6 @@ goog.provide 'acorn.util'
 goog.require 'acorn.config'
 
 
-# Preserve image aspect ratio but contain it wholly
-# See https://github.com/schmidsi/jquery-object-fit
-# setTimeout bypasses https://github.com/schmidsi/jquery-object-fit/issues/3
-fixObjectFit = ->
-  objectFit_ = $.fn.objectFit
-  $.fn.objectFit = ->
-    setTimeout (=> objectFit_ arguments...), 200
-    @
-fixObjectFit()
-
-
 acorn.util =
 
   assert: (condition, description) ->
@@ -181,3 +170,33 @@ acorn.util =
   LINK_REGEX: /// ^
     https?://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]
   ///
+
+# -- jQuery utils
+
+# Preserve image aspect ratio but contain it wholly
+# See https://github.com/schmidsi/jquery-object-fit
+# setTimeout bypasses https://github.com/schmidsi/jquery-object-fit/issues/3
+acorn.util.fixObjectFit = ->
+  objectFit_ = $.fn.objectFit
+  $.fn.objectFit = ->
+    setTimeout (=> objectFit_ arguments...), 200
+    @
+
+acorn.util.fixObjectFit()
+
+
+# inserts element at specific index
+$.fn.insertAt = (index, element) ->
+  lastIndex = @children().size()
+
+  # negative indices wrap
+  if index < 0
+    index = Math.max(0, lastIndex + 1 + index) if index < 0
+
+  @append element
+
+  # move into position
+  if index < lastIndex
+    @children().eq(index).before(@children().last())
+
+  @
