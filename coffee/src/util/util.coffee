@@ -56,7 +56,7 @@ iframeOptions:
 # construct an <iframe> element, with `src` and `id`
 iframe: (src, id) ->
   f = $ '<iframe>'
-  _.map @embedIframeOptions, (val, key) ->
+  _.map @iframeOptions, (val, key) ->
     f.attr key, val
   f.attr 'src', src
   f.attr 'id', id if id?
