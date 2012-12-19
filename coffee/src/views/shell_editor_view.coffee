@@ -63,6 +63,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
     @remixerViews = @model.shells().map @remixerForShell
 
+    @on 'ShellEditor:ShellsUpdated', @renderUpdates
 
   render: =>
     super
@@ -71,16 +72,12 @@ class acorn.player.ShellEditorView extends athena.lib.View
     @$el.html @template()
     @renderOptionsView()
     _.each @remixerViews, @renderRemixerView
-
+    @renderUpdates()
     @
 
   renderOptionsView: =>
     @shellOptionsView.setElement @$ '.shell-options-view'
     @shellOptionsView.render()
-
-    # hide the options view if there is only one shell
-    if @model.shells().length > 1
-      @$('.shell-options-view').css 'display', 'none'
     @
 
   renderRemixerView: (remixerView, index) =>
@@ -91,6 +88,13 @@ class acorn.player.ShellEditorView extends athena.lib.View
       @$('.remix-views').append remixerView.el
     @
 
+  renderUpdates: =>
+    shellCount = @model.shells().length
+
+    # hide the options view if there is only one shell
+    if @rendering
+      display = if shellCount > 1 then 'block' else 'none'
+      @$('.shell-options-view').css 'display', display
 
   # retrieves the finalized shell. @model should not be used directly.
   shell: =>
@@ -115,6 +119,8 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
     if @rendering
       @renderRemixerView remixerView, index
+      @trigger 'ShellEditor:ShellsUpdated'
+
     @
 
   removeShell: (shell) =>
@@ -123,6 +129,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
     [view] = @remixerViews.splice(index, 1)
     view.destroy()
+    @trigger 'ShellEditor:ShellsUpdated'
     @
 
   # whether the shell is considered empty (placeholders)

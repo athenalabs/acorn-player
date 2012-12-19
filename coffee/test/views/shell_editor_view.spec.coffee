@@ -159,6 +159,49 @@ describe 'acorn.player.ShellEditorView', ->
         expect(rv.el.parentNode.parentNode).toBe view.el
 
 
+  describe 'ShellEditorView::renderUpdates', ->
+
+    it 'should hide the ShellOptionsView when there are < 2 shells', ->
+      view = new ShellEditorView options
+      view.render()
+      expect(view.remixerViews.length).toBe 2
+      expect(view.shellOptionsView.$el.css 'display').toBe 'block'
+
+      view.removeShell view.model.shells().models[0]
+      expect(view.remixerViews.length).toBe 1
+      expect(view.shellOptionsView.$el.css 'display').toBe 'none'
+
+    it 'should show the ShellOptionsView when there are > 1 shells', ->
+      view = new ShellEditorView options
+      view.render()
+      expect(view.remixerViews.length).toBe 2
+      expect(view.shellOptionsView.$el.css 'display').toBe 'block'
+
+      view.removeShell view.model.shells().models[0]
+      expect(view.remixerViews.length).toBe 1
+      expect(view.shellOptionsView.$el.css 'display').toBe 'none'
+
+      _.each _.range(10), (i) =>
+        view.addShell new Shell.Model
+        expect(view.remixerViews.length).toBe 2 + i
+        expect(view.shellOptionsView.$el.css 'display').toBe 'block'
+
+    it 'should add an empty shell when going to 0 shells', ->
+      view = new ShellEditorView options
+      firstShell = -> view.model.shells().models[0]
+
+      expect(view.remixerViews.length).toBe 2
+      view.removeShell firstShell()
+      expect(view.remixerViews.length).toBe 1
+
+      view.removeShell firstShell()
+      expect(view.remixerViews.length).toBe 1 # stay at 1
+      expect(firstShell() instanceof EmptyShell.Model).toBe true
+
+      view.removeShell firstShell()
+      expect(view.remixerViews.length).toBe 1 # stay at 1
+      expect(firstShell() instanceof EmptyShell.Model).toBe true
+
 
 
 
