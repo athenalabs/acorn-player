@@ -27,4 +27,4 @@ class PDFLinkShell.MediaView extends LinkShell.MediaView
 class PDFLinkShell.RemixView extends LinkShell.RemixView
 
 
-acorn.RegisterShellModule PDFLinkShell
+acorn.registerShellModule PDFLinkShell
