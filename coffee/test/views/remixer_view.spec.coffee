@@ -1,6 +1,8 @@
 goog.provide 'acorn.specs.player.RemixerView'
 
 goog.require 'acorn.player.RemixerView'
+goog.require 'acorn.shells.LinkShell'
+goog.require 'acorn.shells.ImageLinkShell'
 
 describe 'acorn.player.RemixerView', ->
   RemixerView = acorn.player.RemixerView
@@ -8,7 +10,6 @@ describe 'acorn.player.RemixerView', ->
 
   # construction options
   model = new acorn.shells.Shell.Model
-    shellid: 'acorn.Shell'
 
   options =
     model: model
@@ -62,6 +63,36 @@ describe 'acorn.player.RemixerView', ->
       view.toolbarView.$('button#delete').trigger 'click'
       expect(spy.triggered).toBe true
       expect(spy.arguments[0]).toEqual [view]
+
+    it 'should trigger `Remixer:SwapShell` on dropdown select', ->
+      model = new acorn.shells.LinkShell.Model
+      view = new RemixerView model: model
+      spy1 = new EventSpy view.dropdownView, 'Dropdown:Selected'
+      spy2 = new EventSpy view, 'Remixer:SwapShell'
+
+      view.render()
+      expect(spy1.triggered).toBe false
+      expect(spy2.triggered).toBe false
+      view.dropdownView.selected acorn.shells.ImageLinkShell.id
+      expect(spy1.triggered).toBe true
+      expect(spy2.triggered).toBe true
+      expect(spy2.arguments[0]).toEqual [view, model, view.model]
+      expect(model).not.toEqual view.model
+
+    it 'should not trigger `Remixer:SwapShell` if dropdown select is same', ->
+      model = new acorn.shells.LinkShell.Model
+      view = new RemixerView model: model
+      spy1 = new EventSpy view, 'Remixer:SwapShell'
+      spy2 = new EventSpy view, 'Remixer:SwapShell'
+
+      view.render()
+      expect(spy1.triggered).toBe false
+      expect(spy2.triggered).toBe false
+      view.dropdownView.selected model.shellid()
+      expect(spy1.triggered).toBe false
+      expect(spy2.triggered).toBe false
+
+
 
   it 'should look good', ->
     # setup DOM

@@ -1,6 +1,7 @@
 goog.provide 'acorn.player.RemixerView'
 
 goog.require 'acorn.player.DropdownView'
+goog.require 'acorn.shells.LinkShell'
 
 # View to select options.
 class acorn.player.RemixerView extends athena.lib.View
@@ -28,14 +29,7 @@ class acorn.player.RemixerView extends athena.lib.View
     unless @model instanceof acorn.shells.Shell.Model
       TypeError @model, 'Shell.Model'
 
-    @dropdownView = new acorn.player.DropdownView
-      items: [
-        {id: '', icon: ''},
-        {id: 'Link', icon: 'share'},
-        {id: 'Video Link', icon: 'play'}
-      ]
-      selected: 'Link'
-      eventhub: @eventhub
+    @initializeDropdownView()
 
     @toolbarView = new athena.lib.ToolbarView
       eventhub: @eventhub
@@ -47,6 +41,29 @@ class acorn.player.RemixerView extends athena.lib.View
     @remixSubview = new @model.module.RemixView
       eventhub: @eventhub
       model: @model
+
+
+  initializeDropdownView: =>
+
+    # get only the Link-based Modules
+    linkModules = _.filter acorn.shells.Registry.modules, (module) =>
+      !!module.id.match 'Link'
+
+    # construct dropdown items
+    items = _.map linkModules, (module, shellid) =>
+      {id:module.id, name: module.title, icon: module.icon}
+
+    @dropdownView = new acorn.player.DropdownView
+      items: items
+      selected: LinkShell.id
+      eventhub: @eventhub
+
+    @dropdownView.on 'Dropdown:Selected', (dropdown, value) =>
+      unless value is @model.shellid()
+        @swapShell Shell.Model.withData
+          shellid: value
+          link: @model.link()
+
 
   render: =>
     super
@@ -60,6 +77,25 @@ class acorn.player.RemixerView extends athena.lib.View
     @toolbarView.setElement @$ '.toolbar-view'
     @toolbarView.render()
 
-    @$('.remixer-content').append @remixSubview.render().el
+    @renderRemixSubview()
 
+    @
+
+  renderRemixSubview: =>
+    unless @model is @remixSubview.model
+      @remixSubview?.destroy()
+      @remixSubview = new @model.module.RemixView
+        eventhub: @eventhub
+        model: @model
+
+    if @rendering
+      @$('.remixer-content').append @remixSubview.render().el
+
+    @
+
+  swapShell: (newShell) =>
+    oldShell = @model
+    @model = newShell
+    @renderRemixSubview()
+    @trigger 'Remixer:SwapShell', @, oldShell, newShell
     @
