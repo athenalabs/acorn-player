@@ -22,17 +22,19 @@ class ImageLinkShell.Model extends LinkShell.Model
 
 class ImageLinkShell.MediaView extends LinkShell.MediaView
 
-  template: _.template '<div class="wrapper"></div>'
-
   render: =>
     img = $('<img>').attr 'src', @model.get 'link'
-    @$el.html @template()
-    @$el.find('.wrapper').append img
+    @$el.append img
     @
 
 
 
 class ImageLinkShell.RemixView extends LinkShell.RemixView
+
+  render: =>
+    img = $('<img>').attr 'src', @model.get 'link'
+    @$el.append img
+    @
 
 
 
