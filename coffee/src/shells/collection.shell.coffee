@@ -121,10 +121,8 @@ class CollectionShell.Model extends Shell.Model
     if _.isEqual shells, data
       return
 
-    shells.splice 0, shells.length, data
-
-    # trigger change events. (splicing array doesn't)
-    @set shells: shells, options
+    # trigger change events.
+    @set shells: data, options
 
 
 # Render each subshell in sequence. Shows each shell individually, keeping
@@ -142,14 +140,17 @@ class CollectionShell.MediaView extends Shell.MediaView
     super
 
     # construct shell models accordingly
-    @shellModels = _.map @model.get('shells'), acorn.shellWithData
+    @model.shells()
 
     # sync all metadata
-    # TODO _.each @shellModels, (shellModel) => shellModel.metaData().sync()
+    # TODO @model.shells().each (shell) => shell.metaData().sync()
 
     # keep all subviews in memory - perhaps in the future only keep p<c>n.
-    @shellViews = _.map @shellModels, (shellModel) =>
-      view = new shellModel.module.MediaView eventhub: @eventhub
+    @shellViews = @model.shells().map (shellModel) =>
+      view = new shellModel.module.MediaView
+        eventhub: @eventhub
+        model: shellModel
+
       # TODO view.on 'playback:ended', @onShellPlaybackEnded
       view
 
@@ -180,7 +181,7 @@ class CollectionShell.MediaView extends Shell.MediaView
     view?.remove()
 
     @currentIndex = index
-    view = @shellViews
+    view = @shellViews[index]
     @$el.append view.render().el
     # TODO update controls
     view

@@ -108,8 +108,11 @@ class acorn.player.ShellEditorView extends athena.lib.View
   shell: =>
     shell = @model.clone()
 
+    # retrieve shells from views. seem to be out of sync. Bug?
+    shells = _.map @remixerViews, (view) => view.model
+
     # clear out any empty shells
-    shell.shells().reset shell.shells().filter (shell) =>
+    shell.shells().reset _.filter shells, (shell) =>
       not @shellIsEmpty shell
 
     # unwrap from collection if there is only one shell

@@ -4,6 +4,7 @@ goog.require 'acorn.player.EditorView'
 
 describe 'acorn.player.EditorView', ->
   Shell = acorn.shells.Shell
+  TextShell = acorn.shells.TextShell
   EventSpy = athena.lib.util.test.EventSpy
   EditorView = acorn.player.EditorView
   describeView = athena.lib.util.test.describeView
@@ -14,8 +15,8 @@ describe 'acorn.player.EditorView', ->
     thumbnail: acorn.config.img.acorn
     acornid: 'nyfskeqlyx'
     title: 'The Differential'
-    shell:
-      shellid: 'acorn.Shell'
+    shell: (new TextShell.Model).toJSON()
+
 
   # patch the model for testing
   model.save = (attrs, opts) -> opts.error()
@@ -89,7 +90,7 @@ describe 'acorn.player.EditorView', ->
 
       view.save()
       expect(spy).toHaveBeenCalled()
-      expect(spy).toHaveBeenCalledWith(view.shellEditorView.model.attributes)
+      expect(spy).toHaveBeenCalledWith(view.shellEditorView.shell().attributes)
 
     it 'should call save on acornModel', ->
       view = new EditorView options

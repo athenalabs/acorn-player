@@ -75,7 +75,7 @@ class acorn.player.EditorView extends athena.lib.View
     # TODO add validation first
 
     # update acornModel with edited shellModel data
-    @model.shellData @shellEditorView.model.attributes
+    @model.shellData @shellEditorView.shell().attributes
 
     @$('#editor-save-btn').attr 'disabled', 'disabled'
     @$('#editor-save-btn').text 'Saving...'
