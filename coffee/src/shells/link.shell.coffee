@@ -45,11 +45,11 @@ LinkShell = acorn.shells.LinkShell =
     location = acorn.util.parseUrl link
 
     # filter out shell modules that don't derive from LinkShell
-    shells = _.filter acorn.shells, (shell) ->
-      acorn.util.derives shell.Model, LinkShell.Model
+    shells = _.filter acorn.shells, (shell) =>
+      athena.lib.util.derives shell.Model, LinkShell.Model
 
     # filter out shells that don't match this link
-    shells = _.filter shells, (shell) ->
+    shells = _.filter shells, (shell) =>
       @linkMatches link, shell.validLinkPatterns
 
     # if all else fails, use LinkShell
@@ -67,7 +67,7 @@ LinkShell = acorn.shells.LinkShell =
 
     # reduce function to get the most specific shell (in terms of inheritance)
     reduceFn = (bestShell, shell) ->
-      if acorn.util.derives bestShell.Model, shell.Model
+      if athena.lib.util.derives bestShell.Model, shell.Model
         return bestShell
       else return shell
 
