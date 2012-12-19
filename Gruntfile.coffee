@@ -26,7 +26,7 @@ module.exports = (grunt) ->
     build_dir: 'build'
 
     # minified target name
-    minified: 'build/acornplayer.min.js'
+    minified: 'build/acorn.player.min.js'
 
     # jasmine test page to render
     test_page: 'static/tests.html'
