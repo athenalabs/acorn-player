@@ -38,6 +38,9 @@ class TextShell.RemixView extends Shell.RemixView
     <textarea class="span12"><%= text %></textarea>
     '''
 
+  events: => _.extend super,
+    'keyup textarea': => @model.text @$('textarea').val()
+
   render: =>
     super
     @$el.empty()
