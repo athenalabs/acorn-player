@@ -94,6 +94,17 @@ class LinkShell.Model extends Shell.Model
       unless LinkShell.linkMatches attrs.link, @module.validLinkPatterns
         ValueError 'link', 'doesn\'t match valid link patterns for this shell.'
 
+  # Constructs the `bestMatchingShell` for given `link`
+  @withLink: (link) ->
+    unless acorn.util.isUrl link
+      TypeError link, 'url'
+
+    BestShell = @module.bestMatchingShell link
+    return new BestShell.Model link: link
+
+
+acorn.withLink = LinkShell.Model.withLink
+
 
 
 class LinkShell.MediaView extends Shell.MediaView
