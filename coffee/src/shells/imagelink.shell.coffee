@@ -23,6 +23,8 @@ class ImageLinkShell.Model extends LinkShell.Model
 class ImageLinkShell.MediaView extends LinkShell.MediaView
 
   render: =>
+    super
+    @$el.empty()
     img = $('<img>').attr 'src', @model.get 'link'
     @$el.append img
     @
@@ -32,6 +34,8 @@ class ImageLinkShell.MediaView extends LinkShell.MediaView
 class ImageLinkShell.RemixView extends LinkShell.RemixView
 
   render: =>
+    super
+    @$el.empty()
     img = $('<img>').attr 'src', @model.get 'link'
     @$el.append img
     @
