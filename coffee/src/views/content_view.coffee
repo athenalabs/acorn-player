@@ -23,7 +23,7 @@ ControlToolbarView = acorn.player.controls.ControlToolbarView
 # |                                                                |
 # |                                                                |
 # ------------------------------------------------------------------
-# | Shell.MediaView::controlsView         MediaView::acornControls |
+# | Shell.MediaView:controlsView         ContentView:acornControls |
 # ------------------------------------------------------------------
 
 

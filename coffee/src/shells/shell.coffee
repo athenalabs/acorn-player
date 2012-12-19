@@ -80,7 +80,7 @@ acorn.shellWithData = Shell.Model.withData
 
 class Shell.MediaView extends athena.lib.View
 
-  className: @classNameExtend 'shell-content-view'
+  className: @classNameExtend 'shell-media-view'
 
   initialize: =>
     super
