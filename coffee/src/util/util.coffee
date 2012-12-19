@@ -12,6 +12,7 @@ acorn.util =
     ///^(https?:\/\/)?#{url ? '.*'}$///
 
   isUrl: (url) ->
+    url = String(url)
     @urlRegEx().test url
 
   isPath: (path) ->
