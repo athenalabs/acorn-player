@@ -2,6 +2,7 @@ goog.provide 'acorn.player.ShellEditorView'
 
 goog.require 'acorn.player.ShellOptionsView'
 goog.require 'acorn.player.RemixerView'
+goog.require 'acorn.shells.EmptyShell'
 
 # acorn player ShellEditorView:
 #   ------------------------------------------
@@ -28,6 +29,7 @@ goog.require 'acorn.player.RemixerView'
 # figure out whether shell must change based on final state
 
 Shell = acorn.shells.Shell
+EmptyShell = acorn.shells.EmptyShell
 CollectionShell = acorn.shells.CollectionShell
 
 # View to edit a shell. Renders shells' RemixViews.
@@ -39,6 +41,8 @@ class acorn.player.ShellEditorView extends athena.lib.View
     <div class="shell-options-view row-fluid"></div>
     <div class="remix-views"></div>
     '''
+
+  defaultShell: EmptyShell,
 
   initialize: =>
     super
@@ -55,7 +59,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
     # add an empty shell at the end, ready for a new link
     unless @shellIsEmpty @model.shells().last()
-      @model.shells().push new EmptyShell.Model
+      @model.shells().push new @defaultShell.Model
 
     @shellOptionsView = new acorn.player.ShellOptionsView
       eventhub: @eventhub
@@ -98,7 +102,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
     # if there are no shells, add an empty one
     if shellCount is 0
-      @addShell new EmptyShell.Model
+      @addShell new @defaultShell.Model
 
   # retrieves the finalized shell. @model should not be used directly.
   shell: =>
@@ -115,7 +119,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
     shell
 
   addShell: (shell, index) =>
-    index ?= @model.shells().length - 1 # -1 = before EmptyShell
+    index ?= @model.shells().length - 1 # -1 = before @defaultShell
     @model.shells().add shell, at: index
 
     remixerView = @remixerForShell shell
@@ -140,7 +144,8 @@ class acorn.player.ShellEditorView extends athena.lib.View
   shellIsEmpty: (shell) =>
     shell &&
     (shell.constructor is Shell.Model or
-     shell.constructor is EmptyShell.Model)
+     shell.constructor is EmptyShell.Model or
+     shell.constructor is @defaultShell.Model)
 
   # initializes a RemixerView for given shell
   remixerForShell: (shell) =>
