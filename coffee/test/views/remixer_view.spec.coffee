@@ -41,25 +41,27 @@ describe 'acorn.player.RemixerView', ->
     viewOptions: options
     checkDOM: (cEl, pEl) -> cEl.parentNode.parentNode is pEl
 
-  it 'should trigger `Remixer:Duplicate` on clicking btn', ->
-    view = new RemixerView options
-    spy = new EventSpy view, 'Remixer:Duplicate'
+  describe 'events', ->
 
-    view.render()
-    expect(spy.triggered).toBe false
-    view.toolbarView.$('button#duplicate').trigger 'click'
-    expect(spy.triggered).toBe true
-    expect(spy.arguments[0]).toEqual [view]
+    it 'should trigger `Remixer:Duplicate` on clicking btn', ->
+      view = new RemixerView options
+      spy = new EventSpy view, 'Remixer:Duplicate'
 
-  it 'should trigger `Remixer:Delete` on clicking btn', ->
-    view = new RemixerView options
-    spy = new EventSpy view, 'Remixer:Delete'
+      view.render()
+      expect(spy.triggered).toBe false
+      view.toolbarView.$('button#duplicate').trigger 'click'
+      expect(spy.triggered).toBe true
+      expect(spy.arguments[0]).toEqual [view]
 
-    view.render()
-    expect(spy.triggered).toBe false
-    view.toolbarView.$('button#delete').trigger 'click'
-    expect(spy.triggered).toBe true
-    expect(spy.arguments[0]).toEqual [view]
+    it 'should trigger `Remixer:Delete` on clicking btn', ->
+      view = new RemixerView options
+      spy = new EventSpy view, 'Remixer:Delete'
+
+      view.render()
+      expect(spy.triggered).toBe false
+      view.toolbarView.$('button#delete').trigger 'click'
+      expect(spy.triggered).toBe true
+      expect(spy.arguments[0]).toEqual [view]
 
   it 'should look good', ->
     # setup DOM
