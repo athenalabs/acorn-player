@@ -144,9 +144,17 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
   # initializes a RemixerView for given shell
   remixerForShell: (shell) =>
-    new acorn.player.RemixerView
+    view = new acorn.player.RemixerView
       eventhub: @eventhub
       model: shell
+
+    view.on 'Remixer:Duplicate', =>
+      @addShell shell.clone(), @model.shells().indexOf(shell) + 1
+
+    view.on 'Remixer:Delete', =>
+      @removeShell shell
+
+    view
 
   # swaps the main shell with given shell
   swapTopLevelShell: (shell) =>
