@@ -155,7 +155,22 @@ class acorn.player.ShellEditorView extends athena.lib.View
     view.on 'Remixer:Delete', (remixer) =>
       @removeShell remixer.model
 
+    view.on 'Remixer:SwapShell', (remixer, oldShell, newShell) =>
+      @swapSubShell oldShell, newShell
+
     view
+
+  # swaps a subshell with given shell
+  swapSubShell: (oldShell, newShell) =>
+    index = @model.shells().indexOf(oldShell)
+    @model.shells().remove oldShell
+    @model.shells().add newShell, {at: index}
+
+    unless @remixerViews[index].model is newShell
+      @remixerViews[index].destroy()
+      @remixerViews[index] = @remixerForShell newShell
+
+    @
 
   # swaps the main shell with given shell
   swapTopLevelShell: (shell) =>

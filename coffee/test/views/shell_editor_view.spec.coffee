@@ -247,6 +247,54 @@ describe 'acorn.player.ShellEditorView', ->
         remixer.trigger 'Remixer:Delete', remixer
         expect(spy).toHaveBeenCalledWith remixer.model
 
+    describe 'on Remixer:SwapShell', ->
+
+      it 'should be triggered by a Remixer:SwapShell event ', ->
+        oldShell = new acorn.shells.LinkShell.Model
+        newShell = new acorn.shells.ImageLinkShell.Model
+        view = new ShellEditorView model: oldShell
+        view.render()
+        remixer = view.remixerViews[0]
+
+        spy = spyOn(view, 'swapSubShell').andCallThrough()
+        remixer.trigger 'Remixer:SwapShell', remixer, oldShell, newShell
+        expect(spy).toHaveBeenCalled()
+
+      it 'should be triggered with a new, different shell', ->
+        oldShell = new acorn.shells.LinkShell.Model
+        newShell = new acorn.shells.ImageLinkShell.Model
+        view = new ShellEditorView model: oldShell
+        view.render()
+        remixer = view.remixerViews[0]
+
+        spy = spyOn(view, 'swapSubShell').andCallThrough()
+        remixer.trigger 'Remixer:SwapShell', remixer, oldShell, newShell
+        expect(spy).toHaveBeenCalledWith oldShell, newShell
+
+      it 'should remove the old shell, and replace it with the new', ->
+        oldShell = new acorn.shells.LinkShell.Model
+        newShell = new acorn.shells.ImageLinkShell.Model
+        view = new ShellEditorView model: oldShell
+        view.render()
+        remixer = view.remixerViews[0]
+
+        expect(view.model.shells().models[0]).toBe oldShell
+        expect(view.remixerViews[0].model).toBe oldShell
+
+        remixer.swapShell newShell
+        expect(view.model.shells().models[0]).toBe newShell
+        expect(view.remixerViews[0].model).toBe newShell
+
+      it 'should not change the remixerView (it changed already)', ->
+        oldShell = new acorn.shells.LinkShell.Model
+        newShell = new acorn.shells.ImageLinkShell.Model
+        view = new ShellEditorView model: oldShell
+        view.render()
+        remixer = view.remixerViews[0]
+
+        remixer.swapShell newShell
+        expect(view.remixerViews[0]).toBe remixer
+
 
 
   it 'should look good', ->
