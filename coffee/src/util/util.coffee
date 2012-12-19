@@ -85,7 +85,7 @@ acorn.util =
         css.attr 'href', src
         $('body').append css
 
-  # converts human-readable timeString to seconds and back
+  # converts human-readable timestring to seconds and back
   # human-readable format is: [[hh:]mm:]ss[.SSS]
   Time: class Time
     constructor: (time) ->
