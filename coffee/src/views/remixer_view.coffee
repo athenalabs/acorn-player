@@ -23,6 +23,7 @@ class acorn.player.RemixerView extends athena.lib.View
   events: => _.extend super,
     'click button#duplicate': => @trigger 'Remixer:Duplicate', @
     'click button#delete': => @trigger 'Remixer:Delete', @
+    'blur input#link': @onBlurLink
 
   initialize: =>
     super
@@ -72,6 +73,8 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @$el.html @template()
 
+    @$('input#link').val @model.link?()
+
     @dropdownView.setElement @$ '.dropdown-view'
     @dropdownView.render()
 
@@ -100,3 +103,16 @@ class acorn.player.RemixerView extends athena.lib.View
     @renderRemixSubview()
     @trigger 'Remixer:SwapShell', @, oldShell, newShell
     @
+
+  onBlurLink: (event) =>
+    link = @$('input#link').val().trim();
+
+    if acorn.util.isUrl link
+      shell = LinkShell.Model.withLink link
+      if shell instanceof Shell.Model and shell.shellid() != @model.shellid()
+        @swapShell shell
+      else
+        @model.link link
+
+    # set link to whatever our model is
+    @$('input#link').val @model.link?()
