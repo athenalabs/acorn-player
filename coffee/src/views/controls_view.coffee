@@ -92,6 +92,18 @@ class SourcesControlView extends IconControlView
   defaults: => _.extend super,
     icon: 'globe'
 
+class PreviousControlView extends IconControlView
+  controlName: => 'PreviousControl'
+  tooltip: => title: 'Previous', delay: show: 1500
+  defaults: => _.extend super,
+    icon: 'arrow-left'
+
+class NextControlView extends IconControlView
+  controlName: => 'NextControl'
+  tooltip: => title: 'Next', delay: show: 1500
+  defaults: => _.extend super,
+    icon: 'arrow-right'
+
 
 class ImageControlView extends ControlView
   controlName: => 'ImageControl'
@@ -131,6 +143,9 @@ acorn.player.controls.IconControlView = IconControlView
 acorn.player.controls.EditControlView = EditControlView
 acorn.player.controls.SourcesControlView = SourcesControlView
 acorn.player.controls.FullscreenControlView = FullscreenControlView
+
+acorn.player.controls.NextControlView = NextControlView
+acorn.player.controls.PreviousControlView = PreviousControlView
 
 acorn.player.controls.ImageControlView = ImageControlView
 acorn.player.controls.AcornControlView = AcornControlView
