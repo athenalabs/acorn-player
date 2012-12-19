@@ -157,14 +157,20 @@ class CollectionShell.MediaView extends Shell.MediaView
     # initialize the currently selected view
     @currentIndex = 0
 
-    @eventhub.on 'controls:left', @showPrevious
-    @eventhub.on 'controls:list', @onTogglePlaylist
-    @eventhub.on 'controls:right', @showNext
+    # construct a ControlToolbar for the acorn controls
+    @controlsView = new ControlToolbarView
+      extraClasses: ['shell-controls']
+      buttons: ['Previous', 'Next']
+      eventhub: @eventhub
+
+    @controlsView.on 'PreviousControl:Click', @showPrevious
+    @controlsView.on 'ListControl:Click', @onTogglePlaylist
+    @controlsView.on 'NextControl:Click', @showNext
 
   remove: =>
-    @eventhub.off 'controls:left', @onShowPrevious
-    @eventhub.off 'controls:list', @onTogglePlaylist
-    @eventhub.off 'controls:right', @onShowNext
+    @controlsView.off 'PreviousControl:Click', @showPrevious
+    @controlsView.off 'ListControl:Click', @onTogglePlaylist
+    @controlsView.off 'NextControl:Click', @showNext
     super
 
   render: =>
