@@ -179,7 +179,7 @@ acorn.util =
 acorn.util.fixObjectFit = ->
   objectFit_ = $.fn.objectFit
   $.fn.objectFit = ->
-    setTimeout (=> objectFit_ arguments...), 200
+    setTimeout (=> objectFit_.apply @, arguments), 200
     @
 
 acorn.util.fixObjectFit()
