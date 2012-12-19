@@ -210,7 +210,7 @@ describe 'acorn.player.ShellEditorView', ->
       remixer = view.remixerViews[0]
 
       spy = spyOn(view, 'addShell').andCallThrough()
-      remixer.trigger 'Remixer:Duplicate'
+      remixer.trigger 'Remixer:Duplicate', remixer
       expect(spy).toHaveBeenCalled()
 
     it 'should add a clone of the remixerView\'s shell', ->
@@ -219,7 +219,7 @@ describe 'acorn.player.ShellEditorView', ->
       remixer = view.remixerViews[0]
 
       spy = spyOn(view, 'addShell').andCallThrough()
-      remixer.trigger 'Remixer:Duplicate'
+      remixer.trigger 'Remixer:Duplicate', remixer
 
       shell = spy.mostRecentCall.args[0]
       expect(shell instanceof Shell.Model).toBe true
@@ -233,7 +233,7 @@ describe 'acorn.player.ShellEditorView', ->
       remixer = view.remixerViews[0]
 
       spy = spyOn(view, 'removeShell').andCallThrough()
-      remixer.trigger 'Remixer:Delete'
+      remixer.trigger 'Remixer:Delete', remixer
       expect(spy).toHaveBeenCalled()
 
     it 'should remove the remixerView\'s shell', ->
@@ -242,7 +242,7 @@ describe 'acorn.player.ShellEditorView', ->
       remixer = view.remixerViews[0]
 
       spy = spyOn(view, 'removeShell').andCallThrough()
-      remixer.trigger 'Remixer:Delete'
+      remixer.trigger 'Remixer:Delete', remixer
       expect(spy).toHaveBeenCalledWith remixer.model
 
 
