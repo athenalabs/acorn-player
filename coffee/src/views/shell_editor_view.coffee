@@ -96,6 +96,10 @@ class acorn.player.ShellEditorView extends athena.lib.View
       display = if shellCount > 1 then 'block' else 'none'
       @$('.shell-options-view').css 'display', display
 
+    # if there are no shells, add an empty one
+    if shellCount is 0
+      @addShell new EmptyShell.Model
+
   # retrieves the finalized shell. @model should not be used directly.
   shell: =>
     shell = @model.clone()
