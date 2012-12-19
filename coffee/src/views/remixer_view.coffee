@@ -3,6 +3,15 @@ goog.provide 'acorn.player.RemixerView'
 goog.require 'acorn.player.DropdownView'
 goog.require 'acorn.shells.LinkShell'
 
+
+TextShell = acorn.shells.TextShell
+EmptyShell = acorn.shells.EmptyShell
+
+LinkShell = acorn.shells.LinkShell
+PDFLinkShell = acorn.shells.PDFLinkShell
+ImageLinkShell = acorn.shells.ImageLinkShell
+
+
 # View to select options.
 class acorn.player.RemixerView extends athena.lib.View
 
@@ -48,16 +57,23 @@ class acorn.player.RemixerView extends athena.lib.View
   initializeDropdownView: =>
 
     # get only the Link-based Modules
-    linkModules = _.filter acorn.shells.Registry.modules, (module) =>
-      !!module.id.match 'Link'
+    modules = [
+      {id:LinkShell.id, name:'Link (iframe)', icon: LinkShell.icon}
+      {id:ImageLinkShell.id, name:'Image Link', icon: ImageLinkShell.icon}
+      {id:PDFLinkShell.id, name:'PDF Link', icon: PDFLinkShell.icon}
+      # '---' divisors TODO
+      {id:TextShell.id, name:'Text', icon: TextShell.icon}
+      # '---' divisors TODO
+      {id:EmptyShell.id, name:'Empty', icon: EmptyShell.icon}
+    ]
 
-    # construct dropdown items
-    items = _.map linkModules, (module, shellid) =>
-      {id:module.id, name: module.title, icon: module.icon}
+    selected = @model.module.id
+    if selected == Shell.id
+      selected = LinkShell.id
 
     @dropdownView = new acorn.player.DropdownView
-      items: items
-      selected: LinkShell.id
+      items: modules
+      selected: selected
       eventhub: @eventhub
 
     @dropdownView.on 'Dropdown:Selected', (dropdown, value) =>
@@ -73,14 +89,13 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @$el.html @template()
 
-    @$('input#link').val @model.link?()
-
     @dropdownView.setElement @$ '.dropdown-view'
     @dropdownView.render()
 
     @toolbarView.setElement @$ '.toolbar-view'
     @toolbarView.render()
 
+    @$('input#link').val @model.link?()
     @renderRemixSubview()
 
     @
@@ -100,7 +115,11 @@ class acorn.player.RemixerView extends athena.lib.View
   swapShell: (newShell) =>
     oldShell = @model
     @model = newShell
+
+    @$('input#link').val @model.link?()
+    @dropdownView.selected @model.shellid()
     @renderRemixSubview()
+
     @trigger 'Remixer:SwapShell', @, oldShell, newShell
     @
 
