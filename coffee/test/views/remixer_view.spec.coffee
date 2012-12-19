@@ -49,6 +49,7 @@ describe 'acorn.player.RemixerView', ->
     expect(spy.triggered).toBe false
     view.toolbarView.$('button#duplicate').trigger 'click'
     expect(spy.triggered).toBe true
+    expect(spy.arguments[0]).toEqual [view]
 
   it 'should trigger `Remixer:Delete` on clicking btn', ->
     view = new RemixerView options
@@ -58,6 +59,7 @@ describe 'acorn.player.RemixerView', ->
     expect(spy.triggered).toBe false
     view.toolbarView.$('button#delete').trigger 'click'
     expect(spy.triggered).toBe true
+    expect(spy.arguments[0]).toEqual [view]
 
   it 'should look good', ->
     # setup DOM
