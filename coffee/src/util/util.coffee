@@ -9,7 +9,7 @@ acorn.util =
     throw new Error description if not condition
 
   urlRegEx: (url) ->
-    ///^(https?:\/\/)?#{url}$///
+    ///^(https?:\/\/)?#{url ? '.*'}$///
 
   isUrl: (url) ->
     @urlRegEx().test url
