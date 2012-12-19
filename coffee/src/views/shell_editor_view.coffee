@@ -124,7 +124,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
     @
 
   removeShell: (shell) =>
-    index = @model.shells().index shell
+    index = @model.shells().indexOf shell
     @model.shells().remove shell
 
     [view] = @remixerViews.splice(index, 1)
