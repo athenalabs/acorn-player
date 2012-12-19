@@ -202,48 +202,50 @@ describe 'acorn.player.ShellEditorView', ->
       expect(view.remixerViews.length).toBe 1 # stay at 1
       expect(firstShell() instanceof EmptyShell.Model).toBe true
 
-  describe 'ShellEditor Duplicate Shell', ->
+  describe 'ShellEditorView events', ->
 
-    it 'should be triggered by a Remixer:Duplicate event', ->
-      view = new ShellEditorView options
-      view.render()
-      remixer = view.remixerViews[0]
+    describe 'on Remixer:Duplicate', ->
 
-      spy = spyOn(view, 'addShell').andCallThrough()
-      remixer.trigger 'Remixer:Duplicate', remixer
-      expect(spy).toHaveBeenCalled()
+      it 'should be triggered by a Remixer:Duplicate event', ->
+        view = new ShellEditorView options
+        view.render()
+        remixer = view.remixerViews[0]
 
-    it 'should add a clone of the remixerView\'s shell', ->
-      view = new ShellEditorView options
-      view.render()
-      remixer = view.remixerViews[0]
+        spy = spyOn(view, 'addShell').andCallThrough()
+        remixer.trigger 'Remixer:Duplicate', remixer
+        expect(spy).toHaveBeenCalled()
 
-      spy = spyOn(view, 'addShell').andCallThrough()
-      remixer.trigger 'Remixer:Duplicate', remixer
+      it 'should add a clone of the remixerView\'s shell', ->
+        view = new ShellEditorView options
+        view.render()
+        remixer = view.remixerViews[0]
 
-      shell = spy.mostRecentCall.args[0]
-      expect(shell instanceof Shell.Model).toBe true
-      expect(shell.attributes).toEqual remixer.model.attributes
+        spy = spyOn(view, 'addShell').andCallThrough()
+        remixer.trigger 'Remixer:Duplicate', remixer
 
-  describe 'ShellEditor Delete Shell', ->
+        shell = spy.mostRecentCall.args[0]
+        expect(shell instanceof Shell.Model).toBe true
+        expect(shell.attributes).toEqual remixer.model.attributes
 
-    it 'should be triggered by a Remixer:Delete event', ->
-      view = new ShellEditorView options
-      view.render()
-      remixer = view.remixerViews[0]
+    describe 'on Remixer:Delete', ->
 
-      spy = spyOn(view, 'removeShell').andCallThrough()
-      remixer.trigger 'Remixer:Delete', remixer
-      expect(spy).toHaveBeenCalled()
+      it 'should be triggered by a Remixer:Delete event', ->
+        view = new ShellEditorView options
+        view.render()
+        remixer = view.remixerViews[0]
 
-    it 'should remove the remixerView\'s shell', ->
-      view = new ShellEditorView options
-      view.render()
-      remixer = view.remixerViews[0]
+        spy = spyOn(view, 'removeShell').andCallThrough()
+        remixer.trigger 'Remixer:Delete', remixer
+        expect(spy).toHaveBeenCalled()
 
-      spy = spyOn(view, 'removeShell').andCallThrough()
-      remixer.trigger 'Remixer:Delete', remixer
-      expect(spy).toHaveBeenCalledWith remixer.model
+      it 'should remove the remixerView\'s shell', ->
+        view = new ShellEditorView options
+        view.render()
+        remixer = view.remixerViews[0]
+
+        spy = spyOn(view, 'removeShell').andCallThrough()
+        remixer.trigger 'Remixer:Delete', remixer
+        expect(spy).toHaveBeenCalledWith remixer.model
 
 
 
