@@ -38,7 +38,6 @@ acorn.util =
     allowFullScreen: 'true'
     webkitAllowFullScreen: 'true'
     mozallowfullscreen: 'true'
-    scrolling: 'no'
 
   # construct an <iframe> element, with `src` and `id`
   iframe: (src, id) ->
