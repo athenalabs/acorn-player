@@ -125,7 +125,9 @@ class LinkShell.RemixView extends Shell.RemixView
   render: =>
     super
     @$el.empty()
-    @$el.append acorn.util.iframe @model.get('link')
+    iframe = acorn.util.iframe @model.get('link')
+    iframe.attr 'scrolling', 'no'
+    @$el.append iframe
     @
 
 
