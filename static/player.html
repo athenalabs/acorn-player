@@ -130,19 +130,21 @@ How to use:
   .acorn-player-container {
     margin: 0 auto;
     width: 600px;
-    height: 400px;
+    min-height: 400px;
   }
 
-  .acorn-player {
-    width: 600px;
-    height: 400px;
+  .acorn-player,
+  .acorn-player .editor-view,
+  .acorn-player .splash-view,
+  .acorn-player .content-view {
+    min-height: 400px;
   }
 
   textarea#acorndata {
     margin-top: 100px;
     margin-bottom: 100px;
     width: 600px;
-    height: 400px;
+    min-height: 400px;
     font-family: Monaco;
     font-size: 10pt;
   }

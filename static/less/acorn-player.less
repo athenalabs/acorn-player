@@ -76,9 +76,8 @@
 }
 
 .splash-view {
-  position: relative;
   text-align: center;
-  .position-absolutely;
+  position: relative;
 
   > .splash-image {
     width: 100%;
@@ -111,7 +110,6 @@
   padding: 20px;
   width: 540px;
   margin: 0 auto;
-  .position-absolutely;
 
   > * {
     margin-top: 30px;
@@ -290,6 +288,18 @@
     }
 
   }
+
+  > .remixer-content {
+    .bordered;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    position: relative;
+    height: 300px;
+
+    iframe {
+      .position-absolutely;
+    }
+  }
 }
 
 .link-shell.shell-content-view {
@@ -297,6 +307,7 @@
   > iframe {
     width: 100%;
     height: 100%;
+    overflow: none;
   }
 }
 
