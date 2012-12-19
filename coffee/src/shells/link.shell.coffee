@@ -83,6 +83,12 @@ acorn.bestMatchingLinkShell = LinkShell.bestMatchingShell
 
 class LinkShell.Model extends Shell.Model
 
+  properties: => _.extend super,
+
+    # Link to any web resource
+    link: ''
+
+
   validate: (attrs) =>
     if attrs.link? and attrs.link != ''
       unless LinkShell.linkMatches attrs.link, @module.validLinkPatterns
