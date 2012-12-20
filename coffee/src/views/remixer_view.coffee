@@ -61,6 +61,7 @@ class acorn.player.RemixerView extends athena.lib.View
       {id:LinkShell.id, name:'Link (iframe)', icon: LinkShell.icon}
       {id:ImageLinkShell.id, name:'Image Link', icon: ImageLinkShell.icon}
       {id:PDFLinkShell.id, name:'PDF Link', icon: PDFLinkShell.icon}
+      {id:YouTubeShell.id, name:'YouTube', icon: YouTubeShell.icon}
       # '---' divisors TODO
       {id:TextShell.id, name:'Text', icon: TextShell.icon}
       # '---' divisors TODO
