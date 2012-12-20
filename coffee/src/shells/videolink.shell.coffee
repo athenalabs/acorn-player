@@ -20,7 +20,13 @@ class VideoLinkShell.Model extends LinkShell.Model
 
   description: => "Seconds #{@get('timeStart')} to #{@get('timeEnd')} of video."
 
-  duration: => (@get('timeEnd') ? 0) - (@get('timeStart') ? 0)
+  # total possible video time (media length)
+  timeTotal: => @get('timeTotal') ? 0
+
+  # duration of one video loop given current splicing
+  duration: =>
+    end = @get('timeEnd') ? @timeTotal()
+    end - (@get('timeStart') ? 0)
 
   # if metaDataUrl is set, returns a resource to sync with and cache custom data
   metaData: =>
@@ -67,7 +73,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
     now = @seekOffset()
     start = @model.get('timeStart') ? 0
-    end = @model.get('timeEnd') ? @model.get('totalTime')
+    end = @model.get('timeEnd') ? @model.timeTotal() or Infinity
 
     # if current playback is behind the start time, seek to start
     @seek(start) if now < start
@@ -241,7 +247,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
   changeTimes: (data, options) =>
     options ?= {}
     offset = 10
-    max = @model.get('timeTotal') ? @model.duration()
+    max = @model.timeTotal() or Infinity
 
     bound = (val) -> Math.max(0, Math.min((val ? 0), max))
 
