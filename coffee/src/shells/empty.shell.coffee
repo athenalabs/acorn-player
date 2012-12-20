@@ -15,10 +15,6 @@ EmptyShell = acorn.shells.EmptyShell =
 
 class EmptyShell.Model extends Shell.Model
 
-  # Returns a remoteResource object whose data() function
-  # Caches and returns this Shell's thumbnail link.
-  # Stub implementation -- Intended to be overriden by derived classes.
-  thumbnailLink: => acorn.config.img.acorn
 
 
 class EmptyShell.MediaView extends Shell.MediaView

@@ -18,28 +18,37 @@ VideoLinkShell = acorn.shells.VideoLinkShell =
 
 class VideoLinkShell.Model extends LinkShell.Model
 
-  description: => "Seconds #{@get('timeStart')} to #{@get('timeEnd')} of video."
+  properties: => _.extend super,
+    timeStart: undefined
+    timeEnd: undefined
+    timeTotal: undefined
+
+  description: =>
+    "Seconds #{@timeStart()} to #{@timeEnd()} of video."
 
   # total possible video time (media length)
-  timeTotal: => @get('timeTotal') ? 0
+  timeTotal: =>
+    @timeTotal() ? 0
 
   # duration of one video loop given current splicing
   duration: =>
-    end = @get('timeEnd') ? @timeTotal()
-    end - (@get('timeStart') ? 0)
+    end = @timeEnd() ? @timeTotal()
+    end - (@timeStart() ? 0)
 
-  # if metaDataUrl is set, returns a resource to sync with and cache custom data
+  # if metaDataUrl is set, returns a resource to sync and cache custom data
   metaData: =>
     if @metaDataUrl() and not @_metaData
-      @_metaData = new athena.lib.util.RemoteResource(
+      @_metaData = new athena.lib.util.RemoteResource
         url: @metaDataUrl()
         dataType: 'json'
-      )
 
     @_metaData
 
   # override with resource URL
   metaDataUrl: => ''
+
+
+
 
 
 class VideoLinkShell.MediaView extends LinkShell.MediaView
@@ -62,18 +71,16 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     @timer.stopTick()
     @
 
-  duration: => @model.duration()
 
-  onPlaybackPause: => @pause()
-  onPlaybackPlay: => @play()
+  duration: => @model.duration()
 
   # executes periodically to adjust video playback.
   onPlaybackTick: =>
     return unless @isPlaying()
 
     now = @seekOffset()
-    start = @model.get('timeStart') ? 0
-    end = @model.get('timeEnd') ? @model.timeTotal() or Infinity
+    start = @model.timeStart() ? 0
+    end = (@model.timeEnd() ? @model.timeTotal()) or Infinity
 
     # if current playback is behind the start time, seek to start
     @seek(start) if now < start
@@ -107,13 +114,13 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
   className: @classNameExtend('video-link-shell')
 
   events: => _.extend super,
-    'change input.start': 'startTimeInputChanged'
-    'blur input.start': 'startTimeInputChanged'
-    'change input.end': 'endTimeInputChanged'
-    'blur input.end': 'endTimeInputChanged'
-    'click button.loops': 'onClickLoopsButton'
-    'change input.n-loops': 'onChangeNLoops'
-    'blur input.n-loops': 'onChangeNLoops'
+    'change input.start': => @timeInputChanged 'start'
+    'blur input.start':  => @timeInputChanged 'start'
+    'change input.end': => @timeInputChanged 'end'
+    'blur input.end': @onClickLoopsButton
+    'click button.loops': @onClickLoopsButton
+    'change input.n-loops': @onChangeNLoops
+    'blur input.n-loops': @onChangeNLoops
 
   timeRangeTemplate: _.template('''
     <div class="slider-block">
@@ -162,7 +169,10 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @
 
   setupTimeControls: =>
-    @changeTimes {start: @model.get('timeStart'), end: @model.get('timeEnd')}
+    @changeTimes
+      start: @model.timeStart()
+      end: @model.timeEnd()
+
     # TODO: add rangeslider functionality
     # @setupSlider()
 
@@ -174,15 +184,20 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
       min: 0
       max: max
       range: true
-      values: [ @model.get('timeStart') ? 0, @model.get('timeEnd') ? max]
+      values: [ @model.timeStart() ? 0, @model.timeEnd() ? max]
+
       slide: (e, ui) =>
         start = ui.values[0]
         end = ui.values[1]
         @changeTimes({start: start, end: end})
-      stop: (e, ui) => @eventhub.trigger('change:shell', @model, @)
+
+      stop: (e, ui) =>
+        @eventhub.trigger('change:shell', @model, @)
     )
 
-    @changeTimes({start: @model.get('timeStart'), end: @model.get('timeEnd')})
+    @changeTimes
+      start: @model.timeStart()
+      end: @model.timeEnd()
 
   setupLoopsButton: =>
     loops = @model.get('loops')
@@ -200,9 +215,6 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
         @$('input.n-loops').val(@nLoops())
         @showLoops('n')
 
-  startTimeInputChanged: => @timeInputChanged('start')
-
-  endTimeInputChanged: => @timeInputChanged('end')
 
   timeInputChanged: (changed) =>
     start = @$('.start').val()
@@ -213,8 +225,8 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
       end: acorn.util.Time.timestringToSeconds(end)
 
     # reset invalid input values instead of converting them to 0
-    data.start = @model.get('timeStart') if _.isNaN(parseFloat(start))
-    data.end = @model.get('timeEnd') if _.isNaN(parseFloat(end))
+    data.start = @model.timeStart() if _.isNaN(parseFloat(start))
+    data.end = @model.timeEnd() if _.isNaN(parseFloat(end))
 
     @changeTimes(data, {lock: changed, updateSlider: true})
 

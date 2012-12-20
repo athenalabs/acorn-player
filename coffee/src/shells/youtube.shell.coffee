@@ -24,14 +24,14 @@ YouTubeShell = acorn.shells.YouTubeShell =
 
 class YouTubeShell.Model extends VideoLinkShell.Model
 
-  metaDataUrl: => "http://gdata.youtube.com/feeds/api/videos/#{@youtubeId()}?v=2" +
-      "&alt=jsonc"
+  metaDataUrl: =>
+    "http://gdata.youtube.com/feeds/api/videos/#{@youtubeId()}?v=2&alt=jsonc"
 
-  description: => "Seconds #{@get('timeStart')} to #{@get('timeEnd')} of " +
-         "YouTube video #{@get('link')}"
+  description: =>
+    "Seconds #{@timeStart()} to #{@timeEnd()} of YouTube video #{@title()}"
 
   timeTotal: =>
-    currTotal = @get('timeTotal')
+    currTotal = super
     cache = @metaData()
 
     if cache.synced()
@@ -49,9 +49,9 @@ class YouTubeShell.Model extends VideoLinkShell.Model
   youtubeId: =>
     link = @get('link')
 
-    pattern = _.find(@module.validLinkPatterns, (pattern) ->
-        pattern.test(link))
-    acorn.util.assert(pattern, 'Incorrect youtube link, no video id found.')
+    pattern = _.find @module.validLinkPatterns, (pattern) -> pattern.test link
+
+    unless pattern then ValueError 'Incorrect youtube link, no video id found.'
 
     pattern.exec(link)[3]
 
@@ -69,16 +69,10 @@ class YouTubeShell.Model extends VideoLinkShell.Model
          '&enablejsapi=1' +
          '&controls=1'
 
-  # returns a remoteResource object whose data() function caches and returns
-  # this YouTube shell's thumbnail link
-  thumbnailLink: =>
-    # YouTube videos' thumbnail links can be derived from the video's ID.
-    # Since the return-type of thumbnailLink functions is typically a
-    # remoteResource object, this function mimics a remoteResource.
-    _.extend(new athena.lib.util.RemoteResourceInterface(),
-      data: => "https://img.youtube.com/vi/#{@youtubeId()}/0.jpg"
-    )
-
+    # Thumbnail Link can be accessed via:
+    # "https://img.youtube.com/vi/#{@youtubeId()}/0.jpg"
+    # Use this to set the thumbnail initially in the RemixView. Thumbnail
+    # is afterwards entirely changeable by the user (i.e. stored in data).
 
 class YouTubeShell.MediaView extends VideoLinkShell.MediaView
 
@@ -116,7 +110,7 @@ class YouTubeShell.MediaView extends VideoLinkShell.MediaView
     if window.onYouTubeIframeAPIReady
       # YT API expects the id of a player currently on the page. Backbone may
       # have not yet added the current DOM subtree to the page DOM.
-      setTimeout(@onYTReady, 0)
+      setTimeout @onYTReady, 0
 
     else
       # setup YT ready callback and include the YouTubePlayerAPI code
@@ -126,10 +120,9 @@ class YouTubeShell.MediaView extends VideoLinkShell.MediaView
       $('body').append(script)
 
   onYTReady: =>
-    @ytplayer = new YT.Player('ytplayer', events:
+    @ytplayer = new YT.Player 'ytplayer', events:
       onReady: @onYTPlayerReady
       onStateChange: @onYTPlayerStateChange
-    )
 
     # replace the callback with a no-op
     window.onYouTubeIframeAPIReady = ->
@@ -145,7 +138,7 @@ class YouTubeShell.MediaView extends VideoLinkShell.MediaView
       @ytplayer.cueVideoById(@model.youtubeId(), start)
 
   onYTPlayerStateChange: (event) =>
-    if @isPlaying then @timer.startTick() else @timer.stopTick()
+    if @isPlaying() then @timer.startTick() else @timer.stopTick()
 
 
 class YouTubeShell.RemixView extends VideoLinkShell.RemixView
