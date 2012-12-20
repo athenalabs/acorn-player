@@ -22,9 +22,18 @@ class VideoLinkShell.Model extends LinkShell.Model
 
   duration: => (@get('timeEnd') ? 0) - (@get('timeStart') ? 0)
 
+  # if metaDataUrl is set, returns a resource to sync with and cache custom data
   metaData: =>
-    sync: (opts) ->
-      opts.success()
+    if @metaDataUrl() and not @_metaData
+      @_metaData = new athena.lib.util.RemoteResource(
+        url: @metaDataUrl()
+        dataType: 'json'
+      )
+
+    @_metaData
+
+  # override with resource URL
+  metaDataUrl: => ''
 
 
 class VideoLinkShell.MediaView extends LinkShell.MediaView
@@ -158,6 +167,9 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @$el.append(@timeRangeTemplate())
     @setupTimeControls()
     @setupLoopsButton()
+
+    # if meta data is waiting, refresh time controls on retrieval
+    @model.metaData()?.sync(success: => @setupTimeControls())
 
     @
 
