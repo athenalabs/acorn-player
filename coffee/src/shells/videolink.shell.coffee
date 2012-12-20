@@ -48,7 +48,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
   initialize: =>
     super
-    @timer = new @constructor.Timer(200, @onPlaybackTick)
+    @timer = new acorn.util.Timer 200, @onPlaybackTick
 
   render: =>
     super
@@ -100,24 +100,6 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     else
       @restarting = false
 
-  # an object to execute periodic callbacks.
-  @Timer: class Timer
-    constructor: (@interval, @callback, @args) ->
-      @callback ?= ->
-      @args ?= []
-      @args = [@args] unless _.isArray(@args)
-
-    startTick: =>
-      @stopTick()
-      @intervalObject = setInterval(@onTick, @interval)
-
-    stopTick: =>
-      if @intervalObject
-        clearInterval(@intervalObject)
-        @intervalObject = undefined
-
-    onTick: =>
-      @callback(@args...)
 
 
 class VideoLinkShell.RemixView extends LinkShell.RemixView

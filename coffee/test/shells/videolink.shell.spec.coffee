@@ -14,7 +14,6 @@ describe 'acorn.shells.VideoLinkShell', ->
 
     Model = VideoLinkShell.Model
     MediaView = VideoLinkShell.MediaView
-    Timer = MediaView.Timer
     RemixView = VideoLinkShell.RemixView
 
     timestring = acorn.util.Time.secondsToTimestring
@@ -46,7 +45,7 @@ describe 'acorn.shells.VideoLinkShell', ->
 
       it 'should create a Timer instance on initialize', ->
         mv = new MediaView viewOptions()
-        expect(mv.timer instanceof Timer).toBe true
+        expect(mv.timer instanceof acorn.util.Timer).toBe true
 
       # TODO: test onPlaybackTick. waiting on integration with video start,
       # pause, and seek calls
@@ -56,34 +55,6 @@ describe 'acorn.shells.VideoLinkShell', ->
 
       # TODO: visual test. waiting on ability to embed video links
       it '------ NOT IMPLEMENTED ------ should look good', ->
-
-      describe 'VideoLinkShell.MediaView.Timer', ->
-        it 'should have startTick method', ->
-          expect(typeof Timer::startTick).toBe 'function'
-
-        it 'should have stopTick method', ->
-          expect(typeof Timer::stopTick).toBe 'function'
-
-        it 'should have onTick method', ->
-          expect(typeof Timer::onTick).toBe 'function'
-
-        it 'should call callback at a constant interval', ->
-          jasmine.Clock.useMock()
-
-          callback = jasmine.createSpy('timerCallback')
-          object = prop: 'value'
-          timer = new Timer 50, callback, object
-
-          jasmine.Clock.tick(101)
-
-          timer.startTick()
-          jasmine.Clock.tick(201)
-
-          timer.stopTick()
-          jasmine.Clock.tick(301)
-
-          expect(callback.calls.length).toBe 4
-          expect(callback.calls[0].args[0]).toBe object
 
 
     describe 'VideoLinkShell.RemixView', ->

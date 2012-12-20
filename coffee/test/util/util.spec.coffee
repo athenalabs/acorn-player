@@ -65,6 +65,42 @@ describe 'acorn.util.Time', ->
 
   # TODO write tests that should fail
 
+describe 'acorn.util.Timer', ->
+  Timer = acorn.util.Timer
+
+  it 'should be part of acorn.util', ->
+    expect(Timer).toBeDefined()
+
+  it 'should be a class', ->
+    expect(typeof Timer).toBe 'function'
+
+  it 'should have startTick method', ->
+    expect(typeof Timer::startTick).toBe 'function'
+
+  it 'should have stopTick method', ->
+    expect(typeof Timer::stopTick).toBe 'function'
+
+  it 'should have onTick method', ->
+    expect(typeof Timer::onTick).toBe 'function'
+
+  it 'should call callback at a constant interval', ->
+    jasmine.Clock.useMock()
+
+    callback = jasmine.createSpy('timerCallback')
+    object = prop: 'value'
+    timer = new Timer 50, callback, object
+
+    jasmine.Clock.tick(101)
+
+    timer.startTick()
+    jasmine.Clock.tick(201)
+
+    timer.stopTick()
+    jasmine.Clock.tick(301)
+
+    expect(callback.calls.length).toBe 4
+    expect(callback.calls[0].args[0]).toBe object
+
 
 describe 'acorn.util.parseUrl', ->
   parseUrl = acorn.util.parseUrl

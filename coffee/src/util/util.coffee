@@ -167,6 +167,27 @@ class util.Time
     "#{hrs}#{pad min}:#{pad sec}#{subsec or ''}"
 
 
+
+class util.Timer
+
+  constructor: (@interval, @callback, @args) ->
+    @callback ?= ->
+    @args ?= []
+    @args = [@args] unless _.isArray @args
+
+  startTick: =>
+    @stopTick()
+    @intervalObject = setInterval @onTick, @interval
+
+  stopTick: =>
+    if @intervalObject
+      clearInterval @intervalObject
+      @intervalObject = undefined
+
+  onTick: =>
+    @callback @args...
+
+
 # -- regular expressions
 
 util.LINK_REGEX = /// ^
