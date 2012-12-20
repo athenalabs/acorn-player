@@ -69,15 +69,16 @@ describe 'acorn.Model', ->
   describe 'acorn.Model.shellData property', ->
 
     it 'shellData should be a property', ->
-      expect(new Model(shell: {shell: 'S'}).shellData()).toEqual {shell: 'S'}
+      sd = {shellid: 'S'}
+      expect(new Model(shell: sd).shellData()).toEqual sd
 
     it 'shellData should default to LinkShell', ->
-      expect(new Model().shellData()).toEqual {shell: 'acorn.LinkShell'}
+      expect(new Model().shellData()).toEqual {shellid: 'acorn.LinkShell'}
 
     it 'shellData should be changeable', ->
       model = new Model()
       _.each ['hello', 'I', 'love', 'you'], (type) ->
-        sd = {shell: type}
+        sd = {shellid: type}
         expect(model.shellData()).not.toBe sd
         expect(model.shellData(sd)).toBe sd
         expect(model.shellData()).toBe sd
@@ -98,7 +99,7 @@ describe 'acorn.Model', ->
 
       runs ->
         shell = nyfskeqlyx.shellData()
-        expect(shell.shell).toBe 'acorn.YouTubeShell'
+        expect(shell.shellid).toBe 'acorn.YouTubeShell'
         expect(shell.link).toBe 'https://www.youtube.com/watch?v=yYAw79386WI'
 
     it 'should be able to save', ->

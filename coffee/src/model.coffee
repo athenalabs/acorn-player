@@ -5,25 +5,25 @@ goog.require 'acorn.util'
 
 class acorn.Model extends athena.lib.Model
 
+  properties: => _.extend super,
+    'acornid': 'new'
+
+
   initialize: =>
     super
-    if not @acornid()
-      @acornid 'new'
 
-  defaults: ->
-    shell: {shell: 'acorn.LinkShell'}
+    # set default value for shellData
+    unless @shellData()?
+      @shellData { shellid: 'acorn.LinkShell' }
+
+
+  shellData: (shellData) =>
+    if shellData? then @set 'shell', shellData
+    @get 'shell'
+
 
   idAttribute: 'acornid'
 
-  acornid: (acornid) =>
-    if acornid?
-      @set acornid: acornid
-    @get 'acornid'
-
-  shellData: (data) =>
-    if data?
-      @set shell: data
-    @get 'shell'
 
   url: => "#{acorn.config.url.base}/#{@acornid()}"
   apiurl: => "#{acorn.config.url.api}/#{@acornid()}"
