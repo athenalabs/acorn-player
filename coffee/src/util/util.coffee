@@ -85,6 +85,44 @@ util.appendCss = (srcs) ->
       css.attr 'href', src
       $('body').append css
 
+
+# Originally from StackOverflow
+# http://stackoverflow.com/questions/736513
+util.parseUrl = (url) ->
+  # simple `url` validation
+  # should extend to perform more comprehensive tests
+  ValueError 'url', 'should not be the empty string.' if url == ''
+
+  result = {}
+
+  # trim out any whitespace
+  url = $.trim url
+
+  # if no protocol is found, prepend http
+  url = "http://#{url}" unless /:\/\//.test url
+
+  anchor = document.createElement 'a'
+  anchor.href = url
+
+  keys = 'protocol hostname host pathname port search hash href'
+  (result[key] = anchor[key]) for key in keys.split ' '
+
+  # port-fix for phantomjs
+  result.port = '' if result.port == '0'
+
+  result.toString = -> result.href
+  result.resource = result.pathname + result.search
+  result.extension = result.pathname.split('.').pop()
+
+  result.head = -> throw new Error('head not supported. Yet.')
+
+  _.each result, (val, key) ->
+    if (not /_$/.test key) and (typeof(val) is 'string')
+      result[key + '_'] = val.toLowerCase()
+
+  result
+
+
 # converts human-readable timestring to seconds and back
 # human-readable format is: [[hh:]mm:]ss[.SSS]
 class util.Time
@@ -127,42 +165,6 @@ class util.Time
     pad = (n) -> if n < 10 then "0#{n}" else "#{n}"
 
     "#{hrs}#{pad min}:#{pad sec}#{subsec or ''}"
-
-# Originally from StackOverflow
-# http://stackoverflow.com/questions/736513
-util.parseUrl = (url) ->
-  # simple `url` validation
-  # should extend to perform more comprehensive tests
-  ValueError 'url', 'should not be the empty string.' if url == ''
-
-  result = {}
-
-  # trim out any whitespace
-  url = $.trim url
-
-  # if no protocol is found, prepend http
-  url = "http://#{url}" unless /:\/\//.test url
-
-  anchor = document.createElement 'a'
-  anchor.href = url
-
-  keys = 'protocol hostname host pathname port search hash href'
-  (result[key] = anchor[key]) for key in keys.split ' '
-
-  # port-fix for phantomjs
-  result.port = '' if result.port == '0'
-
-  result.toString = -> result.href
-  result.resource = result.pathname + result.search
-  result.extension = result.pathname.split('.').pop()
-
-  result.head = -> throw new Error('head not supported. Yet.')
-
-  _.each result, (val, key) ->
-    if (not /_$/.test key) and (typeof(val) is 'string')
-      result[key + '_'] = val.toLowerCase()
-
-  result
 
 
 # -- regular expressions
