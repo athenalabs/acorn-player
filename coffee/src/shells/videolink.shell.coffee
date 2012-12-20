@@ -56,7 +56,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
   onPlaybackTick: =>
     return unless @isPlaying()
 
-    now = @currentTime()
+    now = @seekOffset()
     start = @model.get('timeStart') ? 0
     end = @model.get('timeEnd') ? @model.get('totalTime')
 
@@ -79,7 +79,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
         @seek(start)
         @restarting = true
       else
-        @stop()
+        @pause()
         @eventhub.trigger('playback:ended')
 
     else
