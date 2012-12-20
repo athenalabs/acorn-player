@@ -1,40 +1,31 @@
 goog.provide 'acorn.errors'
 
-APIError = (description) ->
+APIError = acorn.errors.APIError = (description) ->
   throw new Error "Acorn API Error: #{description}"
 
-AssertionFailed = (description) ->
+AssertionFailed = acorn.errors.AssertionFailed = (description) ->
   throw new Error "Assertion failed: #{description}"
 
-MissingParameterError = (prefix, parameter) ->
-  throw new Error "#{prefix}: Required parameter `#{parameter}` is missing."
+MissingParameterError = acorn.errors.MissingParameterError = (prefix, param) ->
+  throw new Error "#{prefix}: Required parameter `#{param}` is missing."
 
-NotImplementedError = (method) ->
+NotImplementedError = acorn.errors.NotImplementedError = (method) ->
   throw new Error "#{method} not implemented. Did you override it?"
 
-NotSupportedError = (method, extra) ->
+NotSupportedError = acorn.errors.NotSupportedError = (method, extra) ->
   throw new Error "#{method} not supported. #{extra ? ''}"
 
-TypeError = (variable, expectedType) ->
+TypeError = acorn.errors.TypeError = (variable, expectedType) ->
   throw new Error "Type error: `#{variable}` is not of type #{expectedType}."
 
-ValueError = (variable, error) ->
+ValueError = acorn.errors.ValueError = (variable, error) ->
   throw new Error "Value error: `#{variable}` #{error}."
 
-UnregisteredShellError = (shell) ->
+UnregisteredShellError = acorn.errors.UnregisteredShellError = (shell) ->
   throw new Error "Attempt to construct unregistered shell #{shell}"
 
-ShellRegistryError = (shell, error) ->
+ShellRegistryError = acorn.errors.ShellRegistryError = (shell, error) ->
   throw new Error "Error registering shell #{shell}. #{error ? ''}"
 
-ControlNotFoundError = (name) ->
+ControlNotFoundError = acorn.errors.ControlNotFoundError = (name) ->
   throw new Error "Control not found: #{name}"
-
-acorn.errors.APIError = APIError
-acorn.errors.AssertionFailed = AssertionFailed
-acorn.errors.MissingParameterError = MissingParameterError
-acorn.errors.NotImplementedError = NotImplementedError
-acorn.errors.NotSupportedError = NotSupportedError
-acorn.errors.TypeError = TypeError
-acorn.errors.UnregisteredShellError = UnregisteredShellError
-acorn.errors.ControlNotFoundError = ControlNotFoundError
