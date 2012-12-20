@@ -166,14 +166,6 @@
 
     .gradient(#ffffff, #e6e6e6, #ffffff);
     .transition(0.35s, ease);
-
-    > .acorn-controls {
-      float: right;
-    }
-
-    > .shell-controls {
-      float: left;
-    }
   }
 }
 
@@ -233,6 +225,31 @@
     }
   }
 }
+
+.control-toolbar-view.left {
+  float: left;
+
+  > .control-view:first-child {
+    border-left: 0px;
+  }
+  > .control-view:last-child {
+    border-right: 1px solid rgba(204, 204, 204, 0.5);
+
+  }
+}
+
+.control-toolbar-view.right {
+  float: right;
+
+  > .control-view:first-child {
+    border-right: 0px;
+  }
+  > .control-view:last-child {
+    border-left: 1px solid rgba(204, 204, 204, 0.5);
+  }
+}
+
+
 
 .thumbnail-view {
   display: inline-cell;

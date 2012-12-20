@@ -68,6 +68,10 @@ class acorn.player.ContentView extends athena.lib.View
       buttons: [@acornControlsView, @shellControlsView]
       eventhub: @eventhub
 
+    # alignments
+    @acornControlsView.$el.addClass 'right'
+    @shellControlsView.$el.addClass 'left'
+
     # setup events
     @acornControlsView.on 'all', (name) => @eventhub.trigger name
 
