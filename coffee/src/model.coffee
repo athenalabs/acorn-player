@@ -6,7 +6,9 @@ goog.require 'acorn.util'
 class acorn.Model extends athena.lib.Model
 
   properties: => _.extend super,
-    'acornid': 'new'
+    'acornid':   'new'
+    'title':     'New Acorn'
+    'thumbnail': '/img/acorn.png'
 
 
   initialize: =>
