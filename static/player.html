@@ -75,8 +75,9 @@ How to use:
     });
   };
 
-  var loadAcornId = function() {
-    var acornid = inputId.val().trim();
+  var loadAcornId = function(acornid) {
+    if (!acornid)
+      acornid = inputId.val().trim();
     console.log('looking up acornid:' + acornid);
 
     var acornModel = acorn(acornid);
@@ -91,8 +92,9 @@ How to use:
     });
   };
 
-  var loadAcornData = function() {
-    var data = inputData.val();
+  var loadAcornData = function(data) {
+    if (!data)
+      data = inputData.val();
     data = JSON.parse(data);
     console.log("constructing acorn: ");
     console.log(data);
@@ -106,7 +108,11 @@ How to use:
     inputData = $('textarea#acorndata');
     inputId = $('input#acornid');
 
-    loadAcornData();
+    if (window.location.hash) {
+      loadAcornId(window.location.hash.substr(1));
+    } else {
+      loadAcornData();
+    }
 
     inputId.blur(loadAcornId);
     inputData.blur(loadAcornData);
