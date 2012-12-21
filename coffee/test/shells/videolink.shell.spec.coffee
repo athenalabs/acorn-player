@@ -118,14 +118,14 @@ describe 'acorn.shells.VideoLinkShell', ->
             endInput = rv.$ 'input.end.time-field'
 
             time = 5
-            for input, property in {timeStart: startInput, timeEnd: endInput}
+            for property, input of {timeStart: startInput, timeEnd: endInput}
               for event in ['change', 'blur']
                 # use unique n each round
                 thisTime = time++
                 input.val thisTime
-                expect(input.val()).toBe thisN
+                expect(Number(input.val())).toBe thisTime
                 input[event]()
-                expect(input.val()).toBe timestring thisN
+                expect(input.val()).toBe timestring thisTime
 
           it 'should update model values on both change and blur', ->
             rv = new RemixView viewOptions()
@@ -135,14 +135,14 @@ describe 'acorn.shells.VideoLinkShell', ->
             endInput = rv.$ 'input.end.time-field'
 
             time = 5
-            for input, property in {timeStart: startInput, timeEnd: endInput}
+            for property, input of {timeStart: startInput, timeEnd: endInput}
               for event in ['change', 'blur']
                 # use unique n each round
                 thisTime = time++
                 input.val thisTime
-                expect(rv.model.get property).not.toBe thisN
+                expect(rv.model.get property).not.toBe thisTime
                 input[event]()
-                expect(rv.model.get property).toBe thisN
+                expect(rv.model.get property).toBe thisTime
 
           it 'should accept numbers and timestrings and ignore bad values', ->
             rv = new RemixView viewOptions()
