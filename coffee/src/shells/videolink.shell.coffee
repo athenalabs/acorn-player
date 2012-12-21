@@ -117,7 +117,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     'change input.start': => @timeInputChanged 'start'
     'blur input.start':  => @timeInputChanged 'start'
     'change input.end': => @timeInputChanged 'end'
-    'blur input.end': @onClickLoopsButton
+    'blur input.end': => @timeInputChanged 'end'
     'click button.loops': @onClickLoopsButton
     'change input.n-loops': @onChangeNLoops
     'blur input.n-loops': @onChangeNLoops
