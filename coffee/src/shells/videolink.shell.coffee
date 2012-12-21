@@ -274,8 +274,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     else
       secondsToTimestring(diff, {forceMinutes: true})
 
-    @model.set('timeStart', start)
-    @model.set('timeEnd', end)
+    @model.set(timeStart: start, timeEnd: end)
 
     @$('.start').val(secondsToTimestring(start, {forceMinutes: true}))
     @$('.end').val(secondsToTimestring(end, {forceMinutes: true}))
