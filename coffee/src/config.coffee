@@ -9,11 +9,18 @@ _.extend acorn.config,
   api:
     version: '0.0.1'
 
+
 acorn.config.url = {}
-acorn.config.url.base = "http://#{acorn.config.domain}"
-acorn.config.url.img = "#{acorn.config.url.base}/img"
-acorn.config.url.api =
-    "#{acorn.config.url.base}/api/v#{acorn.config.api.version}"
+
+acorn.config.setDomain = (domain) ->
+  acorn.config.domain = domain.replace('http://', '')
+  acorn.config.url.base = "http://#{acorn.config.domain}"
+  acorn.config.url.img = "#{acorn.config.url.base}/img"
+  acorn.config.url.api =
+      "#{acorn.config.url.base}/api/v#{acorn.config.api.version}"
+
+acorn.config.setDomain(acorn.config.domain)
+
 
 acorn.config.img = {}
 acorn.config.img.acorn = '/static/img/acorn.png'
