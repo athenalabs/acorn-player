@@ -24,8 +24,8 @@ class VideoLinkShell.Model extends LinkShell.Model
     timeTotal: undefined
 
   description: =>
-    start = acorn.util.Time.timestringToSeconds @timeStart()
-    end = acorn.util.Time.timestringToSeconds @timeEnd()
+    start = acorn.util.Time.secondsToTimestring @timeStart()
+    end = acorn.util.Time.secondsToTimestring @timeEnd()
     "Video #{@link()} from #{start} to #{end}."
 
   # total possible video time (media length)
