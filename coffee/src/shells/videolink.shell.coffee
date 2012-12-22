@@ -30,7 +30,7 @@ class VideoLinkShell.Model extends LinkShell.Model
 
   # total possible video time (media length)
   timeTotal: =>
-    @timeTotal() ? 0
+    @timeTotal() ? Infinity
 
   # duration of one video loop given current splicing
   duration: =>
@@ -82,7 +82,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
     now = @seekOffset()
     start = @model.timeStart() ? 0
-    end = (@model.timeEnd() ? @model.timeTotal()) or Infinity
+    end = @model.timeEnd() ? @model.timeTotal()
 
     # if current playback is behind the start time, seek to start
     @seek(start) if now < start
@@ -179,7 +179,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     # @setupSlider()
 
   setupSlider: =>
-    max = @model.duration()
+    max = @model.timeTotal()
 
     # TODO: add rangeslider functionality
     @$('.time-slider').rangeslider(
@@ -243,7 +243,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
   changeTimes: (data, options) =>
     options ?= {}
     offset = 10
-    max = @model.timeTotal() or Infinity
+    max = @model.timeTotal()
 
     bound = (val) -> Math.max(0, Math.min((val ? 0), max))
 
