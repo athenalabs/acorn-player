@@ -28,6 +28,8 @@ acorn.config.img.acornIcon = '/static/img/acorn.icon.png'
 
 acorn.config.css = [
   '/static/css/acorn-player.css',
+  '/lib/fontawesome/css/font-awesome.css',
+  '/lib/jquery/jquery-ui-1.9.2.custom.min.css',
 ]
 
 

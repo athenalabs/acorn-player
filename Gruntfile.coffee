@@ -40,6 +40,7 @@ module.exports = (grunt) ->
       'node_modules/grunt-jasmine-spec-server/lib/bootstrap/js/bootstrap.min.js'
       'lib/athena.lib.min.js'                        # for athena utils
       'lib/jquery/jquery.object-fit.js'              # for object-fit
+      'lib/jquery/jquery-ui.min.js'                  # for rangeslider widget
     ]
 
 
