@@ -124,7 +124,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
   timeRangeTemplate: _.template '''
     <div class="slider-block">
-      <div class="time-slider time fader"></div>
+      <div class="time-slider time"></div>
       <div class="total-time time"></div>
     </div>
     <form class="form-inline">
