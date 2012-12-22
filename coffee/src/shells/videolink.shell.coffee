@@ -53,7 +53,7 @@ class VideoLinkShell.Model extends LinkShell.Model
 
 class VideoLinkShell.MediaView extends LinkShell.MediaView
 
-  className: @classNameExtend('video-link-shell')
+  className: @classNameExtend 'video-link-shell'
 
   initialize: =>
     super
@@ -65,7 +65,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     @$el.empty()
 
     # TODO: this embedding method primarily does not work
-    @$el.append("<embed src='#{@model.get 'link'}'/>")
+    @$el.append "<embed src='#{@model.get 'link'}'/>"
 
     # stop ticking, in case we had been playing and this is a re-render.
     @timer.stopTick()
@@ -83,7 +83,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     end = @model.timeEnd() ? @model.timeTotal()
 
     # if current playback is behind the start time, seek to start
-    @seek(start) if now < start
+    @seek start if now < start
 
     # if current playback is after the end time, pause or loop. when looping,
     # set `restarting` flag to avoid decrementing the loop count multiple
@@ -91,18 +91,18 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     if now >= end
       return if @restarting
 
-      loops = @model.get('loops')
+      loops = @model.get 'loops'
 
-      if _.isNumber(loops)
+      if _.isNumber loops
         @looped ?= 0
         @looped++
 
       if loops == 'infinity' or (_.isNumber(loops) and loops > @looped)
-        @seek(start)
+        @seek start
         @restarting = true
       else
         @pause()
-        @eventhub.trigger('playback:ended')
+        @eventhub.trigger 'playback:ended'
 
     else
       @restarting = false
@@ -111,7 +111,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
 class VideoLinkShell.RemixView extends LinkShell.RemixView
 
-  className: @classNameExtend('video-link-shell')
+  className: @classNameExtend 'video-link-shell'
 
   events: => _.extend super,
     'change input.start': => @timeInputChanged 'start'
@@ -122,7 +122,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     'change input.n-loops': @onChangeNLoops
     'blur input.n-loops': @onChangeNLoops
 
-  timeRangeTemplate: _.template('''
+  timeRangeTemplate: _.template '''
     <div class="slider-block">
       <div class="time-slider time fader"></div>
       <div class="total-time time"></div>
@@ -153,18 +153,18 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
         <input size="16" type="text" class="n-loops">
       </div>
     </form>
-    ''')
+    '''
 
   render: =>
     super
     @$el.empty()
 
-    @$el.append(@timeRangeTemplate())
+    @$el.append @timeRangeTemplate()
     @setupTimeControls()
     @setupLoopsButton()
 
     # if meta data is waiting, fetch it and refresh time controls on retrieval
-    @model.metaData()?.sync(success: => @setupTimeControls())
+    @model.metaData()?.sync success: => @setupTimeControls()
 
     @
 
@@ -180,7 +180,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     max = @model.timeTotal()
 
     # TODO: add rangeslider functionality
-    @$('.time-slider').rangeslider(
+    @$('.time-slider').rangeslider
       min: 0
       max: max
       range: true
@@ -188,46 +188,45 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
       slide: (e, ui) =>
         start = ui.values[0]
         end = ui.values[1]
-        @changeTimes({start: start, end: end})
+        @changeTimes {start: start, end: end}
       stop: (e, ui) =>
-        @eventhub.trigger('change:shell', @model, @)
-    )
+        @eventhub.trigger 'change:shell', @model, @
 
     @changeTimes
       start: @model.timeStart()
       end: @model.timeEnd()
 
   setupLoopsButton: =>
-    loops = @model.get('loops')
+    loops = @model.get 'loops'
 
     if loops == undefined
       loops = 'one'
-      @model.set('loops', loops)
+      @model.set 'loops', loops
 
     switch loops
-      when 'one' then @showLoops('one')
-      when 'infinity' then @showLoops('infinity')
+      when 'one' then @showLoops 'one'
+      when 'infinity' then @showLoops 'infinity'
       else
         # set nLoops value internally and in DOM before showing loop widget
-        @nLoops(loops)
-        @$('input.n-loops').val(@nLoops())
-        @showLoops('n')
+        @nLoops loops
+        @$('input.n-loops').val @nLoops()
+        @showLoops 'n'
 
   timeInputChanged: (changed) =>
     start = @$('.start').val()
     end = @$('.end').val()
 
     data =
-      start: acorn.util.Time.timestringToSeconds(start)
-      end: acorn.util.Time.timestringToSeconds(end)
+      start: acorn.util.Time.timestringToSeconds start
+      end: acorn.util.Time.timestringToSeconds end
 
     # reset invalid input values instead of converting them to 0
-    data.start = @model.timeStart() if _.isNaN(parseFloat(start))
-    data.end = @model.timeEnd() if _.isNaN(parseFloat(end))
+    data.start = @model.timeStart() if _.isNaN parseFloat start
+    data.end = @model.timeEnd() if _.isNaN parseFloat end
 
-    @changeTimes(data, {lock: changed, updateSlider: true})
+    @changeTimes data, {lock: changed, updateSlider: true}
 
-    @eventhub.trigger('change:shell', @model, @)
+    @eventhub.trigger 'change:shell', @model, @
 
   # Args, contained in a single object:
   # @number start - current start time in seconds
@@ -243,13 +242,13 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     bound = (val) -> Math.max(0, Math.min((val ? 0), max))
 
     floatOrDefault = (num, def) ->
-      if _.isNumber(num) and not _.isNaN(num) then parseFloat(num) else def
+      if _.isNumber(num) and not _.isNaN(num) then parseFloat num else def
 
-    start = floatOrDefault(data.start, 0)
-    end = floatOrDefault(data.end, max)
+    start = floatOrDefault data.start, 0
+    end = floatOrDefault data.end, max
 
-    start = bound(start)
-    end = bound(end)
+    start = bound start
+    end = bound end
 
     # prohibit negative length
     invalidTimes = end < start
@@ -261,76 +260,76 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
         end = bound(start + offset)
 
       # after rerender(s), display time error
-      setTimeout(@timeError, 0)
+      setTimeout @timeError, 0
 
     secondsToTimestring = acorn.util.Time.secondsToTimestring
 
     diff = end - start
-    time = if isNaN(diff)
+    time = if isNaN diff
       '--'
     else
-      secondsToTimestring(diff, {forceMinutes: true})
+      secondsToTimestring diff, {forceMinutes: true}
 
-    @model.set(timeStart: start, timeEnd: end)
+    @model.set {timeStart: start, timeEnd: end}
 
-    @$('.start').val(secondsToTimestring(start, {forceMinutes: true}))
-    @$('.end').val(secondsToTimestring(end, {forceMinutes: true}))
-    @$('.total-time').text(time)
+    @$('.start').val secondsToTimestring(start, {forceMinutes: true})
+    @$('.end').val secondsToTimestring(end, {forceMinutes: true})
+    @$('.total-time').text time
 
     # TODO: add rangeslider functionality
     # if options.updateSlider or invalidTimes
-      # @$('.time-slider').rangeslider(values: [start, end])
+      # @$('.time-slider').rangeslider values: [start, end]
 
   timeError: =>
     # 2 seconds of error display
-    timeControls = @$('form').children('.control-group.time-field')
-    timeControls.addClass('error')
-    setTimeout((-> timeControls.removeClass('error')), 2000)
+    timeControls = @$('form').children '.control-group.time-field'
+    timeControls.addClass 'error'
+    setTimeout (-> timeControls.removeClass 'error'), 2000
 
   nLoops: (n) =>
     # force integer or NaN. avoid interpreting -0.2 as 0 with parseInt
-    intN = Math.floor(parseFloat(n))
+    intN = Math.floor parseFloat n
 
     @_lastNLoops = intN if intN >= 0
-    @_lastNLoops = 2 unless _.isFinite(@_lastNLoops)
+    @_lastNLoops = 2 unless _.isFinite @_lastNLoops
     @_lastNLoops
 
   showLoops: (type) =>
-    active = @$("div.#{type}-loops")
+    active = @$ "div.#{type}-loops"
 
-    @$('div.loops').addClass('hidden')
-    active.removeClass('hidden')
+    @$('div.loops').addClass 'hidden'
+    active.removeClass 'hidden'
 
     if @_selectInputOnShow
       active.find('input').select()
       @_selectInputOnShow = false
 
   onClickLoopsButton: =>
-    loops = switch @model.get('loops')
+    loops = switch @model.get 'loops'
       when 'one' then 'infinity'
       when 'infinity'
         @_selectInputOnShow = true
         @nLoops()
       else 'one'
 
-    @model.set('loops', loops)
+    @model.set 'loops', loops
 
-    if _.isNumber(loops)
-      @$('input.n-loops').val(loops)
+    if _.isNumber loops
+      @$('input.n-loops').val loops
       loops = 'n'
 
-    @showLoops(loops)
-    @eventhub.trigger('change:shell', @model, @)
+    @showLoops loops
+    @eventhub.trigger 'change:shell', @model, @
 
   onChangeNLoops: =>
     value = @$('input.n-loops').val()
-    newNLoops = @nLoops(value)
-    @$('input.n-loops').val(newNLoops)
+    newNLoops = @nLoops value
+    @$('input.n-loops').val newNLoops
 
     if @model.get('loops') != newNLoops
-      @model.set('loops', newNLoops)
-      @eventhub.trigger('change:shell', @model, @)
+      @model.set 'loops', newNLoops
+      @eventhub.trigger 'change:shell', @model, @
 
 
 # Register the shell with the acorn object.
-acorn.registerShellModule(VideoLinkShell)
+acorn.registerShellModule VideoLinkShell
