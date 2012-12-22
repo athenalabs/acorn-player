@@ -173,13 +173,11 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
       start: @model.timeStart()
       end: @model.timeEnd()
 
-    # TODO: add rangeslider functionality
-    # @setupSlider()
+    @setupSlider()
 
   setupSlider: =>
     max = @model.timeTotal()
 
-    # TODO: add rangeslider functionality
     @$('.time-slider').rangeslider
       min: 0
       max: max
@@ -276,9 +274,8 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @$('.end').val secondsToTimestring(end, {forceMinutes: true})
     @$('.total-time').text time
 
-    # TODO: add rangeslider functionality
-    # if options.updateSlider or invalidTimes
-      # @$('.time-slider').rangeslider values: [start, end]
+    if options.updateSlider or invalidTimes
+      @$('.time-slider').rangeslider values: [start, end]
 
   timeError: =>
     # 2 seconds of error display
