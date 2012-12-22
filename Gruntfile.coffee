@@ -41,6 +41,7 @@ module.exports = (grunt) ->
       'lib/athena.lib.min.js'                        # for athena utils
       'lib/jquery/jquery.object-fit.js'              # for object-fit
       'lib/jquery/jquery-ui.min.js'                  # for rangeslider widget
+      'lib/range_slider.js'                          # jquery-ui widget
     ]
 
 

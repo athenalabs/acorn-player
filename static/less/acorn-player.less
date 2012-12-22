@@ -29,6 +29,7 @@
   .position-absolutely(@offset, @offset, @offset, @offset);
 }
 
+
 .bordered (@radius:3px) {
   border: 1px solid #DDD;
   border-radius: 3px;
@@ -352,6 +353,33 @@
     border: 0px;
   }
 }
+
+.ui-range-slider {
+  .transition(0.35s, ease);
+  margin: 10px 7px 10px 0px;
+  width: 355px;
+  height: 12px;
+
+  .ui-slider-handle {
+    width: 12px;
+    height: 18px;
+    top: -4px;
+    margin-left: -1px;
+  }
+
+  .ui-slider-range {
+    opacity: 0.4;
+  }
+
+  .ui-slider-range,
+  .ui-slider-handle {
+    .gradient(#414141, #555555, #222222);
+    background-repeat: repeat-x;
+    border-color: #222222 #222222 #000000;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  }
+}
+
 
 /* bootstrap fixes */
 
