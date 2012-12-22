@@ -94,7 +94,7 @@ How to use:
 
   var loadAcornData = function(data) {
     if (!data)
-      data = inputData.val();
+      data = inputData.val().trim();
     data = JSON.parse(data);
     console.log("constructing acorn: ");
     console.log(data);
@@ -114,8 +114,8 @@ How to use:
       loadAcornData();
     }
 
-    inputId.blur(loadAcornId);
-    inputData.blur(loadAcornData);
+    inputId.blur(function() { loadAcornId(); });
+    inputData.blur(function() { loadAcornData(); });
   });
 
   </script>
