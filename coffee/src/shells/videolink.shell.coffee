@@ -51,8 +51,6 @@ class VideoLinkShell.Model extends LinkShell.Model
 
 
 
-
-
 class VideoLinkShell.MediaView extends LinkShell.MediaView
 
   className: @classNameExtend('video-link-shell')
@@ -165,7 +163,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @setupTimeControls()
     @setupLoopsButton()
 
-    # if meta data is waiting, refresh time controls on retrieval
+    # if meta data is waiting, fetch it and refresh time controls on retrieval
     @model.metaData()?.sync(success: => @setupTimeControls())
 
     @
@@ -186,13 +184,11 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
       min: 0
       max: max
       range: true
-      values: [ @model.timeStart() ? 0, @model.timeEnd() ? max]
-
+      values: [@model.timeStart() ? 0, @model.timeEnd() ? max]
       slide: (e, ui) =>
         start = ui.values[0]
         end = ui.values[1]
         @changeTimes({start: start, end: end})
-
       stop: (e, ui) =>
         @eventhub.trigger('change:shell', @model, @)
     )
@@ -216,7 +212,6 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
         @nLoops(loops)
         @$('input.n-loops').val(@nLoops())
         @showLoops('n')
-
 
   timeInputChanged: (changed) =>
     start = @$('.start').val()
