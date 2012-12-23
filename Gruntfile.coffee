@@ -4,26 +4,30 @@ module.exports = (grunt) ->
   # paths setup - separate as some modules dont process templates correctly
   paths =
 
+    # build directory
+    build_dir: 'build'
+
+    # -- sources --
+
     # coffescript sources
     coffee_dir: 'coffee'
     coffee_src: 'coffee/**/*.coffee'
 
-    # javascript sources
-    js_dir: 'js'
-    js_src: 'js/src/**/*.js'
-    js_specs: 'js/test/**/*.spec.js'
-
     # less sources
-    less_dir: 'static/less'
-    less_src: 'static/less/**/*.less'
+    less_dir: 'less'
+    less_src: 'less/**/*.less'
+
+    # -- compiled output --
+
+    # javascript sources
+    js_dir: 'build/js'
+    js_src: 'build/js/src/**/*.js'
+    js_specs: 'build/js/test/**/*.spec.js'
 
     # css sources
-    css_dir: 'static/css'
-    css_src: 'static/css/**/*.css'
-    css_dest: 'static/css/acorn-player.css'
-
-    # build directory
-    build_dir: 'build'
+    css_dir: 'build/css'
+    css_src: 'build/css/**/*.css'
+    css_dest: 'build/css/acorn-player.css'
 
     # minified target name
     minified: 'build/acorn.player.min.js'
@@ -155,12 +159,6 @@ module.exports = (grunt) ->
     # task to clean up directories
     clean:
 
-      # the generated javascript sources
-      js: paths.js_dir
-
-      # the generated css
-      css: paths.css_dir
-
       # the generated build dir
       build: paths.build_dir
 
@@ -192,8 +190,8 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-jasmine-spec-server'
 
   # Register tasks
-  grunt.registerTask 'compile', ['coffee', 'less:dev', 'exec:mkbuild',
-      'closureCompiler']
+  grunt.registerTask 'compile', ['exec:mkbuild', 'coffee', 'less:dev',
+                                 'closureCompiler']
   grunt.registerTask 'deps', ['coffee', 'less:dev', 'closureDepsWriter']
   grunt.registerTask 'test', ['clean', 'deps', 'jasmine', 'clean:test']
   grunt.registerTask 'server', ['deps', 'jasmineSpecServer', 'watch']
