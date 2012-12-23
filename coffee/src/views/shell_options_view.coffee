@@ -24,6 +24,7 @@ class acorn.player.ShellOptionsView extends athena.lib.View
       {id:module.id, name: module.title, icon: module.icon}
 
     @dropdownView = new acorn.player.DropdownView
+      eventhub: @eventhub
       items: modules
       selected: @model.module.id
 
