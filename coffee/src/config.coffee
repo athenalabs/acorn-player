@@ -27,9 +27,9 @@ acorn.config.img.acorn = '/static/img/acorn.png'
 acorn.config.img.acornIcon = '/static/img/acorn.icon.png'
 
 acorn.config.css = [
-  '/static/css/acorn-player.css',
+  '/build/css/acorn-player.css',
   '/lib/fontawesome/css/font-awesome.css',
-  '/lib/jquery/jquery-ui-1.9.2.custom.min.css',
+  '/lib/jquery/jquery-ui.custom.min.css',
 ]
 
 
@@ -37,3 +37,4 @@ acorn.config.css = [
 # the build system adequately processes imports
 acorn.config.test = {}
 acorn.config.test.timeout = 10000  # time in miliseconds
+
