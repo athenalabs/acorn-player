@@ -192,7 +192,7 @@ module.exports = (grunt) ->
   # Register tasks
   grunt.registerTask 'compile', ['exec:mkbuild', 'coffee', 'less:dev',
                                  'closureCompiler']
-  grunt.registerTask 'deps', ['coffee', 'less:dev', 'closureDepsWriter']
+  grunt.registerTask 'deps', ['coffee', 'closureDepsWriter']
   grunt.registerTask 'test', ['clean', 'deps', 'jasmine', 'clean:test']
   grunt.registerTask 'server', ['deps', 'jasmineSpecServer', 'watch']
   grunt.registerTask 'default', ['compile']
