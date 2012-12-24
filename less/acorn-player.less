@@ -336,21 +336,6 @@
   height: 100%;
   overflow: scroll;
 
-  .control-group.time {
-    display: inline-block;
-
-    * {
-      .transition(0.5s, ease)
-    }
-
-    input.time {
-      width: 50px;
-      margin-left: -4px;
-      margin-right: 5px;
-      text-align: center;
-    }
-  }
-
   div.loops span,
   div.loops input {
     width: 30px;
@@ -413,22 +398,46 @@
   }
 }
 
-.slider-block {
-  position: relative;
+.time-range-input-view {
+  .slider-block {
+    position: relative;
 
-  .total-time {
-    position: absolute;
-    left: 365px;
-    top: -6px;
-    width: 46px;
-    height: 18px;
-    padding: 3px 5px;
-    .rounded(3px);
-    text-shadow: 0 1px 0 white;
-    text-align: center;
-    vertical-align: middle;
-    background-color: #EEE;
-    border: 1px solid #CCC;
+    .total-time {
+      position: absolute;
+      left: 365px;
+      top: -6px;
+      width: 46px;
+      height: 18px;
+      padding: 3px 5px;
+      .rounded(3px);
+      text-shadow: 0 1px 0 white;
+      text-align: center;
+      vertical-align: middle;
+      background-color: #EEE;
+      border: 1px solid #CCC;
+    }
+  }
+
+  .form-inline > * {
+    display: inline-block;
+
+    // scope the .hidden rule locally to override `display: inline-block;`
+    &.hidden {
+      .hidden
+    }
+  }
+
+  .time-input-view {
+    .control-group.time {
+      .transition(0.5s, ease)
+    }
+
+    input.time {
+      width: 50px;
+      margin-left: -4px;
+      margin-right: 5px;
+      text-align: center;
+    }
   }
 }
 
