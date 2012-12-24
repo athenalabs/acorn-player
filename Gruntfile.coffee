@@ -144,6 +144,7 @@ module.exports = (grunt) ->
       src: paths.jasmine.src
       specs: paths.jasmine.specs
       view: paths.jasmine.view
+      port: 8090
 
     # task to watch sources for changes and recompile during development
     watch:
