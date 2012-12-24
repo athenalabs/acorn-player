@@ -87,78 +87,50 @@ class YouTubeShell.Model extends VideoLinkShell.Model
 class YouTubeShell.MediaView extends VideoLinkShell.MediaView
 
 
-  className: @classNameExtend('youtube-shell')
+  className: @classNameExtend 'youtube-shell'
+
+
+  initialize: =>
+    super
+
+    @playerView = new YouTubeShell.YouTubePlayerView
+      model: @model
+      eventhub: @eventhub
+
+    @listenTo @playerView, 'YouTubePlayer:StateChange', =>
+      if @isPlaying() then @timer.startTick() else @timer.stopTick()
 
 
   render: =>
     super
     @$el.empty()
-
-    # initialize YouTube setup and add the YouTube player iframe
-    @onYTInitialize()
-    link = @model.embedLink()
-    @$el.append(acorn.util.iframe(link, 'ytplayer'))
-
+    @$el.append @playerView.render().el
+    # start playing once ready
+    # @vimeoPlayerView.once 'VimeoPlayer:Ready', @play
     @
 
 
-  play: => @ytplayer?.playVideo()
+  # Implement MediaView APi
 
 
-  pause: => @ytplayer?.pauseVideo()
+  play: =>
+    @playerView.play()
 
 
-  isPlaying: => @ytplayer?.getPlayerState() == YT.PlayerState.PLAYING
+  pause: =>
+    @playerView.pause()
 
 
-  seek: (seconds) => @ytplayer?.seekTo(seconds, true)
+  isPlaying: =>
+    @playerView.isPlaying() ? false
 
 
-  seekOffset: => @ytplayer?.getCurrentTime() ? 0
+  seek: (seconds) =>
+    @playerView.seekTo seconds
 
 
-  # YouTube API - communication between the YouTube iframe API and the shell.
-  # see https://developers.google.com/youtube/iframe_api_reference
-  youtubePlayerApiSrc: 'http://www.youtube.com/iframe_api'
-
-
-  # initialize youtube API. initialization should happen only once per page load
-  onYTInitialize: =>
-    if window.onYouTubeIframeAPIReady
-      # YT API expects the id of a player currently on the page. Backbone may
-      # have not yet added the current DOM subtree to the page DOM.
-      setTimeout @onYTReady, 0
-
-    else
-      # setup YT ready callback and include the YouTubePlayerAPI code
-      window.onYouTubeIframeAPIReady = @onYTReady
-
-      script = $('<script>').attr('src', @youtubePlayerApiSrc)
-      $('body').append(script)
-
-
-  onYTReady: =>
-    @ytplayer = new YT.Player 'ytplayer', events:
-      onReady: @onYTPlayerReady
-      onStateChange: @onYTPlayerStateChange
-
-    # replace the callback with a no-op
-    window.onYouTubeIframeAPIReady = ->
-
-
-  onYTPlayerReady: =>
-    # this *should* initialize the playback at the correct point but doesn't.
-    # Need a robust solution (tick)
-    start = parseInt(@model.get('time_start') ? 0, 10)
-
-    if @options.autoplay
-      @ytplayer.loadVideoById(@model.youtubeId(), start)
-    else
-      @ytplayer.cueVideoById(@model.youtubeId(), start)
-
-
-  onYTPlayerStateChange: (event) =>
-    if @isPlaying() then @timer.startTick() else @timer.stopTick()
+  seekOffset: =>
+    @playerView.seekOffset() ? 0
 
 
 
@@ -166,6 +138,101 @@ class YouTubeShell.RemixView extends VideoLinkShell.RemixView
 
 
   className: @classNameExtend('youtube-shell')
+
+
+
+class YouTubeShell.YouTubePlayerView extends athena.lib.View
+
+
+  className: @classNameExtend 'youtube-player-view'
+
+
+  initialize: =>
+    super
+    @totalTime = Infinity
+
+
+  render: =>
+    super
+    @$el.empty()
+    @$el.append acorn.util.iframe @model.embedLink(), @playerId()
+    @initializeYouTubeAPI()
+    @
+
+
+  # id for the player element. id must be unique in the entire page to allow
+  # the YouTube API to differentiate between multiple players.
+  playerId: =>
+    "youtube-player-#{@cid}"
+
+
+  # Control the player
+
+
+  play: =>
+    @player?.playVideo()
+
+
+  pause: =>
+    @player?.pauseVideo()
+
+
+  isPlaying: =>
+    @player?.getPlayerState() == YT.PlayerState.PLAYING
+
+
+  seekTo: (seconds) =>
+    @player?.seekTo(seconds, true)
+
+
+  seekOffset: =>
+    @player?.getCurrentTime() ? 0
+
+
+
+  # YouTube API - communication between the YouTube iframe API and the shell.
+  # see https://developers.google.com/youtube/iframe_api_reference
+  youTubePlayerApiSrc: 'http://www.youtube.com/iframe_api'
+
+
+  # initialize youtube API. should happen only once per page load
+  initializeYouTubeAPI: =>
+
+    # if Vimeo hasn't been initialized, initialize it.
+    unless window.onYouTubeIframeAPIReady
+      $.getScript @youTubePlayerApiSrc, @onYouTubeAPIReady
+      return
+
+    # must call onYouTubeAPIReady once the current render call stack finishes
+    # YouTube API expects the id of a player currently on the page. Backbone may
+    # have not yet added the current DOM subtree to the page DOM.
+    setTimeout @onYouTubeAPIReady, 0
+
+
+  onYouTubeAPIReady: =>
+    # replace the callback with a no-op
+    window.onYouTubeIframeAPIReady = ->
+
+    # wait until the YT.Player class is there
+    unless YT.Player
+      setTimeout @onYouTubeAPIReady, 100
+      return
+
+    # create the player object
+    @player = new YT.Player @playerId(), events:
+
+      onReady: =>
+        # this *should* initialize the playback at the correct point but
+        # doesn't. Need a more robust solution (tick)
+        start = parseInt(@model.timeStart() ? 0, 10)
+
+        if @options.autoplay
+          @player.loadVideoById(@model.youtubeId(), start)
+        else
+          @player.cueVideoById(@model.youtubeId(), start)
+
+      onStateChange: (event) =>
+        @trigger 'YouTubePlayer:StateChange', @, @player.getPlayerState()
 
 
 
