@@ -24,13 +24,16 @@ YouTubeShell = acorn.shells.YouTubeShell =
 
 class YouTubeShell.Model extends VideoLinkShell.Model
 
+
   metaDataUrl: =>
     "http://gdata.youtube.com/feeds/api/videos/#{@youtubeId()}?v=2&alt=jsonc"
+
 
   description: =>
     start = acorn.util.Time.secondsToTimestring @timeStart()
     end = acorn.util.Time.secondsToTimestring @timeEnd()
     "YouTube video #{@title()} from #{start} to #{end}."
+
 
   timeTotal: =>
     currTotal = super
@@ -43,9 +46,11 @@ class YouTubeShell.Model extends VideoLinkShell.Model
     else
       @get('timeTotal') ? 0
 
+
   title: =>
     cache = @metaData()
     if cache.synced() then cache.data().data.title else @get('link')
+
 
   # returns the youtube video id of this link.
   youtubeId: =>
@@ -56,6 +61,7 @@ class YouTubeShell.Model extends VideoLinkShell.Model
     unless pattern then ValueError 'Incorrect youtube link, no video id found.'
 
     pattern.exec(link)[3]
+
 
   embedLink: =>
     # see https://developers.google.com/youtube/player_parameters for options
@@ -76,9 +82,13 @@ class YouTubeShell.Model extends VideoLinkShell.Model
     # Use this to set the thumbnail initially in the RemixView. Thumbnail
     # is afterwards entirely changeable by the user (i.e. stored in data).
 
+
+
 class YouTubeShell.MediaView extends VideoLinkShell.MediaView
 
+
   className: @classNameExtend('youtube-shell')
+
 
   render: =>
     super
@@ -91,21 +101,26 @@ class YouTubeShell.MediaView extends VideoLinkShell.MediaView
 
     @
 
+
   play: => @ytplayer?.playVideo()
+
 
   pause: => @ytplayer?.pauseVideo()
 
+
   isPlaying: => @ytplayer?.getPlayerState() == YT.PlayerState.PLAYING
 
+
   seek: (seconds) => @ytplayer?.seekTo(seconds, true)
+
 
   seekOffset: => @ytplayer?.getCurrentTime() ? 0
 
 
   # YouTube API - communication between the YouTube iframe API and the shell.
   # see https://developers.google.com/youtube/iframe_api_reference
-
   youtubePlayerApiSrc: 'http://www.youtube.com/iframe_api'
+
 
   # initialize youtube API. initialization should happen only once per page load
   onYTInitialize: =>
@@ -121,6 +136,7 @@ class YouTubeShell.MediaView extends VideoLinkShell.MediaView
       script = $('<script>').attr('src', @youtubePlayerApiSrc)
       $('body').append(script)
 
+
   onYTReady: =>
     @ytplayer = new YT.Player 'ytplayer', events:
       onReady: @onYTPlayerReady
@@ -128,6 +144,7 @@ class YouTubeShell.MediaView extends VideoLinkShell.MediaView
 
     # replace the callback with a no-op
     window.onYouTubeIframeAPIReady = ->
+
 
   onYTPlayerReady: =>
     # this *should* initialize the playback at the correct point but doesn't.
@@ -139,13 +156,17 @@ class YouTubeShell.MediaView extends VideoLinkShell.MediaView
     else
       @ytplayer.cueVideoById(@model.youtubeId(), start)
 
+
   onYTPlayerStateChange: (event) =>
     if @isPlaying() then @timer.startTick() else @timer.stopTick()
 
 
+
 class YouTubeShell.RemixView extends VideoLinkShell.RemixView
 
+
   className: @classNameExtend('youtube-shell')
+
 
 
 # Register the shell with the acorn object.

@@ -20,13 +20,16 @@ VimeoShell = acorn.shells.VimeoShell =
 
 class VimeoShell.Model extends VideoLinkShell.Model
 
+
   metaDataUrl: =>
     "http://vimeo.com/api/v2/video/#{@vimeoId()}.json?callback=?"
+
 
   description: =>
     start = acorn.util.Time.secondsToTimestring @timeStart()
     end = acorn.util.Time.secondsToTimestring @timeEnd()
     "Vimeo video #{@title()} from #{start} to #{end}."
+
 
   timeTotal: =>
     currTotal = super
@@ -39,9 +42,11 @@ class VimeoShell.Model extends VideoLinkShell.Model
 
     currTotal ? 0
 
+
   title: =>
     cache = @metaData()
     if cache.synced() then cache.data().data.title else @get('link')
+
 
   # returns the vimeo video id of this link.
   vimeoId: =>
@@ -52,6 +57,7 @@ class VimeoShell.Model extends VideoLinkShell.Model
     unless pattern then ValueError 'Incorrect youtube link, no video id found.'
 
     pattern.exec(link)[5]
+
 
   embedLink: =>
     # see http://developer.vimeo.com/player/embedding
@@ -69,7 +75,9 @@ class VimeoShell.Model extends VideoLinkShell.Model
 
 class VimeoShell.MediaView extends VideoLinkShell.MediaView
 
+
   className: @classNameExtend 'vimeo-shell'
+
 
   initialize: =>
     super
@@ -77,6 +85,7 @@ class VimeoShell.MediaView extends VideoLinkShell.MediaView
     @vimeoPlayerView = new VimeoShell.VimeoPlayerView
       model: @model
       eventhub: @eventhub
+
 
   render: =>
     super
@@ -86,35 +95,43 @@ class VimeoShell.MediaView extends VideoLinkShell.MediaView
     # @vimeoPlayerView.once 'VimeoPlayer:Ready', @play
     @
 
+
   # Implement MediaView APi
+
 
   play: =>
     @vimeoPlayerView.play()
 
+
   pause: =>
     @vimeoPlayerView.pause()
+
 
   isPlaying: =>
     @vimeoPlayerView.isPlaying ? false
 
+
   seek: (seconds) =>
     @vimeoPlayerView.seekTo seconds
+
 
   seekOffset: =>
     @vimeoPlayerView.currentTime ? 0
 
 
 
-
 class VimeoShell.VimeoPlayerView extends athena.lib.View
 
+
   className: @classNameExtend 'vimeoplayer'
+
 
   initialize: =>
     super
     @isPlaying = false
     @totalTime = Infinity
     @currentTime = 0
+
 
   render: =>
     super
@@ -123,13 +140,17 @@ class VimeoShell.VimeoPlayerView extends athena.lib.View
     @initializeVimeo()
     @
 
+
   # Control the player
+
 
   play: =>
     @player.api 'play'
 
+
   pause: =>
     @player.api 'pause'
+
 
   seek: (seconds) =>
     @player.api 'seekTo', [seconds.toString()]
@@ -137,8 +158,8 @@ class VimeoShell.VimeoPlayerView extends athena.lib.View
 
   # Vimeo API - communication between the Vimeo js API and the shell.
   # see http://developer.vimeo.com/player/js-api
-
   vimeoPlayerApiSrc: 'http://a.vimeocdn.com/js/froogaloop2.min.js'
+
 
   # initialize vimeo API. should happen only once per page load
   initializeVimeo: =>
@@ -160,6 +181,7 @@ class VimeoShell.VimeoPlayerView extends athena.lib.View
     @player.addEvent 'ready', @onVimeoPlayerReady
     # @play()
 
+
   onVimeoPlayerReady: =>
     # attach callbacks to the vimeo player.
 
@@ -180,11 +202,11 @@ class VimeoShell.VimeoPlayerView extends athena.lib.View
 
 
 
-
-
 class VimeoShell.RemixView extends VideoLinkShell.RemixView
 
+
   className: @classNameExtend 'vimeo-shell'
+
 
 
 # Register the shell with the acorn object.
