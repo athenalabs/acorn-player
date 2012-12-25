@@ -43,7 +43,7 @@
 /* general classes */
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .transparent {
@@ -420,11 +420,6 @@
 
   .form-inline > * {
     display: inline-block;
-
-    // scope the .hidden rule locally to override `display: inline-block;`
-    &.hidden {
-      .hidden
-    }
   }
 
   .time-input-view {
