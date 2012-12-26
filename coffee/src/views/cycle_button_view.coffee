@@ -37,6 +37,9 @@ class acorn.player.CycleButtonView extends athena.lib.View
 
 
   render: =>
+    super
+    @$el.empty()
+
     @views = []
 
     # build views from data
