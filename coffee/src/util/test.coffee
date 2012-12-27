@@ -7,7 +7,14 @@ goog.require 'acorn.util'
 acorn.util.test =
 
 
-  describeShellModule: (Module, tests) =>
+  # call pattern: Module [, modelOptions] [, tests]
+  describeShellModule: (Module, modelOptions, tests) =>
+
+    # cycle arguments if necessary
+    unless athena.lib.util.isStrictObject modelOptions
+      tests = modelOptions
+      modelOptions = {}
+
     derives = athena.lib.util.derives
     Shell = acorn.shells.Shell
 
@@ -33,7 +40,7 @@ acorn.util.test =
           expect(Module[property]).toBeDefined()
           expect(_.isFunction Module[property]).toBe true
 
-      viewOptions = -> model: new Module.Model
+      viewOptions = -> model: new Module.Model modelOptions
 
       describe "#{Module.id}.Model", ->
         Model = Module.Model
@@ -45,25 +52,25 @@ acorn.util.test =
           expect(isOrDerives Model, Shell.Model).toBe true
 
         it 'should correctly assign attributes', ->
-          m = new Model a: 1, b:2
+          m = new Model _.extend modelOptions, {a: 1, b:2}
           expect(m.get 'a').toBe 1
           expect(m.get 'b').toBe 2
 
         it 'should correctly support setting of attributes', ->
-          m = new Model a: 1, b:2
+          m = new Model _.extend modelOptions, {a: 1, b:2}
           m.set 'a', 2
           m.set 'b', 3
           expect(m.get 'a').toBe 2
           expect(m.get 'b').toBe 3
 
         it 'should throw an exception on save/sync', ->
-          m = new Model a: 1, b:2
+          m = new Model _.extend modelOptions, {a: 1, b:2}
           expect(m.save).toThrow()
           expect(m.sync).toThrow()
 
         it 'should be clonable (with deep-copies)', ->
           deep = {'a': 5}
-          m = new Model {shellid:'Shell', a: b: c: deep}
+          m = new Model _.extend modelOptions, {shellid:'Shell', a: b: c: deep}
           expect(m.clone().attributes.a.b.c).toEqual deep
           expect(m.clone().attributes.a.b.c).not.toBe deep
 
@@ -74,7 +81,8 @@ acorn.util.test =
 
         it 'should have a toJSONString function', ->
           expect(typeof Model::toJSONString).toBe 'function'
-          m = new Model {shellid:'Shell', a: b: c: {'a': 5}}
+          m = new Model _.extend modelOptions,
+              {shellid:'Shell', a: b: c: {'a': 5}}
           s = m.toJSONString()
           expect(JSON.stringify m.attributes).toEqual s
 
