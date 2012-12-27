@@ -37,7 +37,7 @@ class VimeoShell.Model extends VideoLinkShell.Model
     cache = @metaData()
 
     if cache.synced()
-      timeTotal = cache.data().data.duration
+      timeTotal = cache.data()[0].duration
       @set('timeTotal', timeTotal) unless currTotal == timeTotal
       return timeTotal
 
