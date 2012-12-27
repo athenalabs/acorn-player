@@ -36,9 +36,12 @@ class Shell.Model extends athena.lib.Model
     super
 
     # set default property values
-    @set {shellid: @module.id} unless @shellid()?
-    @sources [] unless _.isArray @sources()
-    @thumbnail acorn.config.img.acorn unless @thumbnail()?
+    unless @shellid()?
+      @set {shellid: @module.id}
+    unless _.isArray @sources()
+      @sources []
+    unless @thumbnail()?
+      @thumbnail acorn.config.img.acorn
 
 
   # property managers

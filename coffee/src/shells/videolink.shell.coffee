@@ -27,7 +27,8 @@ class VideoLinkShell.Model extends LinkShell.Model
     super
 
     # set default property values
-    unless @timeTotal() >= 0 then @set 'timeTotal', Infinity
+    unless @timeTotal() >= 0
+      @set 'timeTotal', Infinity
 
 
   timeStart: @property 'timeStart'
