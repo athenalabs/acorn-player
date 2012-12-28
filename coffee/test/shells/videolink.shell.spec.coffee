@@ -9,35 +9,51 @@ goog.require 'acorn.util.test'
 describe 'acorn.shells.VideoLinkShell', ->
   VideoLinkShell = acorn.shells.VideoLinkShell
 
+  Model = VideoLinkShell.Model
+  MediaView = VideoLinkShell.MediaView
+  RemixView = VideoLinkShell.RemixView
+  PlayerView = VideoLinkShell.PlayerView
+
   it 'should be part of acorn.shells', ->
     expect(VideoLinkShell).toBeDefined()
 
   acorn.util.test.describeShellModule VideoLinkShell, ->
 
-    Model = VideoLinkShell.Model
-    MediaView = VideoLinkShell.MediaView
-    RemixView = VideoLinkShell.RemixView
-
     timestring = acorn.util.Time.secondsToTimestring
-    viewOptions = -> model: new Model(timeTotal: 300)
+    viewOptions = ->
+      model: new Model {timeTotal: 300}
+      eventhub: _.extend {}, Backbone.Events
 
     validLinks = VideoLinkShell.validLinkPatterns
     expectLinkMatches = (link) ->
       expect(acorn.shells.LinkShell.linkMatches link, validLinks).toBe true
 
-    it 'should recognize .avi video links', ->
-      expectLinkMatches 'http://www.example.com/rgb256.avi'
 
-    it 'should recognize .mov video links', ->
-      expectLinkMatches 'www.example.org/rgb256.mov'
+    describe 'VideoLinkShell', ->
 
-    it 'should recognize .wmv video links', ->
-      expectLinkMatches 'http://example.ai/rgb256.wmv'
+      it 'should recognize .avi video links', ->
+        expectLinkMatches 'http://www.example.com/rgb256.avi'
+
+      it 'should recognize .mov video links', ->
+        expectLinkMatches 'www.example.org/rgb256.mov'
+
+      it 'should recognize .wmv video links', ->
+        expectLinkMatches 'http://example.ai/rgb256.wmv'
 
 
     describe 'VideoLinkShell.Model', ->
 
-      model = new Model {link: 'http://video.com/video.mov', loops: 2}
+      link = 'http://video.com/video.mov'
+
+      model = new Model
+        link: link
+        timeStart: 33
+        timeEnd: 145
+        loops: 2
+
+      # waiting on @properties fix
+      xit 'should have a description method that describes the shell', ->
+        expect(model.description()).toBe "Video #{link} from 00:33 to 02:25."
 
       it 'should have a duration method that returns a number', ->
         expect(typeof model.duration()).toBe 'number'
@@ -48,6 +64,45 @@ describe 'acorn.shells.VideoLinkShell', ->
       it 'should create a Timer instance on initialize', ->
         mv = new MediaView viewOptions()
         expect(mv.timer instanceof acorn.util.Timer).toBe true
+
+      it 'should create a playerView instance on initialize', ->
+        mv = new MediaView viewOptions()
+        expect(mv.playerView instanceof PlayerView).toBe true
+
+      it 'should forward `play` action to playerView', ->
+        mv = new MediaView viewOptions()
+        spyOn mv.playerView, 'play'
+        expect(mv.playerView.play).not.toHaveBeenCalled()
+        mv.play()
+        expect(mv.playerView.play).toHaveBeenCalled()
+
+      it 'should forward `pause` action to playerView', ->
+        mv = new MediaView viewOptions()
+        spyOn mv.playerView, 'pause'
+        expect(mv.playerView.pause).not.toHaveBeenCalled()
+        mv.pause()
+        expect(mv.playerView.pause).toHaveBeenCalled()
+
+      it 'should forward `seek` action to playerView', ->
+        mv = new MediaView viewOptions()
+        spyOn mv.playerView, 'seek'
+        expect(mv.playerView.seek).not.toHaveBeenCalled()
+        mv.seek(33)
+        expect(mv.playerView.seek).toHaveBeenCalledWith 33
+
+      it 'should forward `isPlaying` query to playerView', ->
+        mv = new MediaView viewOptions()
+        spyOn mv.playerView, 'isPlaying'
+        expect(mv.playerView.isPlaying).not.toHaveBeenCalled()
+        mv.isPlaying()
+        expect(mv.playerView.isPlaying).toHaveBeenCalled()
+
+      it 'should forward `seekOffset` query to playerView', ->
+        mv = new MediaView viewOptions()
+        spyOn mv.playerView, 'seekOffset'
+        expect(mv.playerView.seekOffset).not.toHaveBeenCalled()
+        mv.seekOffset()
+        expect(mv.playerView.seekOffset).toHaveBeenCalled()
 
       # TODO: test onPlaybackTick. waiting on integration with video start,
       # pause, and seek calls
@@ -208,3 +263,40 @@ describe 'acorn.shells.VideoLinkShell', ->
         view = new RemixView viewOptions()
         view.render()
         $player.append view.el
+
+
+    describe 'VideoLinkShell.PlayerView', ->
+
+      describeView = athena.lib.util.test.describeView
+      describeView PlayerView, athena.lib.View, viewOptions(), ->
+
+
+        describe 'PlayerView interface', ->
+
+          it 'should have a play method', ->
+            pv = new PlayerView viewOptions()
+            pv.render()
+            expect(typeof pv.play).toBe 'function'
+
+          it 'should have a pause method', ->
+            pv = new PlayerView viewOptions()
+            pv.render()
+            expect(typeof pv.pause).toBe 'function'
+
+          it 'should have a seek method', ->
+            pv = new PlayerView viewOptions()
+            pv.render()
+            expect(typeof pv.seek).toBe 'function'
+
+          it 'should have an isPlaying method that returns a boolean', ->
+            pv = new PlayerView viewOptions()
+            pv.render()
+            expect(typeof pv.isPlaying).toBe 'function'
+            expect(typeof pv.isPlaying()).toBe 'boolean'
+
+          it 'should have a seekOffset method that returns a number', ->
+            pv = new PlayerView viewOptions()
+            pv.render()
+            expect(typeof pv.seekOffset).toBe 'function'
+            expect(typeof pv.seekOffset()).toBe 'number'
+

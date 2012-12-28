@@ -71,7 +71,14 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
   initialize: =>
     super
+
     @timer = new acorn.util.Timer 200, @onPlaybackTick
+
+    @playerView = new @module.PlayerView
+      model: @model
+      eventhub: @eventhub
+
+    @listenTo @playerView, 'PlayerView:StateChange', @onPlayerViewStateChange
 
 
   render: =>
@@ -79,15 +86,15 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
     @$el.empty()
 
-    # TODO: this embedding method primarily does not work
-    @$el.append "<embed src='#{@model.get 'link'}'/>"
-
     # stop ticking, in case we had been playing and this is a re-render.
     @timer.stopTick()
+
+    @$el.append @playerView.render().el
+
+    # start playing once ready
+    # @playerView.once 'PlayerView:Ready', @play
+
     @
-
-
-  duration: => @model.duration()
 
 
   # executes periodically to adjust video playback.
@@ -122,6 +129,39 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
     else
       @restarting = false
+
+
+  onPlayerViewStateChange: =>
+    if @isPlaying() then @timer.startTick() else @timer.stopTick()
+
+
+  # actions
+
+  play: =>
+    @playerView.play()
+
+
+  pause: =>
+    @playerView.pause()
+
+
+  seek: (seconds) =>
+    @playerView.seek seconds
+
+
+  # state getters
+
+  isPlaying: =>
+    @playerView.isPlaying() ? false
+
+
+  seekOffset: =>
+    @playerView.seekOffset() ? 0
+
+
+  # duration of media (clipped) - get from model
+  duration: =>
+    @model.duration()
 
 
 
@@ -210,6 +250,39 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
   _onChangeLoops: (changed) =>
     loops = if changed.name == 'n' then changed.value else changed.name
     @model.set 'loops', loops
+
+
+
+class VideoLinkShell.PlayerView extends athena.lib.View
+
+
+  render: =>
+    super
+    @$el.empty()
+
+    # TODO: this embedding method primarily does not work
+    @$el.append "<embed src='#{@model.get 'link'}'/>"
+
+    @
+
+
+  # actions - override in child classes
+
+  play: =>
+
+
+  pause: =>
+
+
+  seek: (seconds) =>
+
+
+  # state getters - override in child classes
+
+  isPlaying: => false
+
+
+  seekOffset: => 0
 
 
 

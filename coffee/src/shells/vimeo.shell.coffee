@@ -80,58 +80,25 @@ class VimeoShell.MediaView extends VideoLinkShell.MediaView
   className: @classNameExtend 'vimeo-shell'
 
 
-  initialize: =>
-    super
 
-    @vimeoPlayerView = new VimeoShell.VimeoPlayerView
-      model: @model
-      eventhub: @eventhub
+class VimeoShell.RemixView extends VideoLinkShell.RemixView
 
 
-  render: =>
-    super
-    @$el.empty()
-    @$el.append @vimeoPlayerView.render().el
-    # start playing once ready
-    # @vimeoPlayerView.once 'VimeoPlayer:Ready', @play
-    @
-
-
-  # Implement MediaView APi
-
-
-  play: =>
-    @vimeoPlayerView.play()
-
-
-  pause: =>
-    @vimeoPlayerView.pause()
-
-
-  isPlaying: =>
-    @vimeoPlayerView.isPlaying ? false
-
-
-  seek: (seconds) =>
-    @vimeoPlayerView.seekTo seconds
-
-
-  seekOffset: =>
-    @vimeoPlayerView.currentTime ? 0
+  className: @classNameExtend 'vimeo-shell'
 
 
 
-class VimeoShell.VimeoPlayerView extends athena.lib.View
+class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
 
 
-  className: @classNameExtend 'vimeoplayer'
+  className: @classNameExtend 'vimeo-shell'
 
 
   initialize: =>
     super
-    @isPlaying = false
-    @totalTime = Infinity
-    @currentTime = 0
+    @_isPlaying = false
+    @_timeTotal = undefined
+    @_seekOffset = 0
 
 
   render: =>
@@ -155,6 +122,14 @@ class VimeoShell.VimeoPlayerView extends athena.lib.View
 
   seek: (seconds) =>
     @player.api 'seekTo', [seconds.toString()]
+
+
+  isPlaying: =>
+    @_isPlaying
+
+
+  seekOffset: =>
+    @_seekOffset
 
 
   # Vimeo API - communication between the Vimeo js API and the shell.
@@ -187,26 +162,22 @@ class VimeoShell.VimeoPlayerView extends athena.lib.View
     # attach callbacks to the vimeo player.
 
     @player.addEvent 'pause', =>
-      @isPlaying = false
-      @trigger 'VimeoPlayer:Pause'
+      @_isPlaying = false
+      @trigger 'PlayerView:StateChange'
 
     @player.addEvent 'play', =>
-      @isPlaying = true
-      @trigger 'VimeoPlayer:Play'
+      @_isPlaying = true
+      @trigger 'PlayerView:StateChange'
+
 
     @player.addEvent 'playProgress', (params) =>
-      @totalTime = parseFloat params.duration
-      @currentTime = parseFloat params.seconds
-      @isPlaying = true
+      @_timeTotal = parseFloat params.duration
+      @_seekOffset = parseFloat params.seconds
+      @_isPlaying = true
 
-    @trigger 'VimeoPlayer:Ready'
-
-
-
-class VimeoShell.RemixView extends VideoLinkShell.RemixView
+    @trigger 'PlayerView:Ready'
 
 
-  className: @classNameExtend 'vimeo-shell'
 
 
 

@@ -92,66 +92,18 @@ class YouTubeShell.MediaView extends VideoLinkShell.MediaView
   className: @classNameExtend 'youtube-shell'
 
 
-  initialize: =>
-    super
-
-    @playerView = new YouTubeShell.YouTubePlayerView
-      model: @model
-      eventhub: @eventhub
-
-    @listenTo @playerView, 'YouTubePlayer:StateChange', =>
-      if @isPlaying() then @timer.startTick() else @timer.stopTick()
-
-
-  render: =>
-    super
-    @$el.empty()
-    @$el.append @playerView.render().el
-    # start playing once ready
-    # @vimeoPlayerView.once 'VimeoPlayer:Ready', @play
-    @
-
-
-  # Implement MediaView APi
-
-
-  play: =>
-    @playerView.play()
-
-
-  pause: =>
-    @playerView.pause()
-
-
-  isPlaying: =>
-    @playerView.isPlaying() ? false
-
-
-  seek: (seconds) =>
-    @playerView.seekTo seconds
-
-
-  seekOffset: =>
-    @playerView.seekOffset() ? 0
-
-
 
 class YouTubeShell.RemixView extends VideoLinkShell.RemixView
 
 
-  className: @classNameExtend('youtube-shell')
+  className: @classNameExtend 'youtube-shell'
 
 
 
-class YouTubeShell.YouTubePlayerView extends athena.lib.View
+class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
 
 
-  className: @classNameExtend 'youtube-player-view'
-
-
-  initialize: =>
-    super
-    @totalTime = Infinity
+  className: @classNameExtend 'youtube-shell'
 
 
   render: =>
@@ -179,12 +131,12 @@ class YouTubeShell.YouTubePlayerView extends athena.lib.View
     @player?.pauseVideo()
 
 
+  seek: (seconds) =>
+    @player?.seekTo(seconds, true)
+
+
   isPlaying: =>
     @player?.getPlayerState() == YT.PlayerState.PLAYING
-
-
-  seekTo: (seconds) =>
-    @player?.seekTo(seconds, true)
 
 
   seekOffset: =>
@@ -234,7 +186,7 @@ class YouTubeShell.YouTubePlayerView extends athena.lib.View
           @player.cueVideoById(@model.youtubeId(), start)
 
       onStateChange: (event) =>
-        @trigger 'YouTubePlayer:StateChange', @, @player.getPlayerState()
+        @trigger 'PlayerView:StateChange', @, @player.getPlayerState()
 
 
 
