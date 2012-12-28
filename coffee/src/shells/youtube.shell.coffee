@@ -20,6 +20,7 @@ YouTubeShell = acorn.shells.YouTubeShell =
     acorn.util.urlRegEx('(www\.)?youtube\.com\/watch\?.*v=([A-Za-z0-9\-_]+).*')
     acorn.util.urlRegEx('(www\.)?y2u.be\/([A-Za-z0-9\-_]+)')
     acorn.util.urlRegEx('(www\.)?youtu\.be\/([A-Za-z0-9\-_]+).*')
+    acorn.util.urlRegEx('(www\.)?youtube\.googleapis\.com\/v\/([A-Za-z0-9\-_]+).*')
   ]
 
 
