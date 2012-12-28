@@ -55,7 +55,7 @@ class VimeoShell.Model extends VideoLinkShell.Model
 
     pattern = _.find @module.validLinkPatterns, (pattern) -> pattern.test link
 
-    unless pattern then ValueError 'Incorrect youtube link, no video id found.'
+    unless pattern then ValueError 'Incorrect vimeo link, no video id found.'
 
     pattern.exec(link)[5]
 
