@@ -121,7 +121,19 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
 
 
   seek: (seconds) =>
-    @player.api 'seekTo', [seconds.toString()]
+    # Vimeo adds the original seekTo value to the current one. `seekTo n`
+    # initially sends a user to t = n, but forever after will send the user to
+    # t = 2n - 2. `seekTo 6` initially sends a user to t = 6, but will later
+    # send to t = ~10. See https://github.com/vimeo/player-api/issues/30.
+    #
+    # Hack: seekTo 2, then seekTo desired value.
+    #
+    # Note: Vimeo also has a bug that mangles playback after a `seekTo 0` call.
+    # See https://github.com/vimeo/player-api/issues/27. In the case that
+    # `seconds == 0`, we may need to handle things specially. Haven't yet QA'd
+    # for bugs on this point, just ran across it once.
+    @player.api 'seekTo', 2
+    @player.api 'seekTo', seconds
 
 
   isPlaying: =>
