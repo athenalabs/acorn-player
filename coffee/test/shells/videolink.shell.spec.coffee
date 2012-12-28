@@ -51,8 +51,7 @@ describe 'acorn.shells.VideoLinkShell', ->
         timeEnd: 145
         loops: 2
 
-      # waiting on @properties fix
-      xit 'should have a description method that describes the shell', ->
+      it 'should have a description method that describes the shell', ->
         expect(model.description()).toBe "Video #{link} from 00:33 to 02:25."
 
       it 'should have a duration method that returns a number', ->
