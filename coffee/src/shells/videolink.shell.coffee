@@ -105,18 +105,24 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     start = @model.timeStart() ? 0
     end = @model.timeEnd() ? @model.timeTotal()
 
-    # if current playback is behind the start time, seek to start
-    @seek start if now < start
+    # if current playback is before the start time:
+    if now < start
+      # reset loop count in case user has manually restarted
+      @looped = 0
+      # seek to start
+      @seek start
 
-    # if current playback is after the end time, pause or loop. when looping,
-    # set `restarting` flag to avoid decrementing the loop count multiple
-    # times before the restart has completed
+    # if current playback is after the end time, pause or loop
     if now >= end
+
+      # avoid decrementing the loop count multiple times before restart finishes
       return if @restarting
 
       loops = @model.get 'loops'
 
-      if _.isNumber loops
+      # if loops is a number, count video loops
+      if parseInt(loops) >= 0
+        loops = parseInt loops
         @looped ?= 0
         @looped++
 
@@ -127,6 +133,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
         @pause()
         @eventhub.trigger 'playback:ended'
 
+    # otherwise clear restarting flag
     else
       @restarting = false
 
