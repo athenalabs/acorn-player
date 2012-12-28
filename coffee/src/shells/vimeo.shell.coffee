@@ -66,7 +66,7 @@ class VimeoShell.Model extends VideoLinkShell.Model
       '&byline=0' +
       '&portrait=0' +
       '&api=1' +
-      '&player_id=vimeoplayer' +
+      '&player_id=vimeo-player' +
       '&title=0' +
       '&byline=1' +
       '&portrait=0' +
@@ -104,7 +104,7 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
   render: =>
     super
     @$el.empty()
-    @$el.append acorn.util.iframe @model.embedLink(), 'vimeoplayer'
+    @$el.append acorn.util.iframe @model.embedLink(), 'vimeo-player'
     @initializeVimeo()
     @
 
@@ -153,7 +153,7 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
 
   onVimeoReady: =>
     # initialize the player object with the iframe
-    @player = Froogaloop @$('#vimeoplayer')[0]
+    @player = Froogaloop @$('#vimeo-player')[0]
     @player.addEvent 'ready', @onVimeoPlayerReady
     # @play()
 
