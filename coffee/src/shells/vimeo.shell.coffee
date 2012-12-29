@@ -41,7 +41,7 @@ class VimeoShell.Model extends VideoLinkShell.Model
       @set('timeTotal', timeTotal) unless currTotal == timeTotal
       return timeTotal
 
-    currTotal ? 0
+    currTotal ? Infinity
 
 
   title: =>

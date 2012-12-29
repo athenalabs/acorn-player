@@ -46,7 +46,7 @@ class YouTubeShell.Model extends VideoLinkShell.Model
       @set('timeTotal', timeTotal) unless currTotal == timeTotal
       timeTotal
     else
-      @get('timeTotal') ? 0
+      @get('timeTotal') ? Infinity
 
 
   title: =>
