@@ -1,5 +1,5 @@
 goog.provide 'acorn.player.AcornOptionsView'
-
+goog.require 'acorn.config'
 
 
 # acorn player AcornOptionsView:
@@ -46,5 +46,11 @@ class acorn.player.AcornOptionsView extends athena.lib.View
   render: =>
     super
     @$el.empty()
-    @$el.html @template @model.attributes
+
+    variables =
+      thumbnail: acorn.config.img.acorn
+      acornid: 'new'
+      title: ''
+
+    @$el.html @template _.extend variables, @model.attributes
     @
