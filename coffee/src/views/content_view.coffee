@@ -3,6 +3,8 @@ goog.provide 'acorn.player.ContentView'
 goog.require 'acorn.player.controls.ControlToolbarView'
 goog.require 'acorn.shells.Shell'
 
+
+
 ControlToolbarView = acorn.player.controls.ControlToolbarView
 
 # acorn Player:
@@ -30,7 +32,9 @@ ControlToolbarView = acorn.player.controls.ControlToolbarView
 # View to experience an acorn. Renders shells' MediaViews, and the controls.
 class acorn.player.ContentView extends athena.lib.View
 
+
   className: @classNameExtend 'content-view'
+
 
   acornControls: [
     'Sources',
@@ -38,6 +42,7 @@ class acorn.player.ContentView extends athena.lib.View
     'Acorn',
     'Fullscreen',
   ]
+
 
   initialize: =>
     super
@@ -74,6 +79,7 @@ class acorn.player.ContentView extends athena.lib.View
 
     # setup events
     @acornControlsView.on 'all', (name) => @eventhub.trigger name
+
 
   render: =>
     super

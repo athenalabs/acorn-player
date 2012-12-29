@@ -3,7 +3,10 @@ goog.provide 'acorn.shells.ImageLinkShell'
 goog.require 'acorn.shells.LinkShell'
 goog.require 'acorn.util'
 
+
+
 LinkShell = acorn.shells.LinkShell
+
 
 ImageLinkShell = acorn.shells.ImageLinkShell =
 
@@ -12,6 +15,7 @@ ImageLinkShell = acorn.shells.ImageLinkShell =
   description: 'Shell to contain web based images.'
   icon: 'icon-picture'
   validLinkPatterns: [ acorn.util.urlRegEx '.*\.(jpg|jpeg|gif|png|svg)' ]
+
 
 
 # -- module classes --

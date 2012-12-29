@@ -1,13 +1,18 @@
 goog.provide 'acorn.player.SplashView'
 
+
+
 # Rendered first, with thumbnail, and icons.
 # Meant to load quickly, to make many Players cheap to render.
 class acorn.player.SplashView extends athena.lib.View
 
+
   className: @classNameExtend 'splash-view'
+
 
   events: => _.extend super,
     'click #image': => @eventhub.trigger 'show:content'
+
 
   template: _.template '''
     <img id="image" src="<%= image %>" class="splash-image" />
@@ -15,11 +20,13 @@ class acorn.player.SplashView extends athena.lib.View
     <img id="logo" src="<%= logo %>" class="splash-icon" />
     '''
 
+
   initialize: =>
     super
 
     unless @model instanceof acorn.Model
       TypeError @model, 'acorn.Model'
+
 
   render: =>
     @$el.empty()

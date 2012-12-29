@@ -26,6 +26,7 @@ acorn.config.img = {}
 acorn.config.img.acorn = '/static/img/acorn.png'
 acorn.config.img.acornIcon = '/static/img/acorn.icon.png'
 
+
 acorn.config.css = [
   '/build/css/acorn-player.css',
   '/lib/fontawesome/css/font-awesome.css',

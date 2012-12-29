@@ -2,8 +2,11 @@ goog.provide 'acorn.player.SourcesView'
 
 goog.require 'acorn.player.OverlayView'
 
+
+
 # a view to display all sources
 class acorn.player.SourcesView extends acorn.player.OverlayView
+
 
   template: _.template '''
     <div class="header">
@@ -17,20 +20,25 @@ class acorn.player.SourcesView extends acorn.player.OverlayView
     <div id="body"></div>
     '''
 
+
   sourceTemplate: _.template '''
     <div class="source"><%= source %></div>
     '''
 
+
   className: @classNameExtend 'sources-view'
+
 
   events: => _.extend super,
     'click button#close': 'onClickClose'
+
 
   initialize: =>
     super
 
     @shell = @options.shell
     acorn.errors.MissingParameterError 'SourcesView', 'shell' unless @shell
+
 
   render: =>
     super
@@ -45,6 +53,7 @@ class acorn.player.SourcesView extends acorn.player.OverlayView
       body.append @sourceTemplate {source: source}
 
     @
+
 
   onClickClose: =>
     @eventhub.trigger 'close:sources'

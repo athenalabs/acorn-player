@@ -4,6 +4,8 @@ goog.require 'acorn.shells.Registry'
 goog.require 'acorn.shells.Shell'
 goog.require 'acorn.player.DropdownView'
 
+
+
 # acorn player ShellOptionsView:
 #
 #   ------------------------------------------
@@ -11,11 +13,14 @@ goog.require 'acorn.player.DropdownView'
 #   ------------------------------------------
 #   |            shell.OptionsView           |
 #   ------------------------------------------
-
+#
 # View to edit shell options.
+
 class acorn.player.ShellOptionsView extends athena.lib.View
 
+
   className: @classNameExtend 'shell-options-view row-fluid'
+
 
   initialize: =>
     super
@@ -30,6 +35,7 @@ class acorn.player.ShellOptionsView extends athena.lib.View
 
     @dropdownView.on 'Dropdown:Selected', =>
       @model.set shellid: @dropdownView.selected()
+
 
   render: =>
     super

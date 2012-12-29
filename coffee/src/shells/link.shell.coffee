@@ -6,8 +6,13 @@ goog.require 'acorn.shells.Registry'
 goog.require 'acorn.errors'
 goog.require 'acorn.util'
 
+
+
 Shell = acorn.shells.Shell
+
+
 LinkShell = acorn.shells.LinkShell =
+
 
   # -- module properties --
   # Properties in this section should be overriden by all
@@ -17,6 +22,7 @@ LinkShell = acorn.shells.LinkShell =
   title: 'LinkShell'
   description: 'Base shell to contain any web based URL.'
   icon: 'icon-link'
+
 
   # This property lists the set of regular expression patterns
   # that LinkShell matches. It should be extended or overriden
@@ -32,6 +38,7 @@ LinkShell = acorn.shells.LinkShell =
   # returns false
   linkMatches: (link, validLinkPatterns) ->
     (_.find validLinkPatterns, (pattern) -> pattern.test link)?
+
 
   # Returns the set of LinkShell modules that match `link`
   # A LinkShell module matches a link whenever it conforms to
@@ -58,6 +65,7 @@ LinkShell = acorn.shells.LinkShell =
 
     shells
 
+
   # From the set of shells returned by matchingShells(),
   # this function returns the most specific one in the
   # inheritence hierarchy.
@@ -79,6 +87,7 @@ acorn.matchingLinkShells = LinkShell.matchingShells
 acorn.bestMatchingLinkShell = LinkShell.bestMatchingShell
 
 
+
 # -- module classes --
 
 class LinkShell.Model extends Shell.Model
@@ -93,6 +102,7 @@ class LinkShell.Model extends Shell.Model
     if attrs.link? and attrs.link != ''
       unless LinkShell.linkMatches attrs.link, @module.validLinkPatterns
         ValueError 'link', 'doesn\'t match valid link patterns for this shell.'
+
 
   # Constructs the `bestMatchingShell` for given `link`
   @withLink: (link) ->
@@ -109,7 +119,9 @@ acorn.withLink = LinkShell.Model.withLink
 
 class LinkShell.MediaView extends Shell.MediaView
 
+
   className: @classNameExtend 'link-shell'
+
 
   render: =>
     @$el.empty()
@@ -120,7 +132,9 @@ class LinkShell.MediaView extends Shell.MediaView
 
 class LinkShell.RemixView extends Shell.RemixView
 
+
   className: @classNameExtend 'link-shell'
+
 
   render: =>
     super
@@ -129,6 +143,7 @@ class LinkShell.RemixView extends Shell.RemixView
     iframe.attr 'scrolling', 'no'
     @$el.append iframe
     @
+
 
 
 acorn.registerShellModule LinkShell

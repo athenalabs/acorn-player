@@ -6,6 +6,7 @@ goog.require 'acorn.errors'
 goog.require 'acorn.util'
 
 
+
 VideoLinkShell = acorn.shells.VideoLinkShell
 YouTubeShell = acorn.shells.YouTubeShell =
 
@@ -20,6 +21,7 @@ YouTubeShell = acorn.shells.YouTubeShell =
     acorn.util.urlRegEx('(www\.)?y2u.be\/([A-Za-z0-9\-_]+)')
     acorn.util.urlRegEx('(www\.)?youtu\.be\/([A-Za-z0-9\-_]+).*')
   ]
+
 
 
 class YouTubeShell.Model extends VideoLinkShell.Model

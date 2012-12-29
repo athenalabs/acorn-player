@@ -2,7 +2,10 @@ goog.provide 'acorn.shells.PDFLinkShell'
 
 goog.require 'acorn.shells.LinkShell'
 
+
+
 LinkShell = acorn.shells.LinkShell
+
 
 PDFLinkShell = acorn.shells.PDFLinkShell =
 
@@ -17,8 +20,10 @@ PDFLinkShell = acorn.shells.PDFLinkShell =
 
 class PDFLinkShell.Model extends LinkShell.Model
 
+
   thumbnail: =>
     acorn.util.imgUrl('thumbnails/pdf.png')
+
 
 
 class PDFLinkShell.MediaView extends LinkShell.MediaView

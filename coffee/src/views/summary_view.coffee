@@ -1,5 +1,7 @@
 goog.provide 'acorn.player.SummaryView'
 
+
+
 # uniform view to summarize an acorn or shell.
 #
 # +-----------+
@@ -14,7 +16,9 @@ goog.provide 'acorn.player.SummaryView'
 
 class acorn.player.SummaryView extends athena.lib.View
 
+
   className: @classNameExtend 'acorn-shell-summary'
+
 
   template: _.template '''
     <img id="thumbnail" />
@@ -24,6 +28,7 @@ class acorn.player.SummaryView extends athena.lib.View
       <div id="buttons"></div>
     </div>
     '''
+
 
   render: =>
     @$el.empty()

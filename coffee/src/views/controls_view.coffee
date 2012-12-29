@@ -6,10 +6,13 @@ goog.provide 'acorn.player.controls.ImageControlView'
 goog.require 'acorn.config'
 
 
+
 # view with media control buttons
 class ControlToolbarView extends athena.lib.ToolbarView
 
+
   className: @classNameExtend 'control-toolbar-view'
+
 
   initialize: =>
     super
@@ -28,15 +31,22 @@ class ControlToolbarView extends athena.lib.ToolbarView
       btn.on 'all', (eventName) => @trigger eventName
 
 
+
 class ControlView extends athena.lib.View
+
+
   controlName: => 'Control'
+
 
   className: @classNameExtend 'control-view'
 
+
   tooltip: =>
+
 
   events: => _.extend super,
     'click': => @trigger "#{@controlName()}:Click", @
+
 
   render: =>
     super
@@ -44,6 +54,7 @@ class ControlView extends athena.lib.View
     if tooltip
       @$el.tooltip(tooltip)
     @
+
 
   @withId: (id) =>
     cls = "#{id}ControlView"
@@ -53,19 +64,26 @@ class ControlView extends athena.lib.View
     new View
 
 
+
 class IconControlView extends ControlView
+
+
   controlName: => 'IconControl'
 
+
   className: @classNameExtend 'icon-control-view'
+
 
   initialize: =>
     super
     @icon = @options.icon ? 'play'
 
+
   render: =>
     super
     @$el.html $('<i>').addClass "icon-#{@icon}"
     @
+
 
   @withIcon: (icon) =>
     unless _.isString icon
@@ -74,11 +92,14 @@ class IconControlView extends ControlView
     new IconControlView icon: icon
 
 
+
 class FullscreenControlView extends IconControlView
   controlName: => 'FullscreenControl'
   tooltip: => title: 'Fullscreen', delay: show: 1500
   defaults: => _.extend super,
     icon: 'fullscreen'
+
+
 
 class EditControlView extends IconControlView
   controlName: => 'EditControl'
@@ -86,17 +107,23 @@ class EditControlView extends IconControlView
   defaults: => _.extend super,
     icon: 'edit'
 
+
+
 class SourcesControlView extends IconControlView
   controlName: => 'SourcesControl'
   tooltip: => title: 'Sources', delay: show: 1500
   defaults: => _.extend super,
     icon: 'globe'
 
+
+
 class PreviousControlView extends IconControlView
   controlName: => 'PreviousControl'
   tooltip: => title: 'Previous', delay: show: 1500
   defaults: => _.extend super,
     icon: 'arrow-left'
+
+
 
 class NextControlView extends IconControlView
   controlName: => 'NextControl'
@@ -105,19 +132,26 @@ class NextControlView extends IconControlView
     icon: 'arrow-right'
 
 
+
 class ImageControlView extends ControlView
+
+
   controlName: => 'ImageControl'
 
+
   className: @classNameExtend 'image-control-view'
+
 
   initialize: =>
     super
     @url = @options.url ? acorn.config.img.acorn
 
+
   render: =>
     super
     @$el.html $('<img>').attr 'src', @url
     @
+
 
   @withUrl: (url) =>
     unless acorn.util.isUrl(url) or acorn.util.isPath(url)
@@ -132,7 +166,6 @@ class AcornControlView extends ImageControlView
   tooltip: => title: 'Website', delay: show: 1500
   defaults: => _.extend super,
     image: acorn.config.img.acornIcon
-
 
 
 

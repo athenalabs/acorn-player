@@ -2,9 +2,13 @@ goog.provide 'acorn.shells.Registry'
 
 goog.require 'acorn'
 
+
+
 class acorn.shells.Registry
 
+
   @modules: {}
+
 
   @registerModule: (shellModule) =>
 
@@ -47,5 +51,7 @@ class acorn.shells.Registry
 
     # register shell
     @modules[shellModule.id] = shellModule
+
+
 
 acorn.registerShellModule = acorn.shells.Registry.registerModule

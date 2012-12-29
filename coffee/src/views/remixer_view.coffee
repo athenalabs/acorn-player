@@ -4,6 +4,7 @@ goog.require 'acorn.player.DropdownView'
 goog.require 'acorn.shells.LinkShell'
 
 
+
 TextShell = acorn.shells.TextShell
 EmptyShell = acorn.shells.EmptyShell
 
@@ -29,10 +30,12 @@ class acorn.player.RemixerView extends athena.lib.View
     <hr />
     '''
 
+
   events: => _.extend super,
     'click button#duplicate': => @trigger 'Remixer:Duplicate', @
     'click button#delete': => @trigger 'Remixer:Delete', @
     'blur input#link': @onBlurLink
+
 
   initialize: =>
     super
@@ -102,6 +105,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @
 
+
   renderRemixSubview: =>
     unless @model is @remixSubview.model
       @remixSubview?.destroy()
@@ -114,6 +118,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @
 
+
   swapShell: (newShell) =>
     oldShell = @model
     @model = newShell
@@ -124,6 +129,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @trigger 'Remixer:SwapShell', @, oldShell, newShell
     @
+
 
   onBlurLink: (event) =>
     link = @$('input#link').val().trim();

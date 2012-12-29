@@ -1,7 +1,10 @@
 goog.provide 'acorn.player.OverlayView'
 
+
+
 # view with media control buttons
 class acorn.player.OverlayView extends athena.lib.View
+
 
   overlayTemplate: _.template '''
     <div class="background">
@@ -9,7 +12,9 @@ class acorn.player.OverlayView extends athena.lib.View
     </div>
     '''
 
+
   className: @classNameExtend 'overlay-view'
+
 
   render: =>
     @$el.empty()

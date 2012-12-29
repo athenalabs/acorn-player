@@ -1,9 +1,13 @@
 goog.provide 'acorn.player.DropdownView'
 
+
+
 # View to select options.
 class acorn.player.DropdownView extends athena.lib.View
 
+
   className: @classNameExtend 'dropdown-view span12'
+
 
   template: _.template '''
     <button class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -35,6 +39,7 @@ class acorn.player.DropdownView extends athena.lib.View
       @selected $(event.target).attr('dropdown-id')
       event.preventDefault()
 
+
   initialize: =>
     super
     unless @options.items.length > 0
@@ -42,6 +47,7 @@ class acorn.player.DropdownView extends athena.lib.View
 
     @items = _.map @options.items, @formatItem
     @_selected = @options.selected ? @items[0].id
+
 
   render: =>
     super
@@ -53,6 +59,7 @@ class acorn.player.DropdownView extends athena.lib.View
 
     @
 
+
   selected: (id) =>
     if id?
       id = String(id).trim()
@@ -63,8 +70,10 @@ class acorn.player.DropdownView extends athena.lib.View
       @trigger 'Dropdown:Selected', @, @_selected
     @_selected ? @items[0]
 
+
   itemWithId: (id) =>
     _.find(@items, (item) => item.id == id)
+
 
   formatItem: (item) ->
     if _.isString item then {'id': item} else item

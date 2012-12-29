@@ -3,6 +3,8 @@ goog.provide 'acorn.player.EditorView'
 goog.require 'acorn.player.AcornOptionsView'
 goog.require 'acorn.player.ShellEditorView'
 
+
+
 # acorn player EditorView:
 # ------------------------------------------------
 # |  ----------                                  |
@@ -34,11 +36,14 @@ goog.require 'acorn.player.ShellEditorView'
 # View to edit an acorn. Renders shells' EditorViews.
 class acorn.player.EditorView extends athena.lib.View
 
+
   className: @classNameExtend 'editor-view'
+
 
   events: => _.extend super,
     'click #editor-cancel-btn': => @eventhub.trigger 'Editor:Cancel', @
     'click #editor-save-btn': => @save()
+
 
   initialize: =>
     super
@@ -61,6 +66,7 @@ class acorn.player.EditorView extends athena.lib.View
       ]
       eventhub: @eventhub
 
+
   render: =>
     super
     @$el.empty()
@@ -70,6 +76,7 @@ class acorn.player.EditorView extends athena.lib.View
     @$el.append @toolbarView.render().el
 
     @
+
 
   save: =>
     # TODO add validation first

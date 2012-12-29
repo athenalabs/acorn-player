@@ -10,6 +10,7 @@ goog.provide 'acorn'
 
 goog.require 'acorn.Model'
 
+
 acorn_ = (data) ->
   acorn.Model.withData data
 

@@ -4,6 +4,8 @@ goog.require 'acorn.player.ShellOptionsView'
 goog.require 'acorn.player.RemixerView'
 goog.require 'acorn.shells.EmptyShell'
 
+
+
 # acorn player ShellEditorView:
 #   ------------------------------------------
 #   | > |  Type of Media                 | v |
@@ -35,14 +37,18 @@ CollectionShell = acorn.shells.CollectionShell
 # View to edit a shell. Renders shells' RemixViews.
 class acorn.player.ShellEditorView extends athena.lib.View
 
+
   className: @classNameExtend 'shell-editor-view'
+
 
   template: _.template '''
     <div class="shell-options-view row-fluid"></div>
     <div class="remix-views"></div>
     '''
 
-  defaultShell: EmptyShell,
+
+  defaultShell: EmptyShell
+
 
   initialize: =>
     super
@@ -69,6 +75,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
     @on 'ShellEditor:ShellsUpdated', @renderUpdates
 
+
   render: =>
     super
     @$el.empty()
@@ -79,10 +86,12 @@ class acorn.player.ShellEditorView extends athena.lib.View
     @renderUpdates()
     @
 
+
   renderOptionsView: =>
     @shellOptionsView.setElement @$ '.shell-options-view'
     @shellOptionsView.render()
     @
+
 
   renderRemixerView: (remixerView, index) =>
     remixerView.render()
@@ -91,6 +100,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
     else
       @$('.remix-views').append remixerView.el
     @
+
 
   renderUpdates: =>
     shellCount = @model.shells().length
@@ -103,6 +113,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
     # if there are no shells, add an empty one
     if shellCount is 0
       @addShell new @defaultShell.Model
+
 
   # retrieves the finalized shell. @model should not be used directly.
   shell: =>
@@ -121,6 +132,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
     shell
 
+
   addShell: (shell, index) =>
     index ?= @model.shells().length - 1 # -1 = before @defaultShell
     @model.shells().add shell, at: index
@@ -134,6 +146,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
     @
 
+
   removeShell: (shell) =>
     index = @model.shells().indexOf shell
     @model.shells().remove shell
@@ -143,12 +156,14 @@ class acorn.player.ShellEditorView extends athena.lib.View
     @trigger 'ShellEditor:ShellsUpdated'
     @
 
+
   # whether the shell is considered empty (placeholders)
   shellIsEmpty: (shell) =>
     shell &&
     (shell.constructor is Shell.Model or
      shell.constructor is EmptyShell.Model or
      shell.constructor is @defaultShell.Model)
+
 
   # initializes a RemixerView for given shell
   remixerForShell: (shell) =>
@@ -168,6 +183,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
     view
 
+
   # swaps a subshell with given shell
   swapSubShell: (oldShell, newShell) =>
     index = @model.shells().indexOf(oldShell)
@@ -179,6 +195,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
       @remixerViews[index] = @remixerForShell newShell
 
     @
+
 
   # swaps the main shell with given shell
   swapTopLevelShell: (shell) =>

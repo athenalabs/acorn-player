@@ -9,10 +9,14 @@ goog.require 'acorn.player.TimeInputView'
 goog.require 'acorn.player.TimeRangeInputView'
 goog.require 'acorn.player.CycleButtonView'
 
+
+
 # Main view. Container for the other three main views.
 class acorn.player.PlayerView extends athena.lib.ContainerView
 
+
   className: @classNameExtend 'player-view row-fluid'
+
 
   initialize: =>
     super
@@ -45,11 +49,13 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
       model: @model
     @_contentView
 
+
   splashView: =>
     @_splashView ?= new acorn.player.SplashView
       eventhub: @eventhub
       model: @model.acornModel
     @_splashView
+
 
   editorView: =>
     @_editorView ?= new acorn.player.EditorView
@@ -74,5 +80,6 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
 
   enterFullscreen: =>
     acorn.util.fullscreen @$el.parent()
+
 
   openAcornWebsite: =>

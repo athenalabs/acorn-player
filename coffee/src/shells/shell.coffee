@@ -6,18 +6,23 @@ goog.require 'acorn.util'
 goog.require 'acorn.errors'
 
 
+
 Shell = acorn.shells.Shell =
+
 
   # The unique `shell` name of an acorn Shell.
   # The convention is to namespace by vendor. e.g. `acorn.Document`.
   id: 'acorn.Shell'
 
+
   # Returns a simple title of the shell
   # Override it with your own shell-specific code.
   title: 'Shell'
 
+
   # Description of the shell
   description: 'base shell'
+
 
   # Basic icon to display throughout (using Font Awesome classes)
   icon: 'icon-sign-blank'
@@ -48,9 +53,11 @@ class Shell.Model extends athena.lib.Model
   toString: =>
     "#{@shellid()} #{@title()}"
 
+
   # -- factory constructors --
 
   @withAcorn: (acornModel) => @withData acornModel.shellData()
+
 
   @withData: (data) =>
     if data.shellid?
@@ -80,7 +87,9 @@ acorn.shellWithData = Shell.Model.withData
 
 class Shell.MediaView extends athena.lib.View
 
+
   className: @classNameExtend 'shell-media-view'
+
 
   initialize: =>
     super
@@ -88,7 +97,9 @@ class Shell.MediaView extends athena.lib.View
     unless @options.model
       acorn.errors.MissingParameterError 'Shell.MediaView', 'model'
 
+
   controls: []
+
 
   # -- media interface --
   # To be overriden and implemented by inheriting classes
@@ -97,21 +108,27 @@ class Shell.MediaView extends athena.lib.View
   play: =>
   pause: =>
 
+
   # Returns true if the media view is in 'play' state, false otherwise
   isPlaying: => false
+
 
   # Seek to the provided playback offset.
   seek: (offset) =>
 
+
   # Returns the current seek offset.
   seekOffset: => 0
+
 
   # Returns the view's total duration in seconds
   duration: => 0
 
+
   # Sets the media view's volume.
   volume: => 0
   setVolume: (volume) =>
+
 
   # Dimensions
   # The functions below expect and return dimensions in the same
@@ -120,6 +137,7 @@ class Shell.MediaView extends athena.lib.View
   height: => '100%'
   setWidth: (width) =>
   setHeight: (height) =>
+
 
   # Object Fit
   # * contain: if you have set an explicit height and width on a replaced
@@ -148,13 +166,16 @@ class Shell.MediaView extends athena.lib.View
 
 class Shell.RemixView extends athena.lib.View
 
+
   className: @classNameExtend 'shell-remix-view'
+
 
   initialize: =>
     super
 
     unless @options.model
       acorn.errors.MissingParameterError 'Shell.RemixView', 'model'
+
 
 
 acorn.registerShellModule Shell

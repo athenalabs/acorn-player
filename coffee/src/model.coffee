@@ -39,8 +39,10 @@ class acorn.Model extends athena.lib.Model
     'delete': 'DELETE'
     'read':   'GET'
 
+
   isNew: =>
     @acornid() == 'new' or super
+
 
   # Model persistence through CRUD style RPC
   sync: (method, model, options) =>
@@ -76,12 +78,14 @@ class acorn.Model extends athena.lib.Model
     # Make the request, allowing the user to override any Ajax options.
     $.ajax _.extend params, options
 
+
   @withData: (data) =>
     if not data?
       data = acornid: 'new'
     else if _.isString data
       data = acornid: data.trim().split('/').pop()
     new @ data
+
 
   @withShellData: (shelldata) =>
     new @(shell: shelldata.data)

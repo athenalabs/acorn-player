@@ -2,7 +2,10 @@ goog.provide 'acorn.shells.CollectionShell'
 
 goog.require 'acorn.shells.Shell'
 
+
+
 Shell = acorn.shells.Shell
+
 
 # CollectionShell -- one shell to contain them all.
 #
@@ -48,13 +51,16 @@ CollectionShell = acorn.shells.CollectionShell =
   icon: 'icon-sitemap'
 
 
+
 class CollectionShell.Model extends Shell.Model
+
 
   initialize: =>
     super
 
     unless @get 'shells'
       @set 'shells', []
+
 
   # lazily construct shells collection
   shells: =>
@@ -73,9 +79,11 @@ class CollectionShell.Model extends Shell.Model
 
     @_shells
 
+
   _syncShells: =>
     shells = _.map @get('shells'), Shell.Model.withData
     @_shells.reset shells
+
 
   _onAddShell: (shell, collection, options) =>
     if shell is @
@@ -111,6 +119,7 @@ class CollectionShell.Model extends Shell.Model
     # trigger change events. (splicing array doesn't)
     @set shells: shells, options
 
+
   _onResetShells: (collection, options) =>
 
     options ?= {}
@@ -121,8 +130,10 @@ class CollectionShell.Model extends Shell.Model
     if _.isEqual shells, data
       return
 
+
     # trigger change events.
     @set shells: data, options
+
 
 
 # Render each subshell in sequence. Shows each shell individually, keeping
@@ -134,7 +145,9 @@ class CollectionShell.Model extends Shell.Model
 
 class CollectionShell.MediaView extends Shell.MediaView
 
+
   className: @classNameExtend 'collection-shell'
+
 
   initialize: =>
     super
@@ -167,17 +180,20 @@ class CollectionShell.MediaView extends Shell.MediaView
     @controlsView.on 'ListControl:Click', @onTogglePlaylist
     @controlsView.on 'NextControl:Click', @showNext
 
+
   remove: =>
     @controlsView.off 'PreviousControl:Click', @showPrevious
     @controlsView.off 'ListControl:Click', @onTogglePlaylist
     @controlsView.off 'NextControl:Click', @showNext
     super
 
+
   render: =>
     super
     @$el.empty()
     @showView @currentIndex
     @
+
 
   showView: (index) =>
     unless 0 <= index < @shellViews.length
@@ -192,14 +208,17 @@ class CollectionShell.MediaView extends Shell.MediaView
     # TODO update controls
     view
 
+
   showPrevious: => @showView @currentIndex - 1
   showNext: => @showView @currentIndex + 1
+
 
 
 # uniform view to edit shell data.
 class CollectionShell.RemixView extends Shell.RemixView
 
   className: @classNameExtend 'collection-shell'
+
 
 
 acorn.registerShellModule CollectionShell

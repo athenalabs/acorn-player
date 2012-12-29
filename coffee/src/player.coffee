@@ -3,15 +3,20 @@ goog.provide 'acorn.player.Player'
 goog.require 'acorn.player.PlayerView'
 goog.require 'acorn.shells.Shell'
 
+
+
 # The main class, represents the entire player object.
 # Also serves as the eventhub.
 class acorn.player.Player
 
+
   # mixin Backbone.Events (not a class)
   _.extend @prototype, Backbone.Events
 
+
   constructor: (@options) ->
     @initialize()
+
 
   initialize: =>
 
@@ -30,6 +35,7 @@ class acorn.player.Player
       eventhub: @eventhub
 
     @eventhub.trigger 'show:splash'
+
 
   appendTo: (sel) =>
     @$el ?= $('<div>').addClass('acorn-player')

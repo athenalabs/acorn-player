@@ -1,5 +1,7 @@
 goog.provide 'acorn.player.AcornOptionsView'
 
+
+
 # acorn player AcornOptionsView:
 #   ----------
 #   |        |    acornid:
@@ -8,12 +10,16 @@ goog.provide 'acorn.player.AcornOptionsView'
 
 
 # View to edit acorn options.
+
 class acorn.player.AcornOptionsView extends athena.lib.View
+
 
   className: @classNameExtend 'acorn-options-view'
 
+
   events: => _.extend super,
     'blur #title': => @model.set title: @$('#title').val()
+
 
   template: _.template '''
     <div class="row-fluid">
@@ -35,6 +41,7 @@ class acorn.player.AcornOptionsView extends athena.lib.View
       </div>
     </div>
     '''
+
 
   render: =>
     super

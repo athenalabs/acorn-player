@@ -3,32 +3,41 @@ goog.provide 'acorn.util'
 goog.require 'acorn.config'
 
 
+
 util = acorn.util
+
 
 util.assert = (condition, description) ->
   throw new Error description if not condition
 
+
 util.urlRegEx = (url) ->
     ///^(https?:\/\/)?#{url ? '.*'}$///
+
 
 util.isUrl = (url) ->
   url = String(url)
   @urlRegEx().test url
 
+
 util.isPath = (path) ->
   /^[A-Za-z\/.-_]+$/.test path
+
 
 # helpers to construct acorn urls TODO: delete these?
 util.url = ->
   path = _.toArray(arguments).join '/'
   "http://#{acorn.config.domain}/#{path}"
 
+
 util.apiUrl = ->
   apiPath = "api/v#{acorn.config.api.version}".split '/'
   @url.apply(@, apiPath.concat _.toArray arguments)
 
+
 util.imgUrl = ->
   @url.apply(@, ['img'].concat _.toArray arguments)
+
 
 # construct an <iframe> element, with `src` and `id`
 util.iframeOptions =
@@ -40,6 +49,7 @@ util.iframeOptions =
   webkitAllowFullScreen: 'true'
   mozallowfullscreen: 'true'
 
+
 # construct an <iframe> element, with `src` and `id`
 util.iframe = (src, id) ->
   f = $ '<iframe>'
@@ -49,11 +59,13 @@ util.iframe = (src, id) ->
   f.attr 'id', id if id?
   f
 
+
 # get the acorn variable in given <iframe> element
 util.acornInIframe = (iframe) ->
   iframe = iframe.get 0 if iframe.jquery?
   win = iframe.contentWindow ? iframe.contentDocument.defaultView
   win.acorn
+
 
 # creates and returns a get/setter with a closured variable
 util.property = (defaultValue, validate) ->
@@ -64,6 +76,7 @@ util.property = (defaultValue, validate) ->
     storedValue = validate value if value?
     storedValue
 
+
 # requests full screen with given elem
 util.fullscreen = (elem) ->
   elem = elem[0] if elem.jquery?
@@ -73,6 +86,7 @@ util.fullscreen = (elem) ->
     elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT)
   else if elem.mozRequestFullScreen
     elem.mozRequestFullScreen()
+
 
 # add acorn css
 util.appendCss = (srcs) ->
@@ -123,14 +137,19 @@ util.parseUrl = (url) ->
   result
 
 
+
 # converts human-readable timestring to seconds and back
 # human-readable format is: [[hh:]mm:]ss[.SSS]
 class util.Time
+
+
   constructor: (time) ->
     @time = @constructor.timestringToSeconds time
 
+
   seconds: => @time
   timestring: => @constructor.secondsToTimestring @time
+
 
   @timestringToSeconds: (timestring) =>
     timestring = String(timestring ? 0)
@@ -145,6 +164,7 @@ class util.Time
 
     # convert to seconds
     (hrs * 60 * 60) + (min * 60) + sec + subsec
+
 
   @secondsToTimestring: (seconds) =>
     sec = parseInt seconds, 10
@@ -170,22 +190,27 @@ class util.Time
 
 class util.Timer
 
+
   constructor: (@interval, @callback, @args) ->
     @callback ?= ->
     @args ?= []
     @args = [@args] unless _.isArray @args
 
+
   startTick: =>
     @stopTick()
     @intervalObject = setInterval @onTick, @interval
+
 
   stopTick: =>
     if @intervalObject
       clearInterval @intervalObject
       @intervalObject = undefined
 
+
   onTick: =>
     @callback @args...
+
 
 
 # -- regular expressions
@@ -193,6 +218,7 @@ class util.Timer
 util.LINK_REGEX = /// ^
     https?://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]
   ///
+
 
 
 # -- jQuery utils
