@@ -21,9 +21,6 @@ PDFLinkShell = acorn.shells.PDFLinkShell =
 class PDFLinkShell.Model extends LinkShell.Model
 
 
-  thumbnail: =>
-    acorn.util.imgUrl('thumbnails/pdf.png')
-
 
 
 class PDFLinkShell.MediaView extends LinkShell.MediaView
