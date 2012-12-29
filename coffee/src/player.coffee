@@ -35,7 +35,7 @@ class acorn.player.Player
       eventhub: @eventhub
 
     if @acornModel.isNew()
-      @eventhub.trigger 'show:edit'
+      @eventhub.trigger 'show:editor'
     else
       @eventhub.trigger 'show:splash'
 
