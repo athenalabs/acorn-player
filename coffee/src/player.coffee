@@ -34,8 +34,10 @@ class acorn.player.Player
         shellModel: @shellModel
       eventhub: @eventhub
 
-    @eventhub.trigger 'show:splash'
-
+    if @acornModel.isNew()
+      @eventhub.trigger 'show:edit'
+    else
+      @eventhub.trigger 'show:splash'
 
   appendTo: (sel) =>
     @$el ?= $('<div>').addClass('acorn-player')
