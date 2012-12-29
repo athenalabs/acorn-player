@@ -44,18 +44,25 @@ describe 'acorn.shells.VideoLinkShell', ->
     describe 'VideoLinkShell.Model', ->
 
       link = 'http://video.com/video.mov'
-
-      model = new Model
+      options  =
         link: link
         timeStart: 33
         timeEnd: 145
         loops: 2
 
       it 'should have a description method that describes the shell', ->
+        model = new Model options
         expect(model.description()).toBe "Video #{link} from 00:33 to 02:25."
 
       it 'should have a duration method that returns a number', ->
+        model = new Model options
         expect(typeof model.duration()).toBe 'number'
+
+      it 'should have a timeTotal property (with setter:false)', ->
+        model = new Model options
+        expect(model.timeTotal()).toBe Infinity
+        expect(model.timeTotal(1)).toBe Infinity
+        expect(model.timeTotal()).toBe Infinity
 
 
     describe 'VideoLinkShell.MediaView', ->

@@ -38,18 +38,14 @@ class Shell.Model extends athena.lib.Model
     # set default property values
     unless @shellid()?
       @set {shellid: @module.id}
-    unless _.isArray @sources()
-      @sources []
-    unless @thumbnail()?
-      @thumbnail acorn.config.img.acorn
 
 
   # property managers
-  shellid: @property('shellid', false)
-  title: @property 'title'
-  description: @property 'description'
-  sources: @property 'sources'
-  thumbnail: @property 'thumbnail'
+  shellid: @property('shellid', setter: false)
+  title: @property('title', default: '')
+  description: @property('description', default: '')
+  sources: @property('sources', default: [])
+  thumbnail: @property('thumbnail', default: acorn.config.img.acorn)
 
 
   toString: =>

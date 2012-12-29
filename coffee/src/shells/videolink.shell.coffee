@@ -33,13 +33,16 @@ class VideoLinkShell.Model extends LinkShell.Model
 
   timeStart: @property 'timeStart'
   timeEnd: @property 'timeEnd'
-  timeTotal: @property('timeTotal', false)
+  timeTotal: @property('timeTotal', setter: false)
 
 
   description: =>
-    start = acorn.util.Time.secondsToTimestring @timeStart()
-    end = acorn.util.Time.secondsToTimestring @timeEnd()
-    "Video #{@link()} from #{start} to #{end}."
+    desc = super
+    unless desc
+      start = acorn.util.Time.secondsToTimestring @timeStart()
+      end = acorn.util.Time.secondsToTimestring @timeEnd()
+      desc = "Video #{@link()} from #{start} to #{end}."
+    desc
 
 
   # duration of one video loop given current splicing

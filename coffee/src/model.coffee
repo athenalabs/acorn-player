@@ -13,18 +13,14 @@ class acorn.Model extends athena.lib.Model
     # set default property values
     unless @acornid()?
       @acornid 'new'
-    unless @title()?
-      @title 'New Acorn'
-    unless @thumbnail()?
-      @thumbnail acorn.config.img.acorn
     unless @shellData()?
       @shellData { shellid: 'acorn.LinkShell' }
 
 
   # property managers
   acornid: @property 'acornid'
-  title: @property 'title'
-  thumbnail: @property 'thumbnail'
+  title: @property('title', default: 'New Acorn')
+  thumbnail: @property('thumbnail', default: acorn.config.img.acorn)
   shellData: @property 'shell'
 
 

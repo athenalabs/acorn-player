@@ -86,6 +86,9 @@ acorn.util.test =
           s = m.toJSONString()
           expect(JSON.stringify m.attributes).toEqual s
 
+
+
+
       describeView Module.MediaView, athena.lib.View, viewOptions(), ->
 
         MediaView = Module.MediaView
