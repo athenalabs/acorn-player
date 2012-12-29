@@ -133,6 +133,16 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
 
 
   seek: (seconds) =>
+    # Unless playing, seek first to the wrong place. YouTube's player has a bug
+    # such that, when not playing, it occasionally seeks incorrectly (this seems
+    # to happen after 2 correct seeks)
+    unless @isPlaying()
+      wrongPlace = if seconds + 1 < @model.timeTotal()
+        seconds + 1
+      else
+        if seconds - 1 >= 0 then 0 else seconds
+      @player?.seekTo(wrongPlace, true)
+
     @player?.seekTo(seconds, true)
 
 
