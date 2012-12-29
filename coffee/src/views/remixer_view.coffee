@@ -16,7 +16,9 @@ ImageLinkShell = acorn.shells.ImageLinkShell
 # View to select options.
 class acorn.player.RemixerView extends athena.lib.View
 
-  className: @::className + ' remixer-view row-fluid'
+
+  className: @classNameExtend 'remixer-view row-fluid'
+
 
   template: _.template '''
     <div class="row-fluid remixer-header">

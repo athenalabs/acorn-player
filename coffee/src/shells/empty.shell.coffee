@@ -23,6 +23,10 @@ class EmptyShell.Model extends Shell.Model
 
 class EmptyShell.MediaView extends Shell.MediaView
 
+
+  className: @classNameExtend 'empty-shell'
+
+
   render: =>
     @$el.empty()
     @$el.append('this acorn is empty :(')

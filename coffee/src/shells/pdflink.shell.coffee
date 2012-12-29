@@ -29,7 +29,15 @@ class PDFLinkShell.Model extends LinkShell.Model
 class PDFLinkShell.MediaView extends LinkShell.MediaView
 
 
+  className: @classNameExtend 'pdf-shell'
+
+
+
 class PDFLinkShell.RemixView extends LinkShell.RemixView
+
+
+  className: @classNameExtend 'pdf-shell'
+
 
 
 acorn.registerShellModule PDFLinkShell
