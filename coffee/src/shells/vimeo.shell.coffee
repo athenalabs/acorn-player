@@ -181,7 +181,9 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
       @_isPlaying = true
       @trigger 'PlayerView:StateChange'
 
-    @player.addEvent 'seek', @onVimeoSeek
+    @player.addEvent 'seek', (params) =>
+      @_seekOffset = parseFloat params.seconds
+      @enforceVimeoPlaybackState()
 
     @player.addEvent 'playProgress', (params) =>
       @_timeTotal = parseFloat params.duration
@@ -194,7 +196,7 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
   # Vimeo's api claims to hold playing-state constant through seeks, but seems
   # to play after any seek (and if previously paused, doesn't realize that the
   # state has changed).
-  onVimeoSeek: =>
+  enforceVimeoPlaybackState: =>
     # get desirable state
     wasPlaying = @isPlaying()
 
