@@ -191,14 +191,19 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
     @trigger 'PlayerView:Ready'
 
 
+  # Vimeo's api claims to hold playing-state constant through seeks, but seems
+  # to play after any seek (and if previously paused, doesn't realize that the
+  # state has changed).
   onVimeoSeek: =>
-    # Vimeo's api claims to hold playing-state constant through seeks, but seems
-    # to play after any seek (and doesn't announce a state-change when video was
-    # previously paused).
-    #
-    # The following hack is irrelevant, however, since pause seems to have no
-    # effect in this circumstance. Calling it after a timeout does not help.
-    if @isPlaying() then @play() else @pause()
+    # get desirable state
+    wasPlaying = @isPlaying()
+
+    # force state to `PLAYING`
+    @play()
+
+    # pause if appropriate
+    unless wasPlaying
+      @pause()
 
 
 
