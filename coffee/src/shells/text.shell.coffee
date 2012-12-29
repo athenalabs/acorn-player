@@ -18,8 +18,9 @@ TextShell = acorn.shells.TextShell =
 
 class TextShell.Model extends Shell.Model
 
-  properties: => _.extend super,
-    text: ''
+
+  text: @property 'text'
+
 
 
 # Renders the text

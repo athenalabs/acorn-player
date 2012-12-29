@@ -28,26 +28,25 @@ Shell = acorn.shells.Shell =
   icon: 'icon-sign-blank'
 
 
+
 class Shell.Model extends athena.lib.Model
 
-  properties: => _.extend super,
 
-    # Ensure that the model instance shellid property
-    # reflects the module's shellid
-    shellid: @module.id
+  initialize: =>
+    super
 
-    # title of the piece of media
-    title: ''
+    # set default property values
+    @set {shellid: @module.id} unless @shellid()?
+    @sources [] unless _.isArray @sources()
+    @thumbnail acorn.config.img.acorn unless @thumbnail()?
 
-    # description of the piece of media
-    description: ''
 
-    # contributing sources to the piece of media;
-    # expected to be of type Array
-    sources: []
-
-    # a URL to a thumbnail for the piece of media
-    thumbnail: acorn.config.img.acorn
+  # property managers
+  shellid: @property('shellid', false)
+  title: @property 'title'
+  description: @property 'description'
+  sources: @property 'sources'
+  thumbnail: @property 'thumbnail'
 
 
   toString: =>

@@ -3,25 +3,25 @@ goog.provide 'acorn.Model'
 goog.require 'acorn.util'
 
 
-class acorn.Model extends athena.lib.Model
 
-  properties: => _.extend super,
-    'acornid':   'new'
-    'title':     'New Acorn'
-    'thumbnail': '/img/acorn.png'
+class acorn.Model extends athena.lib.Model
 
 
   initialize: =>
     super
 
     # set default value for shellData
-    unless @shellData()?
-      @shellData { shellid: 'acorn.LinkShell' }
+    unless @acornid()? then @acornid 'new'
+    unless @title()? then @title 'New Acorn'
+    unless @thumbnail()? then @thumbnail acorn.config.img.acorn
+    unless @shellData()? then @shellData { shellid: 'acorn.LinkShell' }
 
 
-  shellData: (shellData) =>
-    if shellData? then @set 'shell', shellData
-    @get 'shell'
+  # property managers
+  acornid: @property 'acornid'
+  title: @property 'title'
+  thumbnail: @property 'thumbnail'
+  shellData: @property 'shell'
 
 
   idAttribute: 'acornid'

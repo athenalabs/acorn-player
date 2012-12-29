@@ -23,21 +23,22 @@ VideoLinkShell = acorn.shells.VideoLinkShell =
 class VideoLinkShell.Model extends LinkShell.Model
 
 
-  properties: => _.extend super,
-    timeStart: undefined
-    timeEnd: undefined
-    timeTotal: undefined
+  initialize: =>
+    super
+
+    # set default property values
+    unless @timeTotal() >= 0 then @set 'timeTotal', Infinity
+
+
+  timeStart: @property 'timeStart'
+  timeEnd: @property 'timeEnd'
+  timeTotal: @property('timeTotal', false)
 
 
   description: =>
     start = acorn.util.Time.secondsToTimestring @timeStart()
     end = acorn.util.Time.secondsToTimestring @timeEnd()
     "Video #{@link()} from #{start} to #{end}."
-
-
-  # total possible video time (media length)
-  timeTotal: =>
-    @timeTotal() ? Infinity
 
 
   # duration of one video loop given current splicing
