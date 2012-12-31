@@ -27,7 +27,7 @@ util.isPath = (path) ->
 # helpers to construct acorn urls TODO: delete these?
 util.url = ->
   path = _.toArray(arguments).join '/'
-  "http://#{acorn.config.domain}/#{path}"
+  "//#{acorn.config.domain}/#{path}"
 
 
 util.apiUrl = ->
