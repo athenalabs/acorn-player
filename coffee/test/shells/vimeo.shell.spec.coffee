@@ -326,14 +326,17 @@ describe 'acorn.shells.VimeoShell', ->
           pv.off 'PlayerView:Ready'
           pv.onVimeoPlayerReady()
 
-          # expect PLAYING state
-          runs -> expect(pv.isPlaying()).toBe true
-
           # pause video, expect PAUSED state
           runs -> pv.player.api 'pause'
           waitsFor (->
             not pv.isPlaying()
           ), 'playerView to register paused state', 10000
+
+          # play video, expect PLAYING state
+          runs -> pv.player.api 'play'
+          waitsFor (->
+            pv.isPlaying()
+          ), 'playerView to register playing state', 10000
 
         it 'should report seek offset', ->
           runs -> pv.player.api 'seekTo', 30
