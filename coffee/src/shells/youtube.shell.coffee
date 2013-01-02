@@ -196,6 +196,9 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
         else
           @player.cueVideoById(@model.youtubeId(), start)
 
+        @trigger 'PlayerView:Ready'
+
+
       onStateChange: (event) =>
         @trigger 'PlayerView:StateChange', @, @player.getPlayerState()
 
