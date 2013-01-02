@@ -230,7 +230,6 @@ describe 'acorn.shells.VimeoShell', ->
         beforeEach ->
           pv = new PlayerView viewOptions()
 
-          loading = false
           # set listeners and start playing on pv ready
           pv.on 'PlayerView:Ready', ->
             pv.player.addEvent 'play', -> paused = false
@@ -246,7 +245,7 @@ describe 'acorn.shells.VimeoShell', ->
           # must be appended to DOM in order to load properly
           runs -> $hiddenPlayer.append pv.render().el
 
-          # wait for loading
+          # wait for playing
           waitsFor (-> not paused), 'video to play', 10000
 
         afterEach ->
