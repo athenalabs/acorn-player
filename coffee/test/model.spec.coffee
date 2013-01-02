@@ -18,9 +18,10 @@ describe 'acorn.Model', ->
 
   it 'should have config-based urls', ->
     m = new Model {acornid:'hi'}
-    expect(m.url()).toBe "#{acorn.config.url.base}/#{m.acornid()}"
-    expect(m.apiurl()).toBe "#{acorn.config.url.api}/#{m.acornid()}"
-    expect(m.embedurl()).toBe "#{acorn.config.url.base}/embed/#{m.acornid()}"
+    expect(m.urlRoot()).toBe "#{acorn.config.url.api}/acorn"
+    expect(m.url()).toBe "#{acorn.config.url.api}/acorn/#{m.acornid()}"
+    expect(m.pageUrl()).toBe "#{acorn.config.url.base}/#{m.acornid()}"
+    expect(m.embedUrl()).toBe "#{acorn.config.url.base}/embed/#{m.acornid()}"
 
   it 'should be clonable (with deep-copies)', ->
     deep = {'a': 5}
@@ -88,6 +89,9 @@ describe 'acorn.Model', ->
 
     #TODO expand this into comprehensive tests.
     #TODO find a way to mock the server in the future.
+
+    # Uncomment this to run locally:
+    # acorn.config.setDomain 'localhost.athena.ai:8000'
 
     it 'should be able to fetch', ->
       nyfskeqlyx = new Model acornid:'nyfskeqlyx'

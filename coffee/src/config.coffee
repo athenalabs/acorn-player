@@ -7,7 +7,7 @@ _.extend acorn.config,
   domain: 'staging.acorn.athena.ai'
   version: '0.0.0'
   api:
-    version: '0.0.1'
+    version: '0.0.2'
 
 
 acorn.config.url = {}
