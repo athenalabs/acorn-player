@@ -46,7 +46,7 @@ class VimeoShell.Model extends VideoLinkShell.Model
 
   title: =>
     cache = @metaData()
-    if cache.synced() then cache.data().data.title else @get('link')
+    if cache.synced() then cache.data()[0].title else @get('link')
 
 
   # returns the vimeo video id of this link.
