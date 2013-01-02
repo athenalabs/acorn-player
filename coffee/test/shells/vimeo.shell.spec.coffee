@@ -140,18 +140,26 @@ describe 'acorn.shells.VimeoShell', ->
     # tests pass when run with `grunt server`, they fail when run with
     # `grunt test`
     xdescribe 'VimeoShell.PlayerView', ->
+      pv = undefined
+      $hiddenPlayer = undefined
 
-      it 'should load and ready a vimeo player on render', ->
+      beforeEach ->
         pv = new PlayerView viewOptions()
-        setPlayerListener = false
-        playerReady = false
-        pvReady = false
-        pv.on 'PlayerView:Ready', -> pvReady = true
 
         # setup DOM
         acorn.util.appendCss()
         $hiddenPlayer = $('<div>').addClass('acorn-player hidden').width(600)
             .height(400).appendTo('body')
+
+      afterEach ->
+        pv.destroy()
+        $hiddenPlayer.remove()
+
+      it 'should load and ready a vimeo player on render', ->
+        setPlayerListener = false
+        playerReady = false
+        pvReady = false
+        pv.on 'PlayerView:Ready', -> pvReady = true
 
         # must be appended to DOM in order to load properly
         runs -> $hiddenPlayer.append pv.render().el
@@ -177,8 +185,6 @@ describe 'acorn.shells.VimeoShell', ->
         ), 'player ready', 10000
 
       it 'should load a vimeo player on render that loads video when played', ->
-        pv = new PlayerView viewOptions()
-
         loading = false
         # set 'loadProgress' listener and start playing on pv ready
         pv.on 'PlayerView:Ready', ->
@@ -188,11 +194,6 @@ describe 'acorn.shells.VimeoShell', ->
 
           pv.player.api 'play'
 
-        # setup DOM
-        acorn.util.appendCss()
-        $hiddenPlayer = $('<div>').addClass('acorn-player hidden').width(600)
-            .height(400).appendTo('body')
-
         # must be appended to DOM in order to load properly
         runs -> $hiddenPlayer.append pv.render().el
 
@@ -200,35 +201,25 @@ describe 'acorn.shells.VimeoShell', ->
         waitsFor (-> loading), 'video loading', 10000
 
       it 'should announce state changes', ->
-        pv = new PlayerView viewOptions()
-
         # start playing on pv ready
         pv.on 'PlayerView:Ready', -> pv.player.api 'play'
 
         stateChanged = false
         pv.on 'PlayerView:StateChange', -> stateChanged = true
-
-        # load player view
-        acorn.util.appendCss()
-        $hiddenPlayer = $('<div>').addClass('acorn-player hidden').width(600)
-            .height(400).appendTo('body')
         runs -> $hiddenPlayer.append pv.render().el
 
         waitsFor (-> stateChanged), 'state change event', 10000
 
 
       describe 'video player view api', ->
-        pv = undefined
-        $hiddenPlayer = undefined
-
-        # froogaloop 'paused' query does not work, so track paused status
-        # manually. for details on bug, see:
-        #   https://github.com/vimeo/player-api/issues/31
-        #   http://stackoverflow.com/questions/14119494/
-        paused = true
+        paused = undefined
 
         beforeEach ->
-          pv = new PlayerView viewOptions()
+          # froogaloop 'paused' query does not work, so track paused status
+          # manually. for details on bug, see:
+          #   https://github.com/vimeo/player-api/issues/31
+          #   http://stackoverflow.com/questions/14119494/
+          paused = true
 
           # set listeners and start playing on pv ready
           pv.on 'PlayerView:Ready', ->
@@ -237,21 +228,11 @@ describe 'acorn.shells.VimeoShell', ->
 
             pv.player.api 'play'
 
-          # setup DOM
-          acorn.util.appendCss()
-          $hiddenPlayer = $('<div>').addClass('acorn-player hidden').width(600)
-              .height(400).appendTo('body')
-
           # must be appended to DOM in order to load properly
           runs -> $hiddenPlayer.append pv.render().el
 
           # wait for playing
           waitsFor (-> not paused), 'video to play', 10000
-
-        afterEach ->
-          pv.destroy()
-          $hiddenPlayer.remove()
-          paused = true
 
         it 'should play', ->
           # pause video with vimeo API, don't expect PLAYING state
@@ -385,12 +366,8 @@ describe 'acorn.shells.VimeoShell', ->
 
 
       it 'should look good', ->
-        # setup DOM
-        acorn.util.appendCss()
-        $player = $('<div>').addClass('acorn-player').width(600).height(400)
-            .appendTo('body')
+        $player = $hiddenPlayer.removeClass 'hidden'
 
-        pv = new PlayerView viewOptions()
         pvReady = false
         pv.on 'PlayerView:Ready', -> pvReady = true
 
@@ -399,3 +376,9 @@ describe 'acorn.shells.VimeoShell', ->
           $player.append pv.render().el
           pv.$el.find('iframe').width(600).height(371)
         waitsFor (-> pvReady), 'player view ready', 10000
+
+        runs ->
+          # stub afterEach pv.destroy() and $hiddenPlayer.remove() calls so that
+          # playerView remains in DOM
+          pv = destroy: ->
+          $hiddenPlayer = remove: ->
