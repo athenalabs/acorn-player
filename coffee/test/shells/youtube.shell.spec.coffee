@@ -182,8 +182,8 @@ describe 'acorn.shells.YouTubeShell', ->
       it 'should announce state changes', ->
         pv = new PlayerView viewOptions()
 
-        eventFired = false
-        pv.on 'PlayerView:StateChange', -> eventFired = true
+        stateChanged = false
+        pv.on 'PlayerView:StateChange', -> stateChanged = true
 
         # load player and cue video
         acorn.util.appendCss()
@@ -194,7 +194,8 @@ describe 'acorn.shells.YouTubeShell', ->
 
         runs -> pv.player.playVideo()
 
-        waitsFor (-> eventFired), 'state change event', 10000
+        waitsFor (-> stateChanged), 'state change event', 10000
+
 
       describe 'video player view api', ->
         pv = undefined
@@ -343,6 +344,7 @@ describe 'acorn.shells.YouTubeShell', ->
           waitsFor (->
             pv.seekOffset() == 20
           ), 'playerView to register seekOffset to 20 while paused', 10000
+
 
       it 'should look good', ->
         # setup DOM
