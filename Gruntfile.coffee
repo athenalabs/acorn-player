@@ -21,7 +21,7 @@ module.exports = (grunt) ->
 
     # javascript sources
     js_dir: 'build/js'
-    js_src: 'build/js/src/**/*.js'
+    js_src: ['build/js/src/**/*.js', 'lib/range_slider.js']
     js_specs: 'build/js/test/**/*.spec.js'
 
     # css sources
