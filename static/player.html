@@ -71,7 +71,7 @@ How to use:
 
     if (player)
       player.acornModel.off('change')
-    player = new acorn.player.Player({acornModel: acornModel});
+    player = new acorn.player.Player({acornModel: acornModel, editable: true});
     player.appendTo(container);
     player.acornModel.on('change', function () {
       updateInputs(player.acornModel);
