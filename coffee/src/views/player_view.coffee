@@ -27,17 +27,23 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     unless @model.shellModel instanceof acorn.shells.Shell.Model
       TypeError @model.shellModel, 'acorn.Model'
 
-    @eventhub.on 'show:editor', => @content @editorView()
+    @editable !!@options.editable
+
+    @eventhub.on 'show:editor', => @editable() and @content @editorView()
     @eventhub.on 'show:splash', => @content @splashView()
     @eventhub.on 'show:content', => @content @contentView()
 
     @eventhub.on 'Editor:Saved', @onSave
     @eventhub.on 'Editor:Cancel', =>
+      unless @editable()
+        return
       @_editorView?.destroy()
       @_editorView = undefined
       @content @contentView()
 
-    @eventhub.on 'EditControl:Click', => @eventhub.trigger 'show:editor'
+    @eventhub.on 'EditControl:Click', =>
+      if @editable()
+        @eventhub.trigger 'show:editor'
     @eventhub.on 'AcornControl:Click', => @openAcornWebsite()
     @eventhub.on 'SourcesControl:Click', => @eventhub.trigger 'show:sources'
     @eventhub.on 'FullscreenControl:Click', => @enterFullscreen()
@@ -58,13 +64,34 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
 
 
   editorView: =>
+    unless @editable()
+      return
+
     @_editorView ?= new acorn.player.EditorView
       eventhub: @eventhub
       model: @model.acornModel.clone()
     @_editorView
 
 
+  editable: (editable) =>
+    if editable?
+      @_editable = editable
+
+      # adjust editable class
+      if @_editable
+        @$el.addClass 'editable'
+        @$el.removeClass 'uneditable'
+      else
+        @$el.removeClass 'editable'
+        @$el.addClass 'uneditable'
+
+    @_editable
+
+
   onSave: =>
+    unless @editable()
+      return
+
     @model.acornModel.set @_editorView.model.attributes
     @model.shellModel.set @model.acornModel.shellData()
 

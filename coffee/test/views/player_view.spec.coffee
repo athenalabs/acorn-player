@@ -65,14 +65,14 @@ describe 'acorn.player.PlayerView', ->
   describeView = athena.lib.util.test.describeView
   describeView PlayerView, athena.lib.View, options
 
-  describePlayerSubiew = (name, View) ->
+  describePlayerSubiew = (name, View, tests) ->
 
     describe "PlayerView::#{name}", ->
 
       local = "_#{name}"
 
       it "#{name} should be a lazyily constructed #{View.name}", ->
-        view = new PlayerView model: model
+        view = new PlayerView model: model, editable: true
         view.render()
         expect(view[local]).not.toBeDefined()
 
@@ -81,7 +81,7 @@ describe 'acorn.player.PlayerView', ->
         expect(view[local]).toBe subview
 
       it "#{name} should remain the same once contrsucted", ->
-        view = new PlayerView model: model
+        view = new PlayerView model: model, editable: true
         view.render()
         expect(view[local]).not.toBeDefined()
 
@@ -91,7 +91,7 @@ describe 'acorn.player.PlayerView', ->
         expect(view[name]()).toBe subview
 
       it "#{name} should be re-constructed if deleted", ->
-        view = new PlayerView model: model
+        view = new PlayerView model: model, editable: true
         view.render()
         expect(view[local]).not.toBeDefined()
 
@@ -107,20 +107,43 @@ describe 'acorn.player.PlayerView', ->
         expect(view[name]()).toBe subview2
         expect(subview).not.toBe subview2
 
-  describePlayerSubiew 'editorView', acorn.player.EditorView
+      tests?()
+
+  editorViewTests = ->
+    name = 'editorView'
+    local = "_#{name}"
+    it "#{name} should not be constructed if playerView's `editable` property
+        is not truthy", ->
+      view = new PlayerView model: model
+      view.render()
+      expect(view[local]).not.toBeDefined()
+
+      subview = view[name]()
+      expect(subview).not.toBeDefined()
+      expect(view[local]).not.toBeDefined()
+
+  describePlayerSubiew 'editorView', acorn.player.EditorView, editorViewTests
   describePlayerSubiew 'splashView', acorn.player.SplashView
   describePlayerSubiew 'contentView', acorn.player.ContentView
 
 
   describe 'events', ->
 
-    it 'should show EditorView on eventhub `show:editor`', ->
+    it 'should show EditorView on eventhub `show:editor` if editable', ->
+      hub = new athena.lib.View
+      view = new PlayerView model: model, eventhub: hub, editable: true
+      view.render()
+      expect(view.content() instanceof acorn.player.EditorView).toBe false
+      hub.trigger 'show:editor'
+      expect(view.content() instanceof acorn.player.EditorView).toBe true
+
+    it 'should not show EditorView on eventhub `show:editor` if uneditable', ->
       hub = new athena.lib.View
       view = new PlayerView model: model, eventhub: hub
       view.render()
       expect(view.content() instanceof acorn.player.EditorView).toBe false
       hub.trigger 'show:editor'
-      expect(view.content() instanceof acorn.player.EditorView).toBe true
+      expect(view.content() instanceof acorn.player.EditorView).toBe false
 
     it 'should show ContentView on eventhub `show:content`', ->
       hub = new athena.lib.View
@@ -140,11 +163,11 @@ describe 'acorn.player.PlayerView', ->
       expect(view.content() instanceof acorn.player.SplashView).toBe true
 
 
-  describe 'editor events', ->
+  describe 'editor events (when editable)', ->
 
     it 'should show contentView on `Editor:Cancel`', ->
       hub = new athena.lib.View
-      view = new PlayerView model: model, eventhub: hub
+      view = new PlayerView model: model, eventhub: hub, editable: true
       view.render()
       hub.trigger 'show:content'
       hub.trigger 'show:editor'
@@ -155,7 +178,7 @@ describe 'acorn.player.PlayerView', ->
 
     it 'should show contentView on `Editor:Saved`', ->
       hub = new athena.lib.View
-      view = new PlayerView model: model, eventhub: hub
+      view = new PlayerView model: model, eventhub: hub, editable: true
       view.render()
       hub.trigger 'show:content'
       hub.trigger 'show:editor'
@@ -166,7 +189,7 @@ describe 'acorn.player.PlayerView', ->
 
     it 'should destroy EditorView on `Editor:Cancel`', ->
       hub = new athena.lib.View
-      view = new PlayerView model: model, eventhub: hub
+      view = new PlayerView model: model, eventhub: hub, editable: true
       view.render()
 
       hub.trigger 'show:content'
@@ -181,7 +204,7 @@ describe 'acorn.player.PlayerView', ->
 
     it 'should destroy EditorView on `Editor:Saved`', ->
       hub = new athena.lib.View
-      view = new PlayerView model: model, eventhub: hub
+      view = new PlayerView model: model, eventhub: hub, editable: true
       view.render()
 
       hub.trigger 'show:content'
@@ -196,7 +219,7 @@ describe 'acorn.player.PlayerView', ->
 
     it 'should destroy and replace existing ContentView on `Editor:Saved`', ->
       hub = new athena.lib.View
-      view = new PlayerView model: model, eventhub: hub
+      view = new PlayerView model: model, eventhub: hub, editable: true
       view.render()
 
       hub.trigger 'show:content'
@@ -216,7 +239,7 @@ describe 'acorn.player.PlayerView', ->
 
     it 'should not modify acornModel or shellModel on `Editor:Cancel`', ->
       hub = new athena.lib.View
-      view = new PlayerView model: model, eventhub: hub
+      view = new PlayerView model: model, eventhub: hub, editable: true
       view.render()
 
       hub.trigger 'show:content'
@@ -250,7 +273,7 @@ describe 'acorn.player.PlayerView', ->
 
     it 'should modify acornModel and shellModel on `Editor:Saved`', ->
       hub = new athena.lib.View
-      view = new PlayerView model: model, eventhub: hub
+      view = new PlayerView model: model, eventhub: hub, editable: true
       view.render()
 
       hub.trigger 'show:content'
@@ -285,13 +308,33 @@ describe 'acorn.player.PlayerView', ->
       expect(view.model.shellModel.attributes).not.toEqual shellData
 
 
+  it 'should allow editable status management through editable method', ->
+    view = new PlayerView model: model
+    expect(view.editable()).toBeFalsy()
+    view.editable true
+    expect(view.editable()).toBeTruthy()
+
+    view = new PlayerView model: model, editable: true
+    expect(view.editable()).toBeTruthy()
+    view.editable false
+    expect(view.editable()).toBeFalsy()
+
+  it 'should announce editable status in css', ->
+    view = new PlayerView model: model
+    expect(view.$el.hasClass 'editable').toBe false
+    expect(view.$el.hasClass 'uneditable').toBe true
+
+    view = new PlayerView model: model, editable: true
+    expect(view.$el.hasClass 'editable').toBe true
+    expect(view.$el.hasClass 'uneditable').toBe false
+
   it 'should look good', ->
     # setup DOM
     acorn.util.appendCss()
     $player = $('<div>').addClass('acorn-player').appendTo('body')
 
     # add a PlayerView into the DOM to see how it looks.
-    view = new PlayerView model: model
+    view = new PlayerView model: model, editable: true
     view.$el.width 600
     view.$el.height 400
     view.render()

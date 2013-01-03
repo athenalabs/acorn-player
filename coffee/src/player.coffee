@@ -33,6 +33,7 @@ class acorn.player.Player
         acornModel: @acornModel,
         shellModel: @shellModel
       eventhub: @eventhub
+      editable: @options.editable
 
     if @acornModel.isNew()
       @eventhub.trigger 'show:editor'
