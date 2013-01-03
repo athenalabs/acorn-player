@@ -95,6 +95,7 @@ class IconControlView extends ControlView
 
 class FullscreenControlView extends IconControlView
   controlName: => 'FullscreenControl'
+  className: @classNameExtend 'fullscreen'
   tooltip: => title: 'Fullscreen', delay: show: 1500
   defaults: => _.extend super,
     icon: 'fullscreen'
@@ -103,6 +104,7 @@ class FullscreenControlView extends IconControlView
 
 class EditControlView extends IconControlView
   controlName: => 'EditControl'
+  className: @classNameExtend 'edit'
   tooltip: => title: 'Edit', delay: show: 1500
   defaults: => _.extend super,
     icon: 'edit'
@@ -111,6 +113,7 @@ class EditControlView extends IconControlView
 
 class SourcesControlView extends IconControlView
   controlName: => 'SourcesControl'
+  className: @classNameExtend 'sources'
   tooltip: => title: 'Sources', delay: show: 1500
   defaults: => _.extend super,
     icon: 'globe'
@@ -119,6 +122,7 @@ class SourcesControlView extends IconControlView
 
 class PreviousControlView extends IconControlView
   controlName: => 'PreviousControl'
+  className: @classNameExtend 'previous'
   tooltip: => title: 'Previous', delay: show: 1500
   defaults: => _.extend super,
     icon: 'arrow-left'
@@ -127,6 +131,7 @@ class PreviousControlView extends IconControlView
 
 class NextControlView extends IconControlView
   controlName: => 'NextControl'
+  className: @classNameExtend 'next'
   tooltip: => title: 'Next', delay: show: 1500
   defaults: => _.extend super,
     icon: 'arrow-right'
@@ -163,6 +168,7 @@ class ImageControlView extends ControlView
 
 class AcornControlView extends ImageControlView
   controlName: => 'AcornControl'
+  className: @classNameExtend 'acorn'
   tooltip: => title: 'Website', delay: show: 1500
   defaults: => _.extend super,
     image: acorn.config.img.acornIcon
