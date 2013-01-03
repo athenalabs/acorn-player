@@ -60,3 +60,11 @@ describe 'acorn.player.Player', ->
       p = new Player acornModel: acornModel
       expect(p.view.model.acornModel).toBe p.acornModel
       expect(p.view.model.shellModel).toBe p.shellModel
+
+  it 'should forward editable option to playerView', ->
+    p = new Player acornModel: acornModel
+    expect(p.view.editable()).toBeFalsy()
+
+    p = new Player acornModel: acornModel, editable: true
+    expect(p.view.editable()).toBeTruthy()
+
