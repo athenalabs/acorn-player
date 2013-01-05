@@ -25,6 +25,7 @@ class acorn.player.Player
 
     @acornModel = @options.acornModel # TODO initialize from id or data
     @shellModel = acorn.shellWithAcorn @acornModel
+    @editable = @options.editable or @acornModel.isNew()
     @eventhub = @
 
     @view = new acorn.player.PlayerView
@@ -33,12 +34,13 @@ class acorn.player.Player
         acornModel: @acornModel,
         shellModel: @shellModel
       eventhub: @eventhub
-      editable: @options.editable
+      editable: @editable
 
     if @acornModel.isNew()
       @eventhub.trigger 'show:editor'
     else
       @eventhub.trigger 'show:splash'
+
 
   appendTo: (sel) =>
     @$el ?= $('<div>').addClass('acorn-player')
