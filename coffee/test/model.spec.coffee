@@ -91,55 +91,84 @@ describe 'acorn.Model', ->
     #TODO find a way to mock the server in the future.
 
     # Uncomment this to run locally:
-    # acorn.config.setDomain 'localhost.athena.ai:8000'
+    acorn.config.setDomain 'localhost.athena.ai:8000'
+    acornid = undefined
+    nyfskeqlyx = 'https://www.youtube.com/watch?v=yYAw79386WI'
+
+    it 'should be able to create', ->
+      m = new Model shell:
+        shellid: 'acorn.YouTubeShell'
+        link: nyfskeqlyx
+      spy = new EventSpy m, 'sync'
+      runs -> m.save()
+      waitsFor (-> spy.triggered), 'save should complete',
+        acorn.config.test.timeout
+      runs ->
+        acornid = m.acornid()
+        expect(m.acornid()).toBeDefined()
+        expect(spy.triggered).toBe true
+
 
     it 'should be able to fetch', ->
-      nyfskeqlyx = new Model acornid:'nyfskeqlyx'
-      spy = new EventSpy nyfskeqlyx, 'change'
+      m = new Model acornid: acornid
+      spy = new EventSpy m, 'sync'
 
-      runs -> nyfskeqlyx.fetch()
+      runs -> m.fetch()
+      waitsFor (-> spy.triggered), 'sync should complete',
+        acorn.config.test.timeout
+      runs ->
+        shell = m.shellData()
+        expect(shell.shellid).toBe 'acorn.YouTubeShell'
+        expect(shell.link).toBe nyfskeqlyx
+
+    it 'should be able to save', ->
+      m1 = new Model acornid: acornid
+      m2 = new Model acornid: acornid
+      spy = new EventSpy m1, 'sync'
+      date = new Date().toString()
+
+      runs -> m1.fetch()
+
+      waitsFor (-> spy.triggered), 'fetch should complete',
+        acorn.config.test.timeout
+      runs ->
+        expect(m1.get 'updated').not.toEqual date
+        m1.set({updated: date})
+        m1.synced = false
+        m1.save {},
+          success: => m1.synced = true
+          error: (model, jqXHR, options) =>
+            expect(jqXHR).not.toBeDefined()
+            m1.synced = true
+
+      waitsFor (=> m1.synced), 'sync should complete',
+        acorn.config.test.timeout
+      runs ->
+        expect(m1.get 'updated').toEqual date
+        expect(m2.get 'updated').not.toEqual date
+        expect(m2.get 'updated').not.toEqual m1.get 'updated'
+
+        spy = new EventSpy m2, 'change'
+        m2.fetch()
+
       waitsFor (-> spy.triggered), 'fetch should complete',
         acorn.config.test.timeout
 
       runs ->
-        shell = nyfskeqlyx.shellData()
-        expect(shell.shellid).toBe 'acorn.YouTubeShell'
-        expect(shell.link).toBe 'https://www.youtube.com/watch?v=yYAw79386WI'
+        expect(m1.get 'updated').toEqual date
+        expect(m2.get 'updated').toEqual date
+        expect(m2.get 'updated').toEqual m1.get 'updated'
 
-    it 'should be able to save', ->
-      nyfskeqlyx1 = new Model acornid:'nyfskeqlyx'
-      nyfskeqlyx2 = new Model acornid:'nyfskeqlyx'
-      changeSpy = new EventSpy nyfskeqlyx1, 'change'
+
+    it 'should be able to delete', ->
+      m = new acorn.Model acornid: acornid
+      spy = new EventSpy m, 'sync'
       date = new Date().toString()
 
-      runs -> nyfskeqlyx1.fetch()
+      runs -> m.destroy()
 
-      waitsFor (-> changeSpy.triggered), 'fetch should complete',
+      waitsFor (-> spy.triggered), 'destroy should complete',
         acorn.config.test.timeout
-      runs ->
-        expect(nyfskeqlyx1.get 'updated').not.toEqual date
-        nyfskeqlyx1.set({updated: date})
-        nyfskeqlyx1.synced = false
-        nyfskeqlyx1.save {},
-          success: => nyfskeqlyx1.synced = true
-          error: (jqXHR, response, error) =>
-            console.log response
-            console.log error
-            nyfskeqlyx1.synced = true
 
-      waitsFor (=> nyfskeqlyx1.synced), 'sync should complete',
-        acorn.config.test.timeout
       runs ->
-        expect(nyfskeqlyx1.get 'updated').toEqual date
-        expect(nyfskeqlyx2.get 'updated').not.toEqual date
-        expect(nyfskeqlyx2.get 'updated').not.toEqual nyfskeqlyx1.get 'updated'
-
-        changeSpy = new EventSpy nyfskeqlyx2, 'change'
-        nyfskeqlyx2.fetch()
-
-      waitsFor (-> changeSpy.triggered), 'fetch should complete',
-        acorn.config.test.timeout
-      runs ->
-        expect(nyfskeqlyx1.get 'updated').toEqual date
-        expect(nyfskeqlyx2.get 'updated').toEqual date
-        expect(nyfskeqlyx2.get 'updated').toEqual nyfskeqlyx1.get 'updated'
+        expect(m.acornid()).toEqual(acornid)
