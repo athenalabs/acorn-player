@@ -61,10 +61,34 @@ describe 'acorn.player.Player', ->
       expect(p.view.model.acornModel).toBe p.acornModel
       expect(p.view.model.shellModel).toBe p.shellModel
 
+
+  it 'should force editable if acornModel.isNew()', ->
+    test = (options, bool) ->
+      expect(new Player(options).editable()).toBe bool
+
+    test({acornModel: acornModel}, true)
+    test({acornModel: acornModel, editable: false}, true)
+    test({acornModel: acornModel, editable: true}, true)
+
+    acornModel2 = acornModel.clone()
+    acornModel2.acornid('foo')
+    expect(acornModel2.isNew()).toBe false
+    test({acornModel: acornModel2}, false)
+    test({acornModel: acornModel2, editable: false}, false)
+    test({acornModel: acornModel2, editable: true}, true)
+
+
   it 'should forward editable option to playerView', ->
-    p = new Player acornModel: acornModel
+    acornModel2 = acornModel.clone()
+    acornModel2.acornid('foo')
+    expect(acornModel2.isNew()).toBe false
+
+    p = new Player acornModel: acornModel2
     expect(p.view.editable()).toBeFalsy()
 
-    p = new Player acornModel: acornModel, editable: true
+    p = new Player acornModel: acornModel2, editable: false
+    expect(p.view.editable()).toBeFalsy()
+
+    p = new Player acornModel: acornModel2, editable: true
     expect(p.view.editable()).toBeTruthy()
 
