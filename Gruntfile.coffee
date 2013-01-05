@@ -148,8 +148,15 @@ module.exports = (grunt) ->
 
     # task to watch sources for changes and recompile during development
     watch:
-      files: [paths.coffee_src, paths.less_src]
-      tasks: 'build' # or 'test', or 'testserver' :)
+      compile:
+        files: paths.coffee_src
+        tasks: 'compile'
+      specs:
+        files: [paths.coffee_src, paths.less_src]
+        tasks: 'deps'
+      less:
+        files: paths.less_src
+        tasks: 'less:dev'
 
     # task to run shell commands
     exec:
@@ -191,9 +198,8 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-jasmine-spec-server'
 
   # Register tasks
-  grunt.registerTask 'compile', ['exec:mkbuild', 'build', 'closureCompiler']
-  grunt.registerTask 'deps', ['coffee', 'closureDepsWriter']
-  grunt.registerTask 'build', ['deps', 'less:dev']
-  grunt.registerTask 'test', ['clean', 'build', 'jasmine', 'clean:test']
-  grunt.registerTask 'server', ['build', 'jasmineSpecServer', 'watch']
+  grunt.registerTask 'compile', ['exec:mkbuild', 'deps', 'closureCompiler']
+  grunt.registerTask 'deps', ['coffee', 'less:dev', 'closureDepsWriter']
+  grunt.registerTask 'test', ['clean', 'deps', 'jasmine', 'clean:test']
+  grunt.registerTask 'server', ['deps', 'jasmineSpecServer', 'watch:specs']
   grunt.registerTask 'default', ['compile']
