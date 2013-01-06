@@ -51,8 +51,9 @@ class acorn.player.ContentView extends athena.lib.View
     # @model.acornModel.on 'change', @render
 
     # construct a shell MediaView
-    @shellView = new @model.shellModel.module.MediaView
-      model: @model.shellModel
+    shellModel = acorn.shellWithAcorn @model
+    @shellView = new shellModel.module.MediaView
+      model: shellModel
       eventhub: @eventhub
 
     # construct a ControlToolbar for the acorn controls

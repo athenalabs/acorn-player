@@ -1,23 +1,17 @@
 goog.provide 'acorn.specs.player.ContentView'
 
 goog.require 'acorn.player.ContentView'
+goog.require 'acorn.Model'
 
 describe 'acorn.player.ContentView', ->
   ContentView = acorn.player.ContentView
 
-  # model for ContentView contruction
-  model =
-    acornModel: new athena.lib.Model
-    shellModel: new athena.lib.Model
+  Shell = acorn.shells.CollectionShell
 
-  # emulate shell, object with a MediaView property
-  module = MediaView: athena.lib.View
-  model.shellModel.module = module
-  module.MediaView::controls = [
-    IconControlView.withIcon 'play',
-    IconControlView.withIcon 'pause',
-    IconControlView.withIcon 'stop',
-  ]
+  # model for ContentView contruction
+  model = new acorn.Model
+    shell:
+      shellid: Shell.id
 
   # options for ContentView contruction
   options = model: model
@@ -31,7 +25,7 @@ describe 'acorn.player.ContentView', ->
 
   athena.lib.util.test.describeSubview
     View: ContentView
-    Subview: module.MediaView
+    Subview: Shell.MediaView
     subviewAttr: 'shellView'
     viewOptions: options
 

@@ -62,7 +62,7 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
   contentView: =>
     @_contentView ?= new acorn.player.ContentView
       eventhub: @eventhub
-      model: @model
+      model: @model.acornModel
     @_contentView
 
 

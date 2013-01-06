@@ -250,6 +250,9 @@ describe 'acorn.player.PlayerView', ->
       view = new PlayerView model: model, eventhub: hub, editable: true
       view.render()
 
+      otherAcornId = 'otheracornid '
+      otherShellId = 'acorn.LinkShell'
+
       hub.trigger 'show:content'
       hub.trigger 'show:editor'
       acornData = JSON.parse view.model.acornModel.toJSONString()
@@ -260,22 +263,22 @@ describe 'acorn.player.PlayerView', ->
         shellModel: view._editorView.shellEditorView.model
 
       # make a change to the editor's data
-      editorData.acornModel.set 'acornid', 'otheracornid'
-      editorData.shellModel.set 'shellid', 'othershellid'
+      editorData.acornModel.set 'acornid', otherAcornId
+      editorData.shellModel.set 'shellid', otherShellId
 
       # editor data should be changed
-      expect(editorData.acornModel.get 'acornid').toEqual 'otheracornid'
-      expect(editorData.shellModel.get 'shellid').toEqual 'othershellid'
+      expect(editorData.acornModel.get 'acornid').toEqual otherAcornId
+      expect(editorData.shellModel.get 'shellid').toEqual otherShellId
 
       # player data should not be changed
-      expect(view.model.acornModel.get 'acornid').not.toEqual 'otheracornid'
-      expect(view.model.shellModel.get 'shellid').not.toEqual 'othershellid'
+      expect(view.model.acornModel.get 'acornid').not.toEqual otherAcornId
+      expect(view.model.shellModel.get 'shellid').not.toEqual otherShellId
 
       hub.trigger 'Editor:Cancel'
 
       # player data should remain not changed
-      expect(view.model.acornModel.get 'acornid').not.toEqual 'otheracornid'
-      expect(view.model.shellModel.get 'shellid').not.toEqual 'othershellid'
+      expect(view.model.acornModel.get 'acornid').not.toEqual otherAcornId
+      expect(view.model.shellModel.get 'shellid').not.toEqual otherShellId
       expect(view.model.acornModel.attributes).toEqual acornData
       expect(view.model.shellModel.attributes).toEqual shellData
 
@@ -284,6 +287,9 @@ describe 'acorn.player.PlayerView', ->
       view = new PlayerView model: model, eventhub: hub, editable: true
       view.render()
 
+      otherAcornId = 'otheracornid '
+      otherShellId = 'acorn.LinkShell'
+
       hub.trigger 'show:content'
       hub.trigger 'show:editor'
       acornData = JSON.parse view.model.acornModel.toJSONString()
@@ -294,24 +300,24 @@ describe 'acorn.player.PlayerView', ->
         shellModel: view._editorView.shellEditorView.model
 
       # make a change to the editor's data
-      editorData.acornModel.set 'acornid', 'otheracornid'
-      editorData.shellModel.set 'shellid', 'othershellid'
+      editorData.acornModel.set 'acornid', otherAcornId
+      editorData.shellModel.set 'shellid', otherShellId
 
       # editor data should be changed
-      expect(editorData.acornModel.get 'acornid').toEqual 'otheracornid'
-      expect(editorData.shellModel.get 'shellid').toEqual 'othershellid'
+      expect(editorData.acornModel.get 'acornid').toEqual otherAcornId
+      expect(editorData.shellModel.get 'shellid').toEqual otherShellId
 
       # player data should not be changed
-      expect(view.model.acornModel.get 'acornid').not.toEqual 'otheracornid'
-      expect(view.model.shellModel.get 'shellid').not.toEqual 'othershellid'
+      expect(view.model.acornModel.get 'acornid').not.toEqual otherAcornId
+      expect(view.model.shellModel.get 'shellid').not.toEqual otherShellId
 
       # need to fake the consolidation _editorView.save does
       editorData.acornModel.shellData editorData.shellModel.attributes
       hub.trigger 'Editor:Saved'
 
       # player data should be changed
-      expect(view.model.acornModel.get 'acornid').toEqual 'otheracornid'
-      expect(view.model.shellModel.get 'shellid').toEqual 'othershellid'
+      expect(view.model.acornModel.get 'acornid').toEqual otherAcornId
+      expect(view.model.shellModel.get 'shellid').toEqual otherShellId
       expect(view.model.acornModel.attributes).not.toEqual acornData
       expect(view.model.shellModel.attributes).not.toEqual shellData
 
