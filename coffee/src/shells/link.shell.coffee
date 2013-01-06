@@ -111,7 +111,7 @@ class LinkShell.Model extends Shell.Model
     return new BestShell.Model link: link
 
 
-acorn.withLink = LinkShell.Model.withLink
+acorn.shellWithLink = LinkShell.Model.withLink
 
 
 
