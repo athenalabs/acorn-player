@@ -136,6 +136,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
   onBlurLink: (event) =>
     link = @$('input#link').val().trim();
+    link = acorn.util.urlFix link
 
     if acorn.util.isUrl link
       shell = LinkShell.Model.withLink link

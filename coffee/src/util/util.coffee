@@ -12,7 +12,36 @@ util.assert = (condition, description) ->
 
 
 util.urlRegEx = (url) ->
-    ///^(https?:\/\/)?#{url ? '.*'}$///
+    # temporary. should move away from using urlRegEx this way:
+    if url
+      return ///(https?:\/\/)?#{url ? '.*'}///
+
+    # john gruber's URL regex
+    # http://daringfireball.net/2010/07/improved_regex_for_matching_urls
+
+    ///
+    ^
+    (                       # Capture 1: entire matched URL
+      (?:
+        https?://               # http or https protocol
+        |                       #   or
+        www\d{0,3}[.]           # "www.", "www1.", "www2." … "www999."
+        |                           #   or
+        [a-z0-9.\-]+[.][a-z]{2,4}/  # looks like domain name followed by a slash
+      )
+      (?:                       # One or more:
+        [^\s()<>]+                  # Run of non-space, non-()<>
+        |                           #   or
+        \(([^\s()<>]+|(\([^\s()<>]+\)))*\)  # balanced parens, up to 2 levels
+      )+
+      (?:                       # End with:
+        \(([^\s()<>]+|(\([^\s()<>]+\)))*\)  # balanced parens, up to 2 levels
+        |                               #   or
+        [^\s`!()\[\]{};:'".,<>?«»“”‘’]        # not a space or punct char
+      )
+    )
+    $
+    ///
 
 
 util.isUrl = (url) ->
@@ -37,6 +66,15 @@ util.apiUrl = ->
 
 util.imgUrl = ->
   @url.apply(@, ['img'].concat _.toArray arguments)
+
+
+# fixes given url (or fragment) to be more correct
+util.urlFix = (url) ->
+
+  unless /^([a-z0-9]+:)?\/\//i.test url
+    url = "http://#{url}"
+
+  url
 
 
 # construct an <iframe> element, with `src` and `id`
@@ -113,7 +151,7 @@ util.parseUrl = (url) ->
   url = $.trim url
 
   # if no protocol is found, prepend http
-  url = "http://#{url}" unless /:\/\//.test url
+  url = "http://#{url}" unless /^([a-z0-9]+:)?\/\//i.test url
 
   anchor = document.createElement 'a'
   anchor.href = url

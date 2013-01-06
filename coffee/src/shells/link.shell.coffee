@@ -48,6 +48,10 @@ LinkShell = acorn.shells.LinkShell =
     unless link?
       return LinkShell
 
+    # ensure it is a valid url
+    unless acorn.util.isUrl link
+      TypeError link, 'url'
+
     # parse link into a location object
     location = acorn.util.parseUrl link
 
@@ -106,6 +110,8 @@ class LinkShell.Model extends Shell.Model
   @withLink: (link) =>
     unless acorn.util.isUrl link
       TypeError link, 'url'
+
+    link = acorn.util.urlFix link
 
     BestShell = @module.bestMatchingShell link
     return new BestShell.Model link: link

@@ -3,6 +3,30 @@ goog.provide 'acorn.specs.util'
 goog.require 'acorn.util'
 
 
+describe 'acorn.util.urlFix', ->
+
+  it 'should fix urls', ->
+
+    fixes = {
+      'foo.com': 'http://foo.com',
+    }
+
+    _.each fixes, (desired, given) =>
+      expect(acorn.util.urlFix given).toEqual desired
+
+
+  it 'should keep correct urls', ->
+
+    keeps = [
+      'http://foo.com',
+      'https://foo.com',
+    ]
+
+    _.each keeps, (given) =>
+      expect(acorn.util.urlFix given).toEqual given
+
+
+
 describe 'acorn.util.Time', ->
   Time = acorn.util.Time
   it 'should exist', ->
