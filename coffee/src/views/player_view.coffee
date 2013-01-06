@@ -107,7 +107,7 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     # clear previous contentView to force reload, then show
     @_contentView?.destroy()
     @_contentView = undefined
-    @content @contentView()
+    @eventhub.trigger 'show:content'
 
     # clear editorView
     @_editorView?.destroy()
