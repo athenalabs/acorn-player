@@ -76,7 +76,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
     selected = @model.module.id
     if selected == Shell.id
-      selected = LinkShell.id
+      selected = EmptyShell.id
 
     @dropdownView = new acorn.player.DropdownView
       items: modules

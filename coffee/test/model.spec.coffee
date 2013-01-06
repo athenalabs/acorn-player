@@ -69,8 +69,8 @@ describe 'acorn.Model', ->
       sd = {shellid: 'S'}
       expect(new Model(shell: sd).shellData()).toEqual sd
 
-    it 'shellData should default to LinkShell', ->
-      expect(new Model().shellData()).toEqual {shellid: 'acorn.LinkShell'}
+    it 'shellData should default to EmptyShell', ->
+      expect(new Model().shellData()).toEqual {shellid: 'acorn.EmptyShell'}
 
     it 'shellData should be changeable', ->
       model = new Model()

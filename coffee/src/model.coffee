@@ -14,7 +14,7 @@ class acorn.Model extends athena.lib.Model
     unless @acornid()?
       @acornid 'new'
     unless @shellData()?
-      @shellData { shellid: 'acorn.LinkShell' }
+      @shellData { shellid: 'acorn.EmptyShell' }
 
 
   # property managers
