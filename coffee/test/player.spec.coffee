@@ -9,7 +9,7 @@ describe 'acorn.player.Player', ->
   Player = acorn.player.Player
 
   # sample acorn to test with
-  acornModel = new acorn.Model
+  model = new acorn.Model
     shell:
       shellid: 'acorn.Shell'
       title: 'Awesome Shell'
@@ -25,69 +25,71 @@ describe 'acorn.player.Player', ->
       expect(Player::[key]).toBeDefined()
       expect(typeof Player::[key]).toBe(typeof val)
 
-  it 'should be constructed with an acornModel', ->
-    p = new Player acornModel: acornModel
-    expect(p.acornModel).toBe acornModel
+  it 'should be constructed with a model', ->
+    p = new Player model: model
+    expect(p.model).toBe model
 
-  it 'should have a shellModel property that corresponds to the acorn', ->
-    p = new Player acornModel: acornModel
-    expect(p.shellModel.toJSON()).toEqual acornModel.shellData()
+  it 'should be constructed with a model (acornModel -- backwards compat.)', ->
+    p = new Player acornModel: model
+    expect(p.model).toBe model
+    expect(p.acornModel).toBe model
+
 
   describe 'model verification', ->
 
-    it 'should fail to construct if acornModel was not passed in', ->
+    it 'should fail to construct if model was not passed in', ->
       expect(-> new Player).toThrow()
 
     it 'should fail to construct if model type is incorrect', ->
-      expect(-> new Player acornModel: {bad: value}).toThrow()
-      expect(-> new Player acornModel: new athena.lib.Model).toThrow()
+      expect(-> new Player model: {bad: value}).toThrow()
+      expect(-> new Player model: new athena.lib.Model).toThrow()
 
     it 'should succeed to construct if model type is correct', ->
-      expect(acornModel instanceof acorn.Model).toBe true
-      expect(-> new Player acornModel: acornModel).not.toThrow()
+      expect(model instanceof acorn.Model).toBe true
+      expect(-> new Player model: model).not.toThrow()
 
   describe 'acorn.player.Player.view property', ->
 
     it 'should be a property of type PlayerView', ->
-      p = new Player acornModel: acornModel
+      p = new Player model: model
       expect(p.view instanceof acorn.player.PlayerView).toBe true
 
     it 'should have the Player as eventhub', ->
-      p = new Player acornModel: acornModel
+      p = new Player model: model
       expect(p.view.eventhub).toBe p
 
-    it 'should match the Player\'s models', ->
-      p = new Player acornModel: acornModel
-      expect(p.view.model).toBe p.acornModel
+    it 'should match the Player\'s model', ->
+      p = new Player model: model
+      expect(p.view.model).toBe p.model
 
 
-  it 'should force editable if acornModel.isNew()', ->
+  it 'should force editable if model.isNew()', ->
     test = (options, bool) ->
       expect(new Player(options).editable()).toBe bool
 
-    test({acornModel: acornModel}, true)
-    test({acornModel: acornModel, editable: false}, true)
-    test({acornModel: acornModel, editable: true}, true)
+    test({model: model}, true)
+    test({model: model, editable: false}, true)
+    test({model: model, editable: true}, true)
 
-    acornModel2 = acornModel.clone()
-    acornModel2.acornid('foo')
-    expect(acornModel2.isNew()).toBe false
-    test({acornModel: acornModel2}, false)
-    test({acornModel: acornModel2, editable: false}, false)
-    test({acornModel: acornModel2, editable: true}, true)
+    model2 = model.clone()
+    model2.acornid('foo')
+    expect(model2.isNew()).toBe false
+    test({model: model2}, false)
+    test({model: model2, editable: false}, false)
+    test({model: model2, editable: true}, true)
 
 
   it 'should forward editable option to playerView', ->
-    acornModel2 = acornModel.clone()
-    acornModel2.acornid('foo')
-    expect(acornModel2.isNew()).toBe false
+    model2 = model.clone()
+    model2.acornid('foo')
+    expect(model2.isNew()).toBe false
 
-    p = new Player acornModel: acornModel2
+    p = new Player model: model2
     expect(p.view.editable()).toBeFalsy()
 
-    p = new Player acornModel: acornModel2, editable: false
+    p = new Player model: model2, editable: false
     expect(p.view.editable()).toBeFalsy()
 
-    p = new Player acornModel: acornModel2, editable: true
+    p = new Player model: model2, editable: true
     expect(p.view.editable()).toBeTruthy()
 

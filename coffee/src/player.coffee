@@ -20,11 +20,16 @@ class acorn.player.Player
 
   initialize: =>
 
-    unless @options.acornModel instanceof acorn.Model
-      TypeError @options.acornModel, 'acorn.Model'
+    @model = @options.model ? @options.acornModel
+    # TODO initialize from id or data
 
-    @acornModel = @options.acornModel # TODO initialize from id or data
-    @shellModel = acorn.shellWithAcorn @acornModel
+    unless @model instanceof acorn.Model
+      TypeError @model, 'acorn.Model'
+
+    # Alias @model to @acornModel for backwards compatibility.
+    # NOTE: this is deprecated, and will go away. use @model instead!
+    @acornModel = @model
+
     @eventhub = @
 
     @options.editable = @options.editable or @acornModel.isNew()
