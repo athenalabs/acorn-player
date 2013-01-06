@@ -21,11 +21,13 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
   initialize: =>
     super
 
-    unless @model.acornModel instanceof acorn.Model
-      TypeError @model.acornModel, 'acorn.Model'
+    unless @model instanceof acorn.Model
+      TypeError @model, 'acorn.Model'
 
-    unless @model.shellModel instanceof acorn.shells.Shell.Model
-      TypeError @model.shellModel, 'acorn.Model'
+    # ensure acorn defines valid shellModel
+    shellModel = acorn.shellWithAcorn @model
+    unless shellModel instanceof acorn.shells.Shell.Model
+      TypeError shellModel, 'acorn.shells.Shell.Model'
 
     @editable !!@options.editable
 
@@ -62,14 +64,14 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
   contentView: =>
     @_contentView ?= new acorn.player.ContentView
       eventhub: @eventhub
-      model: @model.acornModel
+      model: @model
     @_contentView
 
 
   splashView: =>
     @_splashView ?= new acorn.player.SplashView
       eventhub: @eventhub
-      model: @model.acornModel
+      model: @model
     @_splashView
 
 
@@ -79,7 +81,7 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
 
     @_editorView ?= new acorn.player.EditorView
       eventhub: @eventhub
-      model: @model.acornModel.clone()
+      model: @model.clone()
     @_editorView
 
 
@@ -102,8 +104,7 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     unless @editable()
       return
 
-    @model.acornModel.set @_editorView.model.attributes
-    @model.shellModel.set @model.acornModel.shellData()
+    @model.set @_editorView.model.attributes
 
     # clear previous contentView to force reload, then show
     @_contentView?.destroy()

@@ -58,8 +58,7 @@ describe 'acorn.player.Player', ->
 
     it 'should match the Player\'s models', ->
       p = new Player acornModel: acornModel
-      expect(p.view.model.acornModel).toBe p.acornModel
-      expect(p.view.model.shellModel).toBe p.shellModel
+      expect(p.view.model).toBe p.acornModel
 
 
   it 'should force editable if acornModel.isNew()', ->

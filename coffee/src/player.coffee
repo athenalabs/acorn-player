@@ -30,9 +30,7 @@ class acorn.player.Player
     @options.editable = @options.editable or @acornModel.isNew()
 
     @view = new acorn.player.PlayerView
-      model:
-        acornModel: @acornModel,
-        shellModel: @shellModel
+      model: @acornModel,
       eventhub: @eventhub
       editable: @options.editable
 

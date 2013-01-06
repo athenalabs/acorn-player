@@ -9,16 +9,13 @@ describe 'acorn.player.PlayerView', ->
   Shell = acorn.shells.Shell
 
   # model for PlayerView contruction
-  model =
-    shellModel: acorn.shellWithData
+  model = acorn.Model.withData
+    acornid: 'thebestacornever'
+    thumbnail: acorn.config.img.acorn
+    title: 'The Best Title Ever'
+    type: 'image'
+    shell:
       shellid: 'acorn.Shell'
-    acornModel: acorn.Model.withData
-      acornid: 'thebestacornever'
-      thumbnail: acorn.config.img.acorn
-      title: 'The Best Title Ever'
-      type: 'image'
-      shell:
-        shellid: 'acorn.Shell'
 
   # options for ContentView contruction
   options = model: model
@@ -29,37 +26,33 @@ describe 'acorn.player.PlayerView', ->
 
   describe 'model verification', ->
 
-    it 'should fail to construct if model.acornModel was not passed in', ->
-      m = _.clone model
-      m.acornModel = undefined
+    it 'should fail to construct if model was not passed in', ->
+      expect(-> new PlayerView).toThrow()
+
+    it 'should fail to construct if model does not define shellModel', ->
+      m = model.clone()
+      m.set shell: undefined
       expect(-> new PlayerView model: m).toThrow()
 
-    it 'should fail to construct if model.shellModel was not passed in', ->
-      m = _.clone model
-      m.shellModel = undefined
+    it 'should fail to construct if model type is incorrect', ->
+      expect(-> new PlayerView model: new athena.lib.Model).toThrow()
+      expect(-> new PlayerView model: new acorn.shells.Shell.Model).toThrow()
+
+    it 'should fail to construct if model does not define valid shellModel', ->
+      m = model.clone()
+      m.set shell: {shellid: 'foo'}
+      expect(-> acorn.shellModuleWithId 'foo').toThrow()
+      expect(-> acorn.shellWithAcorn m).toThrow()
       expect(-> new PlayerView model: m).toThrow()
 
-    it 'should fail to construct if model.acornModel type is incorrect', ->
-      m = _.clone model
-      m.acornModel = new athena.lib.Model
-      expect(-> new PlayerView model: m).toThrow()
-      m.acornModel = model.shellModel
-      expect(-> new PlayerView model: m).toThrow()
-
-    it 'should fail to construct if model.shellModel type is incorrect', ->
-      m = _.clone model
-      m.shellModel = new athena.lib.Model
-      expect(-> new PlayerView model: m).toThrow()
-      m.shellModel = model.acornModel
-      expect(-> new PlayerView model: m).toThrow()
-
-    it 'should succeed to construct if model.acornModel type is correct', ->
-      expect(model.acornModel instanceof acorn.Model).toBe true
+    it 'should succeed to construct if model type is correct', ->
+      expect(model instanceof acorn.Model).toBe true
       expect(-> new PlayerView model: model).not.toThrow()
 
-    it 'should succeed to construct if model.shellModel type is correct', ->
-      expect(model.shellModel instanceof Shell.Model).toBe true
-      expect(-> new PlayerView model: model).not.toThrow()
+    it 'should succeed to construct if model defines valid shellModel', ->
+      shellid = model.attributes.shell.shellid
+      expect(-> acorn.shellModuleWithId shellid).not.toThrow()
+      expect(-> acorn.shellWithAcorn model).not.toThrow()
 
 
   describeView = athena.lib.util.test.describeView
@@ -255,8 +248,8 @@ describe 'acorn.player.PlayerView', ->
 
       hub.trigger 'show:content'
       hub.trigger 'show:editor'
-      acornData = JSON.parse view.model.acornModel.toJSONString()
-      shellData = JSON.parse view.model.shellModel.toJSONString()
+      acornData = JSON.parse view.model.toJSONString()
+      shellData = JSON.parse acorn.shellWithAcorn(view.model).toJSONString()
 
       editorData =
         acornModel: view._editorView.model
@@ -271,16 +264,16 @@ describe 'acorn.player.PlayerView', ->
       expect(editorData.shellModel.get 'shellid').toEqual otherShellId
 
       # player data should not be changed
-      expect(view.model.acornModel.get 'acornid').not.toEqual otherAcornId
-      expect(view.model.shellModel.get 'shellid').not.toEqual otherShellId
+      expect(view.model.get 'acornid').not.toEqual otherAcornId
+      expect(view.model.shellData().shellid).not.toEqual otherShellId
 
       hub.trigger 'Editor:Cancel'
 
       # player data should remain not changed
-      expect(view.model.acornModel.get 'acornid').not.toEqual otherAcornId
-      expect(view.model.shellModel.get 'shellid').not.toEqual otherShellId
-      expect(view.model.acornModel.attributes).toEqual acornData
-      expect(view.model.shellModel.attributes).toEqual shellData
+      expect(view.model.get 'acornid').not.toEqual otherAcornId
+      expect(view.model.shellData().shellid).not.toEqual otherShellId
+      expect(view.model.attributes).toEqual acornData
+      expect(view.model.shellData()).toEqual shellData
 
     it 'should modify acornModel and shellModel on `Editor:Saved`', ->
       hub = new athena.lib.View
@@ -292,8 +285,8 @@ describe 'acorn.player.PlayerView', ->
 
       hub.trigger 'show:content'
       hub.trigger 'show:editor'
-      acornData = JSON.parse view.model.acornModel.toJSONString()
-      shellData = JSON.parse view.model.shellModel.toJSONString()
+      acornData = JSON.parse view.model.toJSONString()
+      shellData = JSON.parse acorn.shellWithAcorn(view.model).toJSONString()
 
       editorData =
         acornModel: view._editorView.model
@@ -308,18 +301,18 @@ describe 'acorn.player.PlayerView', ->
       expect(editorData.shellModel.get 'shellid').toEqual otherShellId
 
       # player data should not be changed
-      expect(view.model.acornModel.get 'acornid').not.toEqual otherAcornId
-      expect(view.model.shellModel.get 'shellid').not.toEqual otherShellId
+      expect(view.model.get 'acornid').not.toEqual otherAcornId
+      expect(view.model.shellData().shellid).not.toEqual otherShellId
 
       # need to fake the consolidation _editorView.save does
       editorData.acornModel.shellData editorData.shellModel.attributes
       hub.trigger 'Editor:Saved'
 
       # player data should be changed
-      expect(view.model.acornModel.get 'acornid').toEqual otherAcornId
-      expect(view.model.shellModel.get 'shellid').toEqual otherShellId
-      expect(view.model.acornModel.attributes).not.toEqual acornData
-      expect(view.model.shellModel.attributes).not.toEqual shellData
+      expect(view.model.get 'acornid').toEqual otherAcornId
+      expect(view.model.shellData().shellid).toEqual otherShellId
+      expect(view.model.attributes).not.toEqual acornData
+      expect(view.model.shellData()).not.toEqual shellData
 
 
   it 'should allow editable status management through editable method', ->
