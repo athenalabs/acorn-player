@@ -58,14 +58,8 @@ class Shell.Model extends athena.lib.Model
 
 
   @withData: (data) =>
-    if data.shellid?
-      shellClass = _.find acorn.shells, (shell) ->
-        shell.id == data.shellid
-
-    unless shellClass?
-      UnregisteredShellError data.shellid
-
-    new shellClass.Model _.clone data
+    shellModule = acorn.shellModuleWithId data.shellid
+    new shellModule.Model _.clone data
 
 
   # -- unsupported --

@@ -7,6 +7,28 @@ throwsExceptionWithString = athena.lib.util.test.throwsExceptionWithString
 describe 'acorn.shells.Registry', ->
   Registry = acorn.shells.Registry
 
+  # -- helpers --
+
+  shellModule =
+    id: 'ApertureScience.GladOS'
+    title: 'Portal into GladOS\'s internal psychological state'
+    description: 'Um... self-describing'
+    icon: 'icon-play'
+    Model: =>
+    MediaView: =>
+    RemixView: =>
+
+  register_fn = -> Registry.registerModule shellModule
+
+  modulesClone = null
+
+  # -- setup and teardown --
+
+  beforeEach -> modulesClone = _.clone Registry.modules
+  afterEach -> Registry.modules = modulesClone
+
+
+
   it 'should be a part of acorn.shells', ->
     expect(Registry).toBeDefined()
 
@@ -14,30 +36,28 @@ describe 'acorn.shells.Registry', ->
     it 'should be an object', ->
       expect(_.isObject Registry.modules).toBe true
 
+  describe 'Registry.moduleWithId', ->
+
+    it 'should be a function', ->
+      expect(_.isFunction Registry.moduleWithId).toBe true
+
+    it 'should be aliased to acorn.shellModuleWithId', ->
+      expect(acorn.shellModuleWithId).toBe Registry.moduleWithId
+
+    it 'should return registered shell modules', ->
+      register_fn()
+      expect(Registry.moduleWithId 'ApertureScience.GladOS').toBe shellModule
+
+    it 'should throw error for unregistered shell modules', ->
+      expect(Registry.moduleWithId, 'ApertureScience.GladOS').toThrow()
+
+
   describe 'Registry.registerModule', ->
 
     # -- helpers --
 
-    modulesClone = null
-
-    shellModule =
-      id: 'ApertureScience.GladOS'
-      title: 'Portal into GladOS\'s internal psychological state'
-      description: 'Um... self-describing'
-      icon: 'icon-play'
-      Model: =>
-      MediaView: =>
-      RemixView: =>
-
-    register_fn = -> Registry.registerModule shellModule
-
     assertObjectSize = (object, size) => expect(_.keys(object).length).toBe size
     unregisterAllShells = => Registry.modules = {}
-
-    # -- setup and teardown --
-
-    beforeEach -> modulesClone = _.clone Registry.modules
-    afterEach -> Registry.modules = modulesClone
 
     # -- test cases --
 

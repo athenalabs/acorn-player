@@ -1,13 +1,20 @@
 goog.provide 'acorn.shells.Registry'
 
 goog.require 'acorn'
-
+goog.require 'acorn.errors'
 
 
 class acorn.shells.Registry
 
 
   @modules: {}
+
+
+  @moduleWithId: (shellid) =>
+    unless @modules[shellid]
+      acorn.errors.UnregisteredShellError shellid
+
+    @modules[shellid]
 
 
   @registerModule: (shellModule) =>
@@ -55,3 +62,4 @@ class acorn.shells.Registry
 
 
 acorn.registerShellModule = acorn.shells.Registry.registerModule
+acorn.shellModuleWithId = acorn.shells.Registry.moduleWithId
