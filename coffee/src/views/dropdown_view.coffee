@@ -34,10 +34,15 @@ class acorn.player.DropdownView extends athena.lib.View
     </ul>
     '''
 
+
   events: => _.extend super,
     'click a.dropdown-link': (event) =>
       @selected $(event.target).attr('dropdown-id')
       event.preventDefault()
+
+
+  defaults: => _.extend super,
+    disabled: false
 
 
   initialize: =>
@@ -45,6 +50,7 @@ class acorn.player.DropdownView extends athena.lib.View
     unless @options.items.length > 0
       ValueError 'options.items', 'must have at least one item'
 
+    @disabled @options.disabled
     @items = _.map @options.items, @formatItem
     @_selected = @options.selected ? @items[0].id
 
@@ -56,6 +62,10 @@ class acorn.player.DropdownView extends athena.lib.View
     @$el.html @template
       selected: @itemWithId @selected()
       items: @items
+
+    if @_disabled
+      @$('.dropdown-toggle').attr 'disabled', 'disabled'
+      @$('.dropdown-toggle').addClass 'btn-disabled'
 
     @
 
@@ -69,6 +79,13 @@ class acorn.player.DropdownView extends athena.lib.View
       @softRender()
       @trigger 'Dropdown:Selected', @, @_selected
     @_selected ? @items[0]
+
+
+  disabled: (disabled) =>
+    if disabled?
+      @_disabled = disabled
+      @softRender()
+    return @_disabled
 
 
   itemWithId: (id) =>

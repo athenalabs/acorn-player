@@ -82,6 +82,7 @@ class acorn.player.RemixerView extends athena.lib.View
       items: modules
       selected: selected
       eventhub: @eventhub
+      disabled: true
 
     @dropdownView.on 'Dropdown:Selected', (dropdown, value) =>
       unless value is @model.shellid()

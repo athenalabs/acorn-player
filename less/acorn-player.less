@@ -282,6 +282,12 @@
     }
   }
 
+  > .dropdown-toggle[disabled] {
+    > .caret {
+      display: none;
+    }
+  }
+
   > .dropdown-menu {
     width: 100%;
   }
@@ -304,8 +310,19 @@
       float: left
     }
 
+    input { // disabled
+      min-width: 403px;
+    }
+
     .dropdown-view > .dropdown-toggle {
       width: 55px;
+      .dropdown-selected {
+        display: none;
+      }
+    }
+
+    .dropdown-view > .dropdown-toggle[disabled] {
+      width: 37px;
       .dropdown-selected {
         display: none;
       }

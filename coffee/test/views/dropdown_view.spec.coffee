@@ -3,6 +3,7 @@ goog.provide 'acorn.specs.player.DropdownView'
 goog.require 'acorn.player.DropdownView'
 
 describe 'acorn.player.DropdownView', ->
+  test = athena.lib.util.test
   DropdownView = acorn.player.DropdownView
   EventSpy = athena.lib.util.test.EventSpy
 
@@ -11,6 +12,9 @@ describe 'acorn.player.DropdownView', ->
 
   it 'should be part of acorn.player', ->
     expect(DropdownView).toBeDefined()
+
+  test.describeDefaults DropdownView, {disabled: false}, {items: ['item']}
+
 
   it 'should ensure it gets at least one item', ->
     expect(-> new DropdownView()).toThrow()
