@@ -103,7 +103,7 @@ class LinkShell.Model extends Shell.Model
 
 
   # Constructs the `bestMatchingShell` for given `link`
-  @withLink: (link) ->
+  @withLink: (link) =>
     unless acorn.util.isUrl link
       TypeError link, 'url'
 
