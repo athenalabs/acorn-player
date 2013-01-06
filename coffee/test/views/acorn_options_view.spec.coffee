@@ -6,8 +6,7 @@ describe 'acorn.player.AcornOptionsView', ->
   AcornOptionsView = acorn.player.AcornOptionsView
 
   options =
-    model: new athena.lib.Model
-      thumbnail: acorn.config.img.acorn
+    model: new acorn.Model
       acornid: 'nyfskeqlyx'
       title: 'The Differential'
 
@@ -18,7 +17,8 @@ describe 'acorn.player.AcornOptionsView', ->
     expect(AcornOptionsView).toBeDefined()
 
   it 'should change model.title on title blur', ->
-    view = new AcornOptionsView options
+    model = options.model.clone()
+    view = new AcornOptionsView model: model
     view.render()
     expect(view.model.get 'title').toBe 'The Differential'
     view.$('#title').val 'Not The Differential'
@@ -26,12 +26,13 @@ describe 'acorn.player.AcornOptionsView', ->
     expect(view.model.get 'title').toBe 'Not The Differential'
 
   it 'should change model.thumbnail on thumbnail blur', ->
-    view = new AcornOptionsView options
+    model = options.model.clone()
+    view = new AcornOptionsView model: model
     view.render()
-    expect(view.model.get 'thumbnail').toBe acorn.config.img.acorn
-    view.$('#thumbnail').val '/img/differential.png'
+    expect(view.model.get 'thumbnail').toBe undefined
+    view.$('#thumbnail').val 'foo.com/differential.png'
     view.$('#thumbnail').trigger 'blur'
-    expect(view.model.get 'thumbnail').toBe '/img/differential.png'
+    expect(view.model.get 'thumbnail').toBe 'http://foo.com/differential.png'
 
   it 'should look good', ->
     # setup DOM

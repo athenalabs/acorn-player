@@ -18,15 +18,16 @@ class acorn.player.AcornOptionsView extends athena.lib.View
 
 
   events: => _.extend super,
-    'blur #title': => @model.set 'title', @$('#title').val()
-    'blur #thumbnail': => @model.set 'thumbnail', @$('#thumbnail').val()
+    'blur #title': => @model.title @$('#title').val()
+    'blur #thumbnail': =>
+      @model.thumbnail acorn.util.urlFix @$('#thumbnail').val()
 
 
   template: _.template '''
     <div class="row-fluid">
       <div class="span3">
         <div class="thumbnail-view">
-          <img class="img-rounded" src="<%= thumbnail %>" />
+          <img class="img-rounded" src="<%= thumbnailUrl %>" />
         </div>
       </div>
       <div class="span9">
@@ -59,7 +60,8 @@ class acorn.player.AcornOptionsView extends athena.lib.View
     @$el.empty()
 
     variables =
-      thumbnail: acorn.config.img.acorn
+      thumbnailUrl: @model.thumbnail() # default
+      thumbnail: ''
       acornid: 'new'
       title: ''
 
