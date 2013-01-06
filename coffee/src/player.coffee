@@ -45,6 +45,7 @@ class acorn.player.Player
 
   editable: (editable) =>
     if editable?
+      editable = editable or @acornModel.isNew()
       @view.editable editable
     @view.editable()
 
