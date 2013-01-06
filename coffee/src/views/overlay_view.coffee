@@ -17,6 +17,7 @@ class acorn.player.OverlayView extends athena.lib.View
 
 
   render: =>
+    super
     @$el.empty()
 
     @$el.append @overlayTemplate()

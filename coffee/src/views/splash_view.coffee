@@ -29,6 +29,7 @@ class acorn.player.SplashView extends athena.lib.View
 
 
   render: =>
+    super
     @$el.empty()
 
     @$el.html @template

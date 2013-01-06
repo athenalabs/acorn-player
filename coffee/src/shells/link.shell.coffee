@@ -128,6 +128,7 @@ class LinkShell.MediaView extends Shell.MediaView
 
 
   render: =>
+    super
     @$el.empty()
     @$el.append acorn.util.iframe @model.get('link')
     @
