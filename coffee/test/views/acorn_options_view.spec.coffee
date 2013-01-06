@@ -25,6 +25,14 @@ describe 'acorn.player.AcornOptionsView', ->
     view.$('#title').trigger 'blur'
     expect(view.model.get 'title').toBe 'Not The Differential'
 
+  it 'should change model.thumbnail on thumbnail blur', ->
+    view = new AcornOptionsView options
+    view.render()
+    expect(view.model.get 'thumbnail').toBe acorn.config.img.acorn
+    view.$('#thumbnail').val '/img/differential.png'
+    view.$('#thumbnail').trigger 'blur'
+    expect(view.model.get 'thumbnail').toBe '/img/differential.png'
+
   it 'should look good', ->
     # setup DOM
     acorn.util.appendCss()

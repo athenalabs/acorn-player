@@ -53,6 +53,7 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     @eventhub.on 'EditControl:Click', =>
       if @editable()
         @eventhub.trigger 'show:editor'
+
     @eventhub.on 'AcornControl:Click', => @openAcornWebsite()
     @eventhub.on 'SourcesControl:Click', => @eventhub.trigger 'show:sources'
     @eventhub.on 'FullscreenControl:Click', => @enterFullscreen()
