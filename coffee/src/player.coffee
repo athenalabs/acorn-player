@@ -31,7 +31,6 @@ class acorn.player.Player
 
     @view = new acorn.player.PlayerView
       model:
-        shellid: 'acorn.Shell',
         acornModel: @acornModel,
         shellModel: @shellModel
       eventhub: @eventhub
