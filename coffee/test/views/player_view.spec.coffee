@@ -134,24 +134,30 @@ describe 'acorn.player.PlayerView', ->
       view = new PlayerView model: model, eventhub: hub, editable: true
       view.render()
       expect(view.content() instanceof acorn.player.EditorView).toBe false
+      expect(view.$el.attr 'showing').not.toBe 'editor'
       hub.trigger 'show:editor'
       expect(view.content() instanceof acorn.player.EditorView).toBe true
+      expect(view.$el.attr 'showing').toBe 'editor'
 
     it 'should not show EditorView on eventhub `show:editor` if uneditable', ->
       hub = new athena.lib.View
       view = new PlayerView model: model, eventhub: hub
       view.render()
       expect(view.content() instanceof acorn.player.EditorView).toBe false
+      expect(view.$el.attr 'showing').not.toBe 'editor'
       hub.trigger 'show:editor'
       expect(view.content() instanceof acorn.player.EditorView).toBe false
+      expect(view.$el.attr 'showing').not.toBe 'editor'
 
     it 'should show ContentView on eventhub `show:content`', ->
       hub = new athena.lib.View
       view = new PlayerView model: model, eventhub: hub
       view.render()
       expect(view.content() instanceof acorn.player.ContentView).toBe false
+      expect(view.$el.attr 'showing').not.toBe 'content'
       hub.trigger 'show:content'
       expect(view.content() instanceof acorn.player.ContentView).toBe true
+      expect(view.$el.attr 'showing').toBe 'content'
 
     it 'should show SplashView on eventhub `show:splash`', ->
       hub = new athena.lib.View
@@ -159,8 +165,10 @@ describe 'acorn.player.PlayerView', ->
       view.render()
       hub.trigger 'show:content'
       expect(view.content() instanceof acorn.player.SplashView).toBe false
+      expect(view.$el.attr 'showing').not.toBe 'splash'
       hub.trigger 'show:splash'
       expect(view.content() instanceof acorn.player.SplashView).toBe true
+      expect(view.$el.attr 'showing').toBe 'splash'
 
 
   describe 'editor events (when editable)', ->

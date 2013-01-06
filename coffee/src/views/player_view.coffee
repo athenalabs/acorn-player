@@ -29,9 +29,18 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
 
     @editable !!@options.editable
 
-    @eventhub.on 'show:editor', => @editable() and @content @editorView()
-    @eventhub.on 'show:splash', => @content @splashView()
-    @eventhub.on 'show:content', => @content @contentView()
+    @eventhub.on 'show:editor', =>
+      unless @editable() then return
+      @content @editorView()
+      @$el.attr 'showing', 'editor'
+
+    @eventhub.on 'show:splash', =>
+      @content @splashView()
+      @$el.attr 'showing', 'splash'
+
+    @eventhub.on 'show:content', =>
+      @content @contentView()
+      @$el.attr 'showing', 'content'
 
     @eventhub.on 'Editor:Saved', @onSave
     @eventhub.on 'Editor:Cancel', =>
