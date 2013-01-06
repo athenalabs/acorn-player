@@ -45,6 +45,11 @@ class acorn.player.Player
       @eventhub.trigger 'show:splash'
 
 
+  destroy: =>
+    @view.destroy()
+    @$el?.remove()
+
+
   editable: (editable) =>
     if editable?
       editable = editable or @acornModel.isNew()

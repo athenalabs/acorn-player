@@ -93,3 +93,25 @@ describe 'acorn.player.Player', ->
     p = new Player model: model2, editable: true
     expect(p.view.editable()).toBeTruthy()
 
+
+  it 'should have a destroy method that forwards to playerView', ->
+    p = new Player model: model
+    spyOn p.view, 'destroy'
+
+    expect(p.view.destroy).not.toHaveBeenCalled()
+    p.destroy()
+    expect(p.view.destroy).toHaveBeenCalled()
+
+
+  it 'should have a destroy method that removes the player from the DOM', ->
+    div = $('<div>')
+    p = new Player model: model
+
+    expect(div.children().length).toBe 0
+
+    p.appendTo div
+    expect(div.children().length).toBe 1
+
+    p.destroy()
+    expect(div.children().length).toBe 0
+
