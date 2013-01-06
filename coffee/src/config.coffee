@@ -23,8 +23,8 @@ acorn.config.setDomain(acorn.config.domain)
 
 
 acorn.config.img = {}
-acorn.config.img.acorn = '/img/acorn.png'
-acorn.config.img.acornIcon = '/img/acorn.icon.png'
+acorn.config.img.acorn = "#{acorn.config.url.img}/acorn.png"
+acorn.config.img.acornIcon = "#{acorn.config.url.img}/acorn.icon.png"
 
 
 acorn.config.css = [
