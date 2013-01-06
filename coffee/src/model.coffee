@@ -22,6 +22,7 @@ class acorn.Model extends athena.lib.Model
   title: @property('title', default: 'New Acorn')
   thumbnail: @property('thumbnail', default: acorn.config.img.acorn)
   shellData: @property 'shell'
+  owner: @property 'owner'
 
 
   idAttribute: 'acornid'

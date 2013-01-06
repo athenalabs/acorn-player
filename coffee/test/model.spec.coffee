@@ -40,19 +40,14 @@ describe 'acorn.Model', ->
     s = m.toJSONString()
     expect(JSON.stringify m.attributes).toEqual s
 
-  describe 'acorn.Model.acornid property', ->
 
-    it 'acornid should be a property', ->
-      expect(new Model().acornid()).toBe 'new'
-      expect(new Model(acornid: 'hi').acornid()).toBe 'hi'
+  describeProperty = athena.lib.util.test.describeProperty
+  describeProperty Model, 'title', {}, default: 'New Acorn'
+  describeProperty Model, 'thumbnail', {}, default: acorn.config.img.acorn
+  describeProperty Model, 'owner', {},
 
-    it 'acornid should be changeable', ->
-      model = new Model()
-      _.each ['hello', 'I', 'love', 'you'], (id) ->
-        expect(model.acornid()).not.toBe id
-        expect(model.acornid(id)).toBe id
-        expect(model.acornid()).toBe id
 
+  describeProperty Model, 'acornid', {}, {}, ->
     it 'acornid should match the id athena.lib.Model property', ->
       model = new Model()
       _.each ['wont', 'you', 'tell', 'me', 'your', 'name'], (id) ->
@@ -66,6 +61,7 @@ describe 'acorn.Model', ->
         expect(model.acornid()).toBe id
         expect(model.id).toBe id
         expect(model.id).toBe model.acornid()
+
 
   describe 'acorn.Model.shellData property', ->
 
@@ -83,6 +79,7 @@ describe 'acorn.Model', ->
         expect(model.shellData()).not.toBe sd
         expect(model.shellData(sd)).toBe sd
         expect(model.shellData()).toBe sd
+
 
 
   describe 'acorn.Model.sync', ->
