@@ -117,13 +117,7 @@ util.property = (defaultValue, validate) ->
 
 # requests full screen with given elem
 util.fullscreen = (elem) ->
-  elem = elem[0] if elem.jquery?
-  if elem.requestFullscreen
-    elem.requestFullscreen()
-  else if elem.webkitRequestFullScreen
-    elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT)
-  else if elem.mozRequestFullScreen
-    elem.mozRequestFullScreen()
+  $(elem).fullScreen()
 
 
 # add acorn css

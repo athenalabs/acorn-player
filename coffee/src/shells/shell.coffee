@@ -152,6 +152,12 @@ class Shell.MediaView extends athena.lib.View
   setObjectFit: (objectFit) =>
 
 
+  render: =>
+    super
+    @$el.width @width()
+    @$el.height @height()
+    @
+
 
 # Shell.RemixView -- uniform view to edit shell data.
 # ---------------------------------------------------
