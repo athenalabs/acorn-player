@@ -90,4 +90,7 @@ class acorn.player.ContentView extends athena.lib.View
     @$el.append @controlsView.render().el
     @$el.prepend @shellView.render().el
 
+    # for now, hide sources control
+    @acornControlsView.$('.control-view.sources').addClass 'hidden'
+
     @
