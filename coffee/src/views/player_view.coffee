@@ -121,3 +121,4 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
 
 
   openAcornWebsite: =>
+    window.open @model.pageUrl(), '_blank'
