@@ -57,7 +57,13 @@ class acorn.player.Player
     @view.editable()
 
 
-  appendTo: (sel) =>
+  render: =>
     @$el ?= $('<div>').addClass('acorn-player')
     @$el.append @view.render().el
+    @el = @$el[0]
+    @
+
+
+  appendTo: (sel) =>
+    @render()
     @$el.appendTo $(sel)
