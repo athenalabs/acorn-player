@@ -161,29 +161,40 @@ describe 'acorn.player.ShellEditorView', ->
 
   describe 'ShellEditorView::renderUpdates', ->
 
-    it 'should hide the ShellOptionsView when there are < 2 shells', ->
+    it 'should have ShellOptionsView hidden with one non-empty shell', ->
       view = new ShellEditorView options
       view.render()
       expect(view.remixerViews.length).toBe 2
-      expect(view.shellOptionsView.$el.css 'display').toBe 'block'
-
-      view.removeShell view.model.shells().models[0]
-      expect(view.remixerViews.length).toBe 1
+      expect(view.model.shells().models[0].module).not.toBe EmptyShell
+      expect(view.model.shells().models[1].module).toBe EmptyShell
       expect(view.shellOptionsView.$el.css 'display').toBe 'none'
 
-    it 'should show the ShellOptionsView when there are > 1 shells', ->
+    it 'should hide the ShellOptionsView with < 2 non-empty shells', ->
       view = new ShellEditorView options
       view.render()
       expect(view.remixerViews.length).toBe 2
-      expect(view.shellOptionsView.$el.css 'display').toBe 'block'
+      expect(view.shellOptionsView.$el.css 'display').toBe 'none'
 
-      view.removeShell view.model.shells().models[0]
-      expect(view.remixerViews.length).toBe 1
+      _.each _.range(10), (i) =>
+        view.addShell new TextShell.Model
+        expect(view.remixerViews.length).toBe 3 + i
+        expect(view.shellOptionsView.$el.css 'display').toBe 'block'
+
+      _.each _.range(10), (i) =>
+        view.removeShell view.model.shells().models[1]
+
+      expect(view.remixerViews.length).toBe 2
+      expect(view.shellOptionsView.$el.css 'display').toBe 'none'
+
+    it 'should show the ShellOptionsView with > 1 non-empty shells', ->
+      view = new ShellEditorView options
+      view.render()
+      expect(view.remixerViews.length).toBe 2
       expect(view.shellOptionsView.$el.css 'display').toBe 'none'
 
       _.each _.range(10), (i) =>
         view.addShell new Shell.Model
-        expect(view.remixerViews.length).toBe 2 + i
+        expect(view.remixerViews.length).toBe 3 + i
         expect(view.shellOptionsView.$el.css 'display').toBe 'block'
 
     it 'should add an empty shell when going to 0 shells', ->

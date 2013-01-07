@@ -104,15 +104,17 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
   renderUpdates: =>
     shellCount = @model.shells().length
+    emptyCount = _.size @model.shells().filter (shell) =>
+      shell.module is @defaultShell
 
     # hide the options view if there is only one shell
     if @rendering
-      display = if shellCount > 1 then 'block' else 'none'
+      display = if (shellCount - emptyCount) > 1 then 'block' else 'none'
       @$('.shell-options-view').css 'display', display
 
     # if there are no shells, add an empty one
-    if shellCount is 0
-      @addShell new @defaultShell.Model
+    if emptyCount is 0
+      @addShell new @defaultShell.Model, shellCount
 
 
   # retrieves the finalized shell. @model should not be used directly.
@@ -194,6 +196,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
       @remixerViews[index].destroy()
       @remixerViews[index] = @remixerForShell newShell
 
+    @trigger 'ShellEditor:ShellsUpdated'
     @
 
 
