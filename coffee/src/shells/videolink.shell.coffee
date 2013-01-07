@@ -266,6 +266,9 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 class VideoLinkShell.PlayerView extends athena.lib.View
 
 
+  className: 'video-player-view video-link-shell'
+
+
   render: =>
     super
     @$el.empty()
