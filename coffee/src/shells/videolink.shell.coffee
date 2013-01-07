@@ -192,6 +192,10 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
     @_initializeLoopsButton()
 
+    @_playerView = new @module.PlayerView
+      model: @model
+      eventhub: @eventhub
+
     @_timeRangeInputView.on 'change:times', @_onChangeTimes
     @_loopsButtonView.on 'change:value', @_onChangeLoops
 
@@ -236,6 +240,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
     @$el.append @_timeRangeInputView.render().el
     @$el.append @_loopsButtonView.render().el
+    @$el.append @_playerView.render().el
 
     # if meta data is waiting, fetch it and reset time input maximum values on
     # retrieval
@@ -252,6 +257,11 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     changes = {}
     changes.timeStart = changed.start if _.isNumber changed?.start
     changes.timeEnd = changed.end if _.isNumber changed?.end
+
+    if changes.timeStart? and changes.timeStart isnt @model.timeStart()
+      @_playerView.seek changes.timeStart
+    else if changes.timeEnd? and changes.timeEnd isnt @model.timeEnd()
+      @_playerView.seek changes.timeEnd
 
     @model.set changes
     @eventhub.trigger 'change:shell', @model, @
