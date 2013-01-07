@@ -316,7 +316,7 @@
     }
 
     input { // disabled
-      min-width: 403px;
+      min-width: 401px;
     }
 
     .dropdown-view > .dropdown-toggle {
@@ -333,13 +333,18 @@
       }
     }
 
-    .toolbar-view > * {
-      margin-left: 0px;
+    .toolbar-view {
+      .transition(0.35s, ease);
+
+      > * {
+        margin-left: 0px;
+      }
     }
 
   }
 
   > .remixer-content {
+    .transition(0.35s, ease);
     .bordered;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -351,6 +356,23 @@
     }
   }
 }
+
+
+.remixer-view.empty {
+
+  > .remixer-header {
+    .toolbar-view {
+      opacity: 0.4;
+    }
+  }
+
+  > .remixer-content {
+    height: 0px;
+    opacity: 0.0;
+  }
+
+}
+
 
 .shell-media-view {
   width: 100%;

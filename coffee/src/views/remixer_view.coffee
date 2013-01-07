@@ -119,6 +119,10 @@ class acorn.player.RemixerView extends athena.lib.View
     if @rendering
       @$('.remixer-content').append @remixSubview.render().el
 
+    @$el.removeClass 'empty'
+    if @model.module is acorn.shells.EmptyShell
+      @$el.addClass 'empty'
+
     @
 
 
