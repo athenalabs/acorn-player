@@ -261,7 +261,8 @@ util.LINK_REGEX = /// ^
 util.fixObjectFit = ->
   objectFit_ = $.fn.objectFit
   $.fn.objectFit = ->
-    setTimeout (=> objectFit_.apply @, arguments), 200
+    console.log 'Object Fit currently disabled.'
+    # setTimeout (=> objectFit_.apply @, arguments), 200
     @
 
 util.fixObjectFit()
