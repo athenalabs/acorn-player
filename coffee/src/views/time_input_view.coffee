@@ -67,9 +67,11 @@ class acorn.player.TimeInputView extends athena.lib.View
   setMax: (max) =>
     return unless _.isNumber(max) and !_.isNaN max
 
-    # update max and call onInputChanged in case current time is now invalid
     @_max = max
-    @_onInputChanged()
+
+    # if current input is invalid, set to max value, else handle state change
+    invalidInput = _.isNaN parseFloat @input.val()
+    if invalidInput then @_handleInput @_max else @_onInputChanged()
 
 
   _bound: (val) =>
