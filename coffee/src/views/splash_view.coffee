@@ -11,7 +11,7 @@ class acorn.player.SplashView extends athena.lib.View
 
 
   events: => _.extend super,
-    'click #image': => @eventhub.trigger 'show:content'
+    'click img': => @eventhub.trigger 'show:content'
 
 
   template: _.template '''
