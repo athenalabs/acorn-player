@@ -36,7 +36,10 @@ class acorn.player.RemixerView extends athena.lib.View
   events: => _.extend super,
     'click button#duplicate': => @trigger 'Remixer:Duplicate', @
     'click button#delete': => @trigger 'Remixer:Delete', @
-    'blur input#link': @onBlurLink
+    'blur input#link': => @onLinkChange()
+    'keyup input#link': (event) =>
+      if event.keyCode is athena.lib.util.keys.ENTER
+        @onLinkChange()
 
 
   initialize: =>
@@ -138,7 +141,7 @@ class acorn.player.RemixerView extends athena.lib.View
     @
 
 
-  onBlurLink: (event) =>
+  onLinkChange: =>
     link = @$('input#link').val().trim();
     link = acorn.util.urlFix link
 

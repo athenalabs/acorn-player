@@ -95,7 +95,7 @@ describe 'acorn.player.RemixerView', ->
     it 'should trigger `Remixer:SwapShell` on editing link input', ->
       model = new acorn.shells.ImageLinkShell.Model
       view = new RemixerView model: model
-      spy1 = spyOn(view, 'onBlurLink').andCallThrough()
+      spy1 = spyOn(view, 'onLinkChange').andCallThrough()
       spy2 = new EventSpy view, 'Remixer:SwapShell'
 
       view.render()
@@ -111,7 +111,7 @@ describe 'acorn.player.RemixerView', ->
     it 'should not trigger `Remixer:SwapShell` on link change (same shell)', ->
       model = new acorn.shells.LinkShell.Model
       view = new RemixerView model: model
-      spy1 = spyOn(view, 'onBlurLink').andCallThrough()
+      spy1 = spyOn(view, 'onLinkChange').andCallThrough()
       spy2 = new EventSpy view, 'Remixer:SwapShell'
 
       view.render()
