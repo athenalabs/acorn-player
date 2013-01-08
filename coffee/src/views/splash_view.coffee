@@ -16,7 +16,7 @@ class acorn.player.SplashView extends athena.lib.View
 
   template: _.template '''
     <img id="image" src="<%= image %>" class="splash-image" />
-    <img id="type" src="<%= type %>" class="splash-icon" />
+    <i id="type" class="<%= type %> splash-icon"></i>
     <img id="logo" src="<%= logo %>" class="splash-icon" />
     '''
 
@@ -32,8 +32,11 @@ class acorn.player.SplashView extends athena.lib.View
     super
     @$el.empty()
 
+    shellid = @model.shellData().shellid
+    module = acorn.shellModuleWithId(shellid)
+
     @$el.html @template
-      type: "#{acorn.config.url.img}/icons/#{@model.get('type')}.png"
+      type: module.icon
       logo: "#{acorn.config.url.img}/acorn.png"
       image: @model.get 'thumbnail'
 
