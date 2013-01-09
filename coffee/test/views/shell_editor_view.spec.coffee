@@ -306,6 +306,21 @@ describe 'acorn.player.ShellEditorView', ->
         remixer.swapShell newShell
         expect(view.remixerViews[0]).toBe remixer
 
+
+    describe 'on Remixer:LinkChanged', ->
+
+      it 'should be triggered by a Remixer:LinkChanged event ', ->
+        oldShell = new acorn.shells.LinkShell.Model
+        newShell = new acorn.shells.ImageLinkShell.Model
+        view = new ShellEditorView model: oldShell
+        view.render()
+        remixer = view.remixerViews[0]
+
+        spy = new test.EventSpy view, 'ShellEditor:ShellsUpdated'
+        remixer.trigger 'Remixer:LinkChanged', remixer, 'http://foo.com'
+        expect(spy.triggered).toBe true
+
+
     describe 'ShellEditor:Thumbnail:Change', ->
 
       it 'should be triggered initially', ->

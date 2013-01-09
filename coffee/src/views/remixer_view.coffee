@@ -146,7 +146,7 @@ class acorn.player.RemixerView extends athena.lib.View
     link = acorn.util.urlFix link
 
     # idempotent
-    if link is @model.link()
+    if link is @model.link?()
       return
 
     if acorn.util.isUrl link

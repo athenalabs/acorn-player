@@ -189,6 +189,9 @@ class acorn.player.ShellEditorView extends athena.lib.View
     view.on 'Remixer:SwapShell', (remixer, oldShell, newShell) =>
       @swapSubShell oldShell, newShell
 
+    view.on 'Remixer:LinkChanged', (remixer, newlink) =>
+      @trigger 'ShellEditor:ShellsUpdated'
+
     view
 
 
