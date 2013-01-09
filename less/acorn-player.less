@@ -387,11 +387,9 @@
   height: 100%;
   overflow: scroll;
 
-  div.loops span,
-  div.loops input {
+  div.loops-button span,
+  div.loops-button input {
     width: 30px;
-    margin-left: -4px;
-    margin-right: 5px;
     text-align: center;
   }
 
@@ -429,10 +427,12 @@
       button {
         padding: 4px 9px;
       }
-    }
 
-    .input-prepend:first-child .add-on {
-      margin-left: 0px;
+      // match bootstrap add-ons
+      input {
+        margin: 0px -1px;
+        padding: 4px 5px;
+      }
     }
   }
 
