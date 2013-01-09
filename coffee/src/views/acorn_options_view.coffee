@@ -20,7 +20,8 @@ class acorn.player.AcornOptionsView extends athena.lib.View
   events: => _.extend super,
     'blur #title': => @model.title @$('#title').val()
     'blur #thumbnail': =>
-      @model.thumbnail acorn.util.urlFix @$('#thumbnail').val()
+      value = acorn.util.urlFix @$('#thumbnail').val()
+      @model.thumbnail value or @defaultThumbnail
 
 
   template: _.template '''
@@ -55,9 +56,10 @@ class acorn.player.AcornOptionsView extends athena.lib.View
         @$('.thumbnail-view img').attr 'src', @model.get 'thumbnail'
 
     @listenTo @eventhub, 'ShellEditor:Thumbnail:Change', (thumbnail) =>
+      @defaultThumbnail = acorn.util.urlFix thumbnail
       # only use it if the field does not have a thumbnail.
       if not @$('#thumbnail').val()
-        @model.thumbnail thumbnail
+        @model.thumbnail @defaultThumbnail
 
 
   render: =>

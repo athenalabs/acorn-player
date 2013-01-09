@@ -70,6 +70,9 @@ util.imgUrl = ->
 
 # fixes given url (or fragment) to be more correct
 util.urlFix = (url) ->
+  # return blank/falsy urls
+  unless url
+    return url
 
   unless /^([a-z0-9]+:)?\/\//i.test url
     url = "http://#{url}"

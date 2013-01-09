@@ -48,7 +48,7 @@ describe 'acorn.player.AcornOptionsView', ->
       spyOn(model, 'thumbnail').andCallThrough()
       hub.trigger 'ShellEditor:Thumbnail:Change', 'foo'
       expect(model.thumbnail).toHaveBeenCalled()
-      expect(model.get 'thumbnail').toBe 'foo'
+      expect(model.get 'thumbnail').toBe 'http://foo'
 
     it 'should NOT change model.thumbnail if something in field', ->
       model = options.model.clone()
@@ -60,9 +60,29 @@ describe 'acorn.player.AcornOptionsView', ->
       expect(view.$('#thumbnail').val()).toBe 'foo'
 
       spyOn(model, 'thumbnail').andCallThrough()
-      hub.trigger 'ShellEditor:Thumbnail:Change', 'foo'
+      hub.trigger 'ShellEditor:Thumbnail:Change', 'bar'
       expect(model.thumbnail).not.toHaveBeenCalled()
       expect(model.get 'thumbnail').toBe 'foo'
+
+    it 'should set default thumbnail, and use it if field blanks', ->
+      model = options.model.clone()
+      model.thumbnail 'foo'
+      hub = new athena.lib.View
+      view = new AcornOptionsView model: model, eventhub: hub
+      view.render()
+      expect(view.model.get 'thumbnail').toBe 'foo'
+      expect(view.$('#thumbnail').val()).toBe 'foo'
+
+      spyOn(model, 'thumbnail').andCallThrough()
+      hub.trigger 'ShellEditor:Thumbnail:Change', 'bar'
+      expect(model.thumbnail).not.toHaveBeenCalled()
+      expect(model.get 'thumbnail').toBe 'foo'
+
+      view.$('#thumbnail').val ''
+      view.$('#thumbnail').trigger 'blur'
+
+      expect(model.thumbnail).toHaveBeenCalled()
+      expect(model.get 'thumbnail').toBe 'http://bar'
 
 
   it 'should look good', ->
