@@ -62,6 +62,10 @@ class CollectionShell.Model extends Shell.Model
       @set 'shells', []
 
 
+  defaultThumbnail: =>
+    @shells().first()?.thumbnail() or super
+
+
   # lazily construct shells collection
   shells: =>
     unless @_shells
