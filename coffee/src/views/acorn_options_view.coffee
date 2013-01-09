@@ -54,6 +54,11 @@ class acorn.player.AcornOptionsView extends athena.lib.View
       if @rendering
         @$('.thumbnail-view img').attr 'src', @model.get 'thumbnail'
 
+    @listenTo @eventhub, 'ShellEditor:Thumbnail:Change', (thumbnail) =>
+      # only use it if the field does not have a thumbnail.
+      if not @$('#thumbnail').val()
+        @model.thumbnail thumbnail
+
 
   render: =>
     super

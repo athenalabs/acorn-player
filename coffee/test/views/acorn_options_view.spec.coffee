@@ -34,6 +34,37 @@ describe 'acorn.player.AcornOptionsView', ->
     view.$('#thumbnail').trigger 'blur'
     expect(view.model.get 'thumbnail').toBe 'http://foo.com/differential.png'
 
+
+  describe 'ShellEditor:Thumbnail:Change event', ->
+
+    it 'should change model.thumbnail if nothing in field', ->
+      model = options.model.clone()
+      hub = new athena.lib.View
+      view = new AcornOptionsView model: model, eventhub: hub
+      view.render()
+      expect(view.model.get 'thumbnail').toBe undefined
+      expect(view.$('#thumbnail').val()).toBe ''
+
+      spyOn(model, 'thumbnail').andCallThrough()
+      hub.trigger 'ShellEditor:Thumbnail:Change', 'foo'
+      expect(model.thumbnail).toHaveBeenCalled()
+      expect(model.get 'thumbnail').toBe 'foo'
+
+    it 'should NOT change model.thumbnail if something in field', ->
+      model = options.model.clone()
+      model.thumbnail 'foo'
+      hub = new athena.lib.View
+      view = new AcornOptionsView model: model, eventhub: hub
+      view.render()
+      expect(view.model.get 'thumbnail').toBe 'foo'
+      expect(view.$('#thumbnail').val()).toBe 'foo'
+
+      spyOn(model, 'thumbnail').andCallThrough()
+      hub.trigger 'ShellEditor:Thumbnail:Change', 'foo'
+      expect(model.thumbnail).not.toHaveBeenCalled()
+      expect(model.get 'thumbnail').toBe 'foo'
+
+
   it 'should look good', ->
     # setup DOM
     acorn.util.appendCss()
