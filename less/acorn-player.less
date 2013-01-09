@@ -381,6 +381,14 @@
 .shell-media-view {
   width: 100%;
   overflow: scroll;
+
+  &.video-link-shell {
+    overflow: hidden; // no scroll bars when watching a video
+
+    .video-player-view {
+      height: 100%;
+    }
+  }
 }
 
 .shell-remix-view {
