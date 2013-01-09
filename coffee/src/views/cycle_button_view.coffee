@@ -33,6 +33,7 @@ class acorn.player.CycleButtonView extends athena.lib.View
 
 
   initialize: =>
+    super
     @buttonName = @options.buttonName ? ''
     @data = @options.data ? MissingParameterError 'CycleButton', 'data'
 
