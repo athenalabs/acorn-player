@@ -150,9 +150,12 @@ describe 'acorn.shells.VideoLinkShell', ->
             expect(triv.values().start).toBe t.start
             expect(triv.values().end).toBe t.end
 
-        # TODO(@tenedor)
-        xit 'should update model values when timeRangeInputView changes', ->
-          rv = new RemixView viewOptions()
+        it 'should update model values when timeRangeInputView changes', ->
+          options = viewOptions()
+          options.model.set 'timeStart', 0
+          options.model.set 'timeEnd', 300
+
+          rv = new RemixView options
           rv.render()
 
           triv = rv._timeRangeInputView
