@@ -234,6 +234,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
       buttonName: 'loops:'
       data: loopsButtonData
       initialView: initialView
+      extraClasses: ['loops-button']
 
 
   render: =>
