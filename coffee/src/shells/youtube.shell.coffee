@@ -66,6 +66,10 @@ class YouTubeShell.Model extends VideoLinkShell.Model
     pattern.exec(link)[3]
 
 
+  defaultThumbnail: =>
+    "//img.youtube.com/vi/#{@youtubeId()}/0.jpg"
+
+
   embedLink: =>
     # see https://developers.google.com/youtube/player_parameters for options
     "http://www.youtube.com/embed/#{@youtubeId()}?" +
