@@ -10,7 +10,9 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
   template: _.template '''
     <div class="slider-block">
-      <div class="time-slider time"></div>
+      <div class="slider-wrapper">
+        <div class="time-slider time"></div>
+      </div>
       <div class="total-time time"></div>
     </div>
     <form class="form-inline"></div>

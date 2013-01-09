@@ -425,7 +425,7 @@
   .loops-button {
     position: absolute;
     top: 34px;
-    right: 116px;
+    right: 1px;
   }
 
   .video-player-view {
@@ -437,9 +437,8 @@
 
 .ui-range-slider {
   .transition(0.35s, ease);
-  margin: 10px 7px 10px 0px;
-  width: 355px;
   height: 12px;
+  width: 100%;
 
   .ui-slider-handle {
     width: 12px;
@@ -464,11 +463,19 @@
 .time-range-input-view {
   .slider-block {
     position: relative;
+    height: 26px;
+
+    .slider-wrapper {
+      position: absolute;
+      height: 18px;
+      top: 6px;
+      left: 0px;
+      right: 69px;
+    }
 
     .total-time {
       position: absolute;
-      left: 365px;
-      top: -6px;
+      right: 0px;
       width: 46px;
       height: 18px;
       padding: 3px 5px;
@@ -486,6 +493,8 @@
   }
 
   .time-input-view {
+    margin-top: 8px;
+
     .control-group.time {
       .transition(0.5s, ease)
     }
