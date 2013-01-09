@@ -116,6 +116,12 @@ class acorn.player.ShellEditorView extends athena.lib.View
     if emptyCount is 0
       @addShell new @defaultShell.Model, shellCount
 
+    # notify of any thumbnail changes
+    unless @lastThumbnail is @model.thumbnail()
+      @lastThumbnail = @model.thumbnail()
+      @trigger 'ShellEditor:Thumbnail:Change', @lastThumbnail
+      @eventhub.trigger 'ShellEditor:Thumbnail:Change', @lastThumbnail
+
 
   # retrieves the finalized shell. @model should not be used directly.
   shell: =>
