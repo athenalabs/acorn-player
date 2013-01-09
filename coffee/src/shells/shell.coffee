@@ -45,8 +45,14 @@ class Shell.Model extends athena.lib.Model
   title: @property('title', default: '')
   description: @property('description', default: '')
   sources: @property('sources', default: [])
-  thumbnail: @property('thumbnail', default: acorn.config.img.acorn)
 
+  thumbnail: (thumbnail) =>
+    if thumbnail?
+      @set 'thumbnail', thumbnail
+    @get('thumbnail') ? @defaultThumbnail()
+
+  defaultThumbnail: @property('defaultThumbnail',
+    default: acorn.config.img.acorn)
 
   toString: =>
     "#{@shellid()} #{@title()}"

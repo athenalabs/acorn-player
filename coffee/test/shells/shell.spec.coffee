@@ -37,3 +37,6 @@ describe 'acorn.shells.Shell', ->
       describeProperty Shell.Model, 'sources', {}, default: []
       describeProperty Shell.Model, 'thumbnail', {},
         default: acorn.config.img.acorn
+
+      describeProperty Shell.Model, 'defaultThumbnail', {},
+        default: acorn.config.img.acorn
