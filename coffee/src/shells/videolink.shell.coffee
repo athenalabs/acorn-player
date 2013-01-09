@@ -185,6 +185,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     super
 
     @_timeRangeInputView = new acorn.player.TimeRangeInputView
+      eventhub: @eventhub
       start: @model.timeStart()
       end: @model.timeEnd()
       min: 0
@@ -229,6 +230,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     ]
 
     @_loopsButtonView = new acorn.player.CycleButtonView
+      eventhub: @eventhub
       buttonName: 'loops:'
       data: loopsButtonData
       initialView: initialView
