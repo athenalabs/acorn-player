@@ -20,9 +20,20 @@ class acorn.Model extends athena.lib.Model
   # property managers
   acornid: @property 'acornid'
   title: @property('title', default: 'New Acorn')
-  thumbnail: @property('thumbnail', default: acorn.config.img.acorn)
   shellData: @property 'shell'
   owner: @property 'owner'
+
+
+  thumbnail: (thumbnail) =>
+    if thumbnail?
+      @set 'thumbnail', thumbnail
+    @get('thumbnail') ? @defaultThumbnail()
+
+
+  defaultThumbnail: =>
+    @shellData().thumbnail or
+      @shellData().defaultThumbnail or
+      acorn.config.img.acorn
 
 
   idAttribute: 'acornid'

@@ -40,11 +40,10 @@ describe 'acorn.Model', ->
     s = m.toJSONString()
     expect(JSON.stringify m.attributes).toEqual s
 
-
   describeProperty = athena.lib.util.test.describeProperty
   describeProperty Model, 'title', {}, default: 'New Acorn'
-  describeProperty Model, 'thumbnail', {}, default: acorn.config.img.acorn
   describeProperty Model, 'owner', {},
+  describeProperty Model, 'thumbnail', {}, default: acorn.config.img.acorn
 
 
   describeProperty Model, 'acornid', {}, {}, ->
@@ -61,6 +60,30 @@ describe 'acorn.Model', ->
         expect(model.acornid()).toBe id
         expect(model.id).toBe id
         expect(model.id).toBe model.acornid()
+
+
+  describe 'Model::defaultThumbnail', ->
+
+    it 'should be a function', ->
+      expect(typeof Model::defaultThumbnail).toBe 'function'
+
+    it 'should return shell.thumbnail, if any', ->
+      attrs =
+        shell:
+          thumbnail: 'foo'
+          defaultThumbnail: 'bar'
+
+      expect(new Model(attrs).defaultThumbnail()).toBe 'foo'
+
+    it 'should return shell.defaultThumbnail, if no thumbnail', ->
+      attrs =
+        shell:
+          defaultThumbnail: 'bar'
+
+      expect(new Model(attrs).defaultThumbnail()).toBe 'bar'
+
+    it 'should return acorn.config.img.acorn otherwise', ->
+      expect(new Model().defaultThumbnail()).toBe acorn.config.img.acorn
 
 
   describe 'acorn.Model.shellData property', ->
