@@ -145,6 +145,10 @@ class acorn.player.RemixerView extends athena.lib.View
     link = @$('input#link').val().trim();
     link = acorn.util.urlFix link
 
+    # idempotent
+    if link is @model.link()
+      return
+
     if acorn.util.isUrl link
       shell = LinkShell.Model.withLink link
       if shell instanceof Shell.Model and shell.shellid() != @model.shellid()
@@ -155,3 +159,6 @@ class acorn.player.RemixerView extends athena.lib.View
 
     # set link to whatever our model is
     @$('input#link').val @model.link?()
+
+    # advertise link change
+    @trigger 'Remixer:LinkChanged', @, @model.link?()

@@ -124,6 +124,40 @@ describe 'acorn.player.RemixerView', ->
       expect(spy2.triggered).toBe false
       expect(view.model.link()).toBe 'http://athena.ai'
 
+    it 'should trigger `Remixer:LinkShell` on editing link (diff shell)', ->
+      model = new acorn.shells.ImageLinkShell.Model
+      view = new RemixerView model: model
+      spy1 = spyOn(view, 'onLinkChange').andCallThrough()
+      spy2 = new EventSpy view, 'Remixer:LinkChanged'
+
+      view.render()
+      expect(spy1).not.toHaveBeenCalled()
+      expect(spy2.triggered).toBe false
+
+      view.$('input#link').val 'http://athena.ai'
+      view.$('input#link').trigger 'blur'
+      expect(spy1).toHaveBeenCalled()
+      expect(spy2.triggered).toBe true
+      expect(spy2.arguments[0]).toEqual [view, 'http://athena.ai']
+      expect(model).not.toEqual view.model
+
+    it 'should trigger `Remixer:LinkChanged` on link change (same shell)', ->
+      model = new acorn.shells.LinkShell.Model
+      view = new RemixerView model: model
+      spy1 = spyOn(view, 'onLinkChange').andCallThrough()
+      spy2 = new EventSpy view, 'Remixer:LinkChanged'
+
+      view.render()
+      expect(spy1).not.toHaveBeenCalled()
+      expect(spy2.triggered).toBe false
+
+      view.$('input#link').val 'http://athena.ai'
+      view.$('input#link').trigger 'blur'
+      expect(spy1).toHaveBeenCalled()
+      expect(spy2.triggered).toBe true
+      expect(spy2.arguments[0]).toEqual [view, 'http://athena.ai']
+      expect(view.model.link()).toBe 'http://athena.ai'
+
 
 
   it 'should look good', ->
