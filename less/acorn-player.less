@@ -430,8 +430,8 @@
 
     .loops-button {
       position: absolute;
-      top: 34px;
-      right: 1px;
+      top: 20px;
+      right: 6px;
 
       button {
         padding: 4px 9px;
@@ -483,9 +483,15 @@
 }
 
 .time-range-input-view {
+  margin-top: -10px;
+  width: 538px;
+  overflow: hidden;
+
   .slider-block {
     position: relative;
-    height: 26px;
+    margin: -7px 0px;
+    height: 34px;
+    width: 100%;
 
     .slider-wrapper {
       position: absolute;
@@ -497,33 +503,30 @@
   }
 
   .form-inline {
+    margin: 0px 5px 5px 5px;
+
     .time-inputs {
       display: inline-block;
 
-      > * {
-        display: inline-block;
-      }
-
       .time-input-view {
-        margin-top: 8px;
+        display: inline-block;
 
         .control-group.time {
-          .transition(0.5s, ease)
+          .transition(0.5s, ease);
+          margin: 0px;
         }
+      }
 
-        input.time {
-          width: 50px;
-          margin-right: 5px;
-          text-align: center;
-        }
+      input.time {
+        width: 50px;
+        margin-right: 5px;
+        text-align: center;
       }
     }
 
     .total-time-view {
       // this css is care of bootstrap
       border-radius: 4px;
-      margin: -1px;
-      margin-top: 8px;
       vertical-align: top;
       display: inline-block;
       width: auto;
