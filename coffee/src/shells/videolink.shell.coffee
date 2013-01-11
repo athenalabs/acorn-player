@@ -182,6 +182,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
 
   template: _.template '''
+    <div class='video-player'></div>
     <div class='time-controls'></div>
     '''
 
@@ -247,9 +248,9 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @$el.empty()
 
     @$el.append @template()
+    @$('.video-player').append @_playerView.render().el
     @$('.time-controls').append @_timeRangeInputView.render().el
     @$('.time-controls').append @_loopsButtonView.render().el
-    @$el.append @_playerView.render().el
 
     # if meta data is waiting, fetch it and reset time input maximum values on
     # retrieval
