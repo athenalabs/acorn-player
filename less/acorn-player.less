@@ -492,39 +492,52 @@
       height: 18px;
       top: 6px;
       left: 0px;
-      right: 69px;
+      right: 0px;
+    }
+  }
+
+  .form-inline {
+    .time-inputs {
+      display: inline-block;
+
+      > * {
+        display: inline-block;
+      }
+
+      .time-input-view {
+        margin-top: 8px;
+
+        .control-group.time {
+          .transition(0.5s, ease)
+        }
+
+        input.time {
+          width: 50px;
+          margin-right: 5px;
+          text-align: center;
+        }
+      }
     }
 
-    .total-time {
-      position: absolute;
-      right: 0px;
-      width: 46px;
-      height: 18px;
-      padding: 3px 5px;
-      .rounded(3px);
-      text-shadow: 0 1px 0 white;
+    .total-time-view {
+      // this css is care of bootstrap
+      border-radius: 4px;
+      margin: -1px;
+      margin-top: 8px;
+      vertical-align: top;
+      display: inline-block;
+      width: auto;
+      height: 20px;
+      min-width: 16px;
+      padding: 4px 5px;
+      font-size: 14px;
+      font-weight: normal;
+      line-height: 20px;
       text-align: center;
-      vertical-align: middle;
+      text-shadow: 0 1px 0 white;
       background-color: #EEE;
       border: 1px solid #CCC;
-    }
-  }
-
-  .form-inline > * {
-    display: inline-block;
-  }
-
-  .time-input-view {
-    margin-top: 8px;
-
-    .control-group.time {
-      .transition(0.5s, ease)
-    }
-
-    input.time {
-      width: 50px;
-      margin-right: 5px;
-      text-align: center;
+      white-space: nowrap;
     }
   }
 }

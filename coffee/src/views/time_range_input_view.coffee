@@ -13,9 +13,17 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
       <div class="slider-wrapper">
         <div class="time-slider time"></div>
       </div>
-      <div class="total-time time"></div>
     </div>
-    <form class="form-inline"></div>
+    <form class="form-inline">
+      <div class="time-inputs"></div>
+      <div class="total-time-view">
+        <span class="total-time"></span>/<span class="max-time"></span>
+      </div>
+    </div>
+    '''
+
+
+  _totalTimeTemplate: _.template '''
     '''
 
 
@@ -58,8 +66,12 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @$el.empty()
     @$el.append @template()
 
-    @$('form').append @startInputView.render().el
-    @$('form').append @endInputView.render().el
+    @$('.time-inputs').append @startInputView.render().el
+    @$('.time-inputs').append @endInputView.render().el
+
+    # set max-time
+    @$('span.max-time').text acorn.util.Time.secondsToTimestring @_max
+
     @_renderSlider()
     @_setTotalTime()
 
