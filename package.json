@@ -1,0 +1,48 @@
+{
+  "name": "acorn-player",
+  "description": "multimedia player",
+  "version": "0.0.1",
+  "homepage": "https://github.com/athenalabs/acorn-player",
+  "author": "Athena Team",
+  "contributors": [
+    {
+      "name": "Juan Batiz-Benet",
+      "email": "juan@athena.ai"
+    },
+    {
+      "name": "Ali Yahya",
+      "email": "alive@athena.ai"
+    },
+    {
+      "name": "Daniel Windham",
+      "email": "daniel@athena.ai"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/athenalabs/acorn-player.git"
+  },
+  "bugs": {
+    "url": "https://github.com/athenalabs/acorn-player/issues"
+  },
+  "scripts": {
+    "test": "grunt --config Gruntfile.coffee test"
+  },
+  "devDependencies": {
+    "grunt": "~0.3.17",
+    "grunt-coffee": "0.0.6",
+    "grunt-contrib-clean": "~0.3.1",
+    "grunt-contrib-less": "~0.3.2",
+    "grunt-closure-tools": "0.6.11",
+    "grunt-jasmine-runner": "~0.6.0",
+    "grunt-jasmine-spec-server": "0.0.2",
+    "coffee-script": "~1.3.3",
+    "phantomjs": "~0.2.3",
+    "jquery-browser": "~1.8.2-1",
+    "underscore": "~1.4.3",
+    "backbone": "~0.9.9",
+    "grunt-exec": "~0.3.0",
+    "grunt-cli": "~0.1.2"
+  },
+  "readmeFilename": "README.md"
+}

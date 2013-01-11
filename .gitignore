@@ -7,3 +7,9 @@ supervisord.log
 data/
 venv/
 *.swp
+build/
+js/
+static/css
+node_modules/
+lib/closure/compiler.jar
+grunt.js
