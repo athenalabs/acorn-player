@@ -89,6 +89,7 @@ util.iframeOptions =
   allowFullScreen: 'true'
   webkitAllowFullScreen: 'true'
   mozallowfullscreen: 'true'
+  sandbox: 'allow-forms allow-same-origin allow-scripts allow-top-navigation'
 
 
 # construct an <iframe> element, with `src` and `id`
