@@ -174,17 +174,23 @@ describe 'acorn.shells.SlideshowShell', ->
           expect(view.currentIndex).toBe 1
 
 
-        it 'should cycle to next shell after shell duration when shell duration
+      # TODO - properly determine when youtube has loaded in order to test this
+        xit 'should cycle to next shell after shell duration when shell duration
             is finite but more than delay', ->
           # set delay and shells
           _viewOptions = viewOptions()
           m = _viewOptions.model
           m.delay 5
           m.set 'shells', [{
-            link: "https://www.video.com/video.avi"
+            timeTotal: 571,
+            timeEnd: 571,
+            timeStart: 560,
+            shellid: "acorn.YouTubeShell",
+            link: "https://www.youtube.com/watch?v=yYAw79386WI",
             loops: "one"
-            shellid: "acorn.VideoLinkShell"
-            timeTotal: 10
+            # or try:
+            # shellid: "acorn.VimeoShell"
+            # link: 'http://www.vimeo.com/8201078'
           }, {
             link: "https://www.video.com/video.avi"
             loops: "one"
@@ -192,19 +198,31 @@ describe 'acorn.shells.SlideshowShell', ->
             timeTotal: 10
           }]
 
+          view = new MediaView _viewOptions
+          ready = undefined
           jasmine.Clock.useMock()
 
-          view = new MediaView _viewOptions
-          view.controlsView.render()
-          view.render()
+          runs ->
+            # setup DOM
+            acorn.util.appendCss()
+            $hiddenPlayer = $('<div>').addClass('acorn-player hidden').width(600)
+                .height(400).appendTo('body')
 
-          expect(view.currentIndex).toBe 0
+            # must be appended to DOM in order for youtubeShell to load properly
+            view.controlsView.render()
+            $hiddenPlayer.append view.render().el
+            view.shellViews[0].playerView.on 'PlayerView:Ready', -> ready = true
 
-          jasmine.Clock.tick(9999)
-          expect(view.currentIndex).toBe 0
+          waitsFor (-> ready), 'video player to be ready', 10000
 
-          jasmine.Clock.tick(2)
-          expect(view.currentIndex).toBe 1
+          runs ->
+            expect(view.currentIndex).toBe 0
+
+            jasmine.Clock.tick(9910999)
+            expect(view.currentIndex).toBe 0
+
+            jasmine.Clock.tick(2)
+            expect(view.currentIndex).toBe 1
 
         it 'should cycle to next shell after delay when shell duration is less
             than delay', ->

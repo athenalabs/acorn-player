@@ -96,22 +96,30 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
   _countdown: =>
     @_clearCountdown()
 
-    unless @isPlaying()
-      return
-
-    view = @shellViews[@currentIndex]
-    dur = view?.duration?()
-    countdown = if @model.delay() < dur < Infinity
-      dur
-    else
-      @model.delay()
-
-    @_counter = setTimeout @showNext, countdown * 1000
+    if @isPlaying()
+      @_counter = setTimeout @_onCountdownFinish, @model.delay() * 1000
 
 
   _clearCountdown: =>
     clearTimeout @_counter
     @_counter = undefined
+
+
+  _onCountdownFinish: =>
+    @_clearCountdown()
+
+    view = @shellViews[@currentIndex]
+
+    if @isPlaying()
+      unless 0 < view?.duration?() < Infinity and view.isPlaying()
+        @showNext()
+
+
+  _onShellPlaybackEnded: =>
+    # show next if counter has already concluded
+    if @isPlaying()
+      unless @_counter?
+        @showNext()
 
 
 
