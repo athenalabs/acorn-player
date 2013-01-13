@@ -150,6 +150,24 @@ class GridControlView extends IconControlView
 
 
 
+class PlayControlView extends IconControlView
+  controlName: => 'PlayControl'
+  className: @classNameExtend 'play'
+  tooltip: => title: 'Play', delay: show: 1500
+  defaults: => _.extend super,
+    icon: 'play'
+
+
+
+class PauseControlView extends IconControlView
+  controlName: => 'PauseControl'
+  className: @classNameExtend 'pause'
+  tooltip: => title: 'Pause', delay: show: 1500
+  defaults: => _.extend super,
+    icon: 'pause'
+
+
+
 class ImageControlView extends ControlView
 
 
@@ -198,6 +216,8 @@ acorn.player.controls.FullscreenControlView = FullscreenControlView
 acorn.player.controls.NextControlView = NextControlView
 acorn.player.controls.PreviousControlView = PreviousControlView
 acorn.player.controls.GridControlView = GridControlView
+acorn.player.controls.PlayControlView = PlayControlView
+acorn.player.controls.PauseControlView = PauseControlView
 
 acorn.player.controls.ImageControlView = ImageControlView
 acorn.player.controls.AcornControlView = AcornControlView
