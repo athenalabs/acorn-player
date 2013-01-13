@@ -168,7 +168,7 @@ class CollectionShell.MediaView extends Shell.MediaView
         eventhub: @eventhub
         model: shellModel
 
-      # TODO view.on 'playback:ended', @onShellPlaybackEnded
+      view.on 'playback:ended', @_onShellPlaybackEnded
       view
 
     # initialize the currently selected view
@@ -223,6 +223,9 @@ class CollectionShell.MediaView extends Shell.MediaView
 
   showPrevious: => @showView @currentIndex - 1
   showNext: => @showView @currentIndex + 1
+
+
+  _onShellPlaybackEnded: =>
 
 
 
