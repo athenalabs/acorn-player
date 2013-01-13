@@ -210,7 +210,15 @@ class CollectionShell.MediaView extends Shell.MediaView
 
   hideView: =>
     view = @shellViews[@currentIndex]
-    view?.remove()
+    #view?.remove()
+
+    # TODO: events are being bound with listenTo, and do not get rebound on
+    # rerenders following a remove() call. This is a quick fix until they get
+    # refactored.
+    if view?
+      view.$el.addClass 'hidden'
+      view.pause()
+
     view
 
 
@@ -221,8 +229,13 @@ class CollectionShell.MediaView extends Shell.MediaView
     @hideView()
     @currentIndex = index
     view = @shellViews[index]
+
+    # TODO: temporary fix - partner of above
+    view.$el.removeClass 'hidden'
+
     @$el.append view.render().el
     # TODO update controls
+
     view
 
 
