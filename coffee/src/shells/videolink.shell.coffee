@@ -23,17 +23,8 @@ VideoLinkShell = acorn.shells.VideoLinkShell =
 class VideoLinkShell.Model extends LinkShell.Model
 
 
-  initialize: =>
-    super
-
-    # set default property values
-    unless @timeTotal() >= 0
-      @set 'timeTotal', Infinity
-
-
   timeStart: @property 'timeStart'
   timeEnd: @property 'timeEnd'
-  timeTotal: @property('timeTotal', setter: false)
 
 
   description: =>

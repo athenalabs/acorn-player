@@ -45,6 +45,7 @@ class Shell.Model extends athena.lib.Model
   title: @property('title', default: '')
   description: @property('description', default: '')
   sources: @property('sources', default: [])
+  timeTotal: @property('timeTotal', {default: Infinity, setter: false})
 
   thumbnail: (thumbnail) =>
     if thumbnail?
@@ -120,7 +121,8 @@ class Shell.MediaView extends athena.lib.View
 
 
   # Returns the view's total duration in seconds
-  duration: => 0
+  duration: =>
+    @model.timeTotal()
 
 
   # Sets the media view's volume.
