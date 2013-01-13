@@ -25,6 +25,7 @@ class VideoLinkShell.Model extends LinkShell.Model
 
   timeStart: @property 'timeStart'
   timeEnd: @property 'timeEnd'
+  loops: @property 'loops'
 
 
   description: =>
@@ -112,7 +113,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
       # avoid decrementing the loop count multiple times before restart finishes
       return if @restarting
 
-      loops = @model.get 'loops'
+      loops = @model.loops()
 
       # if loops is a number, count video loops
       if parseInt(loops) >= 0
@@ -199,12 +200,12 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
 
   _initializeLoopsButton: =>
-    loops = @model.get 'loops'
+    loops = @model.loops()
 
     # ensure loops property is set
     unless loops?
       loops = 'one'
-      @model.set 'loops', loops
+      @model.loops(loops)
 
     # determine initial view index for cycle button
     initialView = switch loops
@@ -270,7 +271,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
   _onChangeLoops: (changed) =>
     loops = if changed.name == 'n' then changed.value else changed.name
-    @model.set 'loops', loops
+    @model.loops(loops)
 
 
 
