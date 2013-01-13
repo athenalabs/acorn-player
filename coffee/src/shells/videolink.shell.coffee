@@ -38,9 +38,23 @@ class VideoLinkShell.Model extends LinkShell.Model
 
 
   # duration of one video loop given current splicing
-  duration: =>
+  singleLoopDuration: =>
     end = @timeEnd() ? @timeTotal()
     end - (@timeStart() ? 0)
+
+
+  # duration of video given current splicing and looping
+  duration: =>
+    loops = @loops()
+
+    if loops == 'infinity'
+      Infinity
+    else
+      if parseInt(loops) >= 0
+        loops = parseInt loops
+      else
+        loops = 1
+      @singleLoopDuration() * loops
 
 
   # if metaDataUrl is set, returns a resource to sync and cache custom data
@@ -161,7 +175,12 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     @playerView.seekOffset() ? 0
 
 
-  # duration of media (clipped) - get from model
+  # duration of one video loop given current splicing - get from model
+  singleLoopDuration: =>
+    @model.singleRunDuration()
+
+
+  # duration of video given current splicing and looping - get from model
   duration: =>
     @model.duration()
 
