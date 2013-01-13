@@ -153,6 +153,10 @@ class CollectionShell.MediaView extends Shell.MediaView
   className: @classNameExtend 'collection-shell'
 
 
+  defaults: => _.extend super,
+    playOnReady: false
+
+
   initialize: =>
     super
 
@@ -167,6 +171,7 @@ class CollectionShell.MediaView extends Shell.MediaView
       view = new shellModel.module.MediaView
         eventhub: @eventhub
         model: shellModel
+        playOnReady: @options.playOnReady
 
       view.on 'playback:ended', @_onShellPlaybackEnded
       view
