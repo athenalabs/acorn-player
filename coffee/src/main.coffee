@@ -17,5 +17,6 @@ goog.require 'acorn.shells.YouTubeShell'
 goog.require 'acorn.shells.VimeoShell'
 goog.require 'acorn.shells.CollectionShell'
 goog.require 'acorn.shells.SlideshowShell'
+goog.require 'acorn.shells.GalleryShell'
 
 (exports ? @).acorn = acorn
