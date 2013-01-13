@@ -28,7 +28,7 @@ acorn.config.img.acornIcon = "#{acorn.config.url.img}/acorn.icon.png"
 
 
 acorn.config.css = [
-  '/css/acorn-player.css',
+  '/build/css/acorn-player.css',
   '/lib/fontawesome/css/font-awesome.css',
   '/lib/jquery/jquery-ui.custom.min.css',
 ]
