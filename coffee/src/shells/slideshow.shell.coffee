@@ -29,6 +29,10 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
   className: @classNameExtend 'slideshow-shell'
 
 
+  defaults: => _.extend super,
+    playOnReady: true
+
+
   _initializeControlsView: =>
     # construct a ControlToolbar for the acorn controls
     @controlsView = new ControlToolbarView
