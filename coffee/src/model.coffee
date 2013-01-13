@@ -58,4 +58,4 @@ class acorn.Model extends athena.lib.Model
 
 
   @withShellData: (shelldata) =>
-    new @(shell: shelldata.data)
+    new @(shell: shelldata)

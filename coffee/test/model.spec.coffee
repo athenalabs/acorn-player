@@ -104,6 +104,37 @@ describe 'acorn.Model', ->
         expect(model.shellData()).toBe sd
 
 
+  describe 'acorn.Model.withData', ->
+
+    it 'should work with an object', ->
+      model = Model.withData {acornid:'hi'}
+      expect(model instanceof Model).toBe true
+      expect(model.acornid()).toBe 'hi'
+
+    it 'should work with nothing (new)', ->
+      model = Model.withData()
+      expect(model instanceof Model).toBe true
+      expect(model.acornid()).toBe 'new'
+
+    it 'should work with a string (acornid)', ->
+      model = Model.withData 'hi'
+      expect(model instanceof Model).toBe true
+      expect(model.acornid()).toBe 'hi'
+
+    it 'should work with a string (url)', ->
+      model = Model.withData 'http://acorn.athena.ai/hi'
+      expect(model instanceof Model).toBe true
+      expect(model.acornid()).toBe 'hi'
+
+
+  describe 'acorn.Model.withShellData', ->
+
+    it 'should work with shell object', ->
+      model = Model.withShellData {shellid:'acorn.EmptyShell'}
+      expect(model instanceof Model).toBe true
+      expect(model.acornid()).toBe 'new'
+      expect(model.shellData()).toEqual {shellid:'acorn.EmptyShell'}
+
 
   describe 'acorn.Model.sync', ->
 
