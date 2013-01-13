@@ -6,6 +6,16 @@ goog.require 'acorn.util.test'
 describe 'acorn.shells.Shell', ->
   Shell = acorn.shells.Shell
 
+  Model = Shell.Model
+  MediaView = Shell.MediaView
+  RemixView = Shell.RemixView
+
+  viewOptions = ->
+    model: new Model
+    eventhub: _.extend {}, Backbone.Events
+
+  EventSpy = athena.lib.util.test.EventSpy
+
   it 'should be part of acorn.shells', ->
     expect(Shell).toBeDefined()
 
@@ -40,3 +50,38 @@ describe 'acorn.shells.Shell', ->
 
       describeProperty Shell.Model, 'defaultThumbnail', {},
         default: acorn.config.img.acorn
+
+
+    describe 'Shell.MediaView', ->
+
+      describe '\'MediaView:Ready\' event', ->
+
+        it 'should fire after render (waiting for call stack to clear) by
+            default', ->
+          view = new MediaView viewOptions()
+          spy = new EventSpy view, 'MediaView:Ready'
+
+          expect(spy.triggered).toBe false
+
+          runs -> view.render()
+
+          # asynchronous since call stack clears before event is fired
+          waitsFor (-> spy.triggered), 'MediaView:Ready event', 100
+
+        it 'should not fire after render when `readyOnInitialize` is false', ->
+          MediaView::readyOnInitialize = false
+          @after -> MediaView::readyOnInitialize = true
+
+          view = new MediaView viewOptions()
+          spy = new EventSpy view, 'MediaView:Ready'
+
+          expect(spy.triggered).toBe false
+          tenth = false
+
+          runs ->
+            view.render()
+            setTimeout (-> tenth = true), 100
+
+          waitsFor (-> tenth), 'tenth of a second', 110
+
+          runs -> expect(spy.triggered).toBe false

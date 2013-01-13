@@ -88,9 +88,13 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
       eventhub: @eventhub
 
     @listenTo @playerView, 'PlayerView:StateChange', @onPlayerViewStateChange
+    @listenTo @playerView, 'PlayerView:Ready', @onPlayerViewReady
 
 
   render: =>
+    # reset ready flag
+    @ready = false
+
     super
 
     @$el.empty()
@@ -99,9 +103,6 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     @timer.stopTick()
 
     @$el.append @playerView.render().el
-
-    # start playing once ready
-    # @playerView.once 'PlayerView:Ready', @play
 
     @
 
@@ -151,6 +152,14 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     if @isPlaying() then @timer.startTick() else @timer.stopTick()
 
 
+  onPlayerViewReady: =>
+    @ready = true
+
+    # announce ready state if already rendering
+    if @rendering
+      @trigger 'MediaView:Ready'
+
+
   # actions
 
   play: =>
@@ -183,6 +192,11 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
   # duration of video given current splicing and looping - get from model
   duration: =>
     @model.duration()
+
+
+  # video playerView will announce when it is ready, and mediaView will forward
+  # the event
+  readyOnRender: false
 
 
 

@@ -96,6 +96,9 @@ class Shell.MediaView extends athena.lib.View
     unless @options.model
       acorn.errors.MissingParameterError 'Shell.MediaView', 'model'
 
+    if @readyOnInitialize
+      @ready = true
+
 
   controls: []
 
@@ -160,10 +163,21 @@ class Shell.MediaView extends athena.lib.View
   setObjectFit: (objectFit) =>
 
 
+  # Whether this mediaView is ready
+  ready: false
+
+  # Whether this mediaView is fully loaded after initialization
+  readyOnInitialize: true
+
+
   render: =>
     super
     @$el.width @width()
     @$el.height @height()
+
+    # if ready when call stack clears, announce readiness
+    setTimeout (=> @trigger 'MediaView:Ready' if @ready), 0
+
     @
 
 
