@@ -8,6 +8,10 @@ class acorn.player.TimeInputView extends athena.lib.View
   className: @classNameExtend 'time-input-view'
 
 
+  defaults: => _.extend super,
+    padTime: true
+
+
   events: => _.extend super,
     'change input': @_onInputChanged
     'blur input': @_onInputChanged
@@ -103,7 +107,7 @@ class acorn.player.TimeInputView extends athena.lib.View
 
     # display timestring or '--'
     time = if @_time?
-      acorn.util.Time.secondsToTimestring @_time
+      acorn.util.Time.secondsToTimestring @_time, {padTime: @options.padTime}
     else
       '--'
 
