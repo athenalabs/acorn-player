@@ -169,12 +169,15 @@ class CollectionShell.MediaView extends Shell.MediaView
     # keep all subviews in memory - perhaps in the future only keep p<c>n.
     @shellViews = @model.shells().map (shellModel) =>
       view = new shellModel.module.MediaView
+        # TODO: should be passing `eventhub: @` and selectively forwarding
+        # events to @eventhub
         eventhub: @eventhub
         model: shellModel
         playOnReady: @options.playOnReady
 
-      view.on 'playback:ended', @_onShellPlaybackEnded
       view
+
+    @eventhub.on 'playback:ended', @_onShellPlaybackEnded
 
     # initialize the currently selected view
     @currentIndex = 0
