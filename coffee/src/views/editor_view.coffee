@@ -59,11 +59,13 @@ class acorn.player.EditorView extends athena.lib.View
       model: acorn.shellWithAcorn @model
       eventhub: @eventhub
 
+    btns = []
+    unless @model.isNew()
+      btns.push {text: 'Cancel', id: 'editor-cancel-btn'}
+    btns.push {text: 'Save', id: 'editor-save-btn', className: 'btn-success'}
+
     @toolbarView = new athena.lib.ToolbarView
-      buttons: [
-        {text: 'Cancel', id: 'editor-cancel-btn'},
-        {text: 'Save', id: 'editor-save-btn', className: 'btn-success'},
-      ]
+      buttons: btns
       eventhub: @eventhub
 
 
