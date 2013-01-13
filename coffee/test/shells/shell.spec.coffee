@@ -85,3 +85,32 @@ describe 'acorn.shells.Shell', ->
           waitsFor (-> tenth), 'tenth of a second', 110
 
           runs -> expect(spy.triggered).toBe false
+
+
+      describe 'playOnReady', ->
+
+        beforeEach -> spyOn MediaView::, 'play'
+        afterEach -> MediaView::play.reset()
+
+        it 'should by default not play video on MediaView:Ready', ->
+          view = new MediaView viewOptions()
+
+          expect(MediaView::play).not.toHaveBeenCalled()
+          tenth = false
+
+          runs ->
+            view.render()
+            setTimeout (-> tenth = true), 100
+
+          waitsFor (-> tenth), 'tenth of a second', 110
+
+          runs -> expect(MediaView::play).not.toHaveBeenCalled()
+
+        it 'should play video on MediaView:Ready if passed `playOnReady`', ->
+          view = new MediaView _.extend viewOptions(), {playOnReady: true}
+
+          expect(MediaView::play).not.toHaveBeenCalled()
+
+          runs -> view.render()
+
+          waitsFor (-> MediaView::play.calls.length > 0), 'play to be called', 100

@@ -99,6 +99,9 @@ class Shell.MediaView extends athena.lib.View
     if @readyOnInitialize
       @ready = true
 
+    if @options.playOnReady
+      @listenTo @, 'MediaView:Ready', @play
+
 
   controls: []
 
