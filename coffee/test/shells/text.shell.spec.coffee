@@ -4,7 +4,6 @@ goog.require 'acorn.shells.TextShell'
 goog.require 'acorn.util.test'
 
 describe 'acorn.shells.TextShell', ->
-  derives = athena.lib.util.derives
   Shell = acorn.shells.Shell
   TextShell = acorn.shells.TextShell
 
