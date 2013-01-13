@@ -25,6 +25,8 @@ class acorn.player.ShellOptionsView extends athena.lib.View
   initialize: =>
     super
 
+    @remixView = new @model.module.RemixView model: @model
+
     modules = _.map acorn.shells.Registry.modules, (module, shellid) =>
       {id:module.id, name: module.title, icon: module.icon}
 
@@ -34,11 +36,14 @@ class acorn.player.ShellOptionsView extends athena.lib.View
       selected: @model.module.id
 
     @dropdownView.on 'Dropdown:Selected', =>
-      @model.set shellid: @dropdownView.selected()
+      shellid = @dropdownView.selected()
+      unless shellid is @model.shellid()
+        @trigger 'ShellOptions:SwapShell', shellid
 
 
   render: =>
     super
     @$el.empty()
     @$el.append @dropdownView.render().el
+    @$el.append @remixView.render().el
     @

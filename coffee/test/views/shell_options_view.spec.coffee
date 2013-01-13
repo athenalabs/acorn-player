@@ -3,6 +3,7 @@ goog.provide 'acorn.specs.player.ShellOptionsView'
 goog.require 'acorn.player.ShellOptionsView'
 
 describe 'acorn.player.ShellOptionsView', ->
+  test = athena.lib.util.test
   ShellOptionsView = acorn.player.ShellOptionsView
 
   # shell model for ShellOptionsView contruction
@@ -15,21 +16,21 @@ describe 'acorn.player.ShellOptionsView', ->
   it 'should be part of acorn.player', ->
     expect(ShellOptionsView).toBeDefined()
 
-  describeView = athena.lib.util.test.describeView
+  describeView = test.describeView
   describeView ShellOptionsView, athena.lib.View, options
 
-  athena.lib.util.test.describeSubview
+  test.describeSubview
     View: ShellOptionsView
     Subview: acorn.player.DropdownView
     subviewAttr: 'dropdownView'
     viewOptions: options
 
-  it 'should change shell.shellid on Dropdown:Selected', ->
+  it 'should trigger `ShellOptions:SwapShell` on Dropdown:Selected', ->
     view = new ShellOptionsView options
     view.render()
-    expect(view.model.get 'shellid').toBe 'acorn.Shell'
+    spy = new test.EventSpy view, 'ShellOptions:SwapShell'
     view.dropdownView.selected('acorn.EmptyShell')
-    expect(view.model.get 'shellid').toBe 'acorn.EmptyShell'
+    expect(spy.triggered).toBe true
 
   it 'should look good', ->
     # setup DOM

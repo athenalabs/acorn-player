@@ -42,7 +42,6 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
 
   template: _.template '''
-    <div class="shell-options-view row-fluid"></div>
     <div class="remix-views"></div>
     '''
 
@@ -67,13 +66,24 @@ class acorn.player.ShellEditorView extends athena.lib.View
     unless @shellIsEmpty @model.shells().last()
       @model.shells().push new @defaultShell.Model
 
-    @shellOptionsView = new acorn.player.ShellOptionsView
-      eventhub: @eventhub
-      model: @model
+    @initializeShellOptionsView()
 
     @remixerViews = @model.shells().map @remixerForShell
 
     @on 'ShellEditor:ShellsUpdated', @renderUpdates
+
+
+  # initializes the ShellOptionsView
+  initializeShellOptionsView: =>
+
+    @shellOptionsView?.destroy()
+    @shellOptionsView = new acorn.player.ShellOptionsView
+      eventhub: @eventhub
+      model: @model
+
+    @shellOptionsView.on 'ShellOptions:SwapShell', (shellid) =>
+      module = acorn.shellModuleWithId shellid
+      @swapTopLevelShell new module.Model
 
 
   render: =>
@@ -88,8 +98,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
 
   renderOptionsView: =>
-    @shellOptionsView.setElement @$ '.shell-options-view'
-    @shellOptionsView.render()
+    @$el.prepend @shellOptionsView.render().el
     @
 
 
@@ -211,18 +220,14 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
   # swaps the main shell with given shell
   swapTopLevelShell: (shell) =>
-    unless shell instanceof CollectionShell
-      TypeError shell, 'CollectionShell'
+    unless shell instanceof CollectionShell.Model
+      TypeError shell, 'CollectionShell.Model'
 
-    @shellOptionsView?.destroy()
-
-    _.map @model.shells(), shell.addShell
+    shell.shells().add @model.shells().models
     @model = shell
 
-    @shellOptionsView = new acorn.player.ShellOptionsView
-      eventhub: @eventhub
-      model: @model
-
+    @initializeShellOptionsView()
     if @rendering
       @renderOptionsView()
+      @trigger 'ShellEditor:ShellsUpdated'
     @

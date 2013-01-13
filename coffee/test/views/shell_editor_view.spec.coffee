@@ -3,6 +3,8 @@ goog.provide 'acorn.specs.player.ShellEditorView'
 goog.require 'acorn.player.ShellEditorView'
 goog.require 'acorn.shells.TextShell'
 goog.require 'acorn.shells.EmptyShell'
+goog.require 'acorn.shells.GalleryShell'
+goog.require 'acorn.shells.CollectionShell'
 
 describe 'acorn.player.ShellEditorView', ->
   test = athena.lib.util.test
@@ -12,6 +14,8 @@ describe 'acorn.player.ShellEditorView', ->
   Shell = acorn.shells.Shell
   TextShell = acorn.shells.TextShell
   EmptyShell = acorn.shells.EmptyShell
+  GalleryShell = acorn.shells.GalleryShell
+  CollectionShell = acorn.shells.CollectionShell
   ShellEditorView = acorn.player.ShellEditorView
 
   # model for EditorView contruction
@@ -214,6 +218,29 @@ describe 'acorn.player.ShellEditorView', ->
       expect(firstShell() instanceof EmptyShell.Model).toBe true
 
   describe 'ShellEditorView events', ->
+
+    describe 'on ShellOptions:SwapShell', ->
+
+      it 'should call swap the top level shell', ->
+        view = new ShellEditorView options
+        view.render()
+        spyOn view, 'swapTopLevelShell'
+        view.shellOptionsView.trigger 'ShellOptions:SwapShell', GalleryShell.id
+        expect(view.swapTopLevelShell).toHaveBeenCalled()
+
+
+      it 'should swap the shell seamlessly', ->
+        view = new ShellEditorView options
+        view.render()
+        expect(view.model.shellid()).toBe CollectionShell.id
+        models = _.clone view.model.shells().models
+
+        view.shellOptionsView.trigger 'ShellOptions:SwapShell', GalleryShell.id
+        expect(view.model.shellid()).toBe GalleryShell.id
+        expect(view.shellOptionsView.model).toBe view.model
+        expect(view.model.shells().models.length).toEqual models.length
+        expect(view.model.shells().models[0]).toEqual models[0]
+
 
     describe 'on Remixer:Duplicate', ->
 
