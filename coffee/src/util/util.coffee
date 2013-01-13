@@ -178,12 +178,12 @@ util.parseUrl = (url) ->
 class util.Time
 
 
-  constructor: (time) ->
+  constructor: (time, @options = {}) ->
     @time = @constructor.timestringToSeconds time
 
 
   seconds: => @time
-  timestring: => @constructor.secondsToTimestring @time
+  timestring: => @constructor.secondsToTimestring @time, @options
 
 
   @timestringToSeconds: (timestring) =>
@@ -201,7 +201,7 @@ class util.Time
     (hrs * 60 * 60) + (min * 60) + sec + subsec
 
 
-  @secondsToTimestring: (seconds) =>
+  @secondsToTimestring: (seconds, options = {}) =>
     sec = parseInt seconds, 10
 
     hrs = parseInt sec / (60 * 60), 10
@@ -219,7 +219,15 @@ class util.Time
     hrs = if hrs == 0 then '' else "#{hrs}:"
     pad = (n) -> if n < 10 then "0#{n}" else "#{n}"
 
-    "#{hrs}#{pad min}:#{pad sec}#{subsec or ''}"
+    if hrs == '' and options.padTime == false
+      if min == 0 then min = '' else min = "#{min}:"
+    else
+      min = "#{pad min}:"
+
+    unless min == ''
+      sec = pad sec
+
+    "#{hrs}#{min}#{sec}#{subsec or ''}"
 
 
 

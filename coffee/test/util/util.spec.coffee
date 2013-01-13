@@ -55,6 +55,28 @@ describe 'acorn.util.Time', ->
     '111:11:11.111': 400271.111
     '123:46:07.89': 445567.89
 
+  padlessPairs =
+    '0': 0
+    '1': 1
+    '10': 10
+    '50': 50
+    '1:00': 60
+    '0.1': 0.1
+    '1.1': 1.1
+    '0.11': 0.11
+    '0.111': 0.111
+    '9.999': 9.999
+    '1:10': 70
+    '2:00': 120
+    '10:00': 600
+    '10:10': 610
+    '11:11': 671
+    '1:00:00': 3600
+    '10:00:00': 36000
+    '111:11:11': 400271
+    '111:11:11.111': 400271.111
+    '123:46:07.89': 445567.89
+
   it 'should have a working, static `timestringToSeconds` function', ->
     expect(typeof Time.timestringToSeconds).toBe('function')
     _.each pairs, (sec, str) ->
@@ -64,6 +86,11 @@ describe 'acorn.util.Time', ->
     expect(typeof Time.secondsToTimestring).toBe('function')
     _.each pairs, (sec, str) ->
       expect(Time.secondsToTimestring sec).toBe(str)
+
+  it 'should have a `secondsToTimestring` function that does not pad times when
+      passed {padTime: false}', ->
+    _.each padlessPairs, (sec, str) ->
+      expect(Time.secondsToTimestring sec, {padTime: false}).toBe(str)
 
   it 'constructing the object should work', ->
     t = new Time(0)
