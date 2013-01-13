@@ -227,6 +227,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @_playerView = new @module.PlayerView
       model: @model
       eventhub: @eventhub
+      noControls: true
 
     @_timeRangeInputView.on 'change:times', @_onChangeTimes
     @_loopsButtonView.on 'change:value', @_onChangeLoops

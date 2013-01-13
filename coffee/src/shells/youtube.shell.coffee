@@ -70,7 +70,7 @@ class YouTubeShell.Model extends VideoLinkShell.Model
     "//img.youtube.com/vi/#{@youtubeId()}/0.jpg"
 
 
-  embedLink: =>
+  embedLink: (options) =>
     # see https://developers.google.com/youtube/player_parameters for options
     "http://www.youtube.com/embed/#{@youtubeId()}?" +
          '&fs=1' +
@@ -82,7 +82,7 @@ class YouTubeShell.Model extends VideoLinkShell.Model
          '&hd=1' +
          '&wmode=transparent' +
          '&enablejsapi=1' +
-         '&controls=1'
+         "&controls=#{if options.noControls then 0 else 1}"
 
     # Thumbnail Link can be accessed via:
     # "https://img.youtube.com/vi/#{@youtubeId()}/0.jpg"
@@ -114,7 +114,8 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
   render: =>
     super
     @$el.empty()
-    @$el.append acorn.util.iframe @model.embedLink(), @playerId()
+    options = noControls: @options.noControls
+    @$el.append acorn.util.iframe @model.embedLink(options), @playerId()
     @initializeYouTubeAPI()
     @
 
