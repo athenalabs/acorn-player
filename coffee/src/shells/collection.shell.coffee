@@ -203,13 +203,17 @@ class CollectionShell.MediaView extends Shell.MediaView
     @
 
 
+  hideView: =>
+    view = @shellViews[@currentIndex]
+    view?.remove()
+    view
+
+
   showView: (index) =>
     unless 0 <= index < @shellViews.length
       return
 
-    view = @shellViews[@currentIndex]
-    view?.remove()
-
+    @hideView()
     @currentIndex = index
     view = @shellViews[index]
     @$el.append view.render().el

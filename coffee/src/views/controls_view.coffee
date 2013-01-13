@@ -141,6 +141,15 @@ class NextControlView extends IconControlView
 
 
 
+class GridControlView extends IconControlView
+  controlName: => 'GridControl'
+  className: @classNameExtend 'grid'
+  tooltip: => title: 'Grid', delay: show: 1500
+  defaults: => _.extend super,
+    icon: 'th'
+
+
+
 class ImageControlView extends ControlView
 
 
@@ -188,6 +197,7 @@ acorn.player.controls.FullscreenControlView = FullscreenControlView
 
 acorn.player.controls.NextControlView = NextControlView
 acorn.player.controls.PreviousControlView = PreviousControlView
+acorn.player.controls.GridControlView = GridControlView
 
 acorn.player.controls.ImageControlView = ImageControlView
 acorn.player.controls.AcornControlView = AcornControlView
