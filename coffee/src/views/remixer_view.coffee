@@ -11,7 +11,7 @@ EmptyShell = acorn.shells.EmptyShell
 LinkShell = acorn.shells.LinkShell
 PDFLinkShell = acorn.shells.PDFLinkShell
 ImageLinkShell = acorn.shells.ImageLinkShell
-
+AcornLinkShell = acorn.shells.AcornLinkShell
 
 # View to select options.
 class acorn.player.RemixerView extends athena.lib.View
@@ -67,6 +67,7 @@ class acorn.player.RemixerView extends athena.lib.View
     # get only the Link-based Modules
     modules = [
       {id:LinkShell.id, name:'Link (iframe)', icon: LinkShell.icon}
+      {id:AcornLinkShell.id, name:'Acorn Link', icon: AcornLinkShell.icon}
       {id:ImageLinkShell.id, name:'Image Link', icon: ImageLinkShell.icon}
       {id:PDFLinkShell.id, name:'PDF Link', icon: PDFLinkShell.icon}
       {id:YouTubeShell.id, name:'YouTube', icon: YouTubeShell.icon}

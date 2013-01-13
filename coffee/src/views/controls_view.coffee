@@ -16,6 +16,9 @@ class ControlToolbarView extends athena.lib.ToolbarView
 
   initialize: =>
     super
+    @initializeButtons()
+
+  initializeButtons: =>
 
     # construct any ControlViews referenced by id
     @buttons = _.map @buttons, (btn) =>
