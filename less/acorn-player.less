@@ -1,0 +1,620 @@
+@import 'elements.less';
+
+/* variables */
+@main-control-height: 29px;
+@main-control-font-size: 22px;
+@main-control-icon-size: 17px;
+@main-control-padding: 4px 9px;
+
+/* less functions */
+
+// position-absolutely: call with 0-4 parameters
+.position-absolutely(@top, @right, @bottom, @left) {
+  position: absolute;
+  top: @top;
+  right: @right;
+  bottom: @bottom;
+  left: @left;
+}
+
+.position-absolutely(@top, @right-left, @bottom) {
+  .position-absolutely(@top, @right-left, @bottom, @right-left);
+}
+
+.position-absolutely(@top-bottom, @right-left) {
+  .position-absolutely(@top-bottom, @right-left, @top-bottom, @right-left);
+}
+
+.position-absolutely(@offset: 0px) {
+  .position-absolutely(@offset, @offset, @offset, @offset);
+}
+
+
+.bordered (@radius:3px) {
+  border: 1px solid #DDD;
+  border-radius: 3px;
+}
+
+/* acorn-player */
+.acorn-player {
+  position: relative;
+
+
+/* general classes */
+
+.hidden {
+  display: none !important;
+}
+
+.transparent {
+  .opacity(0);
+}
+
+.translucent {
+  .opacity(0.6);
+}
+
+.opaque {
+  .opacity(1);
+}
+
+
+/* view-specific styling */
+
+.player-view {
+  position: relative;
+  text-align: left;
+  .bordered;
+  width: 100%;
+  height: 100%;
+
+  /* center the content inside the player (some isn't full-width) */
+  > div[class*="row"] > div,
+  > div[class*="row"] > div:first-child {
+    margin: 0 auto;
+    float:none;
+  }
+
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.splash-view {
+  text-align: center;
+  position: relative;
+
+  > .splash-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  > .splash-icon {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 7px;
+    padding: 15px;
+    height: 50px;
+    width: 50px;
+    position: absolute;
+    bottom: 20px;
+    font-size: 50px;
+    line-height: 50px;
+  }
+
+  > #logo.splash-icon {
+    float: right;
+    right: 20px;
+  }
+
+  > #type.splash-icon {
+    float: left;
+    left: 20px;
+  }
+}
+
+
+.editor-view {
+  padding: 20px;
+  width: 540px;
+  margin: 0 auto;
+
+  > * {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+
+  > :first-child {
+    margin-top: 0px;
+  }
+
+  > .toolbar-view {
+    text-align: right;
+    width: 100%;
+    margin-top: 40px;
+
+    > * {
+      margin-left: 10px;
+      min-width: 120px;
+    }
+  }
+}
+
+.shell-editor-view {
+  > * {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+}
+
+.acorn-options-view {
+  input {
+    width: 100%;
+  }
+
+  .thumbnail-view {
+    height: 126px;
+    width: 126px;
+  }
+}
+
+.content-view {
+  position: relative;
+  height: 100%;
+  width: 100%;
+
+  > :first-child {
+    .position-absolutely;
+    bottom: @main-control-height;
+  }
+
+  > .control-toolbar-view {
+    .position-absolutely;
+    top: auto;
+
+    display: block;
+    border-top: 1px solid #cccccc;
+    padding: 0px;
+    height: @main-control-height;
+
+    .gradient(#ffffff, #e6e6e6, #ffffff);
+    .transition(0.35s, ease);
+  }
+}
+
+
+.control-toolbar-view {
+  display: inline-block;
+  height: @main-control-height;
+
+  > .control-view {
+    display: inline-block;
+    position: relative;
+    font-size: @main-control-font-size;
+    line-height: @main-control-font-size;
+    width: (@main-control-height * 1.2);
+    height: @main-control-height;
+    padding: 0px;
+    margin: 0px;
+    border-left: 1px solid rgba(204, 204, 204, 0.5);
+
+    > * {
+      .position-absolutely;
+      padding: @main-control-padding;
+      .opacity(0.65);
+    }
+
+    > img {
+      margin-top: 2px;
+      width: @main-control-icon-size;
+      height: @main-control-icon-size;
+    }
+  }
+
+  > .control-view[disabled="disabled"] > * {
+    pointer-events: none;
+    .opacity(0.3);
+  }
+
+  > .control-view:hover {
+    background: rgba(204, 204, 204, 0.2);
+
+    > * {
+      .opacity(1.0);
+    }
+  }
+
+  > .control-view:active {
+    background: rgba(204, 204, 204, 0.1);
+
+    > * {
+      .opacity(0.7);
+      /*
+      margin-left: -1px;
+      font-size: @main-control-font-size + 2;
+      width: @main-control-icon-size + 1;
+      height: @main-control-icon-size + 1;
+      */
+    }
+  }
+}
+
+.control-toolbar-view.left {
+  float: left;
+
+  > .control-view:first-child {
+    border-left: 0px;
+  }
+  > .control-view:last-child {
+    border-right: 1px solid rgba(204, 204, 204, 0.5);
+
+  }
+}
+
+.control-toolbar-view.right {
+  float: right;
+
+  > .control-view:first-child {
+    border-right: 0px;
+  }
+  > .control-view:last-child {
+    border-left: 1px solid rgba(204, 204, 204, 0.5);
+  }
+}
+
+.player-view.uneditable .control-toolbar-view .control-view.edit {
+  .hidden
+}
+
+
+
+.thumbnail-view {
+  display: inline-cell;
+  width: 74px;
+  height: 74px;
+
+  > img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.dropdown-view {
+  position: relative;
+
+  > .dropdown-toggle {
+    text-align: left;
+    width: 100%;
+
+    > .caret {
+      float: right;
+    }
+  }
+
+  > .dropdown-toggle[disabled] {
+    > .caret {
+      display: none;
+    }
+  }
+
+  > .dropdown-menu {
+    width: 100%;
+  }
+}
+
+
+.remixer-view {
+
+  > .remixer-header {
+
+    .input-append {
+      margin: -1px;
+      margin-right: 10px;
+      width: auto;
+      display: inline-block;
+    }
+
+    input {
+      min-width: 385px;
+      float: left
+    }
+
+    input { // disabled
+      min-width: 401px;
+    }
+
+    .dropdown-view > .dropdown-toggle {
+      width: 55px;
+      .dropdown-selected {
+        display: none;
+      }
+    }
+
+    .dropdown-view > .dropdown-toggle[disabled] {
+      width: 37px;
+      .dropdown-selected {
+        display: none;
+      }
+    }
+
+    .toolbar-view {
+      .transition(0.35s, ease);
+      vertical-align: baseline; // override bootstrap
+
+      > * {
+        margin-left: 0px;
+      }
+    }
+
+  }
+
+  > .remixer-content {
+    .transition(0.35s, ease);
+    .bordered;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    position: relative;
+    min-height: 300px;
+
+    iframe {
+      .position-absolutely;
+    }
+  }
+}
+
+
+.remixer-view.empty {
+
+  > .remixer-header {
+    .toolbar-view {
+      opacity: 0.4;
+    }
+  }
+
+  > .remixer-content {
+    height: 0px;
+    opacity: 0.0;
+  }
+
+}
+
+
+.shell-media-view {
+  width: 100%;
+  overflow: scroll;
+
+  &.video-link-shell {
+    overflow: hidden; // no scroll bars when watching a video
+
+    .video-player-view {
+      height: 100%;
+    }
+  }
+}
+
+.shell-remix-view {
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+
+  div.loops-button span,
+  div.loops-button input {
+    width: 30px;
+    text-align: center;
+  }
+
+  div.loops span {
+    background-color: #F4F4F4;
+  }
+}
+
+.link-shell.shell-media-view {
+
+  > iframe {
+    width: 100%;
+    height: 100%;
+    overflow: none;
+  }
+}
+
+.text-shell.shell-remix-view {
+  textarea {
+    .position-absolutely;
+    margin: 0px;
+    border: 0px;
+  }
+}
+
+.video-link-shell.shell-remix-view {
+  .time-controls {
+    position: relative;
+
+    .loops-button {
+      position: absolute;
+      top: 20px;
+      right: 6px;
+
+      button {
+        padding: 4px 9px;
+      }
+
+      // match bootstrap add-ons
+      input {
+        margin: 0px -1px;
+        padding: 4px 5px;
+      }
+    }
+  }
+
+  .video-player {
+    height: 404px;
+    width: 538px;
+
+    .video-player-view {
+      height: 100%;
+      width: 100%;
+      position: relative;
+    }
+  }
+}
+
+.ui-range-slider {
+  .transition(0.35s, ease);
+  height: 7px;
+  width: 100%;
+  border-radius: 0px;
+  border: none;
+  background-color: #DDDDDD;
+  opacity: 1.0;
+
+  .ui-slider-handle {
+    width: 15px;
+    height: 15px;
+    top: -3px;
+    margin: 0px;
+    border-radius: 9001px;
+    border: none;
+    opacity: 1.0;
+    .gradient(#666666, #888888, #777777);
+    background-repeat: repeat-x;
+  }
+
+  .ui-slider-range {
+    margin-left: 9px;
+    opacity: 1.0;
+    .gradient(#AAAAAA, #BBBBBB, #A8A8A8);
+    background-repeat: repeat-x;
+  }
+}
+
+.time-range-input-view {
+  margin-top: -10px;
+  width: 538px;
+  overflow: hidden;
+  .gradient(#ffffff, #e6e6e6, #ffffff);
+  .transition(0.35s, ease);
+
+  .slider-block {
+    position: relative;
+    margin: -7px 0px;
+    height: 34px;
+    width: 100%;
+
+    .slider-wrapper {
+      position: absolute;
+      height: 18px;
+      top: 6px;
+      left: 0px;
+      right: 0px;
+    }
+  }
+
+  .form-inline {
+    margin: 0px 5px 5px 5px;
+
+    .time-inputs {
+      display: inline-block;
+
+      .time-input-view {
+        display: inline-block;
+
+        .control-group.time {
+          .transition(0.5s, ease);
+          margin: 0px;
+        }
+      }
+
+      input.time {
+        width: 50px;
+        margin-right: 5px;
+        text-align: center;
+      }
+    }
+
+    .total-time-view {
+      // this css is care of bootstrap
+      border-radius: 4px;
+      vertical-align: top;
+      display: inline-block;
+      width: auto;
+      height: 20px;
+      min-width: 16px;
+      padding: 4px 5px;
+      font-size: 14px;
+      font-weight: normal;
+      line-height: 20px;
+      text-align: center;
+      text-shadow: 0 1px 0 white;
+      background-color: #EEE;
+      border: 1px solid #CCC;
+      white-space: nowrap;
+    }
+  }
+}
+
+
+/* bootstrap fixes */
+
+iframe {
+  border: 0px;
+}
+
+select,
+textarea {
+  height: auto;
+}
+
+
+.overlay-view {
+  .position-absolutely;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.00);
+  z-index: 10;
+
+  > .background {
+    .position-absolutely(10px);
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 2px 5px rgba(34, 25, 25, 0.4);
+
+    > .content {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: scroll;
+
+      > .header {
+        position: relative;
+        width: 538px;
+        height: 40px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 0px 0px 10px;
+
+        > * {
+          position: absolute;
+          height: 100%;
+          width: 100%;
+          margin: 0px;
+        }
+
+        > .actions {
+          height: 35px;
+          text-align: right;
+          padding-top: 5px;
+        }
+      }
+    }
+  }
+}
+
+}
+
+/* for some reason, delimiting the rules with `,` doesn't work */
+
+.acorn-player.fullScreen {
+  .position-absolutely;
+  position: fixed;
+  overflow: scroll;
+
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+
+player.html: renders acorns in real time
+
+How to use:
+
+1. setup a web-server on the acorn-player root:
+
+    .../acorn-player % python -m SimpleHTTPServer
+
+2. GET /static/player.html
+
+    http://localhost:8000/static/player.html
+
+3. The fields trigger on blur
+
+-->
+<head>
+  <meta charset="UTF-8">
+
+  <title>acorn-player</title>
+  <link rel="shortcut icon" href="/img/favicon.ico">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <script src="/node_modules/jquery-browser/lib/jquery.js"></script>
+  <script src="/node_modules/underscore/underscore.js"></script>
+  <script src="/node_modules/backbone/backbone.js"></script>
+  <script src="/lib/jquery/jquery.object-fit.js"></script>
+  <script src="/lib/jquery/jquery.fullscreen.js"></script>
+  <script src="/lib/jquery/jquery-ui.custom.min.js"></script>
+  <script src="/lib/range_slider.js"></script>
+  <script src="/node_modules/grunt-jasmine-spec-server/lib/bootstrap/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href="/lib/bootstrap/bootstrap.noicons.min.css" />
+  <link rel="stylesheet" href="/lib/fontawesome/css/font-awesome.css">
+  <link rel="stylesheet" href="/lib/jquery/jquery-ui.custom.min.css">
+
+  <!-- font awesome cdn
+  <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-icons.min.css" rel="stylesheet">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css" rel="stylesheet">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome-ie7.css" rel="stylesheet">
+  -->
+
+  <link rel="stylesheet" href="/build/css/acorn-player.css" />
+
+  <script src="/lib/athena.lib.min.js"></script>
+  <script src="/build/acorn.player.min.js"></script>
+
+  <script type="text/javascript">
+
+  var player;
+  var container;
+  var inputData;
+  var inputId;
+
+  var updateInputs = function(acornModel) {
+    inputData.val(JSON.stringify(acornModel.toJSON(), null, 2));
+    inputId.val(acornModel.acornid());
+  };
+
+  var showAcorn = function(acornModel) {
+    if (player && player.view)
+      player.view.destroy();
+
+    updateInputs(acornModel);
+    container.empty();
+
+    if (player)
+      player.acornModel.off('change')
+    player = new acorn.player.Player({acornModel: acornModel, editable: true});
+    player.appendTo(container);
+    player.acornModel.on('change', function () {
+      updateInputs(player.acornModel);
+    });
+  };
+
+  var loadAcornId = function(acornid) {
+    if (!acornid)
+      acornid = inputId.val().trim();
+    console.log('looking up acornid:' + acornid);
+
+    var acornModel = acorn(acornid);
+    acornModel.fetch({
+      success: function() {
+        console.log(acornModel.toJSON());
+        showAcorn(acornModel);
+      },
+      error: function() {
+        console.log('error');
+      }
+    });
+  };
+
+  var loadAcornData = function(data) {
+    if (!data)
+      data = inputData.val().trim();
+    data = JSON.parse(data);
+    console.log("constructing acorn: ");
+    console.log(data);
+
+    var acornModel = acorn(data);
+    showAcorn(acornModel);
+  };
+
+  $(document).ready(function() {
+    container = $('.acorn-player-container');
+    inputData = $('textarea#acorndata');
+    inputId = $('input#acornid');
+
+    if (window.location.hash) {
+      loadAcornId(window.location.hash.substr(1));
+    } else {
+      loadAcornData();
+    }
+
+    inputId.blur(function() { loadAcornId(); });
+    inputData.blur(function() { loadAcornData(); });
+  });
+
+  </script>
+
+
+  <style>
+  body {
+    text-align: center;
+  }
+
+  input#acornid {
+    margin-top: 100px;
+    margin-bottom: 100px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .acorn-player-container {
+    margin: 0 auto;
+    width: 600px;
+    min-height: 400px;
+  }
+
+  .acorn-player,
+  .acorn-player .editor-view,
+  .acorn-player .splash-view,
+  .acorn-player .content-view {
+    min-height: 400px;
+  }
+
+  textarea#acorndata {
+    margin-top: 100px;
+    margin-bottom: 100px;
+    width: 600px;
+    min-height: 400px;
+    font-family: Monaco;
+    font-size: 10pt;
+  }
+  </style>
+
+</head>
+<body>
+
+<div class="container">
+  <div class="span12" id="box">
+
+    <input type="text" id="acornid" placeholder="acornid" value="" />
+    <div class="acorn-player-container"></div>
+    <textarea id="acorndata" placeholder="acorn data">
+{
+  "shell": {
+    "shellid": "acorn.EmptyShell"
+  },
+  "acornid": "new",
+  "title": "The Best Acorn Ever"
+}
+    </textarea>
+
+  </div>
+</div>
+</body>
+</html>

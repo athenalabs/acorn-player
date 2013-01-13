@@ -1,0 +1,101 @@
+<html>
+<head>
+
+<!-- lib -->
+<% _.each(lib, function(file) { %>
+<script src="/<%= file %>"></script>
+<% }); %>
+
+<link rel="stylesheet" href="/lib/bootstrap/bootstrap.noicons.min.css" />
+<link rel="stylesheet" href="/lib/fontawesome/css/font-awesome.css" />
+
+<link rel="stylesheet" href="/<%= taskPath %>/static/sidenav.css" />
+
+<link rel="stylesheet" href="/<%= taskPath %>/lib/jasmine/jasmine.css" />
+<script src="/<%= taskPath %>/lib/jasmine/jasmine.js"></script>
+<script src="/<%= taskPath %>/lib/jasmine/jasmine-html.js"></script>
+
+<!-- src -->
+<% _.each(src, function(file) { %>
+<script src="/<%= file %>"></script>
+<% }); %>
+
+<!-- specs to run -->
+<% _.each(run, function(file) { %>
+<script src="/<%= file %>"></script>
+<% }); %>
+
+<script type="text/javascript">
+window.onload = function() {
+  var rep = new jasmine.HtmlReporter();
+  var env = jasmine.getEnv();
+  env.addReporter(rep);
+  env.specFilter = function(spec) { return rep.specFilter(spec); };
+  env.execute();
+};
+</script>
+
+<style>
+
+iframe {
+  border: 0px;
+  width: 960px;
+  height: 100%;
+  overflow: hidden;
+  border: none;
+}
+
+.affix {
+  position: fixed;
+  left: 10px;
+  height: 100%;
+}
+
+.affix-inner {
+  position: absolute;
+  top: 0px;
+  bottom: 30px;
+  overflow: scroll;
+  width: 278px;
+}
+
+body {
+  margin-left: 300px;
+}
+
+.affix > .affix-inner > .nav.nav-list.sidenav:first-child {
+  margin-top: 0px;
+}
+
+.affix > .affix-inner > .nav.nav-list.sidenav > li > a {
+  font-size: 12px;
+  padding: 4px 10px;
+}
+
+.sidenav .active i.icon-chevron-right,
+.sidenav a:hover i.icon-chevron-right {
+  background-image: none;
+}
+
+</style>
+</head>
+<body>
+
+<div class="affix">
+  <div class="affix-inner">
+    <% _.each(['special', 'specs'], function(group) { %>
+      <ul class="nav nav-list sidenav">
+      <% _.each(eval(group), function(name) { %>
+        <li <%= (name == title ? "class='active'" : '') %>>
+          <a href="/<%= group %>/<%= name %>">
+            <i class="icon-chevron-right"></i> <%= name %>
+          </a>
+        </li>
+      <% }); %>
+      </ul>
+    <% }); %>
+  </div>
+</div>
+
+</body>
+</html>
