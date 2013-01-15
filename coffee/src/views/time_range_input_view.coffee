@@ -166,6 +166,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     time = @_end - @_start
     time = if _.isNaN time then '--' else timestring time
     @$('.total-time').text time
+    @$('span.max-time').text acorn.util.Time.secondsToTimestring @_max
 
 
   _bound: (val) =>
