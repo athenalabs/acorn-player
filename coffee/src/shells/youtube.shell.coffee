@@ -152,7 +152,8 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
 
 
   isPlaying: =>
-    @player?.getPlayerState() == YT.PlayerState.PLAYING
+    if @player? and YT?
+      @player.getPlayerState() == YT.PlayerState.PLAYING
 
 
   seekOffset: =>
