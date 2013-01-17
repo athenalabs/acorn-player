@@ -136,7 +136,7 @@ describe 'acorn.Model', ->
       expect(model.shellData()).toEqual {shellid:'acorn.EmptyShell'}
 
 
-  describe 'acorn.Model.sync', ->
+  xdescribe 'acorn.Model.sync', ->
 
     #TODO expand this into comprehensive tests.
     #TODO find a way to mock the server in the future.
