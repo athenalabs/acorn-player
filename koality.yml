@@ -1,0 +1,27 @@
+--- #Koality: 0.0.1
+languages:
+  nodejs: 0.8
+setup:
+  - scripts:
+    - script:
+      - git submodule init
+      - git submodule update
+    - script:
+      - wget http://phantomjs.googlecode.com/files/phantomjs-1.8.1-linux-x86_64.tar.bz2
+      - tar xvf phantomjs-1.8.1-linux-x86_64.tar.bz2
+      - mv phantomjs-1.8.1-linux-x86_64 /usr/local/phantomjs
+      - ln -s /usr/local/phantomjs/bin/phantomjs /usr/local/bin/.
+      - phantomjs --version
+  - packages:
+    - npm:
+      - grunt
+      - iced-coffee-script
+      - less
+      - directory: .
+
+test:
+  - all_tests:
+      script:
+        - ln -s Gruntfile.coffee grunt.js
+        - grunt --coffee Gruntfile.coffee test
+      timeout: 120
