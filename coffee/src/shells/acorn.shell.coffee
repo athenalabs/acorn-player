@@ -78,7 +78,7 @@ class AcornLinkShell.MediaView extends LinkShell.MediaView
       eventhub: @eventhub
 
     # fwd all events.
-    @on 'all', _.bind(@mediaView.trigger, @)
+    @listenTo @mediaView, 'all', _.bind(@trigger, @)
 
     if @mediaView.controlsView
       @controlsView.buttons = [@mediaView.controlsView]
