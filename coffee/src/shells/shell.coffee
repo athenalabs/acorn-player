@@ -179,7 +179,7 @@ class Shell.MediaView extends athena.lib.View
     @$el.height @height()
 
     # if ready when call stack clears, announce readiness
-    setTimeout (=> @trigger 'MediaView:Ready' if @ready), 0
+    setTimeout (=> @trigger('MediaView:Ready') if @ready), 0
 
     @
 
