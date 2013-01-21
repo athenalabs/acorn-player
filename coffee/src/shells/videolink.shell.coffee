@@ -28,6 +28,10 @@ class VideoLinkShell.Model extends LinkShell.Model
   loops: @property 'loops'
 
 
+  title: =>
+    super or @link()
+
+
   description: =>
     desc = super
     unless desc
