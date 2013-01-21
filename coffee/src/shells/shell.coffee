@@ -45,7 +45,7 @@ class Shell.Model extends athena.lib.Model
   title: @property('title', default: '')
   description: @property('description', default: '')
   sources: @property('sources', default: [])
-  timeTotal: @property('timeTotal', {default: Infinity, setter: false})
+  timeTotal: @property('timeTotal', {default: Infinity})
 
   thumbnail: (thumbnail) =>
     if thumbnail?

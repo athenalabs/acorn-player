@@ -58,11 +58,11 @@ describe 'acorn.shells.VideoLinkShell', ->
         model = new Model options
         expect(typeof model.duration()).toBe 'number'
 
-      it 'should have a timeTotal property (with setter:false)', ->
+      it 'should have a timeTotal property', ->
         model = new Model options
         expect(model.timeTotal()).toBe Infinity
-        expect(model.timeTotal(1)).toBe Infinity
-        expect(model.timeTotal()).toBe Infinity
+        expect(model.timeTotal(1)).toBe 1
+        expect(model.timeTotal()).toBe 1
 
 
     describe 'VideoLinkShell.MediaView', ->
