@@ -175,9 +175,10 @@ class CollectionShell.MediaView extends Shell.MediaView
         model: shellModel
         playOnReady: @options.playOnReady
 
+      view.on 'Media:DidEnd', @showNext
+
       view
 
-    @eventhub.on 'playback:ended', @_onShellPlaybackEnded
 
     # initialize the currently selected view
     @currentIndex = 0
@@ -244,9 +245,6 @@ class CollectionShell.MediaView extends Shell.MediaView
 
   showPrevious: => @showView @currentIndex - 1
   showNext: => @showView @currentIndex + 1
-
-
-  _onShellPlaybackEnded: =>
 
 
 
