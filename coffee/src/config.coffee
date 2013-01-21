@@ -14,7 +14,7 @@ acorn.config.url = {}
 
 acorn.config.setDomain = (domain) ->
   acorn.config.domain = domain.replace(/https?:\/\//, '')
-  acorn.config.url.base = "//#{acorn.config.domain}"
+  acorn.config.url.base = "https://#{acorn.config.domain}"
   acorn.config.url.img = "#{acorn.config.url.base}/img"
   acorn.config.url.api =
       "#{acorn.config.url.base}/api/v#{acorn.config.api.version}"
