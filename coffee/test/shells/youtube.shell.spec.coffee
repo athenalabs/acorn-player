@@ -70,74 +70,23 @@ describe 'acorn.shells.YouTubeShell', ->
         expect(model.metaDataUrl()).toBe "http://gdata.youtube.com/feeds/" +
             "api/videos/#{youtubeId}?v=2&alt=jsonc"
 
-      it 'should fetch metadata', ->
-        model = new Model modelOptions()
-        retrieved = false
 
-        runs ->
-          model.metaData().sync success: => retrieved = true
-
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
-
-        runs ->
-          cache = model.metaData()
-          expect(cache.synced()).toBe true
-          expect(athena.lib.util.isStrictObject cache.data().data).toBe true
-
-      it 'should have a title method that uses metaData or link as title', ->
-        model = new Model modelOptions()
-
-        expect(model.title()).toBe modelOptions().link
-
-        retrieved = false
-
-        runs ->
-          model.metaData().sync success: => retrieved = true
-
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
-
-        runs ->
-          title = model.metaData().data().data.title
-          expect(model.title()).toBe title
-
-      it 'should have a description method that describes the shell', ->
+      it 'should have a description based on title, timeStart, and timeEnd', ->
         _modelOptions = _.extend modelOptions(),
           timeStart: 33
           timeEnd: 145
 
-        model = new Model _modelOptions
+        view = new RemixView
+          model: new Model _modelOptions
 
-        expect(model.description()).toBe "YouTube video #{_modelOptions.link}" +
-            " from 00:33 to 02:25."
+        expect(view.model.description()).toBe(
+          "YouTube video #{_modelOptions.link} from 00:33 to 02:25.")
 
-        retrieved = false
+        view.model.title 'foo'
 
-        runs ->
-          model.metaData().sync success: => retrieved = true
+        expect(view.model.description()).toBe(
+          "YouTube video foo from 00:33 to 02:25.")
 
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
-
-        runs ->
-          title = model.metaData().data().data.title
-          expect(model.description()).toBe "YouTube video #{title} from 00:33" +
-              " to 02:25."
-
-      it 'should have a timeTotal method that returns metaData.duration or
-          Infinity', ->
-        model = new Model modelOptions()
-
-        expect(model.timeTotal()).toBe Infinity
-
-        retrieved = false
-
-        runs ->
-          model.metaData().sync success: => retrieved = true
-
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
-
-        runs ->
-          timeTotal = model.metaData().data().data.duration
-          expect(model.timeTotal()).toBe timeTotal
 
 
     describe 'YouTubeShell.PlayerView', ->
@@ -359,3 +308,36 @@ describe 'acorn.shells.YouTubeShell', ->
           $player.append pv.render().el
           pv.$el.find('iframe').width(600).height(371)
         waitsFor (-> pv.player?.getPlayerState?() >= 0), 'cued video', 10000
+
+
+    describe 'YouTubeShell.RemixView', ->
+
+      describe 'metaData', ->
+        it 'should fetch properly', ->
+          view = new RemixView viewOptions()
+          metaData = view.metaData()
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs ->
+            expect(metaData.synced()).toBe true
+            expect(_.isObject metaData.data().data).toBe true
+
+        it 'should update title', ->
+          view = new RemixView viewOptions()
+          model = view.model
+          metaData = view.metaData()
+
+          expect(model.title()).toBe modelOptions().link
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs -> expect(model.title()).toBe metaData.data().data.title
+
+        it 'should update timeTotal', ->
+          view = new RemixView viewOptions()
+          model = view.model
+          metaData = view.metaData()
+
+          expect(model.timeTotal()).toBe Infinity
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs -> expect(model.timeTotal()).toBe metaData.data().data.duration

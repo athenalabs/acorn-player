@@ -62,74 +62,21 @@ describe 'acorn.shells.VimeoShell', ->
         expect(model.metaDataUrl()).toBe "http://vimeo.com/api/v2/video/" +
             "#{vimeoId}.json?callback=?"
 
-      it 'should fetch metadata', ->
-        model = new Model modelOptions()
-        retrieved = false
-
-        runs ->
-          model.metaData().sync success: => retrieved = true
-
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
-
-        runs ->
-          cache = model.metaData()
-          expect(cache.synced()).toBe true
-          expect(athena.lib.util.isStrictObject cache.data()[0]).toBe true
-
-      it 'should have a title method that uses metaData or link as title', ->
-        model = new Model modelOptions()
-
-        expect(model.title()).toBe modelOptions().link
-
-        retrieved = false
-
-        runs ->
-          model.metaData().sync success: => retrieved = true
-
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
-
-        runs ->
-          title = model.metaData().data()[0].title
-          expect(model.title()).toBe title
-
-      it 'should have a description method that describes the shell', ->
+      it 'should have a description based on title, timeStart, and timeEnd', ->
         _modelOptions = _.extend modelOptions(),
           timeStart: 33
           timeEnd: 145
 
-        model = new Model _modelOptions
+        view = new RemixView
+          model: new Model _modelOptions
 
-        expect(model.description()).toBe "Vimeo video #{_modelOptions.link}" +
-            " from 00:33 to 02:25."
+        expect(view.model.description()).toBe(
+          "Vimeo video #{_modelOptions.link} from 00:33 to 02:25.")
 
-        retrieved = false
+        view.model.title 'foo'
 
-        runs ->
-          model.metaData().sync success: => retrieved = true
-
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
-
-        runs ->
-          title = model.metaData().data()[0].title
-          expect(model.description()).toBe "Vimeo video #{title} from 00:33" +
-              " to 02:25."
-
-      it 'should have a timeTotal method that returns metaData.duration or
-          Infinity', ->
-        model = new Model modelOptions()
-
-        expect(model.timeTotal()).toBe Infinity
-
-        retrieved = false
-
-        runs ->
-          model.metaData().sync success: => retrieved = true
-
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
-
-        runs ->
-          timeTotal = model.metaData().data()[0].duration
-          expect(model.timeTotal()).toBe timeTotal
+        expect(view.model.description()).toBe(
+          "Vimeo video foo from 00:33 to 02:25.")
 
 
     describe 'VimeoShell.PlayerView', ->
@@ -382,3 +329,48 @@ describe 'acorn.shells.VimeoShell', ->
           # playerView remains in DOM
           pv = destroy: ->
           $hiddenPlayer = remove: ->
+
+
+    describe 'VimeoShell.RemixView', ->
+
+      describe 'metaData', ->
+        it 'should fetch properly', ->
+          view = new RemixView viewOptions()
+          metaData = view.metaData()
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs ->
+            expect(metaData.synced()).toBe true
+            expect(athena.lib.util.isStrictObject metaData.data()[0]).toBe true
+
+        it 'should update title', ->
+          view = new RemixView viewOptions()
+          model = view.model
+          metaData = view.metaData()
+
+          expect(model.title()).toBe modelOptions().link
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs -> expect(model.title()).toBe metaData.data()[0].title
+
+        it 'should update timeTotal', ->
+          view = new RemixView viewOptions()
+          model = view.model
+          metaData = view.metaData()
+
+          expect(model.timeTotal()).toBe Infinity
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs -> expect(model.timeTotal()).toBe metaData.data()[0].duration
+
+        it 'should update defaultThumbnail', ->
+          view = new RemixView viewOptions()
+          model = view.model
+          metaData = view.metaData()
+
+          expect(model.defaultThumbnail()).toBe acorn.config.img.acorn
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs ->
+            thumbnail = metaData.data()[0].thumbnail_large
+            expect(model.defaultThumbnail()).toBe thumbnail

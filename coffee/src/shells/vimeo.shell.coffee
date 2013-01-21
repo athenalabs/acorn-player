@@ -29,24 +29,7 @@ class VimeoShell.Model extends VideoLinkShell.Model
   description: =>
     start = acorn.util.Time.secondsToTimestring @timeStart()
     end = acorn.util.Time.secondsToTimestring @timeEnd()
-    "Vimeo video #{@title()} from #{start} to #{end}."
-
-
-  timeTotal: =>
-    currTotal = super
-    cache = @metaData()
-
-    if cache.synced()
-      timeTotal = cache.data()[0].duration
-      @set('timeTotal', timeTotal) unless currTotal == timeTotal
-      return timeTotal
-
-    currTotal ? Infinity
-
-
-  title: =>
-    cache = @metaData()
-    if cache.synced() then cache.data()[0].title else @get('link')
+    "Vimeo video #{@title() or @link()} from #{start} to #{end}."
 
 
   # returns the vimeo video id of this link.
@@ -85,6 +68,26 @@ class VimeoShell.RemixView extends VideoLinkShell.RemixView
 
 
   className: @classNameExtend 'vimeo-shell'
+
+
+  initialize: =>
+    super
+    @metaData().sync success: @onMetaDataSync
+
+
+  onMetaDataSync: (data) =>
+    @model.title data[0].title
+    @model.timeTotal data[0].duration
+    @model.defaultThumbnail data[0].thumbnail_large
+
+
+  metaData: =>
+    if @model.metaDataUrl() and not @_metaData
+      @_metaData = new athena.lib.util.RemoteResource
+        url: @model.metaDataUrl()
+        dataType: 'json'
+
+    @_metaData
 
 
 

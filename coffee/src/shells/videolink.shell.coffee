@@ -54,25 +54,9 @@ class VideoLinkShell.Model extends LinkShell.Model
     if loops == 'infinity'
       Infinity
     else
-      if parseInt(loops) >= 0
-        loops = parseInt loops
-      else
-        loops = 1
+      loops = parseInt(loops)
+      loops = 1 unless loops >= 0
       @singleLoopDuration() * loops
-
-
-  # if metaDataUrl is set, returns a resource to sync and cache custom data
-  metaData: =>
-    if @metaDataUrl() and not @_metaData
-      @_metaData = new athena.lib.util.RemoteResource
-        url: @metaDataUrl()
-        dataType: 'json'
-
-    @_metaData
-
-
-  # override with resource URL
-  metaDataUrl: => ''
 
 
 
@@ -281,10 +265,6 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @$('.video-player').append @_playerView.render().el
     @$('.time-controls').append @_timeRangeInputView.render().el
     @$('.time-controls').append @_loopsButtonView.render().el
-
-    # if meta data is waiting, fetch it and reset time input maximum values on
-    # retrieval
-    @model.metaData()?.sync success: => @_setTimeInputMax()
 
     @
 

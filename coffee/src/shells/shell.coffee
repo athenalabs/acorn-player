@@ -1,5 +1,6 @@
 goog.provide 'acorn.shells.Shell'
 
+goog.require 'acorn.MediaInterface'
 goog.require 'acorn.shells.Registry'
 goog.require 'acorn.Model'
 goog.require 'acorn.util'
@@ -86,6 +87,9 @@ acorn.shellWithData = Shell.Model.withData
 
 class Shell.MediaView extends athena.lib.View
 
+  # mixin acorn.MediaInterface
+  _.extend @prototype, acorn.MediaInterface.prototype
+
 
   className: @classNameExtend 'shell-media-view'
 
@@ -96,34 +100,11 @@ class Shell.MediaView extends athena.lib.View
     unless @options.model
       acorn.errors.MissingParameterError 'Shell.MediaView', 'model'
 
-    if @readyOnInitialize
-      @ready = true
-
-    if @options.playOnReady
-      @listenTo @, 'MediaView:Ready', @play
+    @wireMediaEvents @options
+    @init()
 
 
   controls: []
-
-
-  # -- media interface --
-  # To be overriden and implemented by inheriting classes
-
-  # Transition between play and pause states.
-  play: =>
-  pause: =>
-
-
-  # Returns true if the media view is in 'play' state, false otherwise
-  isPlaying: => false
-
-
-  # Seek to the provided playback offset.
-  seek: (offset) =>
-
-
-  # Returns the current seek offset.
-  seekOffset: => 0
 
 
   # Returns the view's total duration in seconds
@@ -131,46 +112,8 @@ class Shell.MediaView extends athena.lib.View
     @model.timeTotal()
 
 
-  # Sets the media view's volume.
-  volume: => 0
-  setVolume: (volume) =>
-
-
-  # Dimensions
-  # The functions below expect and return dimensions in the same
-  # format used to specify dimensions in CSS3. (e.g. 100%, 100px, etc.)
-  width: => '100%'
-  height: => '100%'
-  setWidth: (width) =>
-  setHeight: (height) =>
-
-
-  # Object Fit
-  # * contain: if you have set an explicit height and width on a replaced
-  #            element, object-fit:contain will cause the content to be resized
-  #            so that it is fully displayed with its intrinsic aspec ratio
-  #            preserved, but still fits inside the dimensions set for the
-  #            element.
-  #
-  # * fill:    causes the element's content to expand to completely fill the
-  #            dimensions set for it, even if this does change its intrinsic
-  #            aspect ratio.
-  #
-  # * cover:   preserves the content's intrinsic aspect ratio but alters its
-  #            width and height to completely cover the element. The smaller
-  #            of the two is made to fit the elemnt exactly, and the larger of
-  #            the two overflows the element
-  #
-  # * none:    the content's intrinsic dimensions are used.
-  objectFit: => 'contain'
-  setObjectFit: (objectFit) =>
-
-
-  # Whether this mediaView is ready
-  ready: false
-
-  # Whether this mediaView is fully loaded after initialization
-  readyOnInitialize: true
+  # Whether this mediaView is fully loaded after render
+  readyOnRender: true
 
 
   render: =>
@@ -179,8 +122,8 @@ class Shell.MediaView extends athena.lib.View
     @$el.height @height()
 
     # if ready when call stack clears, announce readiness
-    setTimeout (=> @trigger('MediaView:Ready') if @ready), 0
-
+    if @readyOnRender and @isInStateInit()
+      @ready()
     @
 
 

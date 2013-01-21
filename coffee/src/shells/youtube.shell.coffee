@@ -38,23 +38,6 @@ class YouTubeShell.Model extends VideoLinkShell.Model
     "YouTube video #{@title()} from #{start} to #{end}."
 
 
-  timeTotal: =>
-    currTotal = super
-    cache = @metaData()
-
-    if cache.synced()
-      timeTotal = cache.data().data.duration
-      @set('timeTotal', timeTotal) unless currTotal == timeTotal
-      timeTotal
-    else
-      @get('timeTotal') ? Infinity
-
-
-  title: =>
-    cache = @metaData()
-    if cache.synced() then cache.data().data.title else @get('link')
-
-
   # returns the youtube video id of this link.
   youtubeId: =>
     link = @get('link')
@@ -103,6 +86,24 @@ class YouTubeShell.RemixView extends VideoLinkShell.RemixView
 
   className: @classNameExtend 'youtube-shell'
 
+
+  initialize: =>
+    super
+    @metaData().sync success: @onMetaDataSync
+
+
+  onMetaDataSync: (data) =>
+    @model.title data.data.title
+    @model.timeTotal data.data.duration
+
+
+  metaData: =>
+    if @model.metaDataUrl() and not @_metaData
+      @_metaData = new athena.lib.util.RemoteResource
+        url: @model.metaDataUrl()
+        dataType: 'json'
+
+    @_metaData
 
 
 class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView

@@ -87,6 +87,9 @@ class AcornLinkShell.MediaView extends LinkShell.MediaView
     @controlsView.initializeButtons()
 
 
+  readyOnRender: false
+
+
   render: =>
     super
     @$el.empty()
@@ -101,6 +104,10 @@ class AcornLinkShell.MediaView extends LinkShell.MediaView
 
 
   # actions
+
+  ready: =>
+    @mediaView.ready()
+
 
   play: =>
     @mediaView.play()

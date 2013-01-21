@@ -54,26 +54,26 @@ describe 'acorn.shells.Shell', ->
 
     describe 'Shell.MediaView', ->
 
-      describe '\'MediaView:Ready\' event', ->
+      describe '\'Media:Ready\' event', ->
 
         it 'should fire after render (waiting for call stack to clear) by
             default', ->
           view = new MediaView viewOptions()
-          spy = new EventSpy view, 'MediaView:Ready'
+          spy = new EventSpy view, 'Media:Ready'
 
           expect(spy.triggered).toBe false
 
           runs -> view.render()
 
           # asynchronous since call stack clears before event is fired
-          waitsFor (-> spy.triggered), 'MediaView:Ready event', 100
+          waitsFor (-> spy.triggered), 'Media:Ready event', 100
 
-        it 'should not fire after render when `readyOnInitialize` is false', ->
-          MediaView::readyOnInitialize = false
-          @after -> MediaView::readyOnInitialize = true
+        it 'should not fire after render when `readyOnRender` is false', ->
+          MediaView::readyOnRender = false
+          @after -> MediaView::readyOnRender = true
 
           view = new MediaView viewOptions()
-          spy = new EventSpy view, 'MediaView:Ready'
+          spy = new EventSpy view, 'Media:Ready'
 
           expect(spy.triggered).toBe false
           tenth = false
@@ -92,7 +92,7 @@ describe 'acorn.shells.Shell', ->
         beforeEach -> spyOn MediaView::, 'play'
         afterEach -> MediaView::play.reset()
 
-        it 'should by default not play video on MediaView:Ready', ->
+        it 'should by default not play video on Media:Ready', ->
           view = new MediaView viewOptions()
 
           expect(MediaView::play).not.toHaveBeenCalled()
@@ -106,7 +106,7 @@ describe 'acorn.shells.Shell', ->
 
           runs -> expect(MediaView::play).not.toHaveBeenCalled()
 
-        it 'should play video on MediaView:Ready if passed `playOnReady`', ->
+        it 'should play video on Media:Ready if passed `playOnReady`', ->
           view = new MediaView _.extend viewOptions(), {playOnReady: true}
 
           expect(MediaView::play).not.toHaveBeenCalled()
