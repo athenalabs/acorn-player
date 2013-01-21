@@ -112,6 +112,12 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
   className: @classNameExtend 'youtube-shell'
 
 
+  initialize: =>
+    super
+    @on 'Media:Play', => @player?.playVideo()
+    @on 'Media:Pause', => @player?.pauseVideo()
+
+
   render: =>
     super
     @$el.empty()
@@ -127,22 +133,11 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     "youtube-player-#{@cid}"
 
 
-  # Control the player
-
-
-  play: =>
-    @player?.playVideo()
-
-
-  pause: =>
-    @player?.pauseVideo()
-
-
   seek: (seconds) =>
     # Unless playing, seek first to the wrong place. YouTube's player has a bug
     # such that, when not playing, it occasionally seeks incorrectly (this seems
     # to happen after 2 correct seeks)
-    unless @isPlaying()
+    unless @isInStatePlay()
       wrongPlace = if seconds + 1 < @model.timeTotal()
         seconds + 1
       else
@@ -152,14 +147,33 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     @player?.seekTo(seconds, true)
 
 
-  isPlaying: =>
-    if @player? and YT?
-      @player.getPlayerState() == YT.PlayerState.PLAYING
+  isInStatePlay: =>
+    inState = super
+    ytState = (@player.getPlayerState() == YT.PlayerState.PLAYING)
+    if ytState isnt inState
+      console.log 'Error: YT player must agree with internal state'
+    inState
+
+
+  isInStatePause: =>
+    inState = super
+    ytState = @player.getPlayerState() == YT.PlayerState.PAUSED or
+              @player.getPlayerState() == YT.PlayerState.BUFFERING
+    if ytState isnt inState
+      console.log 'Error: YT player must agree with internal state'
+    inState
+
+
+  isInStateEnd: =>
+    inState = super
+    ytState = @player.getPlayerState() == YT.PlayerState.ENDED
+    if ytState isnt inState
+      console.log 'Error: YT player must agree with internal state'
+    inState
 
 
   seekOffset: =>
     @player?.getCurrentTime() ? 0
-
 
 
   # YouTube API - communication between the YouTube iframe API and the shell.
@@ -197,17 +211,24 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
         # this *should* initialize the playback at the correct point but
         # doesn't. Need a more robust solution (tick)
         start = parseInt(@model.timeStart() ? 0, 10)
-
-        if @options.autoplay
-          @player.loadVideoById(@model.youtubeId(), start)
-        else
-          @player.cueVideoById(@model.youtubeId(), start)
-
-        @trigger 'PlayerView:Ready'
+        @player.cueVideoById(@model.youtubeId(), start)
+        @trigger 'Media:DidReady', @
 
 
       onStateChange: (event) =>
-        @trigger 'PlayerView:StateChange', @, @player.getPlayerState()
+        switch @player.getPlayerState()
+          when YT.PlayerState.BUFFERING
+            @state = 'pause'
+            @trigger 'Media:DidPause', @
+          when YT.PlayerState.PLAYING
+            @state = 'play'
+            @trigger 'Media:DidPlay', @
+          when YT.PlayerState.PAUSED
+            @state = 'pause'
+            @trigger 'Media:DidPause', @
+          when YT.PlayerState.ENDED
+            @state = 'end'
+            @trigger 'Media:DidEnd', @
 
 
 

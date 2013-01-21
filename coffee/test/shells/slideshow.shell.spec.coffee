@@ -28,24 +28,24 @@ describe 'acorn.shells.SlideshowShell', ->
     describe 'SlideshowShell.MediaView', ->
 
 
-      describe 'MediaView::isPlaying', ->
+      describe 'MediaView::isInStatePlay', ->
 
         it 'should by default be true on render', ->
           view = new MediaView viewOptions()
           view.render()
-          expect(view.isPlaying()).toBe true
+          expect(view.isInStatePlay()).toBe true
 
         it 'should be true following MediaView.play()', ->
           view = new MediaView viewOptions()
           view.render()
           view.play()
-          expect(view.isPlaying()).toBe true
+          expect(view.isInStatePlay()).toBe true
 
         it 'should be false following MediaView.pause()', ->
           view = new MediaView viewOptions()
           view.render()
           view.pause()
-          expect(view.isPlaying()).toBe false
+          expect(view.isInStatePlay()).toBe false
 
 
       describe 'MediaView::controlsView', ->
@@ -85,7 +85,7 @@ describe 'acorn.shells.SlideshowShell', ->
           view.controlsView.render()
           view.render()
           view.pause()
-          expect(view.isPlaying()).toBe false
+          expect(view.isInStatePause()).toBe true
 
           playControl = view.controlsView.$ '.control-view.play'
           expect(playControl.hasClass 'hidden').toBe false
@@ -95,7 +95,7 @@ describe 'acorn.shells.SlideshowShell', ->
           view.controlsView.render()
           view.render()
           view.pause()
-          expect(view.isPlaying()).toBe false
+          expect(view.isInStatePause()).toBe true
 
           pauseControl = view.controlsView.$ '.control-view.pause'
           expect(pauseControl.hasClass 'hidden').toBe true
@@ -105,7 +105,7 @@ describe 'acorn.shells.SlideshowShell', ->
           view.controlsView.render()
           view.render()
           view.play()
-          expect(view.isPlaying()).toBe true
+          expect(view.isInStatePlay()).toBe true
 
           playControl = view.controlsView.$ '.control-view.play'
           expect(playControl.hasClass 'hidden').toBe true
@@ -115,7 +115,7 @@ describe 'acorn.shells.SlideshowShell', ->
           view.controlsView.render()
           view.render()
           view.play()
-          expect(view.isPlaying()).toBe true
+          expect(view.isInStatePlay()).toBe true
 
           pauseControl = view.controlsView.$ '.control-view.pause'
           expect(pauseControl.hasClass 'hidden').toBe false
@@ -125,28 +125,22 @@ describe 'acorn.shells.SlideshowShell', ->
           view.controlsView.render()
           view.render()
           playControl = view.controlsView.$ '.control-view.play'
-
           view.pause()
-          expect(view.isPlaying()).toBe false
-          expect(playControl.hasClass 'hidden').toBe false
 
+          spyOn view, 'play'
           playControl.click()
-          expect(view.isPlaying()).toBe true
-          expect(playControl.hasClass 'hidden').toBe true
+          expect(view.play).toHaveBeenCalled()
 
         it 'should pause when pause button is clicked', ->
           view = new MediaView viewOptions()
           view.controlsView.render()
           view.render()
           pauseControl = view.controlsView.$ '.control-view.pause'
-
           view.play()
-          expect(view.isPlaying()).toBe true
-          expect(pauseControl.hasClass 'hidden').toBe false
 
+          spyOn view, 'pause'
           pauseControl.click()
-          expect(view.isPlaying()).toBe false
-          expect(pauseControl.hasClass 'hidden').toBe true
+          expect(view.pause).toHaveBeenCalled()
 
 
       describe 'MediaView playback', ->

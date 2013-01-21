@@ -99,9 +99,11 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
 
   initialize: =>
     super
-    @_isPlaying = false
     @_timeTotal = undefined
     @_seekOffset = 0
+
+    @on 'Media:Play', => @player.api 'play'
+    @on 'Media:Pause', => @player.api 'pause'
 
 
   render: =>
@@ -113,15 +115,6 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
 
 
   # Control the player
-
-
-  play: =>
-    @player.api 'play'
-
-
-  pause: =>
-    @player.api 'pause'
-
 
   seek: (seconds) =>
     # Vimeo adds the original seekTo value to the current one. `seekTo n`
@@ -137,10 +130,6 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
     # for bugs on this point, just ran across it once.
     @player.api 'seekTo', 2
     @player.api 'seekTo', seconds
-
-
-  isPlaying: =>
-    @_isPlaying
 
 
   seekOffset: =>
@@ -170,19 +159,14 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
     # initialize the player object with the iframe
     @player = Froogaloop @$('#vimeo-player')[0]
     @player.addEvent 'ready', @onVimeoPlayerReady
-    # @play()
 
 
   onVimeoPlayerReady: =>
     # attach callbacks to the vimeo player.
 
-    @player.addEvent 'pause', =>
-      @_isPlaying = false
-      @trigger 'PlayerView:StateChange'
+    @player.addEvent 'pause', => @pause()
 
-    @player.addEvent 'play', =>
-      @_isPlaying = true
-      @trigger 'PlayerView:StateChange'
+    @player.addEvent 'play', => @play()
 
     @player.addEvent 'seek', (params) =>
       @_seekOffset = parseFloat params.seconds
@@ -191,9 +175,8 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
     @player.addEvent 'playProgress', (params) =>
       @_timeTotal = parseFloat params.duration
       @_seekOffset = parseFloat params.seconds
-      @_isPlaying = true
 
-    @trigger 'PlayerView:Ready'
+    @trigger 'Media:DidReady'
 
 
   # Vimeo's api claims to hold playing-state constant through seeks, but seems
@@ -201,14 +184,14 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
   # state has changed).
   enforceVimeoPlaybackState: =>
     # get desirable state
-    wasPlaying = @isPlaying()
+    wasPlaying = @isInStatePlay()
 
     # force state to `PLAYING`
-    @play()
+    @player.api 'play'
 
     # pause if appropriate
     unless wasPlaying
-      @pause()
+      @player.api 'pause'
 
 
 

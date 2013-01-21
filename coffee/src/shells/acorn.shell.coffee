@@ -123,8 +123,11 @@ class AcornLinkShell.MediaView extends LinkShell.MediaView
 
   # state getters
 
-  isPlaying: =>
-    @mediaView.isPlaying() ? false
+  isInStateInit: => @mediaView.isInStateInit() ? false
+  isInStateReady: => @mediaView.isInStateReady() ? false
+  isInStatePlay: => @mediaView.isInStatePlay() ? false
+  isInStatePause: => @mediaView.isInStatePause() ? false
+  isInStateEnd: => @mediaView.isInStateEnd() ? false
 
 
   seekOffset: =>

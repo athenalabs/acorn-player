@@ -132,17 +132,17 @@ describe 'acorn.shells.YouTubeShell', ->
         pv = new PlayerView viewOptions()
 
         stateChanged = false
-        pv.on 'PlayerView:StateChange', -> stateChanged = true
+        pv.on 'Media:DidPlay', -> stateChanged = true
 
         # load player and cue video
         acorn.util.appendCss()
         $hiddenPlayer = $('<div>').addClass('acorn-player hidden').width(600)
             .height(400).appendTo('body')
+
         runs -> $hiddenPlayer.append pv.render().el
         waitsFor (-> pv.player?.getPlayerState?() >= 0), 'cued video', 10000
 
         runs -> pv.player.playVideo()
-
         waitsFor (-> stateChanged), 'state change event', 10000
 
 
@@ -239,12 +239,12 @@ describe 'acorn.shells.YouTubeShell', ->
 
         it 'should report whether or not it is playing', ->
           # expect PLAYING state
-          runs -> expect(pv.isPlaying()).toBe true
+          runs -> expect(pv.isInStatePlay()).toBe true
 
           # pause video, expect PAUSED state
           runs -> pv.player.pauseVideo()
           waitsFor (->
-            not pv.isPlaying()
+            not pv.isInStatePlay()
           ), 'playerView to register paused state', 10000
 
         it 'should report seek offset', ->

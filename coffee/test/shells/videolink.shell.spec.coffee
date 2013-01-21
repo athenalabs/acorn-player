@@ -96,12 +96,12 @@ describe 'acorn.shells.VideoLinkShell', ->
         mv.seek(33)
         expect(mv.playerView.seek).toHaveBeenCalledWith 33
 
-      it 'should forward `isPlaying` query to playerView', ->
+      it 'should forward `isInStatePlay` query to playerView', ->
         mv = new MediaView viewOptions()
-        spyOn mv.playerView, 'isPlaying'
-        expect(mv.playerView.isPlaying).not.toHaveBeenCalled()
-        mv.isPlaying()
-        expect(mv.playerView.isPlaying).toHaveBeenCalled()
+        spyOn mv.playerView, 'isInStatePlay'
+        expect(mv.playerView.isInStatePlay).not.toHaveBeenCalled()
+        mv.isInStatePlay()
+        expect(mv.playerView.isInStatePlay).toHaveBeenCalled()
 
       it 'should forward `seekOffset` query to playerView', ->
         mv = new MediaView viewOptions()
@@ -298,11 +298,11 @@ describe 'acorn.shells.VideoLinkShell', ->
             pv.render()
             expect(typeof pv.seek).toBe 'function'
 
-          it 'should have an isPlaying method that returns a boolean', ->
+          it 'should have an isInStatePlay method that returns a boolean', ->
             pv = new PlayerView viewOptions()
             pv.render()
-            expect(typeof pv.isPlaying).toBe 'function'
-            expect(typeof pv.isPlaying()).toBe 'boolean'
+            expect(typeof pv.isInStatePlay).toBe 'function'
+            expect(typeof pv.isInStatePlay()).toBe 'boolean'
 
           it 'should have a seekOffset method that returns a number', ->
             pv = new PlayerView viewOptions()

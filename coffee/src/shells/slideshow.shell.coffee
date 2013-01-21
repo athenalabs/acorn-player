@@ -33,6 +33,12 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
     playOnReady: true
 
 
+  initialize: =>
+    super
+    @on 'Media:Play', @onPlay
+    @on 'Media:Pause', @onPause
+
+
   _initializeControlsView: =>
     # construct a ControlToolbar for the acorn controls
     @controlsView = new ControlToolbarView
@@ -42,45 +48,36 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
 
     @controlsView.on 'PreviousControl:Click', @showPrevious
     @controlsView.on 'NextControl:Click', @showNext
-    @controlsView.on 'PlayControl:Click', @play
-    @controlsView.on 'PauseControl:Click', @pause
+    @controlsView.on 'PlayControl:Click', => @play()
+    @controlsView.on 'PauseControl:Click', => @pause()
 
 
   remove: =>
     @controlsView.off 'PreviousControl:Click', @showPrevious
     @controlsView.off 'NextControl:Click', @showNext
-    @controlsView.off 'PlayControl:Click', @play
-    @controlsView.off 'PauseControl:Click', @pause
+    @controlsView.off 'PlayControl:Click'
+    @controlsView.off 'PauseControl:Click'
 
     @_clearCountdown()
-
     super
 
 
   render: =>
     super
-
     @play()
-
     @
 
 
-  play: =>
+  onPlay: =>
     @controlsView.$('.control-view.play').addClass 'hidden'
     @controlsView.$('.control-view.pause').removeClass 'hidden'
-    @_isPlaying = true
     @_countdown()
 
 
-  pause: =>
+  onPause: =>
     @controlsView.$('.control-view.play').removeClass 'hidden'
     @controlsView.$('.control-view.pause').addClass 'hidden'
-    @_isPlaying = false
     @_clearCountdown()
-
-
-  isPlaying: =>
-    @_isPlaying
 
 
   showNext: =>
@@ -96,7 +93,7 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
   _countdown: =>
     @_clearCountdown()
 
-    if @isPlaying()
+    if @isInStatePlay()
       @_counter = setTimeout @_onCountdownFinish, @model.delay() * 1000
 
 
@@ -110,14 +107,14 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
 
     view = @shellViews[@currentIndex]
 
-    if @isPlaying()
-      unless 0 < view?.duration?() < Infinity and view.isPlaying()
+    if @isInStatePlay()
+      unless 0 < view?.duration?() < Infinity and view.isInStatePlay()
         @showNext()
 
 
   _onShellPlaybackEnded: =>
     # show next if counter has already concluded
-    if @isPlaying()
+    if @isInStatePlay()
       unless @_counter?
         @showNext()
 

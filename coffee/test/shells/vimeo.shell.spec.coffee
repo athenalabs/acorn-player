@@ -106,13 +106,13 @@ describe 'acorn.shells.VimeoShell', ->
         setPlayerListener = false
         playerReady = false
         pvReady = false
-        pv.on 'PlayerView:Ready', -> pvReady = true
+        pv.on 'Media:DidReady', -> pvReady = true
 
         # must be appended to DOM in order to load properly
         runs -> $hiddenPlayer.append pv.render().el
 
         waitsFor (->
-          # if 'PlayerView:Ready' event fired before listener was set, settle
+          # if 'Media:DidReady' event fired before listener was set, settle
           # for inability to test low-level readiness and return true
           if pvReady and not setPlayerListener
             return true
@@ -127,14 +127,14 @@ describe 'acorn.shells.VimeoShell', ->
               pv.onVimeoPlayerReady()
 
           # ideally, directly test both froogaloop 'ready' and playerView
-          # 'PlayerView:Ready' events
+          # 'Media:DidReady' events
           playerReady and pvReady
         ), 'player ready', 10000
 
       it 'should load a vimeo player on render that loads video when played', ->
         loading = false
         # set 'loadProgress' listener and start playing on pv ready
-        pv.on 'PlayerView:Ready', ->
+        pv.on 'Media:DidReady', ->
           pv.player.addEvent 'loadProgress', (params) ->
             if parseFloat(params.percent) > 0
               loading = true
@@ -149,10 +149,10 @@ describe 'acorn.shells.VimeoShell', ->
 
       it 'should announce state changes', ->
         # start playing on pv ready
-        pv.on 'PlayerView:Ready', -> pv.player.api 'play'
+        pv.on 'Media:DidReady', -> pv.player.api 'play'
 
         stateChanged = false
-        pv.on 'PlayerView:StateChange', -> stateChanged = true
+        pv.on 'Media:DidPlay', -> stateChanged = true
         runs -> $hiddenPlayer.append pv.render().el
 
         waitsFor (-> stateChanged), 'state change event', 10000
@@ -169,7 +169,7 @@ describe 'acorn.shells.VimeoShell', ->
           paused = true
 
           # set listeners and start playing on pv ready
-          pv.on 'PlayerView:Ready', ->
+          pv.on 'Media:DidReady', ->
             pv.player.addEvent 'play', -> paused = false
             pv.player.addEvent 'pause', -> paused = true
 
@@ -247,23 +247,23 @@ describe 'acorn.shells.VimeoShell', ->
           ), 'video to seek to 20 while paused', 10000
 
         it 'should report whether or not it is playing', ->
-          # remove listener to PlayerView:Ready and set up native vimeo shell
+          # remove listener to Media:DidReady and set up native vimeo shell
           # froogaloop event listeners again. this is necessary because the
           # addEvent function overwrites the old listener to an event - the
           # beforeEach block clobbered the shell's listener to the pause event
-          pv.off 'PlayerView:Ready'
+          pv.off 'Media:DidReady'
           pv.onVimeoPlayerReady()
 
           # pause video, expect PAUSED state
           runs -> pv.player.api 'pause'
           waitsFor (->
-            not pv.isPlaying()
+            not pv.isInStatePlay()
           ), 'playerView to register paused state', 10000
 
           # play video, expect PLAYING state
           runs -> pv.player.api 'play'
           waitsFor (->
-            pv.isPlaying()
+            pv.isInStatePlay()
           ), 'playerView to register playing state', 10000
 
         it 'should report seek offset', ->
@@ -316,7 +316,7 @@ describe 'acorn.shells.VimeoShell', ->
         $player = $hiddenPlayer.removeClass 'hidden'
 
         pvReady = false
-        pv.on 'PlayerView:Ready', -> pvReady = true
+        pv.on 'Media:DidReady', -> pvReady = true
 
         # load player view
         runs ->

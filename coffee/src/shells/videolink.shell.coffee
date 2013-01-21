@@ -75,29 +75,24 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
       model: @model
       eventhub: @eventhub
 
-    @listenTo @playerView, 'PlayerView:StateChange', @onPlayerViewStateChange
-    @listenTo @playerView, 'PlayerView:Ready', @onPlayerViewReady
+    @listenTo @playerView, 'all', _.bind(@trigger, @)
+    @on 'Media:DidPlay', => @timer.startTick()
+    @on 'Media:DidPause', => @timer.stopTick()
+    @on 'Media:DidEnd', => @timer.stopTick()
 
 
   render: =>
-    # reset ready flag
-    @ready = false
-
     super
-
     @$el.empty()
-
     # stop ticking, in case we had been playing and this is a re-render.
     @timer.stopTick()
-
     @$el.append @playerView.render().el
-
     @
 
 
   # executes periodically to adjust video playback.
   onPlaybackTick: =>
-    return unless @isPlaying()
+    return unless @isInStatePlay()
 
     now = @seekOffset()
     start = @model.timeStart() ? 0
@@ -129,43 +124,30 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
         @restarting = true
       else
         @pause()
-        @eventhub.trigger 'playback:ended'
+        @end()
 
     # otherwise clear restarting flag
     else
       @restarting = false
 
 
-  onPlayerViewStateChange: =>
-    if @isPlaying() then @timer.startTick() else @timer.stopTick()
+  # forward state transitions
 
+  init: => @playerView?.init()
+  ready: => @playerView?.ready()
+  play: => @playerView?.play()
+  pause: => @playerView?.pause()
+  end: => @playerView?.end()
 
-  onPlayerViewReady: =>
-    @ready = true
-
-    # announce ready state if already rendering
-    if @rendering
-      @trigger 'MediaView:Ready'
-
-
-  # actions
-
-  play: =>
-    @playerView.play()
-
-
-  pause: =>
-    @playerView.pause()
+  isInStateInit: => @playerView?.isInStateInit() or false
+  isInStateReady: => @playerView?.isInStateReady() or false
+  isInStatePlay: => @playerView?.isInStatePlay() or false
+  isInStatePause: => @playerView?.isInStatePause() or false
+  isInStateEnd: => @playerView?.isInStateEnd() or false
 
 
   seek: (seconds) =>
     @playerView.seek seconds
-
-
-  # state getters
-
-  isPlaying: =>
-    @playerView.isPlaying() ? false
 
 
   seekOffset: =>
@@ -296,6 +278,10 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 class VideoLinkShell.PlayerView extends athena.lib.View
 
 
+  # mixin acorn.MediaInterface
+  _.extend @prototype, acorn.MediaInterface.prototype
+
+
   className: 'video-player-view video-link-shell'
 
 
@@ -307,25 +293,6 @@ class VideoLinkShell.PlayerView extends athena.lib.View
     @$el.append "<embed src='#{@model.get 'link'}'/>"
 
     @
-
-
-  # actions - override in child classes
-
-  play: =>
-
-
-  pause: =>
-
-
-  seek: (seconds) =>
-
-
-  # state getters - override in child classes
-
-  isPlaying: => false
-
-
-  seekOffset: => 0
 
 
 
