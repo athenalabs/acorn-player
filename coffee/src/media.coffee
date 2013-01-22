@@ -46,58 +46,76 @@ class acorn.MediaInterface
   _.extend @prototype, Backbone.Events
 
 
-  wireMediaEvents: (options) =>
+  constructor: (options={}) ->
+    @initializeMediaEvents options
+
+
+  initializeMediaEvents: (options) =>
 
     if options.playOnReady
-      @on 'Media:DidReady', @play
+      @on 'Media:DidReady', => @play()
+
+    @on 'Media:WillInit', => @onMediaWillInit?()
+    @on 'Media:Init', => @onMediaInit?()
+    @on 'Media:DidInit', => @onMediaDidInit?()
+
+    @on 'Media:WillReady', => @onMediaWillReady?()
+    @on 'Media:Ready', => @onMediaReady?()
+    @on 'Media:DidReady', => @onMediaDidReady?()
+
+    @on 'Media:WillPlay', => @onMediaWillPlay?()
+    @on 'Media:Play', => @onMediaPlay?()
+    @on 'Media:DidPlay', => @onMediaDidPlay?()
+
+    @on 'Media:WillPause', => @onMediaWillPause?()
+    @on 'Media:Pause', => @onMediaPause?()
+    @on 'Media:DidPause', => @onMediaDidPause?()
+
+    @on 'Media:WillEnd', => @onMediaWillEnd?()
+    @on 'Media:End', => @onMediaEnd?()
+    @on 'Media:DidEnd', => @onMediaDidEnd?()
 
 
   # State transitions.
   # do not override these, call them directly, listen on the events
 
 
-  init: =>
-    @trigger 'Media:WillInit', @
-    @trigger 'Media:Init', @
-    @state = 'init'
-    @trigger 'Media:DidInit', @
+  mediaStates:
+    Init: 'init'
+    Ready: 'ready'
+    Play: 'play'
+    Pause: 'pause'
+    End: 'end'
 
 
-  ready: =>
-    @trigger 'Media:WillReady', @
-    @trigger 'Media:Ready', @
-    @state = 'ready'
-    @trigger 'Media:DidReady', @
+  mediaState: => @_mediaState
+  setMediaState: (state) =>
+    State = _.invert(@mediaStates)[state]
+    unless State
+      ValueError 'state', "must be one of: #{_.values @mediaStates}"
+
+    @trigger "Media:Will#{State}", @
+    @trigger "Media:#{State}", @
+    @_mediaState = state
+    @trigger "Media:StateChange", @, state
+    @trigger "Media:Did#{State}", @
 
 
   play: =>
-    @trigger 'Media:WillPlay', @
-    @trigger 'Media:Play', @
-    @state = 'play'
-    @trigger 'Media:DidPlay', @
+    @setMediaState 'play'
 
 
   pause: =>
-    @trigger 'Media:WillPause', @
-    @trigger 'Media:Pause', @
-    @state = 'pause'
-    @trigger 'Media:DidPause', @
-
-
-  end: =>
-    @trigger 'Media:WillEnd', @
-    @trigger 'Media:End', @
-    @state = 'end'
-    @trigger 'Media:DidEnd', @
+    @setMediaState 'pause'
 
 
   # State checks -- returns true if media is in a particular state
-  isInStateInit: => @state is 'init'
-  isInStateReady: => @state is 'ready'
-  isInStatePlay: => @state is 'play'
-  isInStatePause: => @state is 'pause'
-  isInStateEnd: => @state is 'end'
-  ended: => @isInStateEnd()
+  isInState: (state) => @mediaState() is state
+
+  isReady: => @isInState 'ready'
+  isPlaying: => @isInState 'play'
+  isPaused: => @isInState 'pause'
+  ended: => @isInState 'end'
 
 
   # Seek to/return playback offset.

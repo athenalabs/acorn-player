@@ -101,6 +101,8 @@ test.describeShellModule = (Module, modelOptions, tests) =>
         expect(-> new MediaView viewOptions()).not.toThrow()
         expect(-> new MediaView throwOptions).toThrow()
 
+      acorn.util.test.describeMediaInterface Module.MediaView, viewOptions()
+
 
     describeView Module.RemixView, athena.lib.View, viewOptions(), ->
 
@@ -119,3 +121,193 @@ test.describeShellModule = (Module, modelOptions, tests) =>
         expect(-> new RemixView throwOptions).toThrow()
 
     tests?()
+
+
+
+test.describeMediaInterface = (Cls, options, tests) ->
+
+  # cycle arguments if necessary
+  unless athena.lib.util.isStrictObject options
+    tests = options
+    options = {}
+
+  test = athena.lib.util.test
+  MediaInterface = acorn.MediaInterface
+
+  capitalize = (s) ->
+    s.replace /^[a-z]/i, (m) -> m.toUpperCase()
+
+  describe "#{Cls.name} - media interface", ->
+
+    describe 'should implement media interface', ->
+      _.each MediaInterface.prototype, (val, key) ->
+        type = typeof val
+        it "#{Cls.name}::#{key} should exist (#{type})", ->
+          expect(Cls::[key]).toBeDefined()
+          expect(typeof Cls::[key]).toBe type
+
+
+    describeStateChange = (name) ->
+      Name = capitalize(name)
+      describe "#{Cls.name} mediaState #{name}", ->
+
+        it 'should be a valid state', ->
+          expect(typeof Cls::mediaStates[name]).toBeDefined()
+
+
+        it "should trigger Will#{Name}, #{Name}, change, then Did#{Name}", ->
+          flag = 0
+          iface = new Cls options
+
+          # later states require init and ready to have happened
+          if name isnt 'init'
+            iface.setMediaState 'init'
+            if name isnt 'ready'
+              iface.setMediaState 'ready'
+
+
+          iface.on "Media:Will#{Name}", ->
+            if name isnt 'init'
+              expect(iface.mediaState()).not.toBe name
+            expect(flag).toBe 0
+            flag = 1
+
+          iface.on "Media:#{Name}", ->
+            if name isnt 'init'
+              expect(iface.mediaState()).not.toBe name
+            expect(flag).toBe 1
+            flag = 2
+
+          iface.on "Media:Did#{Name}", ->
+            expect(iface.mediaState()).toBe name
+            expect(flag).toBe 2
+            flag = 3
+
+          expect(flag).toBe(0)
+          iface.setMediaState(name)
+          expect(flag).toBe(3)
+
+        it "should call defined on(Will,,Did)Media#{Name} in order", ->
+          flag = 0
+          iface = new Cls options
+
+          # later states require init and ready to have happened
+          if name isnt 'init'
+            iface.setMediaState 'init'
+            if name isnt 'ready'
+              iface.setMediaState 'ready'
+
+
+          iface["onMediaWill#{Name}"] = =>
+            if name isnt 'init'
+              expect(iface.mediaState()).not.toBe name
+            expect(flag).toBe 0
+            flag = 1
+
+          iface["onMedia#{Name}"] = =>
+            if name isnt 'init'
+              expect(iface.mediaState()).not.toBe name
+            expect(flag).toBe 1
+            flag = 2
+
+          iface["onMediaDid#{Name}"] = =>
+            expect(iface.mediaState()).toBe name
+            expect(flag).toBe 2
+            flag = 3
+
+          expect(flag).toBe(0)
+          iface.setMediaState(name)
+          expect(flag).toBe(3)
+
+
+        it "#{Cls.name}::isInState(#{name}) should return true", ->
+          iface = new Cls options
+          if name isnt 'init'
+            expect(iface.isInState name).not.toBe true
+          iface.setMediaState(name)
+          expect(iface.isInState name).toBe true
+
+
+    describeStateChange 'init'
+    describeStateChange 'ready'
+    describeStateChange 'play'
+    describeStateChange 'pause'
+    describeStateChange 'end'
+
+
+    describeFunction = (name, tests) ->
+      describe "#{Cls.name}::#{name}", ->
+        it 'should be a function', ->
+          expect(typeof Cls::[name]).toBe 'function'
+
+        tests?()
+
+
+    describeFunction 'isReady', ->
+      it 'should call isInState `ready` ', ->
+        iface = new Cls options
+        spyOn iface, 'isInState'
+        iface.isReady()
+        expect(iface.isInState).toHaveBeenCalledWith 'ready'
+
+
+    describeFunction 'isPlaying', ->
+      it 'should call isInState `play` ', ->
+        iface = new Cls options
+        spyOn iface, 'isInState'
+        iface.isPlaying()
+        expect(iface.isInState).toHaveBeenCalledWith 'play'
+
+
+    describeFunction 'isPaused', ->
+      it 'should call isInState `pause` ', ->
+        iface = new Cls options
+        spyOn iface, 'isInState'
+        iface.isPaused()
+        expect(iface.isInState).toHaveBeenCalledWith 'pause'
+
+
+    describeFunction 'ended', ->
+      it 'should call isInState `end` ', ->
+        iface = new Cls options
+        spyOn iface, 'isInState'
+        iface.ended()
+        expect(iface.isInState).toHaveBeenCalledWith 'end'
+
+
+    describeFunction 'play', ->
+      it 'should trigger setMediaState `play`', ->
+        iface = new Cls options
+        iface.setMediaState 'init'
+        iface.setMediaState 'ready'
+        spyOn iface, 'setMediaState'
+        iface.play()
+        expect(iface.setMediaState).toHaveBeenCalledWith 'play'
+
+
+    describeFunction 'pause', ->
+      it 'should trigger setMediaState `pause`', ->
+        iface = new Cls options
+        iface.setMediaState 'init'
+        iface.setMediaState 'ready'
+        iface.setMediaState 'play'
+        spyOn iface, 'setMediaState'
+        iface.pause()
+        expect(iface.setMediaState).toHaveBeenCalledWith 'pause'
+
+
+    describeFunction 'seek'
+    describeFunction 'seekOffset'
+    describeFunction 'seek'
+    describeFunction 'duration'
+    describeFunction 'volume'
+    describeFunction 'setVolume'
+    describeFunction 'width'
+    describeFunction 'height'
+    describeFunction 'setWidth'
+    describeFunction 'setHeight'
+    describeFunction 'objectFit'
+    describeFunction 'setObjectFit'
+
+
+  tests?()
