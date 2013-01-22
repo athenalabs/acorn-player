@@ -56,61 +56,38 @@ describe 'acorn.shells.Shell', ->
 
       describe '\'Media:Ready\' event', ->
 
-        it 'should fire after render (waiting for call stack to clear) by
-            default', ->
+        it 'should fire after render by default', ->
           view = new MediaView viewOptions()
           spy = new EventSpy view, 'Media:Ready'
 
           expect(spy.triggered).toBe false
-
-          runs -> view.render()
-
-          # asynchronous since call stack clears before event is fired
-          waitsFor (-> spy.triggered), 'Media:Ready event', 100
+          view.render()
+          expect(spy.triggered).toBe true
 
         it 'should not fire after render when `readyOnRender` is false', ->
-          MediaView::readyOnRender = false
-          @after -> MediaView::readyOnRender = true
-
           view = new MediaView viewOptions()
           spy = new EventSpy view, 'Media:Ready'
 
           expect(spy.triggered).toBe false
-          tenth = false
-
-          runs ->
-            view.render()
-            setTimeout (-> tenth = true), 100
-
-          waitsFor (-> tenth), 'tenth of a second', 110
-
-          runs -> expect(spy.triggered).toBe false
+          view.readyOnRender = false
+          view.render()
+          expect(spy.triggered).toBe false
 
 
       describe 'playOnReady', ->
 
-        beforeEach -> spyOn MediaView::, 'play'
-        afterEach -> MediaView::play.reset()
-
         it 'should by default not play video on Media:Ready', ->
           view = new MediaView viewOptions()
+          spyOn view, 'play'
 
-          expect(MediaView::play).not.toHaveBeenCalled()
-          tenth = false
-
-          runs ->
-            view.render()
-            setTimeout (-> tenth = true), 100
-
-          waitsFor (-> tenth), 'tenth of a second', 110
-
-          runs -> expect(MediaView::play).not.toHaveBeenCalled()
+          expect(view.play).not.toHaveBeenCalled()
+          view.render()
+          expect(view.play).not.toHaveBeenCalled()
 
         it 'should play video on Media:Ready if passed `playOnReady`', ->
           view = new MediaView _.extend viewOptions(), {playOnReady: true}
+          spyOn view, 'play'
 
-          expect(MediaView::play).not.toHaveBeenCalled()
-
-          runs -> view.render()
-
-          waitsFor (-> MediaView::play.calls.length > 0), 'play to be called', 100
+          expect(view.play).not.toHaveBeenCalled()
+          view.render()
+          expect(view.play).toHaveBeenCalled()

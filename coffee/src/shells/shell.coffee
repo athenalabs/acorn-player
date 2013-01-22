@@ -99,9 +99,12 @@ class Shell.MediaView extends athena.lib.View
 
     unless @options.model
       acorn.errors.MissingParameterError 'Shell.MediaView', 'model'
+    @initializeMedia()
 
-    @wireMediaEvents @options
-    @init()
+
+  initializeMedia: =>
+    @initializeMediaEvents @options
+    @setMediaState 'init'
 
 
   controls: []
@@ -112,19 +115,17 @@ class Shell.MediaView extends athena.lib.View
     @model.timeTotal()
 
 
-  # Whether this mediaView is fully loaded after render
-  readyOnRender: true
-
-
   render: =>
     super
     @$el.width @width()
     @$el.height @height()
-
-    # if ready when call stack clears, announce readiness
-    if @readyOnRender and @isInStateInit()
-      @ready()
+    if @readyOnRender
+      @setMediaState 'ready'
     @
+
+
+  readyOnRender: true
+
 
 
 # Shell.RemixView -- uniform view to edit shell data.
