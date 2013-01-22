@@ -22,5 +22,6 @@ goog.require 'acorn.shells.SlideshowShell'
 goog.require 'acorn.shells.GalleryShell'
 
 goog.require 'acorn.player.MediaPlayerView'
+goog.require 'acorn.player.TimedMediaPlayerView'
 
 (exports ? @).acorn = acorn
