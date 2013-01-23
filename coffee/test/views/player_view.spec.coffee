@@ -163,6 +163,16 @@ describe 'acorn.player.PlayerView', ->
       expect(view.content() instanceof acorn.player.SplashView).toBe true
       expect(view.$el.attr 'showing').toBe 'splash'
 
+    it 'should send keyups to eventhub', ->
+      hub = new athena.lib.View
+      view = new PlayerView model: model, eventhub: hub
+      view.render()
+      _.each athena.lib.util.keys, (key, name) =>
+        spy = new EventSpy hub, "Keypress:#{name}"
+        event = $.Event 'keyup', {which: key, keyCode: key}
+        view.$el.trigger event
+        expect(spy.triggered).toBe true
+
 
   describe 'editor events (when editable)', ->
 

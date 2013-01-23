@@ -18,6 +18,12 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
   className: @classNameExtend 'player-view row-fluid'
 
 
+  events: => _.extend super,
+    'keyup': (event) =>
+      name = _.invert(athena.lib.util.keys)[event.keyCode]
+      @eventhub.trigger "Keypress:#{name}"
+
+
   initialize: =>
     super
 
