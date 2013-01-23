@@ -160,21 +160,25 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
 
   isInState: (state) =>
     isInState = super
-    ytState = @player?.getPlayerState?()
+    unless window.YT and @player?.getPlayerState
+      return isInState
+
+    ytState = @player.getPlayerState()
 
     # ensure that YT State matches our expectations.
     switch state
-      when state is 'play'
+      when 'play'
         ytIsInState = ytState == YT.PlayerState.PLAYING
-      when state is 'pause'
+      when 'pause'
         ytIsInState = ytState == YT.PlayerState.PAUSED
-      when state is 'end'
+      when 'end'
         ytIsInState = ytState == YT.PlayerState.ENDED
       else
         ytIsInState = undefined
 
     if ytIsInState isnt isInState
       console.log 'Error: YT player must agree with internal state'
+      console.log "internal: #{@mediaState()} youtube: #{ytState}"
 
     isInState
 
