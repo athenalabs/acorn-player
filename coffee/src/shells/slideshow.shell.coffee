@@ -35,8 +35,6 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
 
   initialize: =>
     super
-    @on 'Media:Play', @onPlay
-    @on 'Media:Pause', @onPause
 
 
   _initializeControlsView: =>
@@ -68,13 +66,13 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
     @
 
 
-  onPlay: =>
+  onMediaPlay: =>
     @controlsView.$('.control-view.play').addClass 'hidden'
     @controlsView.$('.control-view.pause').removeClass 'hidden'
     @_countdown()
 
 
-  onPause: =>
+  onMediaPause: =>
     @controlsView.$('.control-view.play').removeClass 'hidden'
     @controlsView.$('.control-view.pause').addClass 'hidden'
     @_clearCountdown()
@@ -93,7 +91,7 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
   _countdown: =>
     @_clearCountdown()
 
-    if @isInStatePlay()
+    if @isPlaying()
       @_counter = setTimeout @_onCountdownFinish, @model.delay() * 1000
 
 
@@ -107,14 +105,14 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
 
     view = @shellViews[@currentIndex]
 
-    if @isInStatePlay()
-      unless 0 < view?.duration?() < Infinity and view.isInStatePlay()
+    if @isPlaying()
+      unless 0 < view?.duration?() < Infinity and view.isPlaying()
         @showNext()
 
 
   _onShellPlaybackEnded: =>
     # show next if counter has already concluded
-    if @isInStatePlay()
+    if @isPlaying()
       unless @_counter?
         @showNext()
 

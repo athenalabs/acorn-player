@@ -41,18 +41,21 @@ describe 'acorn.player.TimedMediaPlayerView', ->
 
     it 'should be started on Media:DidPlay', ->
       view = new TimedMediaPlayerView options()
+      view.render()
       spyOn view.timer, 'startTick'
       view.trigger 'Media:DidPlay'
       expect(view.timer.startTick).toHaveBeenCalled()
 
     it 'should be stopped on Media:DidPause', ->
       view = new TimedMediaPlayerView options()
+      view.render()
       spyOn view.timer, 'stopTick'
       view.trigger 'Media:DidPause'
       expect(view.timer.stopTick).toHaveBeenCalled()
 
     it 'should be stopped on Media:DidEnd', ->
       view = new TimedMediaPlayerView options()
+      view.render()
       spyOn view.timer, 'stopTick'
       view.trigger 'Media:DidEnd'
       expect(view.timer.stopTick).toHaveBeenCalled()
