@@ -51,7 +51,7 @@ class VimeoShell.Model extends VideoLinkShell.Model
 
   embedLink: =>
     # see http://developer.vimeo.com/player/embedding
-    "http://player.vimeo.com/video/#{@vimeoId()}?" +
+    "https://player.vimeo.com/video/#{@vimeoId()}?" +
       '&byline=0' +
       '&portrait=0' +
       '&api=1' +
