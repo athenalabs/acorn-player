@@ -22,8 +22,9 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     'keydown': (event) =>
       name = _.invert(athena.lib.util.keys)[event.keyCode]
       @eventhub.trigger "Keypress:#{name}"
-      event.preventDefault()
-      return false
+      if name is 'SPACEBAR'
+        event.preventDefault()
+        return false
 
 
   initialize: =>
