@@ -43,13 +43,19 @@ class VimeoShell.Model extends VideoLinkShell.Model
     pattern.exec(link)[5]
 
 
+  # id for the player element. id must be unique in the entire page to allow
+  # the YouTube API to differentiate between multiple players.
+  playerId: =>
+    "vimeo-player-#{@cid}"
+
+
   embedLink: =>
     # see http://developer.vimeo.com/player/embedding
     "http://player.vimeo.com/video/#{@vimeoId()}?" +
       '&byline=0' +
       '&portrait=0' +
       '&api=1' +
-      '&player_id=vimeo-player' +
+      '&player_id=' + @playerId() +
       '&title=0' +
       '&byline=1' +
       '&portrait=0' +
@@ -102,20 +108,28 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
     @_timeTotal = undefined
     @_seekOffset = 0
 
-    @on 'Media:Play', => @player.api 'play'
-    @on 'Media:Pause', => @player.api 'pause'
+    @on 'Media:Play', => @player?.api 'play'
+    @on 'Media:Pause', => @player?.api 'pause'
+
+    @initializeVimeoAPI()
 
 
   render: =>
     super
     @$el.empty()
-    @$el.append acorn.util.iframe @model.embedLink(), 'vimeo-player'
-    @initializeVimeo()
+    @$el.append acorn.util.iframe @model.embedLink(), @playerId()
+
+    # initialize in next call stack, after render.
+    # Vimeo requires the element to be in the DOM
+    setTimeout @initializeVimeoPlayer, 0
     @
 
 
-  # Control the player
+  playerId: =>
+    @model.playerId()
 
+
+  # Control the player
   seek: (seconds) =>
     # Vimeo adds the original seekTo value to the current one. `seekTo n`
     # initially sends a user to t = n, but forever after will send the user to
@@ -142,28 +156,27 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
 
 
   # initialize vimeo API. should happen only once per page load
-  initializeVimeo: =>
+  initializeVimeoAPI: =>
+    unless window.Froogaloop or VimeoShell._initializedVimeoAPI
+      VimeoShell._initializedVimeoAPI = true
+      $.getScript @vimeoPlayerApiSrc
 
-    # if Vimeo hasn't been initialized, initialize it.
+
+  initializeVimeoPlayer: =>
     unless window.Froogaloop
-      $.getScript @vimeoPlayerApiSrc, @onVimeoReady
+      @initializeVimeoAPI()
+      setTimeout @initializeVimeoPlayer, 100
       return
 
-    # must call onVimeoReady once the current render call stack finishes
-    # Vimeo API expects the id of a player currently on the page. Backbone may
-    # have not yet added the current DOM subtree to the page DOM.
-    setTimeout @onVimeoReady, 0
-
-
-  onVimeoReady: =>
     # initialize the player object with the iframe
-    @player = Froogaloop @$('#vimeo-player')[0]
+    @player = Froogaloop @$('#' + @playerId())[0]
     @player.addEvent 'ready', @onVimeoPlayerReady
 
 
   onVimeoPlayerReady: =>
-    # attach callbacks to the vimeo player.
+    console.log 'onVimeoPlayerReady ' + @cid
 
+    # attach callbacks to the vimeo player.
     @player.addEvent 'pause', => @pause()
 
     @player.addEvent 'play', => @play()
@@ -176,7 +189,7 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
       @_timeTotal = parseFloat params.duration
       @_seekOffset = parseFloat params.seconds
 
-    @trigger 'Media:DidReady'
+    @setMediaState 'ready'
 
 
   # Vimeo's api claims to hold playing-state constant through seeks, but seems
@@ -184,7 +197,7 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
   # state has changed).
   enforceVimeoPlaybackState: =>
     # get desirable state
-    wasPlaying = @isInStatePlay()
+    wasPlaying = @isPlaying()
 
     # force state to `PLAYING`
     @player.api 'play'

@@ -79,14 +79,14 @@ describe 'acorn.shells.VimeoShell', ->
           "Vimeo video foo from 00:33 to 02:25.")
 
 
-    describe 'VimeoShell.PlayerView', ->
+    xdescribe 'VimeoShell.PlayerView', ->
       it '------ TODO ------ make PlayerView tests work with PhantomJS', ->
 
     # TODO: most of these tests rely on in-DOM interaction with the vimeo API
     # of a nature that phantomJS does not support. Although all of the following
     # tests pass when run with `grunt server`, they fail when run with
     # `grunt test`
-    xdescribe 'VimeoShell.PlayerView', ->
+    describe 'VimeoShell.PlayerView', ->
       pv = undefined
       $hiddenPlayer = undefined
 
@@ -107,28 +107,13 @@ describe 'acorn.shells.VimeoShell', ->
         playerReady = false
         pvReady = false
         pv.on 'Media:DidReady', -> pvReady = true
+        spyOn(pv, 'onVimeoPlayerReady').andCallThrough()
 
         # must be appended to DOM in order to load properly
         runs -> $hiddenPlayer.append pv.render().el
 
         waitsFor (->
-          # if 'Media:DidReady' event fired before listener was set, settle
-          # for inability to test low-level readiness and return true
-          if pvReady and not setPlayerListener
-            return true
-
-          # if possible, add listener to froogaloop 'ready' event
-          if pv.player? and not setPlayerListener
-            setPlayerListener = true
-            pv.player.addEvent 'ready', ->
-              playerReady = true
-
-              # call through (froogaloop overwrites old listener to ready)
-              pv.onVimeoPlayerReady()
-
-          # ideally, directly test both froogaloop 'ready' and playerView
-          # 'Media:DidReady' events
-          playerReady and pvReady
+          pv.onVimeoPlayerReady.callCount > 0
         ), 'player ready', 10000
 
       it 'should load a vimeo player on render that loads video when played', ->
@@ -257,13 +242,13 @@ describe 'acorn.shells.VimeoShell', ->
           # pause video, expect PAUSED state
           runs -> pv.player.api 'pause'
           waitsFor (->
-            not pv.isInStatePlay()
+            not pv.isPlaying()
           ), 'playerView to register paused state', 10000
 
           # play video, expect PLAYING state
           runs -> pv.player.api 'play'
           waitsFor (->
-            pv.isInStatePlay()
+            pv.isPlaying()
           ), 'playerView to register playing state', 10000
 
         it 'should report seek offset', ->
