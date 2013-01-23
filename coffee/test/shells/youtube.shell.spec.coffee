@@ -89,14 +89,14 @@ describe 'acorn.shells.YouTubeShell', ->
 
 
 
-    xdescribe 'YouTubeShell.PlayerView', ->
+    describe 'YouTubeShell.PlayerView', ->
       it '------ TODO ------ make PlayerView tests work with PhantomJS', ->
 
     # TODO: most of these tests rely on in-DOM interaction with the youtube API
     # of a nature that phantomJS does not support. Although all of the following
     # tests pass when run with `grunt server`, all except the first fails when
     # run with `grunt test`
-    describe 'YouTubeShell.PlayerView', ->
+    xdescribe 'YouTubeShell.PlayerView', ->
 
       it 'should have a unique playerId', ->
         pvs = [

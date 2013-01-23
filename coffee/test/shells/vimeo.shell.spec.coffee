@@ -79,14 +79,14 @@ describe 'acorn.shells.VimeoShell', ->
           "Vimeo video foo from 00:33 to 02:25.")
 
 
-    xdescribe 'VimeoShell.PlayerView', ->
+    describe 'VimeoShell.PlayerView', ->
       it '------ TODO ------ make PlayerView tests work with PhantomJS', ->
 
     # TODO: most of these tests rely on in-DOM interaction with the vimeo API
     # of a nature that phantomJS does not support. Although all of the following
     # tests pass when run with `grunt server`, they fail when run with
     # `grunt test`
-    describe 'VimeoShell.PlayerView', ->
+    xdescribe 'VimeoShell.PlayerView', ->
       pv = undefined
       $hiddenPlayer = undefined
 
