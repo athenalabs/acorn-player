@@ -103,6 +103,10 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
   className: @classNameExtend 'vimeo-shell'
 
 
+  events: => _.extend super,
+    'click .click-capture': => @togglePlayPause()
+
+
   initialize: =>
     super
     @_timeTotal = undefined
@@ -119,6 +123,7 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
     super
     @$el.empty()
     @$el.append acorn.util.iframe @model.embedLink(), @playerId()
+    @$el.append $('<div>').addClass('click-capture')
 
     # initialize in next call stack, after render.
     # Vimeo requires the element to be in the DOM

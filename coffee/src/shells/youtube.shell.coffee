@@ -111,6 +111,10 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
   className: @classNameExtend 'youtube-shell'
 
 
+  events: => _.extend super,
+    'click .click-capture': => @togglePlayPause()
+
+
   initialize: =>
     super
     @on 'Media:Play', => @player?.playVideo()
@@ -124,6 +128,7 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     @$el.empty()
     options = noControls: @options.noControls
     @$el.append acorn.util.iframe @model.embedLink(options), @playerId()
+    @$el.append $('<div>').addClass('click-capture')
 
     # initialize in next call stack, after render.
     # YouTube requires the element to be in the DOM
