@@ -55,7 +55,7 @@ class YouTubeShell.Model extends VideoLinkShell.Model
 
   embedLink: (options) =>
     # see https://developers.google.com/youtube/player_parameters for options
-    "http://www.youtube.com/embed/#{@youtubeId()}?" +
+    "https://www.youtube.com/embed/#{@youtubeId()}?" +
          '&fs=1' +
        # '&modestbranding=1' +
          '&iv_load_policy=3' +
