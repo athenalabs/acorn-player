@@ -4,6 +4,7 @@ goog.require 'acorn.player.controls.ControlToolbarView'
 goog.require 'acorn.player.controls.ControlView'
 goog.require 'acorn.player.controls.IconControlView'
 goog.require 'acorn.player.controls.ImageControlView'
+goog.require 'acorn.player.controls.ElapsedTimeControlView'
 
 
 describe 'acorn.player.controls.ControlToolbarView', ->
@@ -188,5 +189,55 @@ describe 'acorn.player.controls.ImageControlView', ->
 
     _.each [acorn.config.img.acornIcon], (url) ->
       view = ImageControlView.withUrl url
+      view.render()
+      $player.append view.el
+
+
+describe 'acorn.player.controls.ElapsedTimeControlView', ->
+  EventSpy = athena.lib.util.test.EventSpy
+  ControlView = acorn.player.controls.ControlView
+  ElapsedTimeControlView = acorn.player.controls.ElapsedTimeControlView
+
+  describeView = athena.lib.util.test.describeView
+  describeView ElapsedTimeControlView, ControlView
+
+  it 'should be part of acorn.player.controls', ->
+    expect(ElapsedTimeControlView).toBeDefined()
+
+  it 'should render elapsed timestring', ->
+    model = new Backbone.Model elapsed: 10, total: 20
+    view = new ElapsedTimeControlView model: model
+    view.render()
+    expect(view.$('.elapsed').text()).toBe '00:10'
+
+  it 'should render total timestring', ->
+    model = new Backbone.Model elapsed: 10, total: 20
+    view = new ElapsedTimeControlView model: model
+    view.render()
+    expect(view.$('.total').text()).toBe '00:20'
+
+  it 'should trigger event `ElapsedTimeControl:Click` on click', ->
+    view = new ElapsedTimeControlView
+    spy = new EventSpy view, 'ElapsedTimeControl:Click'
+    view.render()
+    view.$el.trigger 'click'
+    expect(spy.triggered).toBe true
+
+  it 'should soft-render if model changes', ->
+    view = new ElapsedTimeControlView
+    spyOn view, 'softRender'
+    view.model.set 'total', 10
+    expect(view.softRender).toHaveBeenCalled()
+
+  it 'should look good', ->
+    # setup DOM
+    acorn.util.appendCss()
+    $player = $('<div>').addClass('acorn-player').appendTo('body')
+
+    # add into the DOM to see how it looks.
+
+    _.each [[0, 0], [1, 20], [300, 500], [100000, 200000]], (pair) ->
+      model = new Backbone.Model elapsed: pair[0], total: pair[1]
+      view = new ElapsedTimeControlView model: model
       view.render()
       $player.append view.el

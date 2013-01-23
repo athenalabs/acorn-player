@@ -2,6 +2,7 @@ goog.provide 'acorn.player.controls.ControlToolbarView'
 goog.provide 'acorn.player.controls.ControlView'
 goog.provide 'acorn.player.controls.IconControlView'
 goog.provide 'acorn.player.controls.ImageControlView'
+goog.provide 'acorn.player.controls.ElapsedTimeControlView'
 
 goog.require 'acorn.config'
 
@@ -205,6 +206,47 @@ class AcornControlView extends ImageControlView
 
 
 
+class ElapsedTimeControlView extends ControlView
+
+  controlName: => 'ElapsedTimeControl'
+
+  tooltip: => title: 'Elapsed Time', delay: show: 1500
+  className: @classNameExtend 'elapsed-time-control-view'
+
+
+  template: _.template '''
+    <div>
+      <span class="elapsed"></span> /
+      <span class="total"></span>
+    </div>
+    '''
+
+
+  initialize: =>
+    super
+    @model ?= new Backbone.Model
+    @listenTo @model, 'change', => @softRender()
+
+
+  formatTime: (time) =>
+    if time is Infinity
+      return '∞'
+
+    s = acorn.util.Time.secondsToTimestring time
+    s = s.split('.')[0] # remove subsecon fraction
+    s
+
+
+  render: =>
+    super
+    @$el.empty()
+    @$el.html @template()
+    @$('.elapsed').text @formatTime @model.get 'elapsed'
+    @$('.total').text @formatTime @model.get 'total'
+    @
+
+
+
 acorn.player.controls.ControlToolbarView = ControlToolbarView
 acorn.player.controls.ControlView = ControlView
 
@@ -221,3 +263,5 @@ acorn.player.controls.PauseControlView = PauseControlView
 
 acorn.player.controls.ImageControlView = ImageControlView
 acorn.player.controls.AcornControlView = AcornControlView
+
+acorn.player.controls.ElapsedTimeControlView = ElapsedTimeControlView

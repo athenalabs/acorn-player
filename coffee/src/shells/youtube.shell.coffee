@@ -154,6 +154,10 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     @player?.seekTo(seconds, true)
 
 
+  duration: =>
+    @model.duration() or @player?.getDuration?() or 0
+
+
   isInState: (state) =>
     isInState = super
     ytState = @player?.getPlayerState?()

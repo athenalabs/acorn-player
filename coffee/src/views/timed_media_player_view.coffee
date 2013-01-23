@@ -45,6 +45,9 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
     end = @model.timeEnd() ? @model.timeTotal()
     @_loopsElapsed ?= 0
 
+    # advertise progress
+    @trigger 'Media:Progress', @, (now - start), (end - start)
+
     # if current playback is before the start time:
     if now < start
       # reset loop count in case user has manually restarted
@@ -76,4 +79,4 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
 
   # duration of video given current splicing and looping - get from model
   duration: =>
-    @model.duration()
+    @model.duration() or 0

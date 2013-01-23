@@ -70,13 +70,31 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
   initialize: =>
     super
 
+    @initializeElapsedTimeView()
+
     @controlsView = new ControlToolbarView
       extraClasses: ['shell-controls']
-      buttons: ['Play', 'Pause']
+      buttons: ['Play', 'Pause', @elapsedTimeView]
       eventhub: @eventhub
 
     @controlsView.on 'PlayControl:Click', => @play()
     @controlsView.on 'PauseControl:Click', => @pause()
+
+
+  initializeElapsedTimeView: =>
+
+    # initialize elapsed time control
+    tvModel = new Backbone.Model
+      elapsed: 0
+      total: @duration() or 0
+
+    @elapsedTimeView = new acorn.player.controls.ElapsedTimeControlView
+      eventhub: @eventhub
+      model: tvModel
+
+    tvModel.listenTo @playerView, 'Media:Progress', (view, elapsed, total) =>
+      tvModel.set 'elapsed', elapsed
+      tvModel.set 'total', total
 
 
   remove: =>
@@ -129,7 +147,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
   # duration of video given current splicing and looping - get from model
   duration: =>
-    @model.duration()
+    @playerView?.duration() or @model.duration() or 0
 
 
   # video playerView will announce when ready, mediaView forwards event
