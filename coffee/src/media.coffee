@@ -88,17 +88,23 @@ class acorn.MediaInterface
     End: 'end'
 
 
+  switchingMediaState: =>
+    @_switchingMediaState or false
+
+
   mediaState: => @_mediaState
   setMediaState: (state) =>
     State = _.invert(@mediaStates)[state]
     unless State
       ValueError 'state', "must be one of: #{_.values @mediaStates}"
 
+    @_switchingMediaState = true
     @trigger "Media:Will#{State}", @
     @trigger "Media:#{State}", @
     @_mediaState = state
     @trigger "Media:StateChange", @, state
     @trigger "Media:Did#{State}", @
+    @_switchingMediaState = false
 
 
   play: =>

@@ -195,5 +195,4 @@ describe 'acorn.player.TimedMediaPlayerView', ->
           expect(view._loopsElapsed).toBe loops
           expect(view.restarting).not.toBeDefined()
           expect(view.seek).not.toHaveBeenCalled()
-          expect(view.setMediaState.argsForCall[0]).toEqual ['pause']
-          expect(view.setMediaState.argsForCall[1]).toEqual ['end']
+          expect(view.setMediaState.argsForCall[0]).toEqual ['end']

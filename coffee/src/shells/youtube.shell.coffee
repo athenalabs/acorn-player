@@ -115,6 +115,7 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     super
     @on 'Media:Play', => @player?.playVideo()
     @on 'Media:Pause', => @player?.pauseVideo()
+    @on 'Media:End', => @player?.pauseVideo()
     @initializeYouTubeAPI()
 
 
@@ -217,11 +218,15 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
 
 
       onStateChange: (event) =>
+        if @switchingMediaState()
+          return
+
         switch @player.getPlayerState()
           when YT.PlayerState.PLAYING
             @setMediaState 'play'
           when YT.PlayerState.PAUSED
-            @setMediaState 'pause'
+            if @isInState 'play'
+              @setMediaState 'pause'
           when YT.PlayerState.ENDED
             @setMediaState 'end'
 

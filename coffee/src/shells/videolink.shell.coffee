@@ -132,6 +132,10 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     @controlsView.$('.control-view.play').removeClass 'hidden'
     @controlsView.$('.control-view.pause').addClass 'hidden'
 
+  onMediaEnd: =>
+    @controlsView.$('.control-view.play').removeClass 'hidden'
+    @controlsView.$('.control-view.pause').addClass 'hidden'
+
 
   # forward state transitions
   isInState: (state) => @playerView.isInState(state)

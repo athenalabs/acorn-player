@@ -110,6 +110,7 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
 
     @on 'Media:Play', => @player?.api 'play'
     @on 'Media:Pause', => @player?.api 'pause'
+    @on 'Media:End', => @player?.api 'pause'
 
     @initializeVimeoAPI()
 

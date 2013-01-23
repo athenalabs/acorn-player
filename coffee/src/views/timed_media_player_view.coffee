@@ -34,8 +34,16 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
     parseInt loops, 10
 
 
+  onMediaPlay: =>
+    if @isInState 'end'
+      @seek (@model.timeStart() ? 0)
+
+
   # executes periodically to adjust video playback.
   onPlaybackTick: =>
+    if @switchingMediaState()
+      return
+
     unless @isPlaying()
       @timer.stopTick()
       return
@@ -68,7 +76,6 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
         @seek start
         @restarting = true
       else
-        @pause()
         @setMediaState 'end'
 
 
