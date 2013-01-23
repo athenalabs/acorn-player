@@ -150,6 +150,15 @@ util.elementInDom = (element) ->
   return false
 
 
+util.bound = (n, low, high) ->
+  unless high?
+    high = low ? 100
+    low = 0
+  if n < low then low
+  else if n > high then high
+  else n
+
+
 # Originally from StackOverflow
 # http://stackoverflow.com/questions/736513
 util.parseUrl = (url) ->
