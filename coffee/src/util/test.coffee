@@ -158,6 +158,7 @@ test.describeMediaInterface = (Cls, options, tests) ->
         it "should trigger Will#{Name}, #{Name}, change, then Did#{Name}", ->
           flag = 0
           iface = new Cls options
+          iface.render?()
 
           # later states require init and ready to have happened
           if name isnt 'init'
@@ -187,9 +188,18 @@ test.describeMediaInterface = (Cls, options, tests) ->
           iface.setMediaState(name)
           expect(flag).toBe(3)
 
+          iface.off "Media:Will#{Name}"
+          iface.off "Media:#{Name}"
+          iface.off "Media:Did#{Name}"
+
+          iface.pause()
+          iface.destroy?()
+
+
         it "should call defined on(Will,,Did)Media#{Name} in order", ->
           flag = 0
           iface = new Cls options
+          iface.render?()
 
           # later states require init and ready to have happened
           if name isnt 'init'
@@ -219,13 +229,22 @@ test.describeMediaInterface = (Cls, options, tests) ->
           iface.setMediaState(name)
           expect(flag).toBe(3)
 
+          iface["onMediaWill#{Name}"] = =>
+          iface["onMedia#{Name}"] = =>
+          iface["onMediaDid#{Name}"] = =>
+          iface.pause()
+          iface.destroy?()
+
 
         it "#{Cls.name}::isInState(#{name}) should return true", ->
           iface = new Cls options
+          iface.render?()
           if name isnt 'init'
             expect(iface.isInState name).not.toBe true
           iface.setMediaState(name)
           expect(iface.isInState name).toBe true
+          iface.pause()
+          iface.destroy?()
 
 
     describeStateChange 'init'

@@ -55,6 +55,7 @@ class AcornLinkShell.Model extends LinkShell.Model
     @shellModel?.duration() ? Infinity
 
 
+
 class AcornLinkShell.MediaView extends LinkShell.MediaView
 
 
@@ -72,6 +73,11 @@ class AcornLinkShell.MediaView extends LinkShell.MediaView
     @model.onceLoaded @initializeMediaView
     @
 
+
+  # override Shell.MediaView.initializeMedia
+  initializeMedia: =>
+
+
   initializeMediaView: =>
     @mediaView = new @model.shellModel.module.MediaView
       model: @model.shellModel
@@ -79,12 +85,16 @@ class AcornLinkShell.MediaView extends LinkShell.MediaView
 
     # fwd all events.
     @listenTo @mediaView, 'all', _.bind(@trigger, @)
+    @initializeMediaEvents @options
+
 
     if @mediaView.controlsView
       @controlsView.buttons = [@mediaView.controlsView]
     else
       @controlsView.buttons = @mediaView.controls
     @controlsView.initializeButtons()
+
+    @setMediaState 'init'
 
 
   readyOnRender: false
@@ -103,39 +113,19 @@ class AcornLinkShell.MediaView extends LinkShell.MediaView
     @
 
 
-  # actions
-
-  ready: =>
-    @mediaView.ready()
+  # forward state transitions
+  isInState: (state) => @mediaView?.isInState(state) or state is 'init'
 
 
-  play: =>
-    @mediaView.play()
+  mediaState: => @mediaView?.mediaState() or 'init'
+  setMediaState: (state) => @mediaView?.setMediaState state
 
 
-  pause: =>
-    @mediaView.pause()
+  seek: (seconds) => @mediaView.seek seconds
+  seekOffset: => @mediaView.seekOffset() ? 0
 
 
-  seek: (seconds) =>
-    @mediaView.seek seconds
-
-
-  # state getters
-
-  isInStateInit: => @mediaView.isInStateInit() ? false
-  isInStateReady: => @mediaView.isInStateReady() ? false
-  isInStatePlay: => @mediaView.isInStatePlay() ? false
-  isInStatePause: => @mediaView.isInStatePause() ? false
-  isInStateEnd: => @mediaView.isInStateEnd() ? false
-
-
-  seekOffset: =>
-    @mediaView.seekOffset() ? 0
-
-
-  duration: =>
-    @mediaView.duration()
+  duration: => @mediaView.duration()
 
 
 

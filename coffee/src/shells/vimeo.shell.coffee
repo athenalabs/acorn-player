@@ -174,8 +174,6 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
 
 
   onVimeoPlayerReady: =>
-    console.log 'onVimeoPlayerReady ' + @cid
-
     # attach callbacks to the vimeo player.
     @player.addEvent 'pause', => @pause()
 

@@ -137,7 +137,7 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
 
 
   seekOffset: =>
-    @player?.getCurrentTime() ? 0
+    @player?.getCurrentTime?() ? 0
 
 
   seek: (seconds) =>
@@ -156,7 +156,7 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
 
   isInState: (state) =>
     isInState = super
-    ytState = @player?.getPlayerState()
+    ytState = @player?.getPlayerState?()
 
     # ensure that YT State matches our expectations.
     switch state
@@ -166,6 +166,8 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
         ytIsInState = ytState == YT.PlayerState.PAUSED
       when state is 'end'
         ytIsInState = ytState == YT.PlayerState.ENDED
+      else
+        ytIsInState = undefined
 
     if ytIsInState isnt isInState
       console.log 'Error: YT player must agree with internal state'
