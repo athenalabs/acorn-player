@@ -188,6 +188,47 @@ util.parseUrl = (url) ->
 
 
 
+# track mouse location at all times
+util.mouseLocationTracker = (->
+  id = 0
+  subscribed = []
+  tracker =
+    x: undefined
+    y: undefined
+    active: false
+
+  onMousemove = (e) ->
+    tracker.x = e.pageX
+    tracker.y = e.pageY
+
+  startTracking = ->
+    tracker.active = true
+    $(document).on 'mousemove.mouseLocationTracker', onMousemove
+
+  stopTracking = ->
+    tracker.active = false
+    tracker.x = undefined
+    tracker.y = undefined
+    $(document).off 'mousemove.mouseLocationTracker', onMousemove
+
+  # subscribe to tracker to ensure it activates
+  tracker.subscribe = () ->
+    unless tracker.active
+      startTracking()
+    subscribed.push id
+    id++
+
+  # unsubscribe id when done for efficiency
+  tracker.unsubscribe = (id) ->
+    subscribed = _.without subscribed, id
+    if subscribed.length == 0
+      stopTracking()
+
+  tracker
+)()
+
+
+
 # converts human-readable timestring to seconds and back
 # human-readable format is: [[hh:]mm:]ss[.SSS]
 class util.Time
