@@ -115,6 +115,10 @@ class acorn.MediaInterface
     @setMediaState 'pause'
 
 
+  togglePlayPause: =>
+    if @isInState 'play' then @pause() else @play()
+
+
   # State checks -- returns true if media is in a particular state
   isInState: (state) => @mediaState() is state
 

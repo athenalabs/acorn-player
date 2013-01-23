@@ -80,6 +80,7 @@ class acorn.player.ContentView extends athena.lib.View
 
     # setup events
     @acornControlsView.on 'all', (name) => @eventhub.trigger name
+    @eventhub.on 'Keypress:SPACEBAR', => @shellView.togglePlayPause()
 
 
   render: =>

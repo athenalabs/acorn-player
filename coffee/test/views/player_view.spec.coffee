@@ -169,7 +169,7 @@ describe 'acorn.player.PlayerView', ->
       view.render()
       _.each athena.lib.util.keys, (key, name) =>
         spy = new EventSpy hub, "Keypress:#{name}"
-        event = $.Event 'keyup', {which: key, keyCode: key}
+        event = $.Event 'keydown', {which: key, keyCode: key}
         view.$el.trigger event
         expect(spy.triggered).toBe true
 

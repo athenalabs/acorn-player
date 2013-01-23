@@ -19,9 +19,12 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
 
 
   events: => _.extend super,
-    'keyup': (event) =>
+    'keydown': (event) =>
       name = _.invert(athena.lib.util.keys)[event.keyCode]
       @eventhub.trigger "Keypress:#{name}"
+      console.log "triggered Keypress:#{name} " + event.keyCode
+      event.preventDefault()
+      return false
 
 
   initialize: =>
@@ -65,6 +68,12 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     @eventhub.on 'AcornControl:Click', => @openAcornWebsite()
     @eventhub.on 'SourcesControl:Click', => @eventhub.trigger 'show:sources'
     @eventhub.on 'FullscreenControl:Click', => @enterFullscreen()
+
+
+  render: =>
+    super
+    @$el.attr 'tabindex', '-1'
+    @
 
 
   contentView: =>
