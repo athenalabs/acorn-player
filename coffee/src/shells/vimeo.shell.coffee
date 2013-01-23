@@ -23,7 +23,7 @@ class VimeoShell.Model extends VideoLinkShell.Model
 
 
   metaDataUrl: =>
-    "http://vimeo.com/api/v2/video/#{@vimeoId()}.json?callback=?"
+    "https://vimeo.com/api/v2/video/#{@vimeoId()}.json?callback=?"
 
 
   description: =>

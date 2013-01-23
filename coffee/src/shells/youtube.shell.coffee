@@ -29,7 +29,7 @@ class YouTubeShell.Model extends VideoLinkShell.Model
 
 
   metaDataUrl: =>
-    "http://gdata.youtube.com/feeds/api/videos/#{@youtubeId()}?v=2&alt=jsonc"
+    "https://gdata.youtube.com/feeds/api/videos/#{@youtubeId()}?v=2&alt=jsonc"
 
 
   description: =>
@@ -50,7 +50,7 @@ class YouTubeShell.Model extends VideoLinkShell.Model
 
 
   defaultThumbnail: =>
-    "//img.youtube.com/vi/#{@youtubeId()}/0.jpg"
+    "https://img.youtube.com/vi/#{@youtubeId()}/0.jpg"
 
 
   embedLink: (options) =>
@@ -191,7 +191,7 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
 
   # YouTube API - communication between the YouTube iframe API and the shell.
   # see https://developers.google.com/youtube/iframe_api_reference
-  youTubePlayerApiSrc: 'http://www.youtube.com/iframe_api'
+  youTubePlayerApiSrc: '//www.youtube.com/iframe_api'
 
 
   # initialize youtube API. should happen only once per page load
