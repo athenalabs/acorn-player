@@ -4,6 +4,7 @@ goog.require 'acorn.shells.LinkShell'
 goog.require 'acorn.shells.Registry'
 goog.require 'acorn.player.TimeRangeInputView'
 goog.require 'acorn.player.CycleButtonView'
+goog.require 'acorn.player.TimedMediaPlayerView'
 goog.require 'acorn.errors'
 goog.require 'acorn.util'
 
@@ -66,97 +67,35 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
   className: @classNameExtend 'video-link-shell'
 
 
-  initialize: =>
-    super
-
-    @timer = new acorn.util.Timer 200, @onPlaybackTick
-
+  initializeMedia: =>
+    # construct player view instead of setting up own media state
     @playerView = new @module.PlayerView
       model: @model
       eventhub: @eventhub
 
     @listenTo @playerView, 'all', _.bind(@trigger, @)
-    @on 'Media:DidPlay', => @timer.startTick()
-    @on 'Media:DidPause', => @timer.stopTick()
-    @on 'Media:DidEnd', => @timer.stopTick()
+
+    @initializeMediaEvents @options
+
 
 
   render: =>
     super
     @$el.empty()
-    # stop ticking, in case we had been playing and this is a re-render.
-    @timer.stopTick()
     @$el.append @playerView.render().el
     @
 
 
-  # executes periodically to adjust video playback.
-  onPlaybackTick: =>
-    return unless @isInStatePlay()
-
-    now = @seekOffset()
-    start = @model.timeStart() ? 0
-    end = @model.timeEnd() ? @model.timeTotal()
-
-    # if current playback is before the start time:
-    if now < start
-      # reset loop count in case user has manually restarted
-      @looped = 0
-      # seek to start
-      @seek start
-
-    # if current playback is after the end time, pause or loop
-    if now >= end
-
-      # avoid decrementing the loop count multiple times before restart finishes
-      return if @restarting
-
-      loops = @model.loops()
-
-      # if loops is a number, count video loops
-      if parseInt(loops) >= 0
-        loops = parseInt loops
-        @looped ?= 0
-        @looped++
-
-      if loops == 'infinity' or (_.isNumber(loops) and loops > @looped)
-        @seek start
-        @restarting = true
-      else
-        @pause()
-        @end()
-
-    # otherwise clear restarting flag
-    else
-      @restarting = false
-
-
   # forward state transitions
-
-  init: => @playerView?.init()
-  ready: => @playerView?.ready()
-  play: => @playerView?.play()
-  pause: => @playerView?.pause()
-  end: => @playerView?.end()
-
-  isInStateInit: => @playerView?.isInStateInit() or false
-  isInStateReady: => @playerView?.isInStateReady() or false
-  isInStatePlay: => @playerView?.isInStatePlay() or false
-  isInStatePause: => @playerView?.isInStatePause() or false
-  isInStateEnd: => @playerView?.isInStateEnd() or false
+  isInState: (state) => @playerView.isInState(state)
 
 
-  seek: (seconds) =>
-    @playerView.seek seconds
+  mediaState: => @playerView.mediaState()
+  setMediaState: (state) => @playerView.setMediaState state
 
 
-  seekOffset: =>
-    @playerView.seekOffset() ? 0
-
-
-  # duration of one video loop given current splicing - get from model
-  singleLoopDuration: =>
-    @model.singleRunDuration()
+  seek: (seconds) => @playerView.seek seconds
+  seekOffset: => @playerView.seekOffset() ? 0
 
 
   # duration of video given current splicing and looping - get from model
@@ -164,8 +103,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     @model.duration()
 
 
-  # video playerView will announce when it is ready, and mediaView will forward
-  # the event
+  # video playerView will announce when ready, mediaView forwards event
   readyOnRender: false
 
 
@@ -259,13 +197,24 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     changes = {}
     changes.timeStart = changed.start if _.isNumber changed?.start
     changes.timeEnd = changed.end if _.isNumber changed?.end
+    seekOffset = undefined
 
+    # calculate seekOffset before changes take place.
     if changes.timeStart? and changes.timeStart isnt @model.timeStart()
-      @_playerView.seek changes.timeStart
+      seekOffset = changes.timeStart
     else if changes.timeEnd? and changes.timeEnd isnt @model.timeEnd()
-      @_playerView.seek changes.timeEnd
+      seekOffset = changes.timeEnd
 
     @model.set changes
+
+    # when playing, rewind a bit to see the "end"
+    if seekOffset is @model.timeEnd() and @_playerView.isPlaying()
+      seekOffset = Math.max(seekOffset - 2, @model.timeStart())
+
+    if seekOffset
+      @_playerView.seek seekOffset
+      @_playerView.looped = 0
+
     @eventhub.trigger 'change:shell', @model, @
 
 
@@ -273,26 +222,17 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     loops = if changed.name == 'n' then changed.value else changed.name
     @model.loops(loops)
 
+    # restart player loops
+    @_playerView.looped = 0
+    if @_playerView.isPlaying()
+      @_playerView.seek @model.timeStart()
 
 
-class VideoLinkShell.PlayerView extends athena.lib.View
+
+class VideoLinkShell.PlayerView extends acorn.player.TimedMediaPlayerView
 
 
-  # mixin acorn.MediaInterface
-  _.extend @prototype, acorn.MediaInterface.prototype
-
-
-  className: 'video-player-view video-link-shell'
-
-
-  render: =>
-    super
-    @$el.empty()
-
-    # TODO: this embedding method primarily does not work
-    @$el.append "<embed src='#{@model.get 'link'}'/>"
-
-    @
+  className: @classNameExtend 'video-player-view video-link-shell'
 
 
 

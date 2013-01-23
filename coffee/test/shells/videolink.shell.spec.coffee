@@ -13,6 +13,7 @@ describe 'acorn.shells.VideoLinkShell', ->
   MediaView = VideoLinkShell.MediaView
   RemixView = VideoLinkShell.RemixView
   PlayerView = VideoLinkShell.PlayerView
+  TimedMediaPlayerView = acorn.player.TimedMediaPlayerView
 
   it 'should be part of acorn.shells', ->
     expect(VideoLinkShell).toBeDefined()
@@ -67,27 +68,30 @@ describe 'acorn.shells.VideoLinkShell', ->
 
     describe 'VideoLinkShell.MediaView', ->
 
-      it 'should create a Timer instance on initialize', ->
-        mv = new MediaView viewOptions()
-        expect(mv.timer instanceof acorn.util.Timer).toBe true
-
       it 'should create a playerView instance on initialize', ->
         mv = new MediaView viewOptions()
         expect(mv.playerView instanceof PlayerView).toBe true
 
-      it 'should forward `play` action to playerView', ->
+      it 'should forward `isInState` to playerView', ->
         mv = new MediaView viewOptions()
-        spyOn mv.playerView, 'play'
-        expect(mv.playerView.play).not.toHaveBeenCalled()
-        mv.play()
-        expect(mv.playerView.play).toHaveBeenCalled()
+        spyOn mv.playerView, 'isInState'
+        expect(mv.playerView.isInState).not.toHaveBeenCalled()
+        mv.isInState 'play'
+        expect(mv.playerView.isInState).toHaveBeenCalledWith 'play'
 
-      it 'should forward `pause` action to playerView', ->
+      it 'should forward `mediaState` to playerView', ->
         mv = new MediaView viewOptions()
-        spyOn mv.playerView, 'pause'
-        expect(mv.playerView.pause).not.toHaveBeenCalled()
-        mv.pause()
-        expect(mv.playerView.pause).toHaveBeenCalled()
+        spyOn(mv.playerView, 'mediaState').andReturn 'play'
+        expect(mv.playerView.mediaState).not.toHaveBeenCalled()
+        expect(mv.mediaState()).toBe 'play'
+        expect(mv.playerView.mediaState).toHaveBeenCalled()
+
+      it 'should forward `setMediaState` to playerView', ->
+        mv = new MediaView viewOptions()
+        spyOn mv.playerView, 'setMediaState'
+        expect(mv.playerView.setMediaState).not.toHaveBeenCalled()
+        mv.setMediaState 'play'
+        expect(mv.playerView.setMediaState).toHaveBeenCalledWith 'play'
 
       it 'should forward `seek` action to playerView', ->
         mv = new MediaView viewOptions()
@@ -95,13 +99,6 @@ describe 'acorn.shells.VideoLinkShell', ->
         expect(mv.playerView.seek).not.toHaveBeenCalled()
         mv.seek(33)
         expect(mv.playerView.seek).toHaveBeenCalledWith 33
-
-      it 'should forward `isInStatePlay` query to playerView', ->
-        mv = new MediaView viewOptions()
-        spyOn mv.playerView, 'isInStatePlay'
-        expect(mv.playerView.isInStatePlay).not.toHaveBeenCalled()
-        mv.isInStatePlay()
-        expect(mv.playerView.isInStatePlay).toHaveBeenCalled()
 
       it 'should forward `seekOffset` query to playerView', ->
         mv = new MediaView viewOptions()
@@ -278,35 +275,6 @@ describe 'acorn.shells.VideoLinkShell', ->
     describe 'VideoLinkShell.PlayerView', ->
 
       describeView = athena.lib.util.test.describeView
-      describeView PlayerView, athena.lib.View, viewOptions(), ->
+      describeView PlayerView, TimedMediaPlayerView, viewOptions(), ->
 
-
-        describe 'PlayerView interface', ->
-
-          it 'should have a play method', ->
-            pv = new PlayerView viewOptions()
-            pv.render()
-            expect(typeof pv.play).toBe 'function'
-
-          it 'should have a pause method', ->
-            pv = new PlayerView viewOptions()
-            pv.render()
-            expect(typeof pv.pause).toBe 'function'
-
-          it 'should have a seek method', ->
-            pv = new PlayerView viewOptions()
-            pv.render()
-            expect(typeof pv.seek).toBe 'function'
-
-          it 'should have an isInStatePlay method that returns a boolean', ->
-            pv = new PlayerView viewOptions()
-            pv.render()
-            expect(typeof pv.isInStatePlay).toBe 'function'
-            expect(typeof pv.isInStatePlay()).toBe 'boolean'
-
-          it 'should have a seekOffset method that returns a number', ->
-            pv = new PlayerView viewOptions()
-            pv.render()
-            expect(typeof pv.seekOffset).toBe 'function'
-            expect(typeof pv.seekOffset()).toBe 'number'
-
+      acorn.util.test.describeMediaInterface PlayerView, viewOptions()
