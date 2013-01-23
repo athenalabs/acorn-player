@@ -67,6 +67,24 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
   className: @classNameExtend 'video-link-shell'
 
 
+  initialize: =>
+    super
+
+    @controlsView = new ControlToolbarView
+      extraClasses: ['shell-controls']
+      buttons: ['Play', 'Pause']
+      eventhub: @eventhub
+
+    @controlsView.on 'PlayControl:Click', => @play()
+    @controlsView.on 'PauseControl:Click', => @pause()
+
+
+  remove: =>
+    @controlsView.off 'PlayControl:Click'
+    @controlsView.off 'PauseControl:Click'
+    super
+
+
   initializeMedia: =>
     # construct player view instead of setting up own media state
     @playerView = new @module.PlayerView
@@ -83,7 +101,18 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     super
     @$el.empty()
     @$el.append @playerView.render().el
+    @controlsView.$('.control-view.pause').addClass 'hidden'
     @
+
+
+  onMediaPlay: =>
+    @controlsView.$('.control-view.play').addClass 'hidden'
+    @controlsView.$('.control-view.pause').removeClass 'hidden'
+
+
+  onMediaPause: =>
+    @controlsView.$('.control-view.play').removeClass 'hidden'
+    @controlsView.$('.control-view.pause').addClass 'hidden'
 
 
   # forward state transitions
