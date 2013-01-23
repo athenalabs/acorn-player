@@ -108,6 +108,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     @playerView = new @module.PlayerView
       model: @model
       eventhub: @eventhub
+      noControls: true
 
     @listenTo @playerView, 'all', _.bind(@trigger, @)
 
