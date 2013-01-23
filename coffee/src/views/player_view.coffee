@@ -20,11 +20,15 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
 
   events: => _.extend super,
     'keydown': (event) =>
+      # skip if focused on input elems
+      if /(input|textarea|select)/i.test event.target.tagName
+        return event
+
       name = _.invert(athena.lib.util.keys)[event.keyCode]
       @eventhub.trigger "Keypress:#{name}"
       if name is 'SPACEBAR'
         event.preventDefault()
-        return false
+      return event
 
 
   initialize: =>
