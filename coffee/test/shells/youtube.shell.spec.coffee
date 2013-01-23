@@ -89,14 +89,14 @@ describe 'acorn.shells.YouTubeShell', ->
 
 
 
-    describe 'YouTubeShell.PlayerView', ->
+    xdescribe 'YouTubeShell.PlayerView', ->
       it '------ TODO ------ make PlayerView tests work with PhantomJS', ->
 
     # TODO: most of these tests rely on in-DOM interaction with the youtube API
     # of a nature that phantomJS does not support. Although all of the following
     # tests pass when run with `grunt server`, all except the first fails when
     # run with `grunt test`
-    xdescribe 'YouTubeShell.PlayerView', ->
+    describe 'YouTubeShell.PlayerView', ->
 
       it 'should have a unique playerId', ->
         pvs = [
@@ -127,6 +127,10 @@ describe 'acorn.shells.YouTubeShell', ->
         # ended (0), playing (1), paused (2), buffering (3), or cued (5); any of
         # these corresponds to the player being ready with a cued/loaded video
         waitsFor (-> pv.player?.getPlayerState?() >= 0), 'cued video', 10000
+        runs ->
+          pv.destroy()
+          $hiddenPlayer.remove()
+
 
       it 'should announce state changes', ->
         pv = new PlayerView viewOptions()
@@ -144,6 +148,9 @@ describe 'acorn.shells.YouTubeShell', ->
 
         runs -> pv.player.playVideo()
         waitsFor (-> stateChanged), 'state change event', 10000
+        runs ->
+          pv.destroy()
+          $hiddenPlayer.remove()
 
 
       describe 'video player view api', ->
@@ -238,13 +245,12 @@ describe 'acorn.shells.YouTubeShell', ->
           ), 'video to seek to 20 while paused', 10000
 
         it 'should report whether or not it is playing', ->
-          # expect PLAYING state
-          runs -> expect(pv.isInStatePlay()).toBe true
+          runs -> expect(pv.isPlaying()).toBe true
 
           # pause video, expect PAUSED state
           runs -> pv.player.pauseVideo()
           waitsFor (->
-            not pv.isInStatePlay()
+            not pv.isPlaying()
           ), 'playerView to register paused state', 10000
 
         it 'should report seek offset', ->

@@ -80,7 +80,6 @@ class YouTubeShell.MediaView extends VideoLinkShell.MediaView
   className: @classNameExtend 'youtube-shell'
 
 
-
 class YouTubeShell.RemixView extends VideoLinkShell.RemixView
 
 
@@ -116,6 +115,7 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     super
     @on 'Media:Play', => @player?.playVideo()
     @on 'Media:Pause', => @player?.pauseVideo()
+    @initializeYouTubeAPI()
 
 
   render: =>
@@ -123,7 +123,10 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     @$el.empty()
     options = noControls: @options.noControls
     @$el.append acorn.util.iframe @model.embedLink(options), @playerId()
-    @initializeYouTubeAPI()
+
+    # initialize in next call stack, after render.
+    # YouTube requires the element to be in the DOM
+    setTimeout(@initializeYouTubePlayer, 0)
     @
 
 
@@ -133,13 +136,17 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     "youtube-player-#{@cid}"
 
 
+  seekOffset: =>
+    @player?.getCurrentTime() ? 0
+
+
   seek: (seconds) =>
     # Unless playing, seek first to the wrong place. YouTube's player has a bug
     # such that, when not playing, it occasionally seeks incorrectly (this seems
     # to happen after 2 correct seeks)
-    unless @isInStatePlay()
+    unless @isPlaying()
       wrongPlace = if seconds + 1 < @model.timeTotal()
-        seconds + 1
+        seconds + 18
       else
         if seconds - 1 >= 0 then 0 else seconds
       @player?.seekTo(wrongPlace, true)
@@ -147,33 +154,23 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     @player?.seekTo(seconds, true)
 
 
-  isInStatePlay: =>
-    inState = super
-    ytState = (@player.getPlayerState() == YT.PlayerState.PLAYING)
-    if ytState isnt inState
+  isInState: (state) =>
+    isInState = super
+    ytState = @player?.getPlayerState()
+
+    # ensure that YT State matches our expectations.
+    switch state
+      when state is 'play'
+        ytIsInState = ytState == YT.PlayerState.PLAYING
+      when state is 'pause'
+        ytIsInState = ytState == YT.PlayerState.PAUSED
+      when state is 'end'
+        ytIsInState = ytState == YT.PlayerState.ENDED
+
+    if ytIsInState isnt isInState
       console.log 'Error: YT player must agree with internal state'
-    inState
 
-
-  isInStatePause: =>
-    inState = super
-    ytState = @player.getPlayerState() == YT.PlayerState.PAUSED or
-              @player.getPlayerState() == YT.PlayerState.BUFFERING
-    if ytState isnt inState
-      console.log 'Error: YT player must agree with internal state'
-    inState
-
-
-  isInStateEnd: =>
-    inState = super
-    ytState = @player.getPlayerState() == YT.PlayerState.ENDED
-    if ytState isnt inState
-      console.log 'Error: YT player must agree with internal state'
-    inState
-
-
-  seekOffset: =>
-    @player?.getCurrentTime() ? 0
+    isInState
 
 
   # YouTube API - communication between the YouTube iframe API and the shell.
@@ -184,24 +181,18 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
   # initialize youtube API. should happen only once per page load
   initializeYouTubeAPI: =>
 
-    # if Vimeo hasn't been initialized, initialize it.
-    unless window.onYouTubeIframeAPIReady
-      $.getScript @youTubePlayerApiSrc, @onYouTubeAPIReady
-      return
-
-    # must call onYouTubeAPIReady once the current render call stack finishes
-    # YouTube API expects the id of a player currently on the page. Backbone may
-    # have not yet added the current DOM subtree to the page DOM.
-    setTimeout @onYouTubeAPIReady, 0
+    # if YouTube hasn't been initialized, initialize it.
+    unless window.YT or YouTubeShell._initializedYouTubeAPI
+      YouTubeShell._initializedYouTubeAPI = true
+      $.getScript @youTubePlayerApiSrc
 
 
-  onYouTubeAPIReady: =>
-    # replace the callback with a no-op
-    window.onYouTubeIframeAPIReady = ->
+  initializeYouTubePlayer: =>
 
     # wait until the YT.Player class is there
-    unless YT.Player
-      setTimeout @onYouTubeAPIReady, 100
+    unless window.YT and YT.Player
+      @initializeYouTubeAPI()
+      setTimeout @initializeYouTubePlayer, 100
       return
 
     # create the player object
@@ -212,23 +203,17 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
         # doesn't. Need a more robust solution (tick)
         start = parseInt(@model.timeStart() ? 0, 10)
         @player.cueVideoById(@model.youtubeId(), start)
-        @trigger 'Media:DidReady', @
+        @setMediaState 'ready'
 
 
       onStateChange: (event) =>
         switch @player.getPlayerState()
-          when YT.PlayerState.BUFFERING
-            @state = 'pause'
-            @trigger 'Media:DidPause', @
           when YT.PlayerState.PLAYING
-            @state = 'play'
-            @trigger 'Media:DidPlay', @
+            @setMediaState 'play'
           when YT.PlayerState.PAUSED
-            @state = 'pause'
-            @trigger 'Media:DidPause', @
+            @setMediaState 'pause'
           when YT.PlayerState.ENDED
-            @state = 'end'
-            @trigger 'Media:DidEnd', @
+            @setMediaState 'end'
 
 
 
