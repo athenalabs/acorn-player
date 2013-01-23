@@ -117,8 +117,6 @@ class Shell.MediaView extends athena.lib.View
 
   render: =>
     super
-    @$el.width @width()
-    @$el.height @height()
     if @readyOnRender
       @setMediaState 'ready'
     @
