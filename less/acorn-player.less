@@ -509,6 +509,28 @@
   cursor: pointer;
 }
 
+@sliding-object-width: 15px; // override in specific cases
+@sliding-object-height: 15px; // override in specific cases
+.sliding-object-view {
+  height: 0px;
+  width: 100%;
+  position: relative; // overriding with `position: absolute` is fine
+
+  .padded-box {
+    height: 0px;
+    position: absolute;
+    left: 0px;
+    right: @sliding-object-width;
+  }
+
+  .sliding-object {
+    height: @sliding-object-height;
+    width: @sliding-object-width;
+    position: absolute;
+    background-color: #CCCCCC;
+  }
+}
+
 .time-range-input-view {
   margin-top: -10px;
   width: 538px;

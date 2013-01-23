@@ -9,6 +9,7 @@ goog.require 'acorn.player.TimeInputView'
 goog.require 'acorn.player.TimeRangeInputView'
 goog.require 'acorn.player.CycleButtonView'
 goog.require 'acorn.player.MouseTrackingView'
+goog.require 'acorn.player.SlidingObjectView'
 
 
 
