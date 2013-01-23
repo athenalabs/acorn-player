@@ -40,9 +40,9 @@ class acorn.player.AcornOptionsView extends athena.lib.View
           <% } %>
         </h4>
         <input id="title" type="text" value="<%= title %>"
-          placeholder="enter a description" class="span9" />
+          placeholder="enter a description (optional)" class="span9" />
         <input id="thumbnail" type="text" value="<%= thumbnail %>"
-          placeholder="enter thumbnail image link" class="span9" />
+          placeholder="enter thumbnail image link (optional)" class="span9" />
       </div>
     </div>
     '''
