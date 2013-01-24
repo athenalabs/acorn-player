@@ -242,6 +242,18 @@ class acorn.player.MouseTrackingView extends athena.lib.View
     width: container.width(), height: container.height()
 
 
+  _mouseElementPercentOfContainer: ($el, $containerEl) =>
+    # get element and container dimensions
+    el = @_mouseElementDimensions $el
+    if $containerEl?
+      container = @_mouseElementDimensions $containerEl
+    else
+      container = @_mouseElementContainerDimensions $el
+
+    # calculate percents
+    x: el.width * 100 / container.width, y: el.height * 100 / container.height
+
+
   # Mouse position utilities
   # ------------------------
 
