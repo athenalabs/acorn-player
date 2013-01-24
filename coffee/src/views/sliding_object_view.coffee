@@ -78,3 +78,11 @@ class acorn.player.SlidingObjectView extends acorn.player.MouseTrackingView
 
   _mouseElement: ($el) =>
     $el ? @_slidingObject
+
+
+  # get mouse percentage offset from object's sliding area callibrated such that
+  # sending the object to this position will center it under the mouse
+  sliderOptimizedPercentContainerMouseOffset: =>
+    rawPercent = @_percentContainerMouseDisplacement offsetFromElement: true
+    objectPOC = @_mouseElementPercentOfContainer()
+    x: rawPercent.x - objectPOC.x / 2, y: rawPercent.y - objectPOC.y / 2
