@@ -181,29 +181,29 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
   _onStartInputChanged: (start) =>
     return if start == @_start
 
-    @_start = start
-    changed = start: true
+    values =
+      start: start
+      end: @_end
 
     # if start has crossed above end, bump end higher
-    if @_end < @_start
-      @_end = @_bound(@_start + @_bounceOffset)
-      changed.end = true
+    if @_end < start
+      values.end = @_bound start + @_bounceOffset
 
-    @_change changed
+    @values values
 
 
   _onEndInputChanged: (end) =>
     return if end == @_end
 
-    @_end = end
-    changed = end: true
+    values =
+      start: @_start
+      end: end
 
-    # if end has crossed below start, bump start lower
-    if @_end < @_start
-      @_start = @_bound(@_end - @_bounceOffset)
-      changed.start = true
+    # if end has crossed below end, bump start lower
+    if end < @_start
+      values.start = @_bound end - @_bounceOffset
 
-    @_change changed
+    @values values
 
 
   _onSliderChanged: (vals) =>
