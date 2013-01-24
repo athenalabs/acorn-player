@@ -538,6 +538,38 @@
   }
 }
 
+@slider-height: 8px;
+@slider-handle-radius: 7px; // full radius, i.e. including 1px border
+.range-slider-view {
+  height: @slider-height;
+  width: 100%;
+
+  .range-slider {
+    height: 100%;
+    width: 100%;
+    background-color: #DDDDDD;
+
+    .sliding-bar {
+      height: @slider-height;
+    }
+
+    .sliding-object-view.slider-handle-view {
+      .padded-box {
+        right: (@slider-handle-radius * 2);
+
+        .sliding-object {
+          // subtract one from radius to account for border
+          width: ((@slider-handle-radius - 1) * 2);
+          height: ((@slider-handle-radius - 1) * 2);
+
+          top: (@slider-height / 2 - @slider-handle-radius);
+          .bordered(@slider-handle-radius, #444);
+        }
+      }
+    }
+  }
+}
+
 .time-range-input-view {
   margin-top: -10px;
   width: 538px;
