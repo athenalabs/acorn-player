@@ -141,7 +141,7 @@ util.appendCss = (srcs) ->
 # inspired by StackOverflow: http://stackoverflow.com/questions/5629684/
 util.elementInDom = (element) ->
   if element instanceof $
-    return _.all $elements, util.elementInDom
+    return _.all element, util.elementInDom
 
   while element = element?.parentNode
     if element == document
