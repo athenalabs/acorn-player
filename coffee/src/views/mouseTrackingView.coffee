@@ -225,7 +225,7 @@ class acorn.player.MouseTrackingView extends athena.lib.View
 
 
   _mouseElement: ($el) =>
-    $el ? @_mousedownTarget() ? @$('.mouse-target').first()
+    $ $el ? @_mousedownTarget() ? @$('.mouse-target').first()
 
 
   _mouseElementContainer: ($el) =>
