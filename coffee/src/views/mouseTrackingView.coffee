@@ -282,8 +282,15 @@ class acorn.player.MouseTrackingView extends athena.lib.View
     width = options.width ? calculatedDimensions.width
     height = options.height ? calculatedDimensions.height
 
+    # get coordinate difference from mouse location
+    {x, y} =
+      if (_$el = options.offsetFromElement)?
+        _$el = if util.elementInDom(_$el) then _$el else $el
+        @_mouseOffsetFromElement _$el
+      else
+        @_mouseDisplacement startEvent
+
     # calculate and return percent changes against width and height
-    {x, y} = @_mouseDisplacement startEvent
     x: (x * 100 / width), y: (y * 100 / height)
 
 
