@@ -17,25 +17,27 @@ goog.provide 'acorn.player.SummaryView'
 class acorn.player.SummaryView extends athena.lib.View
 
 
-  className: @classNameExtend 'acorn-shell-summary'
+  className: @classNameExtend 'summary-view row-fluid'
 
 
   template: _.template '''
-    <img id="thumbnail" />
-    <div class="thumbnailside">
-      <div id="title"></div>
-      <div id="description"></div>
-      <div id="buttons"></div>
+    <div class="thumbnail-view span2">
+      <img class="img-rounded" src="" />
+    </div>
+    <div class="span10">
+      <div class="title"></div>
+      <div class="description"></div>
+      <div class="buttons"></div>
     </div>
     '''
 
 
   render: =>
+    super
     @$el.empty()
     @$el.html @template()
 
-    @$('#title').text @shell.title()
-    @$('#description').text @shell.description()
-    @$('#thumbnail').attr 'src', @shell.thumbnailLink()
-
+    @$('.title').text @model.title()
+    @$('.description').text @model.description()
+    @$('.thumbnail-view img').attr 'src', @model.thumbnail()
     @
