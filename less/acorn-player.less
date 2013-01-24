@@ -505,8 +505,13 @@
   }
 }
 
-.mouse-tracking-view .mouse-target {
-  cursor: pointer;
+.mouse-tracking-view {
+  position: relative; // simply a default
+
+  .mouse-target {
+    position: absolute;
+    cursor: pointer;
+  }
 }
 
 @sliding-object-width: 15px; // override in specific cases
@@ -514,7 +519,6 @@
 .sliding-object-view {
   height: 0px;
   width: 100%;
-  position: relative; // overriding with `position: absolute` is fine
 
   .padded-box {
     height: 0px;
@@ -526,7 +530,6 @@
   .sliding-object {
     height: @sliding-object-height;
     width: @sliding-object-width;
-    position: absolute;
     background-color: #CCCCCC;
 
     &.sliding-bar {

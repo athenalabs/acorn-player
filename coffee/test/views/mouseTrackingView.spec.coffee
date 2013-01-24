@@ -44,12 +44,13 @@ describe 'acorn.player.MouseTrackingView', ->
         .height(240)
         .width('100%')
         .css('margin', 20)
-        .css('position', 'relative')
         .css('background-color', '#DDD')
         .css('overflow', 'hidden')
 
       # add to the DOM to see how it looks
       [mtv, target] = setupMTV location: 20
+
+      mtv.$el.height('100%').width '100%'
 
       # make some extra targets
       targets = [target]
@@ -64,7 +65,6 @@ describe 'acorn.player.MouseTrackingView', ->
         target
           .height(15 + 5 * i)
           .width(40 - 5 * i)
-          .css('position', 'absolute')
           .css('background-color', '#555')
 
       # helper function
@@ -341,7 +341,7 @@ describe 'acorn.player.MouseTrackingView', ->
             .css('left', targetLeft + targetDims.width / 2 - 5)
             .css('border-radius', 5)
             .css('background-color', "##{rand()}#{rand()}#{rand()}")
-            .appendTo(container)
+            .appendTo(mtv.$el)
 
           @fire projectile, containerDims.height
 
