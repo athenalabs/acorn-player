@@ -34,8 +34,8 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
     @_min = @options.min ? 0
     @_max = @options.max ? Infinity
-    @_start = @options.start ? @_min
-    @_end = @options.end ? @_max
+    @_start = @_bound @options.start ? @_min
+    @_end = @_bound @options.end ? @_max
     @_bounceOffset = @options.bounceOffset ? 10
 
     # initialize start time input view
