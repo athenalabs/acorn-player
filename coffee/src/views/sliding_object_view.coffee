@@ -74,3 +74,7 @@ class acorn.player.SlidingObjectView extends acorn.player.MouseTrackingView
 
   _onMouseDidStop: (event) =>
     @_locationAtMouseStart = undefined
+
+
+  _mouseElement: ($el) =>
+    $el ? @_slidingObject
