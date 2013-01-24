@@ -286,7 +286,7 @@ class acorn.player.MouseTrackingView extends athena.lib.View
 
   _percentMouseDisplacement: (options = {}) =>
     startEvent = options.startEvent ? @_mousedownEvent
-    dimensionsFn = options.dimensionsFn ? @_percentContainerMouseDisplacement
+    dimensionsFn = options.dimensionsFn ? @_mouseElementContainerDimensions
     $el = $ options.$el ? options.el ? startEvent.target
 
     # calculate dimensions from $el, but use options dimensions when available
