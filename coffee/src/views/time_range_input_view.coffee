@@ -71,9 +71,6 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @$('.time-inputs').append @startInputView.render().el
     @$('.time-inputs').append @endInputView.render().el
 
-    # set max-time
-    @$('span.max-time').text acorn.util.Time.secondsToTimestring @_max
-
     @_renderSlider()
     @_setTotalTime()
 
