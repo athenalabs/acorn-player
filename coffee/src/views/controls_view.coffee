@@ -232,6 +232,9 @@ class ElapsedTimeControlView extends ControlView
     if time is Infinity
       return '∞'
 
+    if time < 0
+      time = 0
+
     s = acorn.util.Time.secondsToTimestring time
     s = s.split('.')[0] # remove subsecon fraction
     s
