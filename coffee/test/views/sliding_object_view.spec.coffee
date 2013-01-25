@@ -11,6 +11,7 @@ describe 'acorn.player.SlidingObjectView', ->
 
   util = athena.lib.util
   test = util.test
+  acorn.util.appendCss()
 
 
   defaultOpts = ->
@@ -233,7 +234,9 @@ describe 'acorn.player.SlidingObjectView', ->
 
         for location in locations
           [sov, object] = setupSOV location: location
-          sov.$el.width(100).css 'position', 'relative'
+
+          # these values are set by css, but sometimes appendCss does not work
+          sov.$('.padded-box').width(100).css 'position', 'absolute'
 
           $player = $('<div>').addClass('acorn-player').width(600).height(400)
               .appendTo('body')
