@@ -1,5 +1,6 @@
 goog.provide 'acorn.specs.player.SummaryView'
 goog.require 'acorn.player.SummaryView'
+goog.require 'acorn.shells.TextShell'
 
 describe 'acorn.player.ShellEditorView', ->
   test = athena.lib.util.test
@@ -9,8 +10,10 @@ describe 'acorn.player.ShellEditorView', ->
 
   # model for EditorView contruction
   model = new TextShell.Model
-    title: 'Title'
-    description: 'Description'
+    title: 'Title of the Best Acorn Ever'
+    description: 'Description of the Best Acorn Ever: this acorn is the
+      absolute best acorn ever, \'tis true. Description of the Best Acorn Ever:
+      this acorn is the absolute best acorn ever, \'tis true.'
 
   options = model: model
 
