@@ -98,13 +98,15 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
   values: (vals, options = {}) =>
     unless @_valuesLocked
       changed = {}
+      start = @_bound vals?.start
+      end = @_bound vals?.end
 
-      if vals?.start? and vals.start != @_start
-        @_start = vals.start
+      unless _.isNaN(start) or start == @_start
+        @_start = start
         changed.start = true
 
-      if vals?.end? and vals.end != @_end
-        @_end = vals.end
+      unless _.isNaN(end) or end == @_end
+        @_end = end
         changed.end = true
 
       if options.reset
@@ -190,7 +192,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
 
   _bound: (val) =>
-    Math.max(@_min, Math.min((val ? 0), @_max))
+    Math.max @_min, Math.min(val, @_max)
 
 
   # ### Event Handlers
