@@ -1,5 +1,7 @@
 goog.provide 'acorn.player.TimeRangeInputView'
 
+goog.require 'acorn.player.TimeInputView'
+
 
 
 class acorn.player.TimeRangeInputView extends athena.lib.View
