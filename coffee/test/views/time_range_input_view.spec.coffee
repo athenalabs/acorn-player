@@ -1,9 +1,11 @@
 goog.provide 'acorn.specs.views.TimeRangeInputView'
 
+goog.require 'acorn.player.RangeSliderView'
 goog.require 'acorn.player.TimeInputView'
 goog.require 'acorn.player.TimeRangeInputView'
 
 describe 'acorn.player.TimeRangeInputView', ->
+  RangeSliderView = acorn.player.RangeSliderView
   TimeRangeInputView = acorn.player.TimeRangeInputView
 
   it 'should be part of acorn.player', ->
@@ -22,22 +24,22 @@ describe 'acorn.player.TimeRangeInputView', ->
       triv.render()
 
       widgets =
+        rangeSliderView: triv.rangeSliderView
         startInputView: triv.startInputView
         endInputView: triv.endInputView
-        slider: triv.$ '.time-slider'
         totalTime: triv.$ '.total-time'
 
       [triv, widgets]
 
-    it 'should contain a rangeslider, a total-time field, and start and end ' +
-        'time input views', ->
+    it 'should contain a range slider view, a total-time field, and start and
+        end time input views', ->
       [triv, widgets] = setupTRIV()
       TimeInputView = acorn.player.TimeInputView
 
       expect(triv).toBeDefined()
+      expect(widgets.rangeSliderView instanceof RangeSliderView).toBe true
       expect(widgets.startInputView instanceof TimeInputView).toBe true
       expect(widgets.endInputView instanceof TimeInputView).toBe true
-      expect(widgets.slider.length).toBe 1
       expect(widgets.totalTime.length).toBe 1
 
     it 'should accept initialization values and provide read/write access ' +
@@ -61,21 +63,22 @@ describe 'acorn.player.TimeRangeInputView', ->
       expect(triv.values().start).toBe 10
       expect(triv.values().end).toBe 40
 
-    it 'should propagate values to its time inputs and rangeslider', ->
+    it 'should propagate values to its range slider and time inputs', ->
       [triv, widgets] = setupTRIV
         start: 0
         end: 50
+        max: 100
 
+      expect(widgets.rangeSliderView.values()[0]).toBe 0
+      expect(widgets.rangeSliderView.values()[1]).toBe 50
       expect(widgets.startInputView.value()).toBe 0
       expect(widgets.endInputView.value()).toBe 50
-      expect(widgets.slider.rangeslider('values')[0]).toBe 0
-      expect(widgets.slider.rangeslider('values')[1]).toBe 50
 
       triv.values {start: 10, end: 40}
+      expect(widgets.rangeSliderView.values()[0]).toBe 10
+      expect(widgets.rangeSliderView.values()[1]).toBe 40
       expect(widgets.startInputView.value()).toBe 10
       expect(widgets.endInputView.value()).toBe 40
-      expect(widgets.slider.rangeslider('values')[0]).toBe 10
-      expect(widgets.slider.rangeslider('values')[1]).toBe 40
 
     it 'should abide by min and max restrictions', ->
       [triv, widgets] = setupTRIV
@@ -85,22 +88,22 @@ describe 'acorn.player.TimeRangeInputView', ->
         max: 100
 
       # confirm background assumptions
+      expect(widgets.rangeSliderView.values()[0]).toBe 0
+      expect(widgets.rangeSliderView.values()[1]).toBe 50
       expect(widgets.startInputView.value()).toBe 0
       expect(widgets.endInputView.value()).toBe 50
-      expect(widgets.slider.rangeslider('values')[0]).toBe 0
-      expect(widgets.slider.rangeslider('values')[1]).toBe 50
 
       triv.values {start: 10, end: 140}
+      expect(widgets.rangeSliderView.values()[0]).toBe 10
+      expect(widgets.rangeSliderView.values()[1]).toBe 100
       expect(widgets.startInputView.value()).toBe 10
       expect(widgets.endInputView.value()).toBe 100
-      expect(widgets.slider.rangeslider('values')[0]).toBe 10
-      expect(widgets.slider.rangeslider('values')[1]).toBe 100
 
       triv.values {start: -40, end: 60}
+      expect(widgets.rangeSliderView.values()[0]).toBe 0
+      expect(widgets.rangeSliderView.values()[1]).toBe 60
       expect(widgets.startInputView.value()).toBe 0
       expect(widgets.endInputView.value()).toBe 60
-      expect(widgets.slider.rangeslider('values')[0]).toBe 0
-      expect(widgets.slider.rangeslider('values')[1]).toBe 60
 
     it 'should propagate setMin and setMax to its widgets', ->
       [triv, widgets] = setupTRIV
@@ -110,32 +113,31 @@ describe 'acorn.player.TimeRangeInputView', ->
         max: 100
 
       # confirm background assumptions
+      expect(widgets.rangeSliderView.values()[0]).toBe 0
+      expect(widgets.rangeSliderView.values()[1]).toBe 50
       expect(widgets.startInputView.value()).toBe 0
       expect(widgets.endInputView.value()).toBe 50
-      expect(widgets.slider.rangeslider('values')[0]).toBe 0
-      expect(widgets.slider.rangeslider('values')[1]).toBe 50
 
       triv.setMin 20
+      expect(widgets.rangeSliderView.values()[0]).toBe 0
+      expect(widgets.rangeSliderView.values()[1]).toBe 30*100/80
       expect(widgets.startInputView.value()).toBe 20
       expect(widgets.endInputView.value()).toBe 50
-      expect(widgets.slider.rangeslider('values')[0]).toBe 20
-      expect(widgets.slider.rangeslider('values')[1]).toBe 50
 
       triv.setMax 35
+      expect(widgets.rangeSliderView.values()[0]).toBe 0
+      expect(widgets.rangeSliderView.values()[1]).toBe 100
       expect(widgets.startInputView.value()).toBe 20
       expect(widgets.endInputView.value()).toBe 35
-      expect(widgets.slider.rangeslider('values')[0]).toBe 20
-      expect(widgets.slider.rangeslider('values')[1]).toBe 35
 
       # expect values to stay at upper and lower bounds when individual widgets
       # are given values that exceed these bounds
       widgets.startInputView.value 10
       widgets.endInputView.value 60
-      widgets.slider.rangeslider 'values', [0, 45]
+      expect(widgets.rangeSliderView.values()[0]).toBe 0
+      expect(widgets.rangeSliderView.values()[1]).toBe 100
       expect(widgets.startInputView.value()).toBe 20
       expect(widgets.endInputView.value()).toBe 35
-      expect(widgets.slider.rangeslider('values')[0]).toBe 20
-      expect(widgets.slider.rangeslider('values')[1]).toBe 35
 
     it 'should fire events correctly on _change', ->
       [triv, widgets] = setupTRIV
@@ -198,28 +200,29 @@ describe 'acorn.player.TimeRangeInputView', ->
       [triv, widgets] = setupTRIV
         start: 0
         end: 50
+        max: 100
 
       # confirm background assumptions
+      expect(widgets.rangeSliderView.values()[0]).toBe 0
+      expect(widgets.rangeSliderView.values()[1]).toBe 50
       expect(widgets.startInputView.value()).toBe 0
       expect(widgets.endInputView.value()).toBe 50
-      expect(widgets.slider.rangeslider('values')[0]).toBe 0
-      expect(widgets.slider.rangeslider('values')[1]).toBe 50
 
       # change start input field
       widgets.startInputView.$('input').val 20
       widgets.startInputView.$('input').change()
+      expect(widgets.rangeSliderView.values()[0]).toBe 20
+      expect(widgets.rangeSliderView.values()[1]).toBe 50
       expect(widgets.startInputView.value()).toBe 20
       expect(widgets.endInputView.value()).toBe 50
-      expect(widgets.slider.rangeslider('values')[0]).toBe 20
-      expect(widgets.slider.rangeslider('values')[1]).toBe 50
 
       # change end input field
       widgets.endInputView.$('input').val 40
       widgets.endInputView.$('input').change()
+      expect(widgets.rangeSliderView.values()[0]).toBe 20
+      expect(widgets.rangeSliderView.values()[1]).toBe 40
       expect(widgets.startInputView.value()).toBe 20
       expect(widgets.endInputView.value()).toBe 40
-      expect(widgets.slider.rangeslider('values')[0]).toBe 20
-      expect(widgets.slider.rangeslider('values')[1]).toBe 40
 
     it '------ TODO ------
         should handle changes to range slider and keep all inputs in sync', ->
@@ -231,28 +234,29 @@ describe 'acorn.player.TimeRangeInputView', ->
       [triv, widgets] = setupTRIV
         start: 0
         end: 50
+        max: 100
 
       # confirm background assumptions
       expect(widgets.startInputView.value()).toBe 0
       expect(widgets.endInputView.value()).toBe 50
-      expect(widgets.slider.rangeslider('values')[0]).toBe 0
-      expect(widgets.slider.rangeslider('values')[1]).toBe 50
+      expect(widgets.rangeSliderView.values()[0]).toBe 0
+      expect(widgets.rangeSliderView.values()[1]).toBe 50
 
       # change start input field
       widgets.startInputView.$('input').val 80
       widgets.startInputView.$('input').change()
+      expect(widgets.rangeSliderView.values()[0]).toBe 80
+      expect(widgets.rangeSliderView.values()[1]).toBe 90
       expect(widgets.startInputView.value()).toBe 80
       expect(widgets.endInputView.value()).toBe 90
-      expect(widgets.slider.rangeslider('values')[0]).toBe 80
-      expect(widgets.slider.rangeslider('values')[1]).toBe 90
 
       # change end input field
       widgets.endInputView.$('input').val 40
       widgets.endInputView.$('input').change()
+      expect(widgets.rangeSliderView.values()[0]).toBe 30
+      expect(widgets.rangeSliderView.values()[1]).toBe 40
       expect(widgets.startInputView.value()).toBe 30
       expect(widgets.endInputView.value()).toBe 40
-      expect(widgets.slider.rangeslider('values')[0]).toBe 30
-      expect(widgets.slider.rangeslider('values')[1]).toBe 40
 
     it 'should manage total time', ->
       [triv, widgets] = setupTRIV
@@ -282,5 +286,6 @@ describe 'acorn.player.TimeRangeInputView', ->
         end: 50
         min: 0
         max: 100
-      $player.append triv.el
+
+      $player.append triv.$el.css 'margin-top', 20
 

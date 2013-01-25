@@ -1,5 +1,6 @@
 goog.provide 'acorn.player.TimeRangeInputView'
 
+goog.require 'acorn.player.RangeSliderView'
 goog.require 'acorn.player.TimeInputView'
 
 
@@ -11,11 +12,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
 
   template: _.template '''
-    <div class="slider-block">
-      <div class="slider-wrapper">
-        <div class="time-slider time"></div>
-      </div>
-    </div>
+    <div class="time-range-slider"></div>
     <form class="form-inline">
       <div class="time-inputs"></div>
       <div class="total-time-view">
@@ -38,6 +35,12 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @_end = @_bound @options.end ? @_max
     @_bounceOffset = @options.bounceOffset ? 10
 
+    # initialize range slider view
+    percentValues = @_percentValues()
+    @rangeSliderView = new acorn.player.RangeSliderView
+      low: percentValues.start
+      high: percentValues.end
+
     # initialize start time input view
     @startInputView = new acorn.player.TimeInputView
       name: 'start:'
@@ -52,11 +55,17 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
       min: @_min
       max: @_max
 
+    @listenTo @rangeSliderView, 'RangeSliderView:LowValueDidChange',
+        @_onRangeSliderLowValueDidChange
+    @listenTo @rangeSliderView, 'RangeSliderView:HighValueDidChange',
+        @_onRangeSliderHighValueDidChange
+
     @startInputView.on 'change:time', @_onStartInputChanged
     @endInputView.on 'change:time', @_onEndInputChanged
 
 
   destroy: =>
+    @rangeInputView.destroy()
     @startInputView.destroy()
     @endInputView.destroy()
     super
@@ -68,30 +77,13 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @$el.empty()
     @$el.append @template()
 
+    @$('.time-range-slider').append @rangeSliderView.render().el
     @$('.time-inputs').append @startInputView.render().el
     @$('.time-inputs').append @endInputView.render().el
 
-    @_renderSlider()
     @_setTotalTime()
 
-    # Rangeslider takes time to expand itself, and its handles cannot be
-    # positioned properly until it has done so. For now, reset values on the
-    # slider after 0.2 seconds.
-    setTimeout @_setSlider, 200
-
     @
-
-
-  # set up a jQuery UI rangeslider widget
-  _renderSlider: =>
-    @$('.time-slider').rangeslider
-      min: @_min
-      max: @_max
-      values: [@_start, @_end]
-      slide: (e, ui) =>
-        start = ui.values[0]
-        end = ui.values[1]
-        @_onSliderChanged {start: start, end: end}
 
 
   # get/setter for start and end times
@@ -154,6 +146,25 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @values values, reset: true
 
 
+  _percentValues: (vals) =>
+    range = @_max - @_min
+    fromPercent = (p) => Number (p * range / 100 + @_min).toFixed 1
+    toPercent = (v) => (v - @_min) * 100 / range
+
+    if athena.lib.util.isStrictObject vals
+      if vals.start?
+        vals.start = fromPercent vals.start
+
+      if vals.end?
+        vals.end = fromPercent vals.end
+
+      vals = _.defaults {}, vals, @values()
+      @values vals
+
+    vals = @values()
+    start: toPercent(vals.start), end: toPercent vals.end
+
+
   # focal point for all changes. direct and announce changes to start and/or
   # end times as appropriate
   _change: (changed) =>
@@ -165,7 +176,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
       @_setEndInput()
       @trigger 'change:end', @_end
 
-    @_setSlider()
+    @_setSlider changed
     @_setTotalTime()
     @trigger 'change:times', {start: @_start, end: @_end}
 
@@ -178,8 +189,17 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @endInputView.value @_end
 
 
-  _setSlider: =>
-    @$('.time-slider').rangeslider values: [@_start, @_end]
+  _setSlider: (changed) =>
+    percentValues = @_percentValues()
+    percentValues = [percentValues.start, percentValues.end]
+
+    # only send values that changed
+    unless changed.start
+      percentValues[0] = undefined
+    unless changed.end
+      percentValues[1] = undefined
+
+    @rangeSliderView.values percentValues
 
 
   _setTotalTime: =>
@@ -196,6 +216,14 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
 
   # ### Event Handlers
+
+  _onRangeSliderLowValueDidChange: (percentValue) =>
+    @_percentValues start: percentValue
+
+
+  _onRangeSliderHighValueDidChange: (percentValue) =>
+    @_percentValues end: percentValue
+
 
   _onStartInputChanged: (start) =>
     return if start == @_start
@@ -223,8 +251,4 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
       values.start = @_bound end - @_bounceOffset
 
     @values values
-
-
-  _onSliderChanged: (vals) =>
-    @values vals
 
