@@ -21,7 +21,7 @@ module.exports = (grunt) ->
 
     # javascript sources
     js_dir: 'build/js'
-    js_src: ['build/js/src/**/*.js', 'lib/range_slider.js']
+    js_src: 'build/js/src/**/*.js'
     js_specs: 'build/js/test/**/*.spec.js'
 
     # css sources
@@ -45,8 +45,6 @@ module.exports = (grunt) ->
       'lib/athena.lib.min.js'                        # for athena utils
       'lib/jquery/jquery.object-fit.js'              # for object-fit
       'lib/jquery/jquery.fullscreen.js'
-      'lib/jquery/jquery-ui.custom.min.js'           # for rangeslider widget
-      'lib/range_slider.js'                          # jquery-ui widget
     ]
 
 
