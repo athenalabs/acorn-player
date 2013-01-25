@@ -225,7 +225,7 @@ class ElapsedTimeControlView extends ControlView
   initialize: =>
     super
     @model ?= new Backbone.Model
-    @listenTo @model, 'change', => @softRender()
+    @listenTo @model, 'change', => @refreshValues()
 
 
   formatTime: (time) =>
@@ -244,9 +244,13 @@ class ElapsedTimeControlView extends ControlView
     super
     @$el.empty()
     @$el.html @template()
+    @refreshValues()
+    @
+
+
+  refreshValues: =>
     @$('.elapsed').text @formatTime @model.get 'elapsed'
     @$('.total').text @formatTime @model.get 'total'
-    @
 
 
 

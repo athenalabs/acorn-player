@@ -223,11 +223,11 @@ describe 'acorn.player.controls.ElapsedTimeControlView', ->
     view.$el.trigger 'click'
     expect(spy.triggered).toBe true
 
-  it 'should soft-render if model changes', ->
+  it 'should refresh values if model changes', ->
     view = new ElapsedTimeControlView
-    spyOn view, 'softRender'
+    spyOn view, 'refreshValues'
     view.model.set 'total', 10
-    expect(view.softRender).toHaveBeenCalled()
+    expect(view.refreshValues).toHaveBeenCalled()
 
   it 'should look good', ->
     # setup DOM
