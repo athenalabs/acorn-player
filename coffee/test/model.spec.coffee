@@ -136,14 +136,14 @@ describe 'acorn.Model', ->
       expect(model.shellData()).toEqual {shellid:'acorn.EmptyShell'}
 
 
-  xdescribe 'acorn.Model.sync', ->
+  describe 'acorn.Model.sync', ->
 
     #TODO expand this into comprehensive tests.
     #TODO find a way to mock the server in the future.
 
-    acorn.config.setUrlBase 'https://staging.acorn.athena.ai'
+    acorn.config.setUrlBase 'https://acorn.athena.ai'
     # Uncomment this to run locally:
-    # acorn.config.setUrlBase 'http://localhost.athena.ai:8000'
+    # acorn.config.setUrlBase 'http://localhost.athena.ai:7777'
 
     acornid = undefined
     nyfskeqlyx = 'https://www.youtube.com/watch?v=yYAw79386WI'
