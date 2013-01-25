@@ -86,7 +86,7 @@ class acorn.player.MouseTrackingView extends athena.lib.View
     @_preventClickEvent = false
 
     # we may have missed mouseup (out of window)
-    @_mouseStarted && @_mouseUp event
+    @_mouseStarted && @_onMouseUp event
 
     # only respond to left-clicks
     unless event.which == 1
@@ -121,7 +121,7 @@ class acorn.player.MouseTrackingView extends athena.lib.View
     # IE mouseup check - mouseup may have happened when mouse was out of window
     ie = !!/msie [\w.]+/.exec navigator.userAgent.toLowerCase()
     if (ie and (!document.documentMode or document.documentMode < 9) and
-        !event.button) then return @_mouseUp event
+        !event.button) then return @_onMouseUp event
 
     if @_mouseStarted
       @trigger 'MouseTrackingView:MouseDidDrag', event, @_mousedownEvent
