@@ -229,6 +229,9 @@ class CollectionShell.MediaView extends Shell.MediaView
         @controlsView.buttons.splice controlsIndex, 1
         @controlsView.softRender()
 
+      # remove view.summaryView
+      view.summaryView.$el.addClass 'hidden'
+
     view
 
 
@@ -242,8 +245,10 @@ class CollectionShell.MediaView extends Shell.MediaView
 
     # TODO: temporary fix - partner of above
     view.$el.removeClass 'hidden'
-
     @$el.append view.render().el
+
+    view.summaryView.$el.removeClass 'hidden'
+    @summaryView.$el.append view.summaryView.render().el
 
     # add view.controlsView
     @controlsView.buttons.push view.controlsView
