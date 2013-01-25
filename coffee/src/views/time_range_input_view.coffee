@@ -118,21 +118,15 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
 
   setMin: (min) =>
-    return unless _.isNumber(min) and !_.isNaN min
-
-    @_min = min
-    @startInputView.setMin @_min
-    @endInputView.setMin @_min
-    @$('.time-slider').rangeslider min: @_min
+    if _.isNumber(min) and not (_.isNaN(min) or @_min == min)
+      @_min = min
+      @_reset()
 
 
   setMax: (max) =>
-    return unless _.isNumber(max) and !_.isNaN max
-
-    @_max = max
-    @startInputView.setMax @_max
-    @endInputView.setMax @_max
-    @$('.time-slider').rangeslider max: @_max
+    if _.isNumber(max) and not (_.isNaN(max) or @_max == max)
+      @_max = max
+      @_reset()
 
 
   _reset: =>
