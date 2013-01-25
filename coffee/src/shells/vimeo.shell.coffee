@@ -85,6 +85,7 @@ class VimeoShell.RemixView extends VideoLinkShell.RemixView
     @model.title data[0].title
     @model.timeTotal data[0].duration
     @model.defaultThumbnail data[0].thumbnail_large
+    @_setTimeInputMax()
 
 
   metaData: =>

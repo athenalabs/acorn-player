@@ -94,6 +94,7 @@ class YouTubeShell.RemixView extends VideoLinkShell.RemixView
   onMetaDataSync: (data) =>
     @model.title data.data.title
     @model.timeTotal data.data.duration
+    @_setTimeInputMax()
 
 
   metaData: =>
