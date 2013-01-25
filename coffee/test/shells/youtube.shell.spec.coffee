@@ -67,7 +67,7 @@ describe 'acorn.shells.YouTubeShell', ->
 
       it 'should have a valid metaDataUrl', ->
         model = new Model modelOptions()
-        expect(model.metaDataUrl()).toBe "http://gdata.youtube.com/feeds/" +
+        expect(model.metaDataUrl()).toBe "https://gdata.youtube.com/feeds/" +
             "api/videos/#{youtubeId}?v=2&alt=jsonc"
 
 

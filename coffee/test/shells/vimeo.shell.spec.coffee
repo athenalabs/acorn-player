@@ -59,7 +59,7 @@ describe 'acorn.shells.VimeoShell', ->
 
       it 'should have a valid metaDataUrl', ->
         model = new Model modelOptions()
-        expect(model.metaDataUrl()).toBe "http://vimeo.com/api/v2/video/" +
+        expect(model.metaDataUrl()).toBe "https://vimeo.com/api/v2/video/" +
             "#{vimeoId}.json?callback=?"
 
       it 'should have a description based on title, timeStart, and timeEnd', ->
