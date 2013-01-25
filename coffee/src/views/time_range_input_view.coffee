@@ -135,6 +135,29 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @$('.time-slider').rangeslider max: @_max
 
 
+  _reset: =>
+    # lock values while changing min and max
+    @_valuesLocked = true
+
+    # set min and max
+    @startInputView.setMin @_min
+    @startInputView.setMax @_max
+    @endInputView.setMin @_min
+    @endInputView.setMax @_max
+
+    # unlock values
+    @_valuesLocked = undefined
+
+    # scrub values
+    values = @values()
+    values =
+      start: @_bound values.start ? @_min
+      end: @_bound values.end ? @_max
+
+    # force reset all values
+    @values values, reset: true
+
+
   # focal point for all changes. direct and announce changes to start and/or
   # end times as appropriate
   _change: (changed) =>
