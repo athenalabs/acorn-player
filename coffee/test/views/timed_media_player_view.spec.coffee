@@ -136,9 +136,9 @@ describe 'acorn.player.TimedMediaPlayerView', ->
         view.onPlaybackTick()
         expect(view.seek).toHaveBeenCalledWith 20
         expect(view._loopsElapsed).toBe 0
-        expect(view.restarting).not.toBeDefined()
+        expect(view._seeking).toBeDefined()
 
-    it 'should clear restarting flag if offset is within start and end', ->
+    it 'should clear _seeking flag if offset is within start and end', ->
       view = new TimedMediaPlayerView options {timeStart: 20, timeEnd: 23}
       view.setMediaState 'play'
       spyOn view, 'seekOffset'
@@ -149,7 +149,7 @@ describe 'acorn.player.TimedMediaPlayerView', ->
         view.onPlaybackTick()
         expect(view.seek).not.toHaveBeenCalled()
         expect(view._loopsElapsed).toBe 0
-        expect(view.restarting).toBe false
+        expect(view._seeking).toBe false
 
     it 'should increment loopsElapsed if offset is after end', ->
       _.each [23, 23.5, 24, 500], (offset, times) ->
@@ -175,7 +175,7 @@ describe 'acorn.player.TimedMediaPlayerView', ->
           view.onPlaybackTick()
           expect(view.seek).toHaveBeenCalledWith 20
           expect(view._loopsElapsed).toBe 1
-          expect(view.restarting).toBe true
+          expect(view._seeking).toBe true
 
     it 'should end if offset is after end, and no loops remain', ->
       _.each [23, 23.5, 24, 500], (offset) ->
@@ -193,6 +193,6 @@ describe 'acorn.player.TimedMediaPlayerView', ->
 
           expect(view.seek).not.toHaveBeenCalled()
           expect(view._loopsElapsed).toBe loops
-          expect(view.restarting).not.toBeDefined()
+          expect(view._seeking).not.toBeDefined()
           expect(view.seek).not.toHaveBeenCalled()
           expect(view.setMediaState.argsForCall[0]).toEqual ['end']

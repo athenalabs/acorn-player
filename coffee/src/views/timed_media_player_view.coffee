@@ -48,7 +48,7 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
       @timer.stopTick()
       return
 
-    now = @seekOffset()
+    now = @seekOffset() ? 0
     start = @model.timeStart() ? 0
     end = @model.timeEnd() ? @model.timeTotal()
     @_loopsElapsed ?= 0
@@ -57,24 +57,25 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
     @trigger 'Media:Progress', @, (now - start), (end - start)
 
     # if current playback is before the start time:
-    if now < start
+    if now < start and not @_seeking
       # reset loop count in case user has manually restarted
       @_loopsElapsed = 0
       # seek to start
       @seek start
+      @_seeking = true
 
-    #  clear restarting flag
+    #  clear seeking flag
     else if start <= now < end
-      @restarting = false
+      @_seeking = false
 
     # if current playback is after the end time, loop or end
     # (avoid incrementing loop count multiple times before restart finishes)
-    else if end <= now and not @restarting
+    else if end <= now and not @_seeking
       @_loopsElapsed++
 
       if @loops() > @_loopsElapsed
         @seek start
-        @restarting = true
+        @_seeking = true
       else
         @setMediaState 'end'
 
