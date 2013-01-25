@@ -112,6 +112,8 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
     @listenTo @playerView, 'all', _.bind(@trigger, @)
 
+    @on 'Media:StateChange', @togglePlayPauseControls
+
     @initializeMediaEvents @options
 
 
@@ -120,22 +122,17 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     super
     @$el.empty()
     @$el.append @playerView.render().el
-    @controlsView.$('.control-view.pause').addClass 'hidden'
+    @togglePlayPauseControls()
     @
 
 
-  onMediaPlay: =>
-    @controlsView.$('.control-view.play').addClass 'hidden'
-    @controlsView.$('.control-view.pause').removeClass 'hidden'
-
-
-  onMediaPause: =>
-    @controlsView.$('.control-view.play').removeClass 'hidden'
-    @controlsView.$('.control-view.pause').addClass 'hidden'
-
-  onMediaEnd: =>
-    @controlsView.$('.control-view.play').removeClass 'hidden'
-    @controlsView.$('.control-view.pause').addClass 'hidden'
+  togglePlayPauseControls: =>
+    if @isPlaying()
+      @controlsView.$('.control-view.play').addClass 'hidden'
+      @controlsView.$('.control-view.pause').removeClass 'hidden'
+    else
+      @controlsView.$('.control-view.play').removeClass 'hidden'
+      @controlsView.$('.control-view.pause').addClass 'hidden'
 
 
   # forward state transitions
