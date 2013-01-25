@@ -5,12 +5,15 @@ goog.require 'acorn.util'
 
 describe 'acorn.config', ->
 
-  describe 'acorn.config.domain', ->
-    domain = acorn.config.domain
+  describe 'acorn.config.url.base', ->
+    base = acorn.config.url.base
     it 'should exist', ->
-      expect(typeof domain).toBe('string')
+      expect(typeof base).toBe('string')
+    it 'should have a protocol', ->
+      expect(/(https?:)\/\//.test base).toBe true
     it 'should be a parsable url', ->
-      expect(acorn.util.parseUrl(domain).host).toBe(domain)
+      href = acorn.util.parseUrl(base).href.slice(0, -1)
+      expect(href).toBe(base)
 
   describe 'acorn.config.version', ->
     version = acorn.config.version

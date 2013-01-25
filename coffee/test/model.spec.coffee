@@ -141,9 +141,9 @@ describe 'acorn.Model', ->
     #TODO expand this into comprehensive tests.
     #TODO find a way to mock the server in the future.
 
-    acorn.config.setDomain 'staging.acorn.athena.ai'
+    acorn.config.setUrlBase 'https://staging.acorn.athena.ai'
     # Uncomment this to run locally:
-    # acorn.config.setDomain 'localhost.athena.ai:8000'
+    # acorn.config.setUrlBase 'http://localhost.athena.ai:8000'
 
     acornid = undefined
     nyfskeqlyx = 'https://www.youtube.com/watch?v=yYAw79386WI'
