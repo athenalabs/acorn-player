@@ -43,6 +43,7 @@ describe 'acorn.Model', ->
   describeProperty = athena.lib.util.test.describeProperty
   describeProperty Model, 'title', {}, default: 'New Acorn'
   describeProperty Model, 'owner', {},
+  describeProperty Model, 'parent', {},
   describeProperty Model, 'thumbnail', {}, default: acorn.config.img.acorn
 
 
