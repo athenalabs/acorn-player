@@ -44,6 +44,9 @@ class acorn.player.ContentView extends athena.lib.View
   ]
 
 
+  events: => _.extend super,
+    'mousemove': @onMouseMoved
+
   initialize: =>
     super
     # should these go here?
@@ -70,6 +73,9 @@ class acorn.player.ContentView extends athena.lib.View
       buttons: @shellView.controls
       eventhub: @eventhub
 
+    # grab shellView summaryView
+    @summaryView = @shellView.summaryView
+
     # construct main ControlToolbar
     @controlsView = new ControlToolbarView
       buttons: [@acornControlsView, @shellControlsView]
@@ -89,9 +95,24 @@ class acorn.player.ContentView extends athena.lib.View
     @$el.empty()
 
     # add controlsView to DOM first so that shellView can interact with it
+    @$el.append @summaryView.render().el
     @$el.append @controlsView.render().el
     @$el.prepend @shellView.render().el
 
     # for now, hide sources control
     @acornControlsView.$('.control-view.sources').addClass 'hidden'
     @
+
+
+  onMouseMoved: (event) =>
+    @$el.addClass 'mouse-moving'
+    mousePos = "#{event.clientX},#{event.clientY}"
+    @_lastMousePos = mousePos
+    setTimeout (=>
+      if @_lastMousePos is mousePos
+        @onMouseStoppedMoving()
+    ), 1000
+
+
+  onMouseStoppedMoving: =>
+    @$el.removeClass 'mouse-moving'

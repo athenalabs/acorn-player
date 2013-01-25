@@ -49,6 +49,12 @@ describe 'acorn.player.ContentView', ->
     viewOptions: options
     checkDOM: (childEl, parentEl) -> childEl.parentNode.parentNode is parentEl
 
+  athena.lib.util.test.describeSubview
+    View: ContentView
+    Subview: acorn.player.SummaryView
+    subviewAttr: 'summaryView'
+    viewOptions: options
+
   it 'should render controlsView before shellView', ->
     contentView = new ContentView options
     callStack = []

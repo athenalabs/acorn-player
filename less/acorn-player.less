@@ -80,6 +80,7 @@ input {
   }
 
   background: rgba(255, 255, 255, 0.98);
+  overflow: hidden;
 }
 
 .splash-view {
@@ -165,7 +166,7 @@ input {
   height: 100%;
   width: 100%;
 
-  > :first-child {
+  > .shell-media-view {
     .position-absolutely;
     bottom: @main-control-height;
   }
@@ -181,6 +182,24 @@ input {
 
     .gradient(#ffffff, #e6e6e6, #ffffff);
     .transition(0.35s, ease);
+  }
+
+  > .summary-view {
+    .position-absolutely(0px, 0px, auto);
+    width: auto;
+    padding: 10px 30px;
+    background: rgba(255, 255, 255, 0.3);
+    font-family: "Helvetica Neue", Helvetica;
+    color: white;
+    .transition(0.35s, ease);
+    top: -100%;
+  }
+
+}
+
+.content-view.mouse-moving {
+  > .summary-view {
+    top: 0px;
   }
 }
 

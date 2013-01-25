@@ -2,6 +2,7 @@ goog.provide 'acorn.shells.Shell'
 
 goog.require 'acorn.MediaInterface'
 goog.require 'acorn.shells.Registry'
+goog.require 'acorn.player.SummaryView'
 goog.require 'acorn.Model'
 goog.require 'acorn.util'
 goog.require 'acorn.errors'
@@ -100,6 +101,10 @@ class Shell.MediaView extends athena.lib.View
     unless @options.model
       acorn.errors.MissingParameterError 'Shell.MediaView', 'model'
     @initializeMedia()
+
+    @summaryView = new acorn.player.SummaryView
+      eventhub: @eventhub
+      model: @options.model
 
 
   initializeMedia: =>
