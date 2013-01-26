@@ -46,6 +46,9 @@ class acorn.player.SlidingBarView extends acorn.player.SlidingObjectView
     for view in @internalViews
       if view instanceof Backbone.View
         @$('.internal-views').append view.render().el
+      else
+        console.log 'WARNING: SlidingBarView only supports internalViews derived
+            from Backbone.View'
 
     @
 
