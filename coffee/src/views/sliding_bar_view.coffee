@@ -33,14 +33,18 @@ class acorn.player.SlidingBarView extends acorn.player.SlidingObjectView
     # initialize low and high values
     @values @options
 
-    @internalViews =
-        if _.isArray @options.internalViews then @options.internalViews else []
+    @internalViews = @options.internalViews
 
     @listenTo @, 'SlidingBarView:DidChangeValues', @_refreshDisplay
 
 
   render: =>
     super
+
+    # array-ify internalViews if necessary; do this in render in case
+    # @internalViews is set directly by an external entity
+    unless _.isArray @internalViews
+      @internalViews = [@internalViews]
 
     # append internal views to sliding bar
     for view in @internalViews
