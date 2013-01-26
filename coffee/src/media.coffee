@@ -108,11 +108,13 @@ class acorn.MediaInterface
 
 
   play: =>
-    @setMediaState 'play'
+    unless @isPlaying()
+      @setMediaState 'play'
 
 
   pause: =>
-    @setMediaState 'pause'
+    if @isPlaying()
+      @setMediaState 'pause'
 
 
   togglePlayPause: =>

@@ -66,13 +66,13 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
     @
 
 
-  onMediaPlay: =>
+  onMediaDidPlay: =>
     @controlsView.$('.control-view.play').addClass 'hidden'
     @controlsView.$('.control-view.pause').removeClass 'hidden'
     @_countdown()
 
 
-  onMediaPause: =>
+  onMediaDidPause: =>
     @controlsView.$('.control-view.play').removeClass 'hidden'
     @controlsView.$('.control-view.pause').addClass 'hidden'
     @_clearCountdown()
