@@ -51,7 +51,12 @@ class acorn.player.RangeSliderView extends acorn.player.MouseTrackingView
 
     # initialize range bar
     values = @_magnitudeOrderedValues()
-    options = low: values[0], high: values[1], draggable: @options.draggableBar
+    options =
+      low: values[0]
+      high: values[1]
+      draggable: @options.draggableBar
+      extraClasses: 'range-bar-view'
+
     @_rangeBar = new acorn.player.SlidingBarView options
     @listenTo @_rangeBar, 'SlidingBarView:DidChangeValues',
       @_onRangeBarDidChangeValues
