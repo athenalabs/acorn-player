@@ -1,7 +1,7 @@
 goog.provide 'acorn.specs.views.RangeSliderView'
 
 goog.require 'acorn.player.RangeSliderView'
-goog.require 'acorn.player.SlidingObjectView'
+goog.require 'acorn.player.MouseTrackingView'
 
 describe 'acorn.player.RangeSliderView', ->
 
