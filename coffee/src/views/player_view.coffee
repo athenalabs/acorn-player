@@ -67,7 +67,7 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
         return
       @_editorView?.destroy()
       @_editorView = undefined
-      @content @contentView()
+      @eventhub.trigger 'show:content'
 
     @eventhub.on 'EditControl:Click', =>
       if @editable()
