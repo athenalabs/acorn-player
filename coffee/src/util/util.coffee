@@ -150,10 +150,13 @@ util.elementInDom = (element) ->
   return false
 
 
-util.bound = (n, low, high) ->
-  unless high?
-    high = low ? 100
-    low = 0
+util.bound = (n, opts = {}) ->
+  low = opts.low ? 0
+  high = opts.high ? 100
+
+  unless opts.enforceNumber == false
+    n = Number n
+
   if n < low then low
   else if n > high then high
   else n

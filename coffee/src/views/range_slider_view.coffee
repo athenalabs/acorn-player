@@ -94,8 +94,7 @@ class acorn.player.RangeSliderView extends acorn.player.MouseTrackingView
       # adjust handle values
       for i in [0..1]
         # sanitize value
-        value = parseFloat values[i]
-        value = util.bound value, 100
+        value = util.bound values[i]
 
         # mark if changed
         unless _.isNaN(value) or value == @_values[i]
