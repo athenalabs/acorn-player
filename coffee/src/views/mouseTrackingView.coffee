@@ -299,7 +299,7 @@ class acorn.player.MouseTrackingView extends athena.lib.View
 
     # get coordinate difference from mouse location
     {x, y} =
-      if (_$el = options.offsetFromElement)?
+      if _$el = options.offsetFromElement
         _$el = if util.elementInDom(_$el) then _$el else $el
         @_mouseOffsetFromElement _$el
       else
