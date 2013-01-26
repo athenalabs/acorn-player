@@ -172,6 +172,18 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
   initialize: =>
     super
 
+    @_playerView = new @module.PlayerView
+      model: @model
+      eventhub: @eventhub
+      noControls: true
+
+    @_initializeElapsedTimeView()
+
+    @_controlsView = new ControlToolbarView
+      extraClasses: ['shell-controls']
+      buttons: ['Play', 'Pause', @_elapsedTimeView]
+      eventhub: @eventhub
+
     @_timeRangeInputView = new acorn.player.TimeRangeInputView
       eventhub: @eventhub
       start: @model.timeStart()
@@ -181,13 +193,26 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
     @_initializeLoopsButton()
 
-    @_playerView = new @module.PlayerView
-      model: @model
-      eventhub: @eventhub
-      noControls: true
-
+    @_playerView.on 'Media:StateChange', @_togglePlayPauseControls
+    @_controlsView.on 'PlayControl:Click', => @_playerView.play()
+    @_controlsView.on 'PauseControl:Click', => @_playerView.pause()
     @_timeRangeInputView.on 'change:times', @_onChangeTimes
     @_loopsButtonView.on 'change:value', @_onChangeLoops
+
+
+  _initializeElapsedTimeView: =>
+
+    tvModel = new Backbone.Model
+      elapsed: 0
+      total: @_duration() or 0
+
+    @_elapsedTimeView = new acorn.player.controls.ElapsedTimeControlView
+      eventhub: @eventhub
+      model: tvModel
+
+    tvModel.listenTo @_playerView, 'Media:Progress', (view, elapsed, total) =>
+      tvModel.set 'elapsed', elapsed
+      tvModel.set 'total', total
 
 
   _initializeLoopsButton: =>
@@ -234,12 +259,27 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @$('.video-player').append @_playerView.render().el
     @$('.time-controls').append @_timeRangeInputView.render().el
     @$('.time-controls').append @_loopsButtonView.render().el
+    @$('.time-controls').append @_controlsView.render().el
 
     @
 
 
+  # duration of video given current splicing and looping - get from model
+  _duration: =>
+    @playerView?.duration() or @model.duration() or 0
+
+
   _setTimeInputMax: =>
     @_timeRangeInputView.setMax @model.timeTotal()
+
+
+  _togglePlayPauseControls: =>
+    if @_playerView.isPlaying()
+      @_controlsView.$('.control-view.play').addClass 'hidden'
+      @_controlsView.$('.control-view.pause').removeClass 'hidden'
+    else
+      @_controlsView.$('.control-view.play').removeClass 'hidden'
+      @_controlsView.$('.control-view.pause').addClass 'hidden'
 
 
   _onChangeTimes: (changed) =>
