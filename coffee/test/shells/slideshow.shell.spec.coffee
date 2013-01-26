@@ -158,6 +158,7 @@ describe 'acorn.shells.SlideshowShell', ->
           view = new MediaView _viewOptions
           view.controlsView.render()
           view.render()
+          view.play()
 
           expect(view.currentIndex).toBe 0
 

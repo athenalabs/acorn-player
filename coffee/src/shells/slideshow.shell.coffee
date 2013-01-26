@@ -33,10 +33,6 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
     playOnReady: true
 
 
-  initialize: =>
-    super
-
-
   _initializeControlsView: =>
     # construct a ControlToolbar for the acorn controls
     @controlsView = new ControlToolbarView
@@ -58,12 +54,6 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
 
     @_clearCountdown()
     super
-
-
-  render: =>
-    super
-    @play()
-    @
 
 
   onMediaDidPlay: =>
