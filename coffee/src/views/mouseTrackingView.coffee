@@ -270,6 +270,9 @@ class acorn.player.MouseTrackingView extends athena.lib.View
 
 
   _mouseOffsetFromElement: ($el) =>
+    unless $el
+      MissingParameterError 'MouseTrackingView._mouseOffsetFromElement', '$el'
+
     $el = $ $el
     x = util.mouseLocationTracker.x - $el.offset().left
     y = util.mouseLocationTracker.y - $el.offset().top
