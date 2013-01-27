@@ -202,6 +202,7 @@ util.fromPercent = (percent, params) ->
   value
 
 
+# bound n between high and low values; by default, bounds percentages (0 to 100)
 util.bound = (n, opts = {}) ->
   low = opts.low ? 0
   high = opts.high ? 100
