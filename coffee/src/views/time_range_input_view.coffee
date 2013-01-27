@@ -1,6 +1,7 @@
 goog.provide 'acorn.player.TimeRangeInputView'
 
 goog.require 'acorn.player.RangeSliderView'
+goog.require 'acorn.player.ProgressRangeSliderView'
 goog.require 'acorn.player.TimeInputView'
 
 
@@ -17,6 +18,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     start: undefined # defaults to min
     end: undefined # defaults to max
     bounceOffset: 10
+    SliderView: acorn.player.ProgressRangeSliderView
 
 
   template: _.template '''
@@ -51,9 +53,15 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @_end = if _.isNaN @_end then @_max else @_bound @_end
     if _.isNaN @_bounceOffset then @_bounceOffset = 10
 
+    # scrub slider class option
+    SliderView = @options.SliderView
+    isOrDerives = athena.lib.util.isOrDerives
+    unless isOrDerives SliderView, acorn.player.RangeSliderView
+      SliderView = acorn.player.ProgressRangeSliderView
+
     # initialize range slider view
     percentValues = @_percentValues()
-    @rangeSliderView = new acorn.player.RangeSliderView
+    @rangeSliderView = new SliderView
       low: percentValues.start
       high: percentValues.end
 
@@ -75,6 +83,8 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
         @_onRangeSliderLowValueDidChange
     @listenTo @rangeSliderView, 'RangeSliderView:HighValueDidChange',
         @_onRangeSliderHighValueDidChange
+    @listenTo @rangeSliderView, 'ProgressRangeSliderView:ProgressDidChange',
+        @_onRangeSliderProgressDidChange
 
     @startInputView.on 'change:time', @_onStartInputChanged
     @endInputView.on 'change:time', @_onEndInputChanged
@@ -244,6 +254,10 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
   _onRangeSliderHighValueDidChange: (percentValue) =>
     @_percentValues end: percentValue
+
+
+  _onRangeSliderProgressDidChange: (percentValue) =>
+    # TODO
 
 
   _onStartInputChanged: (start) =>

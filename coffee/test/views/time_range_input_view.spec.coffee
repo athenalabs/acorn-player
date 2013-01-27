@@ -1,6 +1,7 @@
 goog.provide 'acorn.specs.views.TimeRangeInputView'
 
 goog.require 'acorn.player.RangeSliderView'
+goog.require 'acorn.player.ProgressRangeSliderView'
 goog.require 'acorn.player.TimeInputView'
 goog.require 'acorn.player.TimeRangeInputView'
 
@@ -55,6 +56,13 @@ describe 'acorn.player.TimeRangeInputView', ->
           start: 40
 
         expect(triv._bounceOffset).toBe 10
+
+      it 'should default slider view class to ProgressRangeSliderView', ->
+        [triv, widgets] = setupTRIV
+          start: 40
+
+        expect(triv.rangeSliderView instanceof
+            acorn.player.ProgressRangeSliderView).toBe true
 
 
     it 'should contain a range slider view, a total-time field, and start and
@@ -282,11 +290,6 @@ describe 'acorn.player.TimeRangeInputView', ->
           expect(widgets.endInputView.value()).toBe 40
 
 
-    it '------ TODO ------
-        should handle changes to range slider and keep all inputs in sync', ->
-      # Slider widget should get refactored into a view. Until then, there is no
-      # easy way to programatically cause the slider to announce changes.
-
     it 'should manage total time', ->
       [triv, widgets] = setupTRIV
         start: 0
@@ -305,6 +308,74 @@ describe 'acorn.player.TimeRangeInputView', ->
 
 
     describe 'TimeRangeInputView: events', ->
+
+      it 'should respond to rangeSliderView\'s LowValueDidChange event', ->
+        spy = spyOn TimeRangeInputView::, '_onRangeSliderLowValueDidChange'
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+
+        expect(spy).not.toHaveBeenCalled()
+        triv.rangeSliderView.trigger 'RangeSliderView:LowValueDidChange'
+        expect(spy).toHaveBeenCalled()
+
+      it 'should respond to rangeSliderView\'s HighValueDidChange event', ->
+        spy = spyOn TimeRangeInputView::, '_onRangeSliderHighValueDidChange'
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+
+        expect(spy).not.toHaveBeenCalled()
+        triv.rangeSliderView.trigger 'RangeSliderView:HighValueDidChange'
+        expect(spy).toHaveBeenCalled()
+
+      it 'should respond to rangeSliderView\'s ProgressDidChange event', ->
+        spy = spyOn TimeRangeInputView::, '_onRangeSliderProgressDidChange'
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+
+        expect(spy).not.toHaveBeenCalled()
+        triv.rangeSliderView.trigger 'ProgressRangeSliderView:ProgressDidChange'
+        expect(spy).toHaveBeenCalled()
+
+      it 'should update start on rangeSliderView\'s LowValueDidChange event', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+          max: 80
+
+        expect(triv.values().start).toBe 0
+
+        # change start to 25% between min and max
+        triv.rangeSliderView.trigger 'RangeSliderView:LowValueDidChange', 25
+        expect(triv.values().start).toBe 20
+
+      it 'should update end on rangeSliderView\'s HighValueDidChange event', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+          max: 80
+
+        expect(triv.values().end).toBe 50
+
+        # change end to 37.5% between min and max
+        triv.rangeSliderView.trigger 'RangeSliderView:HighValueDidChange', 37.5
+        expect(triv.values().end).toBe 30
+
+      it 'should update progress on rangeSliderView\'s ProgressDidChange event',
+          ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          progress: 20
+          end: 50
+
+        expect(triv.progress()).toBe 20
+
+        # change progress to 60% between start and end
+        triv.rangeSliderView.trigger 'ProgressRangeSliderView:' +
+            'ProgressDidChange', 60
+        expect(triv.progress()).toBe 30
 
       it 'should fire change:start when start value changes', ->
         [triv, widgets] = setupTRIV
