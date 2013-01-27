@@ -212,7 +212,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
 
   _bound: (val) =>
-    Math.max @_min, Math.min(val, @_max)
+    util.bound val, {low: @_min, high: @_max}
 
 
   # ### Event Handlers
