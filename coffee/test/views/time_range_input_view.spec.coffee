@@ -33,6 +33,30 @@ describe 'acorn.player.TimeRangeInputView', ->
 
       [triv, widgets]
 
+
+    describe 'TimeRangeInputView: default values', ->
+
+      it 'should default min and max values to 0 and Infinity', ->
+        [triv, widgets] = setupTRIV()
+
+        expect(triv._min).toBe 0
+        expect(triv._max).toBe Infinity
+
+      it 'should default start and end values to min and max values', ->
+        [triv, widgets] = setupTRIV
+          min: 30
+          max: 80
+
+        expect(triv._start).toBe 30
+        expect(triv._end).toBe 80
+
+      it 'should default bounce offset to 10', ->
+        [triv, widgets] = setupTRIV
+          start: 40
+
+        expect(triv._bounceOffset).toBe 10
+
+
     it 'should contain a range slider view, a total-time field, and start and
         end time input views', ->
       [triv, widgets] = setupTRIV()

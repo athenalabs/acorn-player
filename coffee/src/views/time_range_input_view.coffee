@@ -11,6 +11,14 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
   className: @classNameExtend 'time-range-input-view'
 
 
+  defaults: => _.extend super,
+    min: 0
+    max: Infinity
+    start: undefined # defaults to min
+    end: undefined # defaults to max
+    bounceOffset: 10
+
+
   template: _.template '''
     <div class="time-range-slider"></div>
     <form class="form-inline">
@@ -29,11 +37,19 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
   initialize: =>
     super
 
-    @_min = @options.min ? 0
-    @_max = @options.max ? Infinity
-    @_start = @_bound @options.start ? @_min
-    @_end = @_bound @options.end ? @_max
-    @_bounceOffset = @options.bounceOffset ? 10
+    # force settings to numbers
+    @_min = Number @options.min
+    @_max = Number @options.max
+    @_start = Number @options.start
+    @_end = Number @options.end
+    @_bounceOffset = Number @options.bounceOffset
+
+    # scrub invalid numbers
+    if _.isNaN @_min then @_min = 0
+    if _.isNaN @_max then @_max = Infinity
+    @_start = if _.isNaN @_start then @_min else @_bound @_start
+    @_end = if _.isNaN @_end then @_max else @_bound @_end
+    if _.isNaN @_bounceOffset then @_bounceOffset = 10
 
     # initialize range slider view
     percentValues = @_percentValues()
