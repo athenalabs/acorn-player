@@ -150,6 +150,58 @@ util.elementInDom = (element) ->
   return false
 
 
+# helper for util.toPercent and util.fromPercent
+util._scrubPercentParams = (params) ->
+  # params can be an object or the high value
+  unless _.isObject params
+    params = high: params
+
+  # extract params, assign defaults
+  params.low ?= 0
+  params.high ?= MissingParameterError 'percent conversion utility', 'high'
+  params.bound ?= false
+
+  params
+
+
+# convert a value to a percentage with reference to high and low values
+util.toPercent = (value, params) ->
+  # scrub params
+  params = util._scrubPercentParams params
+
+  # calculate percent
+  percent = (value - params.low) / (params.high - params.low) * 100
+
+  # bind if desired
+  if params.bound
+    percent = util.bound percent
+
+  # limit digits after decimal if desired
+  if params.decimalDigits?
+    percent = Number percent.toFixed params.decimalDigits
+
+  percent
+
+
+# convert a percentage to a value with reference to high and low values
+util.fromPercent = (percent, params) ->
+  # scrub params
+  params = util._scrubPercentParams params
+
+  # bind if desired
+  if params.bound
+    percent = util.bound percent
+
+  # calculate value
+  value = percent / 100 * (params.high - params.low) + params.low
+
+  # limit digits after decimal if desired
+  if params.decimalDigits?
+    value = Number value.toFixed params.decimalDigits
+
+  value
+
+
 util.bound = (n, opts = {}) ->
   low = opts.low ? 0
   high = opts.high ? 100
