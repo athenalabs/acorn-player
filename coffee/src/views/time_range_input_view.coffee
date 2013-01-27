@@ -147,22 +147,25 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
 
   _percentValues: (vals) =>
-    range = @_max - @_min
-    fromPercent = (p) => Number (p * range / 100 + @_min).toFixed 1
-    toPercent = (v) => (v - @_min) * 100 / range
+    params = (decimalDigits) =>
+      low: @_min
+      high: @_max
+      bound: true
+      decimalDigits: decimalDigits
 
     if athena.lib.util.isStrictObject vals
       if vals.start?
-        vals.start = fromPercent vals.start
+        vals.start = util.fromPercent vals.start, params 1
 
       if vals.end?
-        vals.end = fromPercent vals.end
+        vals.end = util.fromPercent vals.end, params 1
 
       vals = _.defaults {}, vals, @values()
       @values vals
 
     vals = @values()
-    start: toPercent(vals.start), end: toPercent vals.end
+    start: util.toPercent vals.start, params()
+    end: util.toPercent vals.end, params()
 
 
   # focal point for all changes. direct and announce changes to start and/or
