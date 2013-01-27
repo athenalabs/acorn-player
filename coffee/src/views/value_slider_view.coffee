@@ -5,6 +5,8 @@ goog.require 'acorn.player.SlidingObjectView'
 goog.require 'acorn.player.SlidingBarView'
 
 
+# TODO: abstract most functionality in ValueSliderView and RangeSliderView into
+# a shared parent view
 
 class acorn.player.ValueSliderView extends acorn.player.MouseTrackingView
 
