@@ -105,7 +105,11 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
   # get/setter for start and end times
   values: (vals, options = {}) =>
     unless @_valuesLocked
-      changed = {}
+      # if resetting, immediately mark start and end as changed
+      changed =
+        start: !!options.reset
+        end: !!options.reset
+
       start = @_bound vals?.start
       end = @_bound vals?.end
 
@@ -116,9 +120,6 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
       unless _.isNaN(end) or end == @_end
         @_end = end
         changed.end = true
-
-      if options.reset
-        changed.start = changed.end = true
 
       # change start and/or end as appropriate
       if changed.start or changed.end
