@@ -159,7 +159,7 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
 
   # Vimeo API - communication between the Vimeo js API and the shell.
   # see http://developer.vimeo.com/player/js-api
-  vimeoPlayerApiSrc: 'http://a.vimeocdn.com/js/froogaloop2.min.js'
+  vimeoPlayerApiSrc: 'https://secure-a.vimeocdn.com/js/froogaloop2.min.js'
 
 
   # initialize vimeo API. should happen only once per page load
