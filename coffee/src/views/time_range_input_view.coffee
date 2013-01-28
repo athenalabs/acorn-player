@@ -17,6 +17,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     max: Infinity
     start: undefined # defaults to min
     end: undefined # defaults to max
+    progress: undefined # defaults to min
     bounceOffset: 10
     SliderView: acorn.player.ProgressRangeSliderView
 
@@ -44,6 +45,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @_max = Number @options.max
     @_start = Number @options.start
     @_end = Number @options.end
+    @_progress = Number @options.progress
     @_bounceOffset = Number @options.bounceOffset
 
     # scrub invalid numbers
@@ -51,6 +53,8 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     if _.isNaN @_max then @_max = Infinity
     @_start = if _.isNaN @_start then @_min else @_bound @_start
     @_end = if _.isNaN @_end then @_max else @_bound @_end
+    @_progress = if _.isNaN @_progress then @_start else util.bound @_progress,
+        {low: @_start, high: @_end}
     if _.isNaN @_bounceOffset then @_bounceOffset = 10
 
     # scrub slider class option
@@ -64,6 +68,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @rangeSliderView = new SliderView
       low: percentValues.start
       high: percentValues.end
+      progress: @_percentProgress()
 
     # initialize start time input view
     @startInputView = new acorn.player.TimeInputView
@@ -131,11 +136,35 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
         @_end = end
         changed.end = true
 
+      # keep progress bounded by start and end
+      progress = util.bound @progress(), {low: @_start, high: @_end}
+      unless progress = @progress()
+        @_progress = progress
+        changed.progress = true
+
       # change start and/or end as appropriate
       if changed.start or changed.end
         @_change changed
 
     start: @_start, end: @_end
+
+
+  # get/setter for progress
+  progress: (progress, options = {}) =>
+    unless @_valuesLocked
+      # if resetting, immediately mark progress as changed
+      changed = progress: !!options.reset
+      progress = util.bound progress, {low: @_start, high: @_end}
+
+      unless _.isNaN(progress) or progress == @_progress
+        @_progress = progress
+        changed.progress = true
+
+      # change if appropriate
+      if changed.progress
+        @_change changed
+
+    @_progress
 
 
   setMin: (min) =>
@@ -195,6 +224,19 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     end: util.toPercent vals.end, params()
 
 
+  _percentProgress: (progress) =>
+    params = (decimalDigits) =>
+      low: @_start
+      high: @_end
+      bound: true
+
+    if progress?
+      progress = util.fromPercent progress, params()
+      @progress progress
+
+    util.toPercent @progress(), params()
+
+
   # focal point for all changes. direct and announce changes to start and/or
   # end times as appropriate
   _change: (changed) =>
@@ -209,7 +251,11 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
       @_setEndInput()
       @trigger 'change:end', @_end
 
-    @trigger 'change:times', {start: @_start, end: @_end}
+    if changed.start or changed.end
+      @trigger 'change:times', {start: @_start, end: @_end}
+
+    if changed.progress
+      @trigger 'change:progress', @_progress
 
 
   _setStartInput: =>
@@ -231,6 +277,9 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
       percentValues[1] = undefined
 
     @rangeSliderView.values percentValues
+
+    # always update progress since the percent is a function of start and end
+    @rangeSliderView.progress?(@_percentProgress())
 
 
   _setTotalTime: =>
@@ -257,7 +306,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
 
   _onRangeSliderProgressDidChange: (percentValue) =>
-    # TODO
+    @_percentProgress percentValue
 
 
   _onStartInputChanged: (start) =>

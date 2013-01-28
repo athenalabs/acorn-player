@@ -51,6 +51,12 @@ describe 'acorn.player.TimeRangeInputView', ->
         expect(triv._start).toBe 30
         expect(triv._end).toBe 80
 
+      it 'should default progress value to start value', ->
+        [triv, widgets] = setupTRIV
+          start: 40
+
+        expect(triv._progress).toBe 40
+
       it 'should default bounce offset to 10', ->
         [triv, widgets] = setupTRIV
           start: 40
@@ -146,6 +152,60 @@ describe 'acorn.player.TimeRangeInputView', ->
         expect(widgets.rangeSliderView.values()[1]).toBe 40
         expect(widgets.startInputView.value()).toBe 10
         expect(widgets.endInputView.value()).toBe 40
+
+      it 'should update its range slider\'s progress percentage', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          progress: 20
+          end: 50
+          max: 100
+
+        expect(widgets.rangeSliderView.progress()).toBe 40
+
+        triv.values start: 10
+        expect(widgets.rangeSliderView.progress()).toBe 25
+
+        triv.values end: 40
+        expect(widgets.rangeSliderView.progress()).toBe 1 / 3 * 100
+
+
+    describe 'TimeRangeInputView::progress', ->
+
+      it 'should provide read access to progress value', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          progress: 20
+          end: 50
+
+        expect(triv.progress()).toBe 20
+        expect(triv._progress).toBe 20
+
+        triv.progress 30
+        expect(triv.progress()).toBe 30
+        expect(triv._progress).toBe 30
+
+      it 'should provide write access to progress value', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          progress: 20
+          end: 50
+
+        expect(triv.progress()).toBe 20
+
+        triv._progress = 30
+        expect(triv.progress()).toBe 30
+
+      it 'should update its range slider\'s progress percentage', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          progress: 20
+          end: 50
+          max: 100
+
+        expect(widgets.rangeSliderView.progress()).toBe 40
+
+        triv.progress 30
+        expect(widgets.rangeSliderView.progress()).toBe 60
 
 
     describe 'TimeRangeInputView: min and max', ->
@@ -427,6 +487,19 @@ describe 'acorn.player.TimeRangeInputView', ->
         expect(timesSpy.arguments[0][0].start).toBe 0
         expect(timesSpy.arguments[0][0].end).toBe 10
 
+      it 'should fire change:progress when progress value changes', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          progress: 10
+          end: 50
+
+        progressSpy = new EventSpy triv, 'change:progress'
+
+        expect(progressSpy.triggerCount).toBe 0
+        triv.progress 30
+        expect(progressSpy.triggerCount).toBe 1
+        expect(progressSpy.arguments[0][0]).toBe 30
+
 
     it 'should look good', ->
       # setup DOM
@@ -440,6 +513,7 @@ describe 'acorn.player.TimeRangeInputView', ->
         end: 50
         min: 0
         max: 100
+        progress: 30
 
       $player.append triv.$el.css 'margin-top', 20
 
