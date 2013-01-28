@@ -91,8 +91,8 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @listenTo @rangeSliderView, 'ProgressRangeSliderView:ProgressDidChange',
         @_onRangeSliderProgressDidChange
 
-    @startInputView.on 'change:time', @_onStartInputChanged
-    @endInputView.on 'change:time', @_onEndInputChanged
+    @startInputView.on 'TimeInputView:TimeDidChange', @_onStartInputChanged
+    @endInputView.on 'TimeInputView:TimeDidChange', @_onEndInputChanged
 
 
   destroy: =>

@@ -124,7 +124,7 @@ class SlideshowShell.RemixView extends CollectionShell.RemixView
       max: Infinity
       padTime: false
       extraClasses: ['slide-delay']
-    @timeInputView.on 'change:time', @_onTimeInputChanged
+    @timeInputView.on 'TimeInputView:TimeDidChange', @_onTimeInputChanged
 
 
   render: =>

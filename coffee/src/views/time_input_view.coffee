@@ -99,7 +99,7 @@ class acorn.player.TimeInputView extends athena.lib.View
 
   _change: =>
     @_setInput()
-    @trigger 'change:time', @_time
+    @trigger 'TimeInputView:TimeDidChange', @_time
 
 
   _setInput: (silent) =>

@@ -5,6 +5,8 @@ goog.require 'acorn.player.TimeInputView'
 describe 'acorn.player.TimeInputView', ->
   TimeInputView = acorn.player.TimeInputView
 
+  EventSpy = athena.lib.util.test.EventSpy
+
   it 'should be part of acorn.player', ->
     expect(TimeInputView).toBeDefined()
 
@@ -154,11 +156,12 @@ describe 'acorn.player.TimeInputView', ->
       expect(input.val()).toBe timestring 30
       expect(tiv.value()).toBe 30
 
-    it 'should trigger `change:time` when the time has changed', ->
+    it 'should trigger `TimeInputView:TimeDidChange` when the time has
+        changed', ->
       [tiv, input] = setupTIV()
 
       spies =
-        spy: new athena.lib.util.test.EventSpy tiv, 'change:time'
+        spy: new EventSpy tiv, 'TimeInputView:TimeDidChange'
 
       setTimeFns = [
         ->
