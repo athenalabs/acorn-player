@@ -30,11 +30,6 @@ describe 'acorn.shells.SlideshowShell', ->
 
       describe 'MediaView::isPlaying', ->
 
-        it 'should by default be true on render', ->
-          view = new MediaView viewOptions()
-          view.render()
-          expect(view.isPlaying()).toBe true
-
         it 'should be true following MediaView.play()', ->
           view = new MediaView viewOptions()
           view.render()
@@ -61,6 +56,7 @@ describe 'acorn.shells.SlideshowShell', ->
           view = new MediaView viewOptions()
           view.controlsView.render()
           view.render()
+          view.play()
           playControl = view.controlsView.$ '.control-view.play'
           expect(playControl.length).toBe 1
           expect(playControl.hasClass 'hidden').toBe true
@@ -69,6 +65,7 @@ describe 'acorn.shells.SlideshowShell', ->
           view = new MediaView viewOptions()
           view.controlsView.render()
           view.render()
+          view.play()
           pauseControl = view.controlsView.$ '.control-view.pause'
           expect(pauseControl.length).toBe 1
 
@@ -76,6 +73,7 @@ describe 'acorn.shells.SlideshowShell', ->
           view = new MediaView viewOptions()
           view.controlsView.render()
           view.render()
+          view.play()
           pauseControl = view.controlsView.$ '.control-view.pause'
           expect(pauseControl.length).toBe 1
           expect(pauseControl.hasClass 'hidden').toBe false
@@ -84,6 +82,7 @@ describe 'acorn.shells.SlideshowShell', ->
           view = new MediaView viewOptions()
           view.controlsView.render()
           view.render()
+          view.play()
           view.pause()
           expect(view.isPaused()).toBe true
 
@@ -94,6 +93,7 @@ describe 'acorn.shells.SlideshowShell', ->
           view = new MediaView viewOptions()
           view.controlsView.render()
           view.render()
+          view.play()
           view.pause()
           expect(view.isPaused()).toBe true
 
@@ -124,6 +124,7 @@ describe 'acorn.shells.SlideshowShell', ->
           view = new MediaView viewOptions()
           view.controlsView.render()
           view.render()
+          view.play()
           playControl = view.controlsView.$ '.control-view.play'
           view.pause()
 
@@ -135,8 +136,8 @@ describe 'acorn.shells.SlideshowShell', ->
           view = new MediaView viewOptions()
           view.controlsView.render()
           view.render()
-          pauseControl = view.controlsView.$ '.control-view.pause'
           view.play()
+          pauseControl = view.controlsView.$ '.control-view.pause'
 
           spyOn view, 'pause'
           pauseControl.click()
@@ -160,13 +161,14 @@ describe 'acorn.shells.SlideshowShell', ->
           view.render()
           view.play()
 
-          expect(view.currentIndex).toBe 0
+          spyOn view, 'showNext'
+          expect(view.showNext.callCount).toBe 0
 
           jasmine.Clock.tick(4999)
-          expect(view.currentIndex).toBe 0
+          expect(view.showNext.callCount).toBe 0
 
           jasmine.Clock.tick(2)
-          expect(view.currentIndex).toBe 1
+          expect(view.showNext.callCount).toBe 1
 
 
       # TODO - properly determine when youtube has loaded in order to test this
@@ -211,13 +213,14 @@ describe 'acorn.shells.SlideshowShell', ->
           waitsFor (-> ready), 'video player to be ready', 10000
 
           runs ->
-            expect(view.currentIndex).toBe 0
+            spyOn view, 'showNext'
+            expect(view.showNext.callCount).toBe 0
 
             jasmine.Clock.tick(9910999)
-            expect(view.currentIndex).toBe 0
+            expect(view.showNext.callCount).toBe 0
 
             jasmine.Clock.tick(2)
-            expect(view.currentIndex).toBe 1
+            expect(view.showNext.callCount).toBe 1
 
         it 'should cycle to next shell after delay when shell duration is less
             than delay', ->
@@ -242,14 +245,16 @@ describe 'acorn.shells.SlideshowShell', ->
           view = new MediaView _viewOptions
           view.controlsView.render()
           view.render()
+          view.play()
 
-          expect(view.currentIndex).toBe 0
+          spyOn view, 'showNext'
+          expect(view.showNext.callCount).toBe 0
 
           jasmine.Clock.tick(4999)
-          expect(view.currentIndex).toBe 0
+          expect(view.showNext.callCount).toBe 0
 
           jasmine.Clock.tick(2)
-          expect(view.currentIndex).toBe 1
+          expect(view.showNext.callCount).toBe 1
 
 
     describe 'SlideshowShell.RemixView', ->

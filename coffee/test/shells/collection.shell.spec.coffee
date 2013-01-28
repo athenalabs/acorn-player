@@ -10,10 +10,25 @@ describe 'acorn.shells.CollectionShell', ->
   Shell = acorn.shells.Shell
   CollectionShell = acorn.shells.CollectionShell
 
+  options =
+    model: new CollectionShell.Model {shellid: CollectionShell.id}
+
   it 'should be part of acorn.shells', ->
     expect(CollectionShell).toBeDefined()
 
-  acorn.util.test.describeShellModule CollectionShell
+  acorn.util.test.describeShellModule CollectionShell, ->
+
+    test.describeDefaults CollectionShell.MediaView, {
+      playOnReady: true
+      readyOnRender: false
+      readyOnFirstShellReady: true
+      showFirstSubshellOnRender: true
+      playOnChangeShell: true
+      showSubshellControls: true
+      showSubshellSummary: true
+      autoAdvanceOnEnd: true
+    }, options
+
 
   describe 'CollectionShell.Model', ->
     Model = CollectionShell.Model

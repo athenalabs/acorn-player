@@ -31,6 +31,16 @@ class GalleryShell.MediaView extends CollectionShell.MediaView
       {link: '', thumbnail: model.thumbnail()}
 
 
+  defaults: => _.extend super,
+    playOnReady: false
+    readyOnRender: true
+    showFirstSubshellOnRender: false
+    playOnChangeShell: true
+    showSubshellControls: true
+    showSubshellSummary: true
+    autoAdvanceOnEnd: false
+
+
   initialize: =>
     super
 
@@ -63,7 +73,6 @@ class GalleryShell.MediaView extends CollectionShell.MediaView
   render: =>
     super
     @$el.append @gridView.render().el
-    @hideView()
     @
 
 

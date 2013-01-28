@@ -31,6 +31,16 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
 
   defaults: => _.extend super,
     playOnReady: true
+    autoAdvanceOnEnd: false
+
+
+  initializeSubshellEvents: =>
+    super
+
+    @on 'Subshell:Media:DidEnd', =>
+      if @isPlaying() and not @_counter?
+        @showNext()
+
 
 
   initializeControlsView: =>
@@ -97,13 +107,6 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
 
     if @isPlaying()
       unless 0 < view?.duration?() < Infinity and view.isPlaying()
-        @showNext()
-
-
-  _onShellPlaybackEnded: =>
-    # show next if counter has already concluded
-    if @isPlaying()
-      unless @_counter?
         @showNext()
 
 
