@@ -292,7 +292,8 @@ class CollectionShell.MediaView extends Shell.MediaView
 
 
   shellView: (index) =>
-    @shellViews[index || @currentIndex]
+    index ?= @currentIndex
+    @shellViews[index]
 
 
   switchShell: (index) =>
