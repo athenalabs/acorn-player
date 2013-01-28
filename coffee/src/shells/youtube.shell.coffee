@@ -223,20 +223,6 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
         @setMediaState 'ready'
 
 
-      onStateChange: (event) =>
-        if @switchingMediaState()
-          return
-
-        switch @player.getPlayerState()
-          when YT.PlayerState.PLAYING
-            @setMediaState 'play'
-          when YT.PlayerState.PAUSED
-            if @isInState 'play'
-              @setMediaState 'pause'
-          when YT.PlayerState.ENDED
-            @setMediaState 'end'
-
-
 
 # Register the shell with the acorn object.
 acorn.registerShellModule(YouTubeShell)
