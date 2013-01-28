@@ -8,6 +8,8 @@ describe 'acorn.player.TimeRangeInputView', ->
   RangeSliderView = acorn.player.RangeSliderView
   TimeRangeInputView = acorn.player.TimeRangeInputView
 
+  EventSpy = athena.lib.util.test.EventSpy
+
   it 'should be part of acorn.player', ->
     expect(TimeRangeInputView).toBeDefined()
 
@@ -176,64 +178,6 @@ describe 'acorn.player.TimeRangeInputView', ->
         expect(widgets.endInputView.value()).toBe 35
 
 
-    it 'should fire events correctly on _change', ->
-      [triv, widgets] = setupTRIV
-        start: 0
-        end: 50
-
-      endInput = widgets.endInputView.$ 'input'
-      startInput = widgets.startInputView.$ 'input'
-
-      spies =
-        startSpy: new athena.lib.util.test.EventSpy triv, 'change:start'
-        endSpy: new athena.lib.util.test.EventSpy triv, 'change:end'
-        timesSpy: new athena.lib.util.test.EventSpy triv, 'change:times'
-
-      setTimeFns = [
-        ->
-          previous = triv.values()
-          triv.values start: 10
-          expectations =
-            startSpy: 10
-            timesSpy: {start: 10, end: previous.end}
-        ->
-          previous = triv.values()
-          endInput.val 60
-          endInput.change()
-          expectations =
-            endSpy: 60
-            timesSpy: {start: previous.start, end: 60}
-        ->
-          previous = triv.values()
-          triv.values {start: 20, end: 70}
-          expectations =
-            startSpy: 20
-            endSpy: 70
-            timesSpy: {start: 20, end: 70}
-        ->
-          previous = triv.values()
-          startInput.val 30
-          startInput.change()
-          endInput.val 80
-          endInput.change()
-          expectations =
-            startSpy: 30
-            endSpy: 80
-            timesSpy: {start: 30, end: 80}
-        ->
-          previous = triv.values()
-          triv.values previous
-          undefined
-        ->
-          previous = triv.values()
-          startInput.val previous.start
-          startInput.change()
-          {}
-      ]
-
-      athena.lib.util.test.expectEventSpyBehaviors spies, setTimeFns
-
-
     describe 'TimeRangeInputView: start and end inputs', ->
 
       it 'should handle changes to start input field and keep all inputs in
@@ -334,6 +278,60 @@ describe 'acorn.player.TimeRangeInputView', ->
 
       triv.values {start: 20}
       expect(widgets.totalTime.text()).toBe timestring 10
+
+
+    describe 'TimeRangeInputView: events', ->
+
+      it 'should fire change:start when start value changes', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+
+        startSpy = new EventSpy triv, 'change:start'
+
+        expect(startSpy.triggerCount).toBe 0
+        triv.values start: 10
+        expect(startSpy.triggerCount).toBe 1
+        expect(startSpy.arguments[0][0]).toBe 10
+
+      it 'should fire change:end when end value changes', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+
+        endSpy = new EventSpy triv, 'change:end'
+
+        expect(endSpy.triggerCount).toBe 0
+        triv.values end: 10
+        expect(endSpy.triggerCount).toBe 1
+        expect(endSpy.arguments[0][0]).toBe 10
+
+      it 'should fire change:times when start value changes', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+
+        timesSpy = new EventSpy triv, 'change:times'
+
+        expect(timesSpy.triggerCount).toBe 0
+        triv.values start: 10
+        expect(timesSpy.triggerCount).toBe 1
+        expect(timesSpy.arguments[0][0].start).toBe 10
+        expect(timesSpy.arguments[0][0].end).toBe 50
+
+      it 'should fire change:times when end value changes', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+
+        timesSpy = new EventSpy triv, 'change:times'
+
+        expect(timesSpy.triggerCount).toBe 0
+        triv.values end: 10
+        expect(timesSpy.triggerCount).toBe 1
+        expect(timesSpy.arguments[0][0].start).toBe 0
+        expect(timesSpy.arguments[0][0].end).toBe 10
+
 
     it 'should look good', ->
       # setup DOM
