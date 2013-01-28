@@ -42,43 +42,76 @@ describe 'acorn.player.TimeRangeInputView', ->
       expect(widgets.endInputView instanceof TimeInputView).toBe true
       expect(widgets.totalTime.length).toBe 1
 
-    it 'should accept initialization values and provide read/write access ' +
-        'through a `values` property', ->
-      [triv, widgets] = setupTRIV
-        start: 0
-        end: 50
 
-      expect(triv.values().start).toBe 0
-      expect(triv.values().end).toBe 50
+    describe 'TimeRangeInputView::values', ->
 
-      triv.values start: 25
-      expect(triv.values().start).toBe 25
-      expect(triv.values().end).toBe 50
+      it 'should provide read access to start and end through a `values`
+          property', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
 
-      triv.values end: 35
-      expect(triv.values().start).toBe 25
-      expect(triv.values().end).toBe 35
+        expect(triv.values().start).toBe 0
+        expect(triv.values().end).toBe 50
 
-      triv.values {start: 10, end: 40}
-      expect(triv.values().start).toBe 10
-      expect(triv.values().end).toBe 40
+        triv._start = 25
+        expect(triv.values().start).toBe 25
+        expect(triv.values().end).toBe 50
 
-    it 'should propagate values to its range slider and time inputs', ->
-      [triv, widgets] = setupTRIV
-        start: 0
-        end: 50
-        max: 100
+        triv._end= 35
+        expect(triv.values().start).toBe 25
+        expect(triv.values().end).toBe 35
 
-      expect(widgets.rangeSliderView.values()[0]).toBe 0
-      expect(widgets.rangeSliderView.values()[1]).toBe 50
-      expect(widgets.startInputView.value()).toBe 0
-      expect(widgets.endInputView.value()).toBe 50
+        triv._start = 10
+        triv._end = 40
+        expect(triv.values().start).toBe 10
+        expect(triv.values().end).toBe 40
 
-      triv.values {start: 10, end: 40}
-      expect(widgets.rangeSliderView.values()[0]).toBe 10
-      expect(widgets.rangeSliderView.values()[1]).toBe 40
-      expect(widgets.startInputView.value()).toBe 10
-      expect(widgets.endInputView.value()).toBe 40
+      it 'should provide write access to start and end through a `values`
+          property', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+
+        expect(triv.values().start).toBe 0
+        expect(triv.values().end).toBe 50
+        expect(triv._start).toBe 0
+        expect(triv._end).toBe 50
+
+        triv.values start: 25
+        expect(triv.values().start).toBe 25
+        expect(triv.values().end).toBe 50
+        expect(triv._start).toBe 25
+        expect(triv._end).toBe 50
+
+        triv.values end: 35
+        expect(triv.values().start).toBe 25
+        expect(triv.values().end).toBe 35
+        expect(triv._start).toBe 25
+        expect(triv._end).toBe 35
+
+        triv.values {start: 10, end: 40}
+        expect(triv.values().start).toBe 10
+        expect(triv.values().end).toBe 40
+        expect(triv._start).toBe 10
+        expect(triv._end).toBe 40
+
+      it 'should propagate values to its range slider and time inputs', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+          max: 100
+
+        expect(widgets.rangeSliderView.values()[0]).toBe 0
+        expect(widgets.rangeSliderView.values()[1]).toBe 50
+        expect(widgets.startInputView.value()).toBe 0
+        expect(widgets.endInputView.value()).toBe 50
+
+        triv.values {start: 10, end: 40}
+        expect(widgets.rangeSliderView.values()[0]).toBe 10
+        expect(widgets.rangeSliderView.values()[1]).toBe 40
+        expect(widgets.startInputView.value()).toBe 10
+        expect(widgets.endInputView.value()).toBe 40
 
 
     describe 'TimeRangeInputView: min and max', ->
