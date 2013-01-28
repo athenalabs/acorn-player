@@ -194,8 +194,10 @@ input {
     background: rgba(85, 85, 85, 0.7);
     font-family: "Helvetica Neue", Helvetica;
     color: white;
-    .transition(0.35s, ease);
-    top: -100%;
+    .transition(0.5s, ease);
+
+    /*top: -100%;*/
+    opacity: 0.0;
 
     > .summary-view {
       margin-top: 20px;
@@ -204,33 +206,40 @@ input {
   }
 
   > .summary-view:hover {
-    top: 0px;
+    /*top: 0px;*/
+    opacity: 1.0;
   }
 
 }
 
-.content-view.mouse-moving {
+.content-view:hover.mouse-moving.off {
   > .summary-view {
-    top: 0px;
+    /*top: 0px;*/
+    opacity: 1.0;
   }
 }
 
 
 .summary-view {
-  height: 74px;
+  height: 44px;
+
+  .thumbnail-view {
+    height: 44px;
+    width: 44px;
+  }
 
   > * {
     display: inline-block;
   }
 
   .title {
-    font-size: 24px;
-    margin: 10px 0px;
+    font-size: 14px;
+    margin: 0px 0px 2px;
   }
 
   .description {
-    font-size: 12px;
-    line-height: 16px;
+    font-size: 10px;
+    line-height: 12px;
     max-height: 32px;
     text-overflow: ellipsis;
     overflow: hidden;

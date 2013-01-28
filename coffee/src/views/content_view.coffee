@@ -112,7 +112,7 @@ class acorn.player.ContentView extends athena.lib.View
     setTimeout (=>
       if @_lastMousePos is mousePos
         @onMouseStoppedMoving()
-    ), 1000
+    ), 2000
 
 
   onMouseStoppedMoving: =>
