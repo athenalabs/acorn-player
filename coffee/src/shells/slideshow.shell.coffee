@@ -33,7 +33,7 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
     playOnReady: true
 
 
-  _initializeControlsView: =>
+  initializeControlsView: =>
     # construct a ControlToolbar for the acorn controls
     @controlsView = new ControlToolbarView
       extraClasses: ['shell-controls']

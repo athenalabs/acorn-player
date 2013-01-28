@@ -184,10 +184,11 @@ class CollectionShell.MediaView extends Shell.MediaView
     # initialize the currently selected view
     @currentIndex = 0
 
-    @_initializeControlsView()
+    @initializeControlsView()
 
 
-  _initializeControlsView: =>
+
+  initializeControlsView: =>
     # construct a ControlToolbar for the acorn controls
     @controlsView = new ControlToolbarView
       extraClasses: ['shell-controls']

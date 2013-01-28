@@ -43,7 +43,7 @@ class GalleryShell.MediaView extends CollectionShell.MediaView
       @showView @model.shells().indexOf tile.model
 
 
-  _initializeControlsView: =>
+  initializeControlsView: =>
     # construct a ControlToolbar for the acorn controls
     @controlsView = new ControlToolbarView
       extraClasses: ['shell-controls']
