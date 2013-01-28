@@ -36,13 +36,6 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
     autoAdvanceOnEnd: true
 
 
-  initialize: =>
-    super
-
-    @on 'Subshell:Media:DidPlay', @play
-    @on 'Subshell:Media:DidPause', @pause
-
-
   initializeControlsView: =>
 
     @initializeElapsedTimeView()
@@ -82,19 +75,22 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
     super
     # render all pieces in order to get them fully ready
     # this will be expensive as the # of pieces incs.
-    _.each _.range(@shellViews.length), (index) =>
+    _.each _.range(1, @shellViews.length), (index) =>
       @showView index
       @shellViews[index].pause()
+      @hideView index
     @showView 0
     @
 
 
   onMediaDidPlay: =>
+    super
     @controlsView.$('.control-view.play').addClass 'hidden'
     @controlsView.$('.control-view.pause').removeClass 'hidden'
 
 
   onMediaDidPause: =>
+    super
     @controlsView.$('.control-view.play').removeClass 'hidden'
     @controlsView.$('.control-view.pause').addClass 'hidden'
 

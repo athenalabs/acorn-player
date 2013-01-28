@@ -310,8 +310,8 @@ class CollectionShell.MediaView extends Shell.MediaView
     delete @_switchingShell
 
 
-  hideView: =>
-    view = @shellView()
+  hideView: (index) =>
+    view = @shellView index
     unless view
       return
 
