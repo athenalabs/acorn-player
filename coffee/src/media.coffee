@@ -124,10 +124,12 @@ class acorn.MediaInterface
   # State checks -- returns true if media is in a particular state
   isInState: (state) => @mediaState() is state
 
+  isIniting: => @isInState 'init'
   isReady: => @isInState 'ready'
   isPlaying: => @isInState 'play'
   isPaused: => @isInState 'pause'
   ended: => @isInState 'end'
+  canPlay: => not @isIniting()
 
 
   # Seek to/return playback offset.
