@@ -220,8 +220,11 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
         # doesn't. Need a more robust solution (tick)
         start = parseInt(@model.timeStart() ? 0, 10)
         @player.cueVideoById(@model.youtubeId(), start)
-        @setMediaState 'ready'
 
+        # playing still needs buffering sometimes. hack: play then pause
+        @player.playVideo()
+        @player.pauseVideo()
+        @setMediaState 'ready'
 
 
 # Register the shell with the acorn object.

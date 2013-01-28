@@ -194,6 +194,8 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
       @_timeTotal = parseFloat params.duration
       @_seekOffset = parseFloat params.seconds
 
+    @player.api 'play'
+    @player.api 'pause'
     @setMediaState 'ready'
 
 
