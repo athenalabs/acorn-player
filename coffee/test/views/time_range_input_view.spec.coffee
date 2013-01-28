@@ -80,64 +80,68 @@ describe 'acorn.player.TimeRangeInputView', ->
       expect(widgets.startInputView.value()).toBe 10
       expect(widgets.endInputView.value()).toBe 40
 
-    it 'should abide by min and max restrictions', ->
-      [triv, widgets] = setupTRIV
-        start: 0
-        end: 50
-        min: 0
-        max: 100
 
-      # confirm background assumptions
-      expect(widgets.rangeSliderView.values()[0]).toBe 0
-      expect(widgets.rangeSliderView.values()[1]).toBe 50
-      expect(widgets.startInputView.value()).toBe 0
-      expect(widgets.endInputView.value()).toBe 50
+    describe 'TimeRangeInputView: min and max', ->
 
-      triv.values {start: 10, end: 140}
-      expect(widgets.rangeSliderView.values()[0]).toBe 10
-      expect(widgets.rangeSliderView.values()[1]).toBe 100
-      expect(widgets.startInputView.value()).toBe 10
-      expect(widgets.endInputView.value()).toBe 100
+      it 'should abide by min and max restrictions', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+          min: 0
+          max: 100
 
-      triv.values {start: -40, end: 60}
-      expect(widgets.rangeSliderView.values()[0]).toBe 0
-      expect(widgets.rangeSliderView.values()[1]).toBe 60
-      expect(widgets.startInputView.value()).toBe 0
-      expect(widgets.endInputView.value()).toBe 60
+        # confirm background assumptions
+        expect(widgets.rangeSliderView.values()[0]).toBe 0
+        expect(widgets.rangeSliderView.values()[1]).toBe 50
+        expect(widgets.startInputView.value()).toBe 0
+        expect(widgets.endInputView.value()).toBe 50
 
-    it 'should propagate setMin and setMax to its widgets', ->
-      [triv, widgets] = setupTRIV
-        start: 0
-        end: 50
-        min: 0
-        max: 100
+        triv.values {start: 10, end: 140}
+        expect(widgets.rangeSliderView.values()[0]).toBe 10
+        expect(widgets.rangeSliderView.values()[1]).toBe 100
+        expect(widgets.startInputView.value()).toBe 10
+        expect(widgets.endInputView.value()).toBe 100
 
-      # confirm background assumptions
-      expect(widgets.rangeSliderView.values()[0]).toBe 0
-      expect(widgets.rangeSliderView.values()[1]).toBe 50
-      expect(widgets.startInputView.value()).toBe 0
-      expect(widgets.endInputView.value()).toBe 50
+        triv.values {start: -40, end: 60}
+        expect(widgets.rangeSliderView.values()[0]).toBe 0
+        expect(widgets.rangeSliderView.values()[1]).toBe 60
+        expect(widgets.startInputView.value()).toBe 0
+        expect(widgets.endInputView.value()).toBe 60
 
-      triv.setMin 20
-      expect(widgets.rangeSliderView.values()[0]).toBe 0
-      expect(widgets.rangeSliderView.values()[1]).toBe 30*100/80
-      expect(widgets.startInputView.value()).toBe 20
-      expect(widgets.endInputView.value()).toBe 50
+      it 'should propagate setMin and setMax to its widgets', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+          min: 0
+          max: 100
 
-      triv.setMax 35
-      expect(widgets.rangeSliderView.values()[0]).toBe 0
-      expect(widgets.rangeSliderView.values()[1]).toBe 100
-      expect(widgets.startInputView.value()).toBe 20
-      expect(widgets.endInputView.value()).toBe 35
+        # confirm background assumptions
+        expect(widgets.rangeSliderView.values()[0]).toBe 0
+        expect(widgets.rangeSliderView.values()[1]).toBe 50
+        expect(widgets.startInputView.value()).toBe 0
+        expect(widgets.endInputView.value()).toBe 50
 
-      # expect values to stay at upper and lower bounds when individual widgets
-      # are given values that exceed these bounds
-      widgets.startInputView.value 10
-      widgets.endInputView.value 60
-      expect(widgets.rangeSliderView.values()[0]).toBe 0
-      expect(widgets.rangeSliderView.values()[1]).toBe 100
-      expect(widgets.startInputView.value()).toBe 20
-      expect(widgets.endInputView.value()).toBe 35
+        triv.setMin 20
+        expect(widgets.rangeSliderView.values()[0]).toBe 0
+        expect(widgets.rangeSliderView.values()[1]).toBe 30*100/80
+        expect(widgets.startInputView.value()).toBe 20
+        expect(widgets.endInputView.value()).toBe 50
+
+        triv.setMax 35
+        expect(widgets.rangeSliderView.values()[0]).toBe 0
+        expect(widgets.rangeSliderView.values()[1]).toBe 100
+        expect(widgets.startInputView.value()).toBe 20
+        expect(widgets.endInputView.value()).toBe 35
+
+        # expect values to stay at upper and lower bounds when individual widgets
+        # are given values that exceed these bounds
+        widgets.startInputView.value 10
+        widgets.endInputView.value 60
+        expect(widgets.rangeSliderView.values()[0]).toBe 0
+        expect(widgets.rangeSliderView.values()[1]).toBe 100
+        expect(widgets.startInputView.value()).toBe 20
+        expect(widgets.endInputView.value()).toBe 35
+
 
     it 'should fire events correctly on _change', ->
       [triv, widgets] = setupTRIV
