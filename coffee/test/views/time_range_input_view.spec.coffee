@@ -437,36 +437,39 @@ describe 'acorn.player.TimeRangeInputView', ->
             'ProgressDidChange', 60
         expect(triv.progress()).toBe 30
 
-      it 'should fire change:start when start value changes', ->
+      it 'should fire TimeRangeInputView:DidChangeStart when start value
+          changes', ->
         [triv, widgets] = setupTRIV
           start: 0
           end: 50
 
-        startSpy = new EventSpy triv, 'change:start'
+        startSpy = new EventSpy triv, 'TimeRangeInputView:DidChangeStart'
 
         expect(startSpy.triggerCount).toBe 0
         triv.values start: 10
         expect(startSpy.triggerCount).toBe 1
         expect(startSpy.arguments[0][0]).toBe 10
 
-      it 'should fire change:end when end value changes', ->
+      it 'should fire TimeRangeInputView:DidChangeEnd when end value
+          changes', ->
         [triv, widgets] = setupTRIV
           start: 0
           end: 50
 
-        endSpy = new EventSpy triv, 'change:end'
+        endSpy = new EventSpy triv, 'TimeRangeInputView:DidChangeEnd'
 
         expect(endSpy.triggerCount).toBe 0
         triv.values end: 10
         expect(endSpy.triggerCount).toBe 1
         expect(endSpy.arguments[0][0]).toBe 10
 
-      it 'should fire change:times when start value changes', ->
+      it 'should fire TimeRangeInputView:DidChangeTimes when start value
+          changes', ->
         [triv, widgets] = setupTRIV
           start: 0
           end: 50
 
-        timesSpy = new EventSpy triv, 'change:times'
+        timesSpy = new EventSpy triv, 'TimeRangeInputView:DidChangeTimes'
 
         expect(timesSpy.triggerCount).toBe 0
         triv.values start: 10
@@ -474,12 +477,13 @@ describe 'acorn.player.TimeRangeInputView', ->
         expect(timesSpy.arguments[0][0].start).toBe 10
         expect(timesSpy.arguments[0][0].end).toBe 50
 
-      it 'should fire change:times when end value changes', ->
+      it 'should fire TimeRangeInputView:DidChangeTimes when end value changes',
+          ->
         [triv, widgets] = setupTRIV
           start: 0
           end: 50
 
-        timesSpy = new EventSpy triv, 'change:times'
+        timesSpy = new EventSpy triv, 'TimeRangeInputView:DidChangeTimes'
 
         expect(timesSpy.triggerCount).toBe 0
         triv.values end: 10
@@ -487,13 +491,14 @@ describe 'acorn.player.TimeRangeInputView', ->
         expect(timesSpy.arguments[0][0].start).toBe 0
         expect(timesSpy.arguments[0][0].end).toBe 10
 
-      it 'should fire change:progress when progress value changes', ->
+      it 'should fire TimeRangeInputView:DidChangeProgress when progress value
+          changes', ->
         [triv, widgets] = setupTRIV
           start: 0
           progress: 10
           end: 50
 
-        progressSpy = new EventSpy triv, 'change:progress'
+        progressSpy = new EventSpy triv, 'TimeRangeInputView:DidChangeProgress'
 
         expect(progressSpy.triggerCount).toBe 0
         triv.progress 30

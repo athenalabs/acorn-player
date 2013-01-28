@@ -196,7 +196,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @_playerView.on 'Media:StateChange', @_togglePlayPauseControls
     @_controlsView.on 'PlayControl:Click', => @_playerView.play()
     @_controlsView.on 'PauseControl:Click', => @_playerView.pause()
-    @_timeRangeInputView.on 'change:times', @_onChangeTimes
+    @_timeRangeInputView.on 'TimeRangeInputView:DidChangeTimes', @_onChangeTimes
     @_loopsButtonView.on 'change:value', @_onChangeLoops
 
 

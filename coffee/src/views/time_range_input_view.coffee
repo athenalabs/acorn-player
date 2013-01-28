@@ -245,17 +245,17 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
     if changed.start
       @_setStartInput()
-      @trigger 'change:start', @_start
+      @trigger 'TimeRangeInputView:DidChangeStart', @_start
 
     if changed.end
       @_setEndInput()
-      @trigger 'change:end', @_end
+      @trigger 'TimeRangeInputView:DidChangeEnd', @_end
 
     if changed.start or changed.end
-      @trigger 'change:times', {start: @_start, end: @_end}
+      @trigger 'TimeRangeInputView:DidChangeTimes', {start: @_start, end: @_end}
 
     if changed.progress
-      @trigger 'change:progress', @_progress
+      @trigger 'TimeRangeInputView:DidChangeProgress', @_progress
 
 
   _setStartInput: =>
