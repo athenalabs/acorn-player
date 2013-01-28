@@ -126,9 +126,9 @@ describe 'acorn.player.CycleButtonView', ->
 
       EventSpy = athena.lib.util.test.EventSpy
       spies =
-        viewSpy: new EventSpy cbv, 'change:view'
-        inputValueSpy: new EventSpy cbv, 'change:input-value'
-        valueSpy: new EventSpy cbv, 'change:value'
+        viewSpy: new EventSpy cbv, 'CycleButtonView:ViewDidChange'
+        inputValueSpy: new EventSpy cbv, 'CycleButtonView:InputValueDidChange'
+        valueSpy: new EventSpy cbv, 'CycleButtonView:ValueDidChange'
 
       states = [
         {view: views[0], name: 'one', value: '1'}
