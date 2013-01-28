@@ -95,6 +95,11 @@ class Shell.MediaView extends athena.lib.View
   className: @classNameExtend 'shell-media-view'
 
 
+  defaults: => _.extend super,
+    # whether this MediaView is ready to play upon rendering
+    readyOnRender: true
+
+
   initialize: =>
     super
 
@@ -122,12 +127,9 @@ class Shell.MediaView extends athena.lib.View
 
   render: =>
     super
-    if @readyOnRender
+    if @options.readyOnRender
       @setMediaState 'ready'
     @
-
-
-  readyOnRender: true
 
 
 

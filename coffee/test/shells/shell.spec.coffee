@@ -56,20 +56,21 @@ describe 'acorn.shells.Shell', ->
 
       describe '\'Media:Ready\' event', ->
 
-        it 'should fire after render by default', ->
+        it 'should fire after render by default (readyOnRender is true)', ->
           view = new MediaView viewOptions()
           spy = new EventSpy view, 'Media:Ready'
 
+          expect(view.options.readyOnRender).toBe true
           expect(spy.triggered).toBe false
           view.render()
           expect(spy.triggered).toBe true
 
         it 'should not fire after render when `readyOnRender` is false', ->
-          view = new MediaView viewOptions()
+          view = new MediaView _.extend viewOptions(), readyOnRender: false
           spy = new EventSpy view, 'Media:Ready'
 
+          expect(view.options.readyOnRender).toBe false
           expect(spy.triggered).toBe false
-          view.readyOnRender = false
           view.render()
           expect(spy.triggered).toBe false
 

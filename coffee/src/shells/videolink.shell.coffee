@@ -67,6 +67,11 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
   className: @classNameExtend 'video-link-shell'
 
 
+  defaults: => _.extend super,
+    # video playerView will announce when ready, mediaView forwards event
+    readyOnRender: false
+
+
   initialize: =>
     super
 
@@ -150,10 +155,6 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
   # duration of video given current splicing and looping - get from model
   duration: =>
     @playerView?.duration() or @model.duration() or 0
-
-
-  # video playerView will announce when ready, mediaView forwards event
-  readyOnRender: false
 
 
 

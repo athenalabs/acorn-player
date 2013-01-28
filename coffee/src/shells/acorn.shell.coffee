@@ -62,6 +62,10 @@ class AcornLinkShell.MediaView extends LinkShell.MediaView
   className: @classNameExtend 'acorn-link-shell'
 
 
+  defaults: => _.extend super,
+    readyOnRender: false
+
+
   initialize: =>
     super
 
@@ -95,9 +99,6 @@ class AcornLinkShell.MediaView extends LinkShell.MediaView
     @controlsView.initializeButtons()
 
     @setMediaState 'init'
-
-
-  readyOnRender: false
 
 
   render: =>

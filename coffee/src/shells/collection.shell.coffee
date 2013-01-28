@@ -155,6 +155,7 @@ class CollectionShell.MediaView extends Shell.MediaView
 
   defaults: => _.extend super,
     playOnReady: false
+    readyOnRender: false
 
 
   initialize: =>
