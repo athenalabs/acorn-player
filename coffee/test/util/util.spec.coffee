@@ -27,6 +27,43 @@ describe 'acorn.util.urlFix', ->
 
 
 
+describe 'acorn.util.elementInDom', ->
+  elementInDom = acorn.util.elementInDom
+
+  it 'should exist', ->
+    expect(elementInDom).toBeDefined()
+    expect(typeof elementInDom).toBe 'function'
+
+  it 'should return false when called with one element not in the DOM', ->
+    div = $ '<div>'
+    expect(elementInDom div).toBe false
+
+  it 'should return true when called with one element in the DOM', ->
+    div = $ '<div>'
+    $('body').append div
+    expect(elementInDom div).toBe true
+    div.remove()
+
+  it 'should return false when called with multiple elements not in the DOM', ->
+    container = $ '<div>'
+    for i in [0...5]
+      container.append $ '<div>'
+
+    divs = container.children()
+    expect(elementInDom divs).toBe false
+
+  it 'should return true when called with multiple elements all in the DOM', ->
+    container = $ '<div>'
+    for i in [0...5]
+      container.append $ '<div>'
+
+    divs = container.children()
+    $('body').append container
+    expect(elementInDom divs).toBe true
+    container.remove()
+
+
+
 describe 'acorn.util.Time', ->
   Time = acorn.util.Time
   it 'should exist', ->
