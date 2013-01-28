@@ -115,7 +115,12 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
       eventhub: @eventhub
       noControls: true
 
-    @listenTo @playerView, 'all', _.bind(@trigger, @)
+    @listenTo @playerView, 'all', =>
+      # replace @playerView with @
+      args = _.map arguments, (arg) =>
+        if arg is @playerView then @ else arg
+
+      @trigger.apply @, args
 
     @on 'Media:StateChange', @togglePlayPauseControls
 
