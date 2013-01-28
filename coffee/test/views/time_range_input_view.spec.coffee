@@ -196,67 +196,91 @@ describe 'acorn.player.TimeRangeInputView', ->
 
       athena.lib.util.test.expectEventSpyBehaviors spies, setTimeFns
 
-    it 'should handle changes to input fields and keep all inputs in sync', ->
-      [triv, widgets] = setupTRIV
-        start: 0
-        end: 50
-        max: 100
 
-      # confirm background assumptions
-      expect(widgets.rangeSliderView.values()[0]).toBe 0
-      expect(widgets.rangeSliderView.values()[1]).toBe 50
-      expect(widgets.startInputView.value()).toBe 0
-      expect(widgets.endInputView.value()).toBe 50
+    describe 'TimeRangeInputView: start and end inputs', ->
 
-      # change start input field
-      widgets.startInputView.$('input').val 20
-      widgets.startInputView.$('input').change()
-      expect(widgets.rangeSliderView.values()[0]).toBe 20
-      expect(widgets.rangeSliderView.values()[1]).toBe 50
-      expect(widgets.startInputView.value()).toBe 20
-      expect(widgets.endInputView.value()).toBe 50
+      it 'should handle changes to start input field and keep all inputs in
+          sync', ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+          max: 100
 
-      # change end input field
-      widgets.endInputView.$('input').val 40
-      widgets.endInputView.$('input').change()
-      expect(widgets.rangeSliderView.values()[0]).toBe 20
-      expect(widgets.rangeSliderView.values()[1]).toBe 40
-      expect(widgets.startInputView.value()).toBe 20
-      expect(widgets.endInputView.value()).toBe 40
+        # confirm background assumptions
+        expect(widgets.rangeSliderView.values()[0]).toBe 0
+        expect(widgets.startInputView.value()).toBe 0
+
+        # change start input field
+        widgets.startInputView.$('input').val 20
+        widgets.startInputView.$('input').change()
+        expect(widgets.rangeSliderView.values()[0]).toBe 20
+        expect(widgets.startInputView.value()).toBe 20
+
+      it 'should handle changes to end input field and keep all inputs in sync',
+          ->
+        [triv, widgets] = setupTRIV
+          start: 0
+          end: 50
+          max: 100
+
+        # confirm background assumptions
+        expect(widgets.rangeSliderView.values()[1]).toBe 50
+        expect(widgets.endInputView.value()).toBe 50
+
+        # change end input field
+        widgets.endInputView.$('input').val 40
+        widgets.endInputView.$('input').change()
+        expect(widgets.rangeSliderView.values()[1]).toBe 40
+        expect(widgets.endInputView.value()).toBe 40
+
+
+      describe 'TimeRangeInputView: enforce start time before end time', ->
+
+        it 'should bounce end input above start input when start crosses end', ->
+          [triv, widgets] = setupTRIV
+            start: 0
+            end: 50
+            max: 100
+
+          # confirm background assumptions
+          expect(widgets.startInputView.value()).toBe 0
+          expect(widgets.endInputView.value()).toBe 50
+          expect(widgets.rangeSliderView.values()[0]).toBe 0
+          expect(widgets.rangeSliderView.values()[1]).toBe 50
+
+          # change start input field
+          widgets.startInputView.$('input').val 80
+          widgets.startInputView.$('input').change()
+          expect(widgets.rangeSliderView.values()[0]).toBe 80
+          expect(widgets.rangeSliderView.values()[1]).toBe 90
+          expect(widgets.startInputView.value()).toBe 80
+          expect(widgets.endInputView.value()).toBe 90
+
+        it 'should bounce start input below end input when end crosses start', ->
+          [triv, widgets] = setupTRIV
+            start: 50
+            end: 100
+            max: 100
+
+          # confirm background assumptions
+          expect(widgets.startInputView.value()).toBe 50
+          expect(widgets.endInputView.value()).toBe 100
+          expect(widgets.rangeSliderView.values()[0]).toBe 50
+          expect(widgets.rangeSliderView.values()[1]).toBe 100
+
+          # change end input field
+          widgets.endInputView.$('input').val 40
+          widgets.endInputView.$('input').change()
+          expect(widgets.rangeSliderView.values()[0]).toBe 30
+          expect(widgets.rangeSliderView.values()[1]).toBe 40
+          expect(widgets.startInputView.value()).toBe 30
+          expect(widgets.endInputView.value()).toBe 40
+
 
     it '------ TODO ------
         should handle changes to range slider and keep all inputs in sync', ->
       # Slider widget should get refactored into a view. Until then, there is no
       # easy way to programatically cause the slider to announce changes.
-
-    it 'should enforce start time before end time, bouncing the appropriate time
-        input when they cross', ->
-      [triv, widgets] = setupTRIV
-        start: 0
-        end: 50
-        max: 100
-
-      # confirm background assumptions
-      expect(widgets.startInputView.value()).toBe 0
-      expect(widgets.endInputView.value()).toBe 50
-      expect(widgets.rangeSliderView.values()[0]).toBe 0
-      expect(widgets.rangeSliderView.values()[1]).toBe 50
-
-      # change start input field
-      widgets.startInputView.$('input').val 80
-      widgets.startInputView.$('input').change()
-      expect(widgets.rangeSliderView.values()[0]).toBe 80
-      expect(widgets.rangeSliderView.values()[1]).toBe 90
-      expect(widgets.startInputView.value()).toBe 80
-      expect(widgets.endInputView.value()).toBe 90
-
-      # change end input field
-      widgets.endInputView.$('input').val 40
-      widgets.endInputView.$('input').change()
-      expect(widgets.rangeSliderView.values()[0]).toBe 30
-      expect(widgets.rangeSliderView.values()[1]).toBe 40
-      expect(widgets.startInputView.value()).toBe 30
-      expect(widgets.endInputView.value()).toBe 40
 
     it 'should manage total time', ->
       [triv, widgets] = setupTRIV
