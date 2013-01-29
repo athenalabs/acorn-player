@@ -11,7 +11,7 @@ Shell = acorn.shells.Shell
 EmptyShell = acorn.shells.EmptyShell =
 
   id: 'acorn.EmptyShell'
-  title: 'EmptyShell'
+  title: 'Empty'
   description: 'an empty, nutless shell'
   icon: 'icon-link'
 

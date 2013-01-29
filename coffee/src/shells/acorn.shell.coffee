@@ -11,8 +11,8 @@ LinkShell = acorn.shells.LinkShell
 AcornLinkShell = acorn.shells.AcornLinkShell =
 
   id: 'acorn.AcornLinkShell'
-  title: 'AcornLinkShell'
-  description: 'A shell for acorn links.'
+  title: 'Acorn'
+  description: 'An acorn within an acorn.'
   icon: 'icon-play'
   validLinkPatterns: [
     acorn.util.urlRegEx('acorn\.athena\.ai\/([A-Za-z]{10})/?')

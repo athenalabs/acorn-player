@@ -9,8 +9,8 @@ CollectionShell = acorn.shells.CollectionShell
 SplicedShell = acorn.shells.SplicedShell =
 
   id: 'acorn.SplicedShell'
-  title: 'SplicedShell'
-  description: 'Splice acorns together'
+  title: 'Spliced'
+  description: 'Media spliced together'
   icon: 'icon-play'
 
 

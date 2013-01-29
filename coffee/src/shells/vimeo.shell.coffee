@@ -11,8 +11,8 @@ VideoLinkShell = acorn.shells.VideoLinkShell
 VimeoShell = acorn.shells.VimeoShell =
 
   id: 'acorn.VimeoShell'
-  title: 'Vimeo Link'
-  description: 'A shell for Vimeo videos.'
+  title: 'Vimeo'
+  description: 'Vimeo videos.'
   icon: 'icon-play'
   validLinkPatterns: [
     acorn.util.urlRegEx('(www\.)?(player\.)?vimeo\.com\/(video\/)?([0-9]+).*')

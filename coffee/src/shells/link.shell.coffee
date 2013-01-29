@@ -19,8 +19,8 @@ LinkShell = acorn.shells.LinkShell =
   # shell modules based on LinkShell
 
   id: 'acorn.LinkShell'
-  title: 'LinkShell'
-  description: 'Base shell to contain any web based URL.'
+  title: 'Link'
+  description: 'Embedded websites.'
   icon: 'icon-link'
 
 

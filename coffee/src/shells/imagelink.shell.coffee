@@ -11,8 +11,8 @@ LinkShell = acorn.shells.LinkShell
 ImageLinkShell = acorn.shells.ImageLinkShell =
 
   id: 'acorn.ImageLinkShell'
-  title: 'ImageLinkShell'
-  description: 'Shell to contain web based images.'
+  title: 'Image'
+  description: 'Embdedded images.'
   icon: 'icon-picture'
   validLinkPatterns: [ acorn.util.urlRegEx '.*\.(jpg|jpeg|gif|png|svg)' ]
 

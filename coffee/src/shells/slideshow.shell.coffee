@@ -10,8 +10,8 @@ CollectionShell = acorn.shells.CollectionShell
 SlideshowShell = acorn.shells.SlideshowShell =
 
   id: 'acorn.SlideshowShell'
-  title: 'SlideshowShell'
-  description: 'Slideshow shell'
+  title: 'Slideshow'
+  description: 'Media displayed in a slideshow.'
   icon: 'icon-play-circle'
 
 

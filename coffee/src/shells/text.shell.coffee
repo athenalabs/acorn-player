@@ -10,8 +10,8 @@ Shell = acorn.shells.Shell
 TextShell = acorn.shells.TextShell =
 
   id: 'acorn.TextShell'
-  title: 'TextShell'
-  description: 'a shell to store text'
+  title: 'Text'
+  description: 'any text'
   icon: 'icon-align-left'
 
 

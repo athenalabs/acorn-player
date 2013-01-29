@@ -10,8 +10,8 @@ CollectionShell = acorn.shells.CollectionShell
 GalleryShell = acorn.shells.GalleryShell =
 
   id: 'acorn.GalleryShell'
-  title: 'GalleryShell'
-  description: 'Gallery shell'
+  title: 'Gallery'
+  description: 'Media displayed in a Gallery'
   icon: 'icon-th'
 
 

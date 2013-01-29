@@ -46,8 +46,8 @@ Shell = acorn.shells.Shell
 CollectionShell = acorn.shells.CollectionShell =
 
   id: 'acorn.CollectionShell'
-  title: 'CollectionShell'
-  description: 'Collection shell'
+  title: 'Collection'
+  description: 'A collection of media'
   icon: 'icon-sitemap'
 
 
