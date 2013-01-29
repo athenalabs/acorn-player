@@ -171,6 +171,24 @@ input {
   > .shell-media-view {
     .position-absolutely;
     bottom: @main-control-height;
+    width: 100%;
+    overflow: scroll;
+
+    &.link-shell {
+      > iframe {
+        width: 100%;
+        height: 100%;
+        overflow: none;
+      }
+
+      &.video-link-shell {
+        overflow: hidden; // no scroll bars when watching a video
+
+        .video-player-view {
+          height: 100%;
+        }
+      }
+    }
   }
 
   > .control-toolbar-view {
@@ -449,20 +467,6 @@ input {
 
 }
 
-
-.shell-media-view {
-  width: 100%;
-  overflow: scroll;
-
-  &.video-link-shell {
-    overflow: hidden; // no scroll bars when watching a video
-
-    .video-player-view {
-      height: 100%;
-    }
-  }
-}
-
 .shell-remix-view {
   width: 100%;
   height: 100%;
@@ -475,15 +479,6 @@ input {
 
   div.loops span {
     background-color: #F4F4F4;
-  }
-}
-
-.link-shell.shell-media-view {
-
-  > iframe {
-    width: 100%;
-    height: 100%;
-    overflow: none;
   }
 }
 
