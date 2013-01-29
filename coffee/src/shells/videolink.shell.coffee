@@ -349,6 +349,10 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
     @model.set changes
 
+    # unless user paused the video, make sure it is playing
+    unless @_playerView.isInState 'pause'
+      @_playerView.play()
+
     # when playing, rewind a bit to see the "end"
     if seekOffset is @model.timeEnd() and @_playerView.isPlaying()
       seekOffset = Math.max(seekOffset - 2, @model.timeStart())
