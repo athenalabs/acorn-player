@@ -175,7 +175,8 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     # ensure that YT State matches our expectations.
     switch state
       when 'play'
-        ytIsInState = ytState == YT.PlayerState.PLAYING
+        ytIsInState = ytState == YT.PlayerState.PLAYING or
+                      ytState == YT.PlayerState.BUFFERING
       when 'pause'
         ytIsInState = ytState == YT.PlayerState.PAUSED
       when 'end'
