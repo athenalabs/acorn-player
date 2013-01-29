@@ -2,6 +2,7 @@ goog.provide 'acorn.shells.VideoLinkShell'
 
 goog.require 'acorn.shells.LinkShell'
 goog.require 'acorn.shells.Registry'
+goog.require 'acorn.player.ValueSliderView'
 goog.require 'acorn.player.TimeRangeInputView'
 goog.require 'acorn.player.CycleButtonView'
 goog.require 'acorn.player.TimedMediaPlayerView'
@@ -82,8 +83,15 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
       buttons: ['Play', 'Pause', @elapsedTimeView]
       eventhub: @eventhub
 
+    @progressBarView = new acorn.player.ValueSliderView
+      value: 0
+      extraClasses: 'progress-bar-view'
+
     @controlsView.on 'PlayControl:Click', => @play()
     @controlsView.on 'PauseControl:Click', => @pause()
+    @progressBarView.on 'ValueSliderView:ValueDidChange',
+        @_onChangeProgressPercent
+    @playerView.on 'Media:Progress', @_onMediaProgress
 
 
   initializeElapsedTimeView: =>
@@ -132,6 +140,10 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     super
     @$el.empty()
     @$el.append @playerView.render().el
+
+    # TODO: move progress bar to controlsView or an equivalent
+    @$el.append @progressBarView.render().el
+
     @togglePlayPauseControls()
     @
 
@@ -143,6 +155,32 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     else
       @controlsView.$('.control-view.play').removeClass 'hidden'
       @controlsView.$('.control-view.pause').addClass 'hidden'
+
+
+  _onChangeProgressPercent: (progressPercent) =>
+    # get progress that corresponds to slider value percent
+    progress = util.fromPercent progressPercent,
+      low: @model.timeStart()
+      high: @model.timeEnd()
+      bound: true
+
+    # if slider progress differs from player progress, seek to new position
+    unless progress.toFixed(5) == @_progress?.toFixed(5)
+      @_progress = progress
+      @seek progress
+
+
+  _onMediaProgress: (view, elapsed, total) =>
+    @_progress = @seekOffset()
+
+    # get progress percent that corresponds with media player progress
+    progressPercent = util.toPercent @_progress,
+      low: @model.timeStart()
+      high: @model.timeEnd()
+      bound: true
+
+    # keep progress bar in sync
+    @progressBarView.value progressPercent
 
 
   # forward state transitions
