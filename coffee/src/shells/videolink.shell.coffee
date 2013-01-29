@@ -200,9 +200,12 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @_initializeLoopsButton()
 
     @_playerView.on 'Media:StateChange', @_togglePlayPauseControls
+    @_playerView.on 'Media:Progress', @_onMediaProgress
     @_controlsView.on 'PlayControl:Click', => @_playerView.play()
     @_controlsView.on 'PauseControl:Click', => @_playerView.pause()
     @_timeRangeInputView.on 'TimeRangeInputView:DidChangeTimes', @_onChangeTimes
+    @_timeRangeInputView.on 'TimeRangeInputView:DidChangeProgress',
+        @_onChangeProgress
     @_loopsButtonView.on 'CycleButtonView:ValueDidChange', @_onChangeLoops
 
 
@@ -288,6 +291,12 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
       @_controlsView.$('.control-view.pause').addClass 'hidden'
 
 
+  _onMediaProgress: (view, elapsed, total) =>
+    # keep progress bar in sync
+    @_progress = @model.timeStart() + elapsed
+    @_timeRangeInputView.progress @_progress
+
+
   _onChangeTimes: (changed) =>
     changes = {}
     changes.timeStart = changed.start if _.isNumber changed?.start
@@ -311,6 +320,13 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
       @_playerView.looped = 0
 
     @eventhub.trigger 'change:shell', @model, @
+
+
+  _onChangeProgress: (progress) =>
+    # if slider progress differs from player progress, seek to new position
+    unless progress.toFixed(5) == @_progress?.toFixed(5)
+      @_progress = progress
+      @_playerView.seek progress
 
 
   _onChangeLoops: (changed) =>
