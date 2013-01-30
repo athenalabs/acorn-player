@@ -112,6 +112,12 @@ class acorn.player.ShellEditorView extends athena.lib.View
     else
       @$('.remix-views').append remixerView.el
 
+    @renderRemixerViewHeading(remixerView, index)
+    @
+
+  renderRemixerViewHeading: (remixerView, index) =>
+    index ?= @model.shells().indexOf(remixerView.model)
+
     prefix = "Item #{index + 1}" if 1 < (index + 1) < @model.shells().length
     @renderSectionHeading remixerView, (prefix ? '')
     @
@@ -226,7 +232,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
       @swapSubShell oldShell, newShell
 
     view.on 'Remixer:LinkChanged', (remixer, newlink) =>
-      @renderRemixerView remixer if remixer
+      @renderRemixerViewHeading(remixer) if remixer
       @trigger 'ShellEditor:ShellsUpdated'
 
     view
