@@ -37,6 +37,12 @@ describe 'acorn.player.RemixerView', ->
 
   describeSubview
     View: RemixerView
+    Subview: acorn.player.SummaryView
+    subviewAttr: 'summarySubview'
+    viewOptions: options
+
+  describeSubview
+    View: RemixerView
     Subview: model.module.RemixView
     subviewAttr: 'remixSubview'
     viewOptions: options

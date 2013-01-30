@@ -32,11 +32,22 @@ class acorn.player.SummaryView extends athena.lib.View
     '''
 
 
+  initialize: =>
+    super
+    @listenTo @model, 'change', =>
+      if @rendering
+        @renderData()
+
+
   render: =>
     super
     @$el.empty()
     @$el.html @template()
+    @renderData()
+    @
 
+
+  renderData: =>
     @$('.title').text @model.title()
     @$('.description').text @model.description()
     @$('.thumbnail-view img').attr 'src', @model.thumbnail()

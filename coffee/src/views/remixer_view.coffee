@@ -57,6 +57,10 @@ class acorn.player.RemixerView extends athena.lib.View
         {id:'delete', icon: 'icon-remove', tooltip: 'Delete'}
       ]
 
+    @summarySubview = new acorn.player.SummaryView
+      eventhub: @eventhub
+      model: @model
+
     @remixSubview = new @model.module.RemixView
       eventhub: @eventhub
       model: @model
@@ -108,14 +112,23 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @$el.html @template()
 
-    @dropdownView.setElement @$ '.dropdown-view'
-    @dropdownView.render()
-
-    @toolbarView.setElement @$ '.toolbar-view'
-    @toolbarView.render()
+    @dropdownView.setElement(@$('.dropdown-view')).render()
+    @toolbarView.setElement(@$('.toolbar-view')).render()
 
     @$('input#link').val @model.link?()
+    @renderSummarySubview()
     @renderRemixSubview()
+
+    @
+
+
+  renderSummarySubview: =>
+    unless @model is @summarySubview.model
+      @summarySubview.model = @model
+
+    unless @model.module is acorn.shells.EmptyShell
+      if @rendering
+        @$('.remixer-header').after @summarySubview.render().el
 
     @
 
@@ -143,6 +156,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @$('input#link').val @model.link?()
     @dropdownView.selected @model.shellid()
+    @renderSummarySubview()
     @renderRemixSubview()
 
     @trigger 'Remixer:SwapShell', @, oldShell, newShell

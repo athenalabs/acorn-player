@@ -21,7 +21,21 @@ describe 'acorn.player.ShellEditorView', ->
   it 'should be part of acorn.player', ->
     expect(SummaryView).toBeDefined()
 
+
   test.describeView SummaryView, athena.lib.View, options
+
+
+  it 'should call renderData on event changes', ->
+    view = new SummaryView model: model.clone()
+    spyOn view, 'renderData'
+
+    view.model.title('Foo')
+    expect(view.renderData).not.toHaveBeenCalled() # not rendering
+
+    view.render()
+    view.model.title('Foo')
+    expect(view.renderData).toHaveBeenCalled() # not rendering
+
 
   it 'should look good', ->
     # setup DOM
