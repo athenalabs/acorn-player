@@ -1,6 +1,7 @@
 goog.provide 'acorn.shells.EmptyShell'
 
 goog.require 'acorn.shells.Shell'
+goog.require 'acorn.player.ShellSelectorView'
 goog.require 'acorn.config'
 
 
@@ -28,9 +29,28 @@ class EmptyShell.MediaView extends Shell.MediaView
 
 
   render: =>
+    super
     @$el.empty()
     @$el.append('this acorn is empty :(')
+    @
 
+
+class EmptyShell.RemixView extends Shell.RemixView
+
+
+  className: @classNameExtend 'empty-shell'
+
+
+  initialize: =>
+    super
+    @selectorView = new acorn.player.ShellSelectorView
+
+
+  render: =>
+    super
+    @$el.empty()
+    @$el.append @selectorView.render().el
+    @
 
 
 acorn.registerShellModule EmptyShell
