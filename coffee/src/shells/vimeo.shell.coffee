@@ -26,7 +26,7 @@ class VimeoShell.Model extends VideoLinkShell.Model
     "https://vimeo.com/api/v2/video/#{@vimeoId()}.json?callback=?"
 
 
-  description: =>
+  defaultDescription: =>
     start = acorn.util.Time.secondsToTimestring @timeStart()
     end = acorn.util.Time.secondsToTimestring @timeEnd()
     "Vimeo video #{@title() or @link()} from #{start} to #{end}."

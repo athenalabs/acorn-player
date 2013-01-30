@@ -46,7 +46,7 @@ class AcornLinkShell.Model extends LinkShell.Model
     pattern.exec(link)[2]
 
 
-  description: =>
+  defaultDescription: =>
     @acornModel.title() ? ''
 
 

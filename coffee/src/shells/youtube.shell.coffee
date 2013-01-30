@@ -32,7 +32,7 @@ class YouTubeShell.Model extends VideoLinkShell.Model
     "https://gdata.youtube.com/feeds/api/videos/#{@youtubeId()}?v=2&alt=jsonc"
 
 
-  description: =>
+  defaultDescription: =>
     start = acorn.util.Time.secondsToTimestring @timeStart()
     end = acorn.util.Time.secondsToTimestring @timeEnd()
     "YouTube video #{@title()} from #{start} to #{end}."
