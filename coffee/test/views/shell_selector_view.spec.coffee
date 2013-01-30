@@ -18,15 +18,15 @@ describe 'acorn.player.ShellSelectorView', ->
   }, ->
 
     it 'should trigger `ShellSelector:Selected` on `GridTile:Click`', ->
-      tile = {model: new Backbone.Model {link: 'foo'}}
+      tile = {model: new Backbone.Model {shell: 'foo'}}
       view = new ShellSelectorView
       spy = new test.EventSpy view, 'ShellSelector:Selected'
       view.render()
       view.gridView.trigger 'GridTile:Click', tile
       expect(spy.triggered).toBe true
 
-    it 'should trigger `ShellSelector:Selected` with view and tile.link', ->
-      tile = {model: new Backbone.Model {link: 'foo'}}
+    it 'should trigger `ShellSelector:Selected` with view and tile.shell', ->
+      tile = {model: new Backbone.Model {shell: 'foo'}}
       view = new ShellSelectorView
       spy = new test.EventSpy view, 'ShellSelector:Selected'
       view.render()

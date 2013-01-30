@@ -61,6 +61,9 @@ class acorn.player.RemixerView extends athena.lib.View
       eventhub: @eventhub
       model: @model
 
+    @remixSubview.on 'Remix:SwapShell', (oldShell, newShell) =>
+      @swapShell newShell
+
 
   initializeDropdownView: =>
 

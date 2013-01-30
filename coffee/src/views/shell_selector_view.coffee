@@ -15,7 +15,6 @@ class acorn.player.ShellSelectorView extends athena.lib.View
     'click a': (event) => event.preventDefault()
 
 
-
   template: _.template '''
     <div class="row-fluid select-divider">
       <hr class="span4"></hr>
@@ -33,14 +32,14 @@ class acorn.player.ShellSelectorView extends athena.lib.View
       new Backbone.Model
         text: Shell.title
         icon: Shell.icon
-        link: Shell.id
+        shell: Shell.id
 
     @gridView = new athena.lib.GridView
       collection: new Backbone.Collection tileModels
       eventhub: @eventhub
 
     @listenTo @gridView, 'GridTile:Click', (tile) =>
-      @trigger 'ShellSelector:Selected', @, tile.model.get 'link'
+      @select tile.model.get 'shell'
 
 
   render: =>
@@ -49,3 +48,7 @@ class acorn.player.ShellSelectorView extends athena.lib.View
     @$el.html @template()
     @$el.append @gridView.render().el
     @
+
+
+  select: (shellid) =>
+    @trigger 'ShellSelector:Selected', @, shellid

@@ -108,6 +108,24 @@ describe 'acorn.player.RemixerView', ->
       expect(spy2.triggered).toBe true
       expect(model).not.toEqual view.model
 
+    it 'should trigger `Remixer:SwapShell` on `Remix:SwapShell`', ->
+      model = new acorn.shells.LinkShell.Model
+      model2 = new acorn.shells.TextShell.Model
+      view = new RemixerView model: model
+      spy1 = new EventSpy view.dropdownView, 'Dropdown:Selected'
+      spy2 = new EventSpy view, 'Remixer:SwapShell'
+
+      view.render()
+      expect(spy1.triggered).toBe false
+      expect(spy2.triggered).toBe false
+      view.remixSubview.trigger 'Remix:SwapShell', model, model2
+      expect(spy1.triggered).toBe true
+      expect(spy2.triggered).toBe true
+      expect(spy2.arguments[0]).toEqual [view, model, model2]
+      expect(model).not.toEqual view.model
+      expect(model2).toEqual view.model
+
+
     it 'should not trigger `Remixer:SwapShell` on link change (same shell)', ->
       model = new acorn.shells.LinkShell.Model
       view = new RemixerView model: model

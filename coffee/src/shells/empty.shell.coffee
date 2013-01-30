@@ -43,7 +43,14 @@ class EmptyShell.RemixView extends Shell.RemixView
 
   initialize: =>
     super
+
     @selectorView = new acorn.player.ShellSelectorView
+      eventhub: @eventhub
+
+    @listenTo @selectorView, 'ShellSelector:Selected', (view, shellid) =>
+      NewShell = acorn.shellModuleWithId shellid
+      if NewShell
+        @trigger 'Remix:SwapShell', @model, new NewShell.Model
 
 
   render: =>
