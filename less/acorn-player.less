@@ -270,6 +270,36 @@ input {
   }
 }
 
+.summary-view.editable {
+  height: 84px;
+
+  .thumbnail-view {
+    height: 84px;
+    width: 84px;
+  }
+
+  input.title, textarea.description {
+    .box-sizing(border-box);
+    width: 445px;
+    padding: 5px;
+  }
+
+  .title {
+    font-size: 16px;
+    margin-bottom: 10px;
+    height: 30px;
+    max-height: 30px;
+  }
+
+  .description {
+    font-size: 12px;
+    margin-bottom: 0px;
+    height: 44px;
+    max-height: 44px;
+    line-height: 16px;
+  }
+}
+
 .shell-selector-view {
   .transition(0.0s, ease);
 
@@ -471,7 +501,7 @@ input {
     }
 
     input { // disabled
-      min-width: 401px;
+      min-width: 402px;
     }
 
     .dropdown-view > .dropdown-toggle {
