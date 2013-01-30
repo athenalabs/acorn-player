@@ -19,7 +19,7 @@ goog.require 'acorn.player.DropdownView'
 class acorn.player.ShellOptionsView extends athena.lib.View
 
 
-  className: @classNameExtend 'shell-options-view row-fluid'
+  className: @classNameExtend 'shell-options-view'
 
 
   initialize: =>
