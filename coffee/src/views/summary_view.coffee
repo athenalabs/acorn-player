@@ -63,10 +63,11 @@ class acorn.player.SummaryView extends athena.lib.View
     @model = model
 
     @listenTo @model, 'change', =>
+      thumbChanged = @model.thumbnail() isnt @$('img').attr('src')
       titleChanged = @model.title() isnt @value 'title'
       descChanged = @model.description() isnt @value 'description'
 
-      if @rendering and (titleChanged or descChanged)
+      if @rendering and (titleChanged or descChanged or thumbChanged)
         @renderData()
 
     if @rendering
