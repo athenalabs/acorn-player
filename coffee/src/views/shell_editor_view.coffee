@@ -99,16 +99,36 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
   renderOptionsView: =>
     @$el.prepend @shellOptionsView.render().el
+    @renderSectionHeading @shellOptionsView, 'Collection'
     @
 
 
   renderRemixerView: (remixerView, index) =>
+    index ?= @model.shells().indexOf(remixerView.model)
+
     remixerView.render()
     if index?
       @$('.remix-views').insertAt index, remixerView.el
     else
       @$('.remix-views').append remixerView.el
+
+    prefix = "Item #{index + 1}" if 1 < (index + 1) < @model.shells().length
+    @renderSectionHeading remixerView, (prefix ? '')
     @
+
+
+  renderSectionHeading: (view, prefix='') =>
+    view.$('.editor-section').remove()
+
+    if @shellIsEmpty view.model
+      text = 'add a media item by entering a link:'
+    else
+      text = view.model.module.title
+
+    if prefix
+      text = prefix + ': ' + text
+    view.$el.prepend $('<h3>').addClass('editor-section').text(text)
+
 
 
   renderUpdates: =>
@@ -130,6 +150,13 @@ class acorn.player.ShellEditorView extends athena.lib.View
       @lastThumbnail = @model.thumbnail()
       @trigger 'ShellEditor:Thumbnail:Change', @lastThumbnail
       @eventhub.trigger 'ShellEditor:Thumbnail:Change', @lastThumbnail
+      @shellOptionsView.model.trigger 'change'
+
+    # update first shell heading
+    prefix = "Item 1" if (shellCount - emptyCount) > 1
+    @renderSectionHeading @remixerViews[0], (prefix ? '')
+
+    @
 
 
   # retrieves the finalized shell. @model should not be used directly.
@@ -199,6 +226,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
       @swapSubShell oldShell, newShell
 
     view.on 'Remixer:LinkChanged', (remixer, newlink) =>
+      @renderRemixerView remixer if remixer
       @trigger 'ShellEditor:ShellsUpdated'
 
     view

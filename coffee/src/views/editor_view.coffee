@@ -70,7 +70,7 @@ class acorn.player.EditorView extends athena.lib.View
 
     text = 'new media'
     text = 'editing ' + @model.acornid() unless @model.isNew()
-    @$el.append $('<h3>').addClass('header').text(text)
+    @$el.append $('<h2>').addClass('editor-section').text(text)
 
     @$el.append @shellEditorView.render().el
     @$el.append @toolbarView.render().el
