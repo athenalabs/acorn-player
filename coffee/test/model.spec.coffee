@@ -41,11 +41,8 @@ describe 'acorn.Model', ->
     expect(JSON.stringify m.attributes).toEqual s
 
   describeProperty = athena.lib.util.test.describeProperty
-  describeProperty Model, 'title', {}, default: 'New Acorn'
   describeProperty Model, 'owner', {},
   describeProperty Model, 'parent', {},
-  describeProperty Model, 'thumbnail', {}, default: acorn.config.img.acorn
-
 
   describeProperty Model, 'acornid', {}, {}, ->
     it 'acornid should match the id athena.lib.Model property', ->
@@ -61,30 +58,6 @@ describe 'acorn.Model', ->
         expect(model.acornid()).toBe id
         expect(model.id).toBe id
         expect(model.id).toBe model.acornid()
-
-
-  describe 'Model::defaultThumbnail', ->
-
-    it 'should be a function', ->
-      expect(typeof Model::defaultThumbnail).toBe 'function'
-
-    it 'should return shell.thumbnail, if any', ->
-      attrs =
-        shell:
-          thumbnail: 'foo'
-          defaultThumbnail: 'bar'
-
-      expect(new Model(attrs).defaultThumbnail()).toBe 'foo'
-
-    it 'should return shell.defaultThumbnail, if no thumbnail', ->
-      attrs =
-        shell:
-          defaultThumbnail: 'bar'
-
-      expect(new Model(attrs).defaultThumbnail()).toBe 'bar'
-
-    it 'should return acorn.config.img.acorn otherwise', ->
-      expect(new Model().defaultThumbnail()).toBe acorn.config.img.acorn
 
 
   describe 'acorn.Model.shellData property', ->
@@ -103,6 +76,51 @@ describe 'acorn.Model', ->
         expect(model.shellData()).not.toBe sd
         expect(model.shellData(sd)).toBe sd
         expect(model.shellData()).toBe sd
+
+
+
+  describeShellProperty = (Model, property, shellProperty, defaultVal, tests) ->
+
+    if _.isFunction(defaultVal)
+      defaultVal = defaultVal()
+
+    describe "Model::#{property} property bound to shell.#{shellProperty}", ->
+
+      it 'should be a function', ->
+        expect(typeof Model::[property]).toBe 'function'
+
+      it "should return default value without shell data", ->
+        model = new Model()
+        expect(model[property]()).toBe defaultVal
+
+      it "should return shell.#{shellProperty}", ->
+        model = new Model()
+        expect(model[property]()).toBe defaultVal
+        model.get('shell')[shellProperty] = 'foo'
+        expect(model.get('shell')[shellProperty]).toBe 'foo'
+        expect(model[property]()).toBe 'foo'
+
+      it "should set shell.#{shellProperty}", ->
+        model = new Model()
+        expect(model.get('shell')?[shellProperty]).not.toBe 'foo'
+        model[property]('foo')
+        expect(model[property]()).toBe 'foo'
+        expect(model.get('shell')[shellProperty]).toBe 'foo'
+
+      tests?()
+
+  img = acorn.config.img.acorn
+  describeShellProperty Model, 'title', 'title', 'New Acorn'
+  describeShellProperty Model, 'description', 'description', ''
+  describeShellProperty Model, 'thumbnail', 'thumbnail', img, ->
+
+    it 'should return shell.defaultThumbnail, if no thumbnail', ->
+      attrs =
+        shell:
+          defaultThumbnail: 'bar'
+
+      expect(new Model(attrs).thumbnail()).toBe 'bar'
+
 
 
   describe 'acorn.Model.withData', ->

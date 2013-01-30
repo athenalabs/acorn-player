@@ -17,31 +17,39 @@ class acorn.Model extends athena.lib.Model
       @shellData { shellid: 'acorn.EmptyShell' }
 
 
+  idAttribute: 'acornid'
+
+
   # property managers
   acornid: @property 'acornid'
-  title: @property('title', default: 'New Acorn')
   shellData: @property 'shell'
   owner: @property 'owner'
   parent: @property 'parent'
 
 
-  thumbnail: (thumbnail) =>
-    if thumbnail?
-      @set 'thumbnail', thumbnail
-    @get('thumbnail') ? @defaultThumbnail()
+  # shell-bound properties
+
+  @bindToShellProperty: (property, defaultVal) ->
+    (value) ->
+      if value?
+        shell = @get('shell') or {}
+        shell[property] = value
+        @set 'shell', shell
+        # re-set so that change:shell is triggered
+
+      # return the value or a default
+      @get('shell')?[property] or
+        if _.isFunction(defaultVal) then defaultVal.call(this) else defaultVal
 
 
-  defaultThumbnail: =>
-    @shellData().thumbnail or
-      @shellData().defaultThumbnail or
-      acorn.config.img.acorn
+  title: @bindToShellProperty('title', 'New Acorn')
+  description: @bindToShellProperty('description', '')
+  thumbnail: @bindToShellProperty('thumbnail', ->
+    @get('shell')?.defaultThumbnail or acorn.config.img.acorn)
 
-
-  idAttribute: 'acornid'
 
   # Backbone url base
   urlRoot: => "#{acorn.config.url.api}/acorn"
-
   pageUrl: => "#{acorn.config.url.base}/#{@acornid()}"
   embedUrl: => "#{acorn.config.url.base}/embed/#{@acornid()}"
 

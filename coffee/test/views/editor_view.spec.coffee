@@ -45,12 +45,6 @@ describe 'acorn.player.EditorView', ->
 
   describeSubview
     View: EditorView
-    Subview: acorn.player.AcornOptionsView
-    subviewAttr: 'acornOptionsView'
-    viewOptions: options
-
-  describeSubview
-    View: EditorView
     Subview: acorn.player.ShellEditorView
     subviewAttr: 'shellEditorView'
     viewOptions: options
