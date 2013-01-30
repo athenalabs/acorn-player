@@ -17,12 +17,11 @@ class acorn.player.ShellSelectorView extends athena.lib.View
 
 
   template: _.template '''
-    <div class="row-fluid">
-      <hr class="span5"></hr>
-      <div class="span1 align-center">or</div>
-      <hr class="span5"></hr>
+    <div class="row-fluid select-divider">
+      <hr class="span4"></hr>
+      <div class="span4 align-center">or select other type below</div>
+      <hr class="span4"></hr>
     </div>
-    <div>Select a shell below:</div>
     '''
 
 

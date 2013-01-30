@@ -271,14 +271,19 @@ input {
 }
 
 .shell-selector-view {
+  .transition(0.0s, ease);
 
-  hr {
-    margin: 0px;
-    min-height: 15px;
-  }
-  > div > div.span1 {
-    text-align: center;
-    margin: 0px 5px;
+  > .select-divider {
+    > hr {
+      margin: 10px 0px;
+      min-height: 15px;
+    }
+
+    > div {
+      color: #aaaaaa;
+      text-align: center;
+      margin: 0px 5px;
+    }
   }
 
   > .grid-view {
@@ -288,11 +293,13 @@ input {
   .grid-tile-view {
     width: 54px;
     height: 54px;
+    margin-left: 0px;
+    margin-right: 20px;
 
     i {
       font-size: 46px;
       line-height: 54px;
-      padding: 5px 0px;
+      padding-bottom: 2px;
     }
 
     a, a:hover, a:active, a:focus {
@@ -300,14 +307,21 @@ input {
       text-decoration: none;
     }
 
-    a:hover {
-      color: #333333;
-    }
-
     .text {
       font-size: 12px;
       margin: 0px -5px;
       text-align: center;
+    }
+  }
+
+  .grid-tile-view:first-child {
+    border-left: 0px;
+  }
+
+  .grid-tile-view:hover {
+    background: rgba(0, 0, 0, 0.1);
+    a, a:hover {
+      color: #333333;
     }
   }
 
@@ -497,6 +511,10 @@ input {
       .position-absolutely;
     }
   }
+
+  hr {
+    margin: 30px 0px;
+  }
 }
 
 
@@ -509,9 +527,8 @@ input {
   }
 
   > .remixer-content {
-    min-height: 0px;
-    height: 0px;
-    opacity: 0.0;
+    min-height: 140px;
+    border: 0px;
   }
 
 }
