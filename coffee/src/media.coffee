@@ -4,14 +4,14 @@ goog.provide 'acorn.MediaInterface'
 ###
 # MediaInterface
 
-acorn's MediaInterface is a generic interface for all sorts of different
-kinds of media. It abstracts the main functionality of embedded wbe media.
+acorn's MediaInterface is a generic interface for all sorts of media. It
+abstracts the main functionality of embedded web media.
 
 ## States
 
 Media can be in one of the following states:
-1. initing - the media is getting ready to be in a playable state
-2. ready - the media is done initing but has not started playing
+1. initializing - the media is getting ready to be in a playable state
+2. ready - the media is done initializing but has not started playing
 3. playing - the media experience is under way
 4. paused - the media experience is paused
 5. ended - the media has finished playing (it can be restarted)
