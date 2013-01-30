@@ -21,6 +21,10 @@ class SplicedShell.Model extends CollectionShell.Model
   transition: @property('transition')
 
 
+  title: =>
+    super or @shells().first()?.title() or ''
+
+
 
 class SplicedShell.MediaView extends CollectionShell.MediaView
 

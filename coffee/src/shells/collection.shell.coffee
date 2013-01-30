@@ -66,6 +66,10 @@ class CollectionShell.Model extends Shell.Model
     @shells().first()?.thumbnail() or super
 
 
+  title: =>
+    super or "#{@module.title} with #{@shells().length} items"
+
+
   # lazily construct shells collection
   shells: =>
     unless @_shells
