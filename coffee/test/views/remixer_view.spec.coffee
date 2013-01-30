@@ -193,3 +193,11 @@ describe 'acorn.player.RemixerView', ->
     view.$el.width 600
     view.render()
     $player.append view.el
+
+    view = new RemixerView _.extend {}, options,
+      showToolbar: false
+      validShells: [acorn.shells.ImageLinkShell]
+
+    view.$el.width 600
+    view.render()
+    $player.append view.el

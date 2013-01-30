@@ -21,13 +21,14 @@ class acorn.player.RemixerView extends athena.lib.View
 
 
   template: _.template '''
-    <div class="row-fluid remixer-header">
+    <div class="row-fluid control-group remixer-header">
       <div class="input-append">
         <input id="link" type="text" placeholder="enter link" />
         <div class="btn-group dropdown-view"></div>
       </div>
       <div class="btn-group toolbar-view"></div>
     </div>
+    <div class="alert"></div>
     <div class="remixer-content"></div>
     <hr />
     '''
@@ -40,6 +41,15 @@ class acorn.player.RemixerView extends athena.lib.View
     'keyup input#link': (event) =>
       if event.keyCode is athena.lib.util.keys.ENTER
         @onLinkChange()
+
+
+  defaults: => _.extend super,
+
+    # whether to show the toolbar
+    showToolbar: true
+
+    # restrict the possible shells - default to all
+    validShells: _.values acorn.shells.Registry.modules
 
 
   initialize: =>
@@ -112,9 +122,12 @@ class acorn.player.RemixerView extends athena.lib.View
     @$el.empty()
 
     @$el.html @template()
+    @alert() # hide
 
     @dropdownView.setElement(@$('.dropdown-view')).render()
-    @toolbarView.setElement(@$('.toolbar-view')).render()
+
+    if @options.showToolbar
+      @toolbarView.setElement(@$('.toolbar-view')).render()
 
     @$('input#link').val @model.link?()
     @renderSummarySubview()
@@ -129,7 +142,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
     unless @model.module is acorn.shells.EmptyShell
       if @rendering
-        @$('.remixer-header').after @summarySubview.render().el
+        @$('.remixer-content').before @summarySubview.render().el
 
     @
 
@@ -163,8 +176,29 @@ class acorn.player.RemixerView extends athena.lib.View
     @trigger 'Remixer:SwapShell', @, oldShell, newShell
     @
 
+  shellIsValid: (shell) =>
+    _.any @options.validShells, (ValidShell) =>
+      shell instanceof ValidShell.Model
+
+
+  alert: (text, className='error') =>
+    alert = @$('.alert')
+    alert.text(text)
+    alert.removeClass('alert-error')
+    alert.removeClass('alert-success')
+    @$('.remixer-header').removeClass 'error'
+    @$('.remixer-header').removeClass 'success'
+    unless text
+      alert.hide()
+      return
+
+    @$('.remixer-header').addClass className
+    alert.addClass("alert-#{className}")
+    alert.show()
+
 
   onLinkChange: =>
+    @alert() # hide
     link = @$('input#link').val().trim();
     link = acorn.util.urlFix link
 
@@ -174,6 +208,13 @@ class acorn.player.RemixerView extends athena.lib.View
 
     if acorn.util.isUrl link
       shell = LinkShell.Model.withLink link
+
+      unless @shellIsValid shell
+        console.log 'invalid shell'
+        shellNames = _.pluck @options.validShells, 'title'
+        @alert 'Invalid link. Enter a link to: ' + shellNames.join(', ')
+        return
+
       if shell instanceof Shell.Model and shell.shellid() != @model.shellid()
         @swapShell shell
       else
