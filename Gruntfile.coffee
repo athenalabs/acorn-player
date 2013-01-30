@@ -41,6 +41,7 @@ module.exports = (grunt) ->
       'node_modules/jquery-browser/lib/jquery.js'    # for dom manipulation
       'node_modules/underscore/underscore.js'        # for utilities
       'node_modules/backbone/backbone.js'            # for mvc apps
+      'node_modules/marked/lib/marked.js'            # for docs
       'node_modules/grunt-jasmine-spec-server/lib/bootstrap/js/bootstrap.min.js'
       'lib/athena.lib.min.js'                        # for athena utils
       'lib/jquery/jquery.object-fit.js'              # for object-fit

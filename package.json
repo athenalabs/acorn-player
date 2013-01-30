@@ -42,7 +42,8 @@
     "underscore": "~1.4.3",
     "backbone": "~0.9.9",
     "grunt-exec": "~0.3.0",
-    "grunt-cli": "~0.1.2"
+    "grunt-cli": "~0.1.2",
+    "marked": "~0.2.7"
   },
   "readmeFilename": "README.md"
 }

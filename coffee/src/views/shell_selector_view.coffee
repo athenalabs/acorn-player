@@ -1,9 +1,10 @@
 goog.provide 'acorn.player.ShellSelectorView'
 goog.require 'acorn.shells.Registry'
-goog.require 'acorn.shells.CollectionShell'
+goog.require 'acorn.shells.DocShell'
+goog.require 'acorn.shells.TextShell'
 
-
-CollectionShell = acorn.shells.CollectionShell
+TextShell = acorn.shells.TextShell
+DocShell = acorn.shells.DocShell
 
 class acorn.player.ShellSelectorView extends athena.lib.View
 
@@ -27,7 +28,7 @@ class acorn.player.ShellSelectorView extends athena.lib.View
   initialize: =>
     super
 
-    @modules ?= [TextShell, VideoLinkShell]
+    @modules ?= [TextShell, DocShell]
     tileModels = _.map @modules, (Shell) =>
       new Backbone.Model
         text: Shell.title
