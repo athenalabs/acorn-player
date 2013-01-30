@@ -53,7 +53,8 @@ describe 'acorn.shells.VideoLinkShell', ->
 
       it 'should have a description method that describes the shell', ->
         model = new Model options
-        expect(model.description()).toBe "Video #{link} from 00:33 to 02:25."
+        expect(model.description()).toBe(
+          "Video \"#{link}\" from 00:33 to 02:25.")
 
       it 'should have a duration method that returns a number', ->
         model = new Model options

@@ -80,12 +80,12 @@ describe 'acorn.shells.YouTubeShell', ->
           model: new Model _modelOptions
 
         expect(view.model.description()).toBe(
-          "YouTube video #{_modelOptions.link} from 00:33 to 02:25.")
+          "YouTube video \"#{_modelOptions.link}\" from 00:33 to 02:25.")
 
         view.model.title 'foo'
 
         expect(view.model.description()).toBe(
-          "YouTube video foo from 00:33 to 02:25.")
+          "YouTube video \"foo\" from 00:33 to 02:25.")
 
 
 

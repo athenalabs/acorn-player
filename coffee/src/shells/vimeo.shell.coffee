@@ -29,7 +29,7 @@ class VimeoShell.Model extends VideoLinkShell.Model
   defaultDescription: =>
     start = acorn.util.Time.secondsToTimestring @timeStart()
     end = acorn.util.Time.secondsToTimestring @timeEnd()
-    "Vimeo video #{@title() or @link()} from #{start} to #{end}."
+    "Vimeo video \"#{@title()}\" from #{start} to #{end}."
 
 
   # returns the vimeo video id of this link.

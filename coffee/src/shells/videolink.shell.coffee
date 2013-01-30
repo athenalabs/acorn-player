@@ -37,7 +37,7 @@ class VideoLinkShell.Model extends LinkShell.Model
   defaultDescription: =>
     start = acorn.util.Time.secondsToTimestring @timeStart()
     end = acorn.util.Time.secondsToTimestring @timeEnd()
-    "Video #{@link()} from #{start} to #{end}."
+    "Video \"#{@link()}\" from #{start} to #{end}."
 
 
   # duration of one video loop given current splicing

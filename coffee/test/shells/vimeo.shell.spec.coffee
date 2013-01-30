@@ -71,12 +71,12 @@ describe 'acorn.shells.VimeoShell', ->
           model: new Model _modelOptions
 
         expect(view.model.description()).toBe(
-          "Vimeo video #{_modelOptions.link} from 00:33 to 02:25.")
+          "Vimeo video \"#{_modelOptions.link}\" from 00:33 to 02:25.")
 
         view.model.title 'foo'
 
         expect(view.model.description()).toBe(
-          "Vimeo video foo from 00:33 to 02:25.")
+          "Vimeo video \"foo\" from 00:33 to 02:25.")
 
 
     describe 'VimeoShell.PlayerView', ->
