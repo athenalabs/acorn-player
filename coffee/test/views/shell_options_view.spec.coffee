@@ -27,6 +27,12 @@ describe 'acorn.player.ShellOptionsView', ->
 
   test.describeSubview
     View: ShellOptionsView
+    Subview: acorn.player.SummaryView
+    subviewAttr: 'summaryView'
+    viewOptions: options
+
+  test.describeSubview
+    View: ShellOptionsView
     Subview: model.module.RemixView
     subviewAttr: 'remixView'
     viewOptions: options

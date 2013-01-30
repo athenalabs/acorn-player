@@ -38,6 +38,11 @@ class acorn.player.ShellOptionsView extends athena.lib.View
       unless shellid is @model.shellid()
         @trigger 'ShellOptions:SwapShell', shellid
 
+    @summaryView = new acorn.player.SummaryView
+      eventhub: @eventhub
+      editable: true
+      model: @model
+
     @remixView = new @model.module.RemixView
       eventhub: @eventhub
       model: @model
@@ -47,5 +52,6 @@ class acorn.player.ShellOptionsView extends athena.lib.View
     super
     @$el.empty()
     @$el.append @dropdownView.render().el
+    @$el.append @summaryView.render().el
     @$el.append @remixView.render().el
     @
