@@ -125,7 +125,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
   renderSummarySubview: =>
     unless @model is @summarySubview.model
-      @summarySubview.model = @model
+      @summarySubview.setModel @model
 
     unless @model.module is acorn.shells.EmptyShell
       if @rendering

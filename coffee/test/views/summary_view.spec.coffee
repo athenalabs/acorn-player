@@ -39,7 +39,20 @@ describe 'acorn.player.ShellEditorView', ->
 
     view.render()
     view.model.title('Foo')
-    expect(view.renderData).toHaveBeenCalled() # not rendering
+    expect(view.renderData).toHaveBeenCalled() # rendering
+
+
+  it 'should call renderData on event changes (after setModel)', ->
+    view = new SummaryView model: model
+    spyOn view, 'renderData'
+
+    view.setModel model.clone()
+    view.model.title('Foo')
+    expect(view.renderData).not.toHaveBeenCalled() # not rendering
+
+    view.render()
+    view.model.title('Foo')
+    expect(view.renderData).toHaveBeenCalled() # rendering
 
 
   it 'should render normal template if editable is false', ->

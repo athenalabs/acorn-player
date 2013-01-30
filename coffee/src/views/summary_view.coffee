@@ -56,12 +56,21 @@ class acorn.player.SummaryView extends athena.lib.View
 
   initialize: =>
     super
+    @setModel @model # bind listener
+
+
+  setModel: (model) =>
+    @model = model
+
     @listenTo @model, 'change', =>
       titleChanged = @model.title() isnt @value 'title'
       descChanged = @model.description() isnt @value 'description'
 
       if @rendering and (titleChanged or descChanged)
         @renderData()
+
+    if @rendering
+      @renderData()
 
 
   render: =>
