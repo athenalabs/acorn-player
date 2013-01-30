@@ -67,18 +67,22 @@ class acorn.player.RemixerView extends athena.lib.View
 
   initializeDropdownView: =>
 
+    moduleObject = (Shell) ->
+      {id:Shell.id, name:Shell.title, icon:Shell.icon}
+
     # get only the Link-based Modules
     modules = [
-      {id:LinkShell.id, name:'Link (iframe)', icon: LinkShell.icon}
-      {id:AcornLinkShell.id, name:'Acorn Link', icon: AcornLinkShell.icon}
-      {id:ImageLinkShell.id, name:'Image Link', icon: ImageLinkShell.icon}
-      {id:PDFLinkShell.id, name:'PDF Link', icon: PDFLinkShell.icon}
-      {id:YouTubeShell.id, name:'YouTube', icon: YouTubeShell.icon}
-      {id:VimeoShell.id, name:'Vimeo', icon: VimeoShell.icon}
+      moduleObject(LinkShell)
+      moduleObject(AcornLinkShell)
+      moduleObject(ImageLinkShell)
+      moduleObject(PDFLinkShell)
+      moduleObject(YouTubeShell)
+      moduleObject(VimeoShell)
       # '---' divisors TODO
-      {id:TextShell.id, name:'Text', icon: TextShell.icon}
+      moduleObject(TextShell)
+      moduleObject(DocShell)
       # '---' divisors TODO
-      {id:EmptyShell.id, name:'Empty', icon: EmptyShell.icon}
+      moduleObject(EmptyShell)
     ]
 
     selected = @model.module.id
