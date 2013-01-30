@@ -25,6 +25,12 @@ describe 'acorn.player.ShellOptionsView', ->
     subviewAttr: 'dropdownView'
     viewOptions: options
 
+  test.describeSubview
+    View: ShellOptionsView
+    Subview: model.module.RemixView
+    subviewAttr: 'remixView'
+    viewOptions: options
+
   it 'should trigger `ShellOptions:SwapShell` on Dropdown:Selected', ->
     view = new ShellOptionsView options
     view.render()
