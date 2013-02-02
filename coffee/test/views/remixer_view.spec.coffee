@@ -50,23 +50,23 @@ describe 'acorn.player.RemixerView', ->
 
   describe 'events', ->
 
-    it 'should trigger `Remixer:Duplicate` on clicking btn', ->
+    it 'should trigger `Remixer:Toolbar:Click:Duplicate` on clicking btn', ->
       view = new RemixerView options
-      spy = new EventSpy view, 'Remixer:Duplicate'
+      spy = new EventSpy view, 'Remixer:Toolbar:Click:Duplicate'
 
       view.render()
       expect(spy.triggered).toBe false
-      view.toolbarView.$('button#duplicate').trigger 'click'
+      view.toolbarView.$('button#Duplicate').trigger 'click'
       expect(spy.triggered).toBe true
       expect(spy.arguments[0]).toEqual [view]
 
-    it 'should trigger `Remixer:Delete` on clicking btn', ->
+    it 'should trigger `Remixer:Toolbar:Click:Delete` on clicking btn', ->
       view = new RemixerView options
-      spy = new EventSpy view, 'Remixer:Delete'
+      spy = new EventSpy view, 'Remixer:Toolbar:Click:Delete'
 
       view.render()
       expect(spy.triggered).toBe false
-      view.toolbarView.$('button#delete').trigger 'click'
+      view.toolbarView.$('button#Delete').trigger 'click'
       expect(spy.triggered).toBe true
       expect(spy.arguments[0]).toEqual [view]
 
@@ -195,7 +195,7 @@ describe 'acorn.player.RemixerView', ->
     $player.append view.el
 
     view = new RemixerView _.extend {}, options,
-      showToolbar: false
+      toolbarButtons: []
       validShells: [acorn.shells.ImageLinkShell]
 
     view.$el.width 600

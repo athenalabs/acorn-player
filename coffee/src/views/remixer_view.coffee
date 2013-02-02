@@ -35,8 +35,6 @@ class acorn.player.RemixerView extends athena.lib.View
 
 
   events: => _.extend super,
-    'click button#duplicate': => @trigger 'Remixer:Duplicate', @
-    'click button#delete': => @trigger 'Remixer:Delete', @
     'blur input#link': => @onLinkChange()
     'keyup input#link': (event) =>
       if event.keyCode is athena.lib.util.keys.ENTER
@@ -45,8 +43,11 @@ class acorn.player.RemixerView extends athena.lib.View
 
   defaults: => _.extend super,
 
-    # whether to show the toolbar
-    showToolbar: true
+    # toolbar buttons
+    toolbarButtons: [
+      {id:'Duplicate', icon: 'icon-copy', tooltip: 'Duplicate'}
+      {id:'Delete', icon: 'icon-remove', tooltip: 'Delete'}
+    ]
 
     # restrict the possible shells - default to all
     validShells: _.values acorn.shells.Registry.modules
@@ -62,10 +63,12 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @toolbarView = new athena.lib.ToolbarView
       eventhub: @eventhub
-      buttons: [
-        {id:'duplicate', icon: 'icon-copy', tooltip: 'Duplicate'}
-        {id:'delete', icon: 'icon-remove', tooltip: 'Delete'}
-      ]
+      buttons: @options.toolbarButtons
+
+    @toolbarView.on 'all', =>
+      unless /Toolbar:Click:/.test arguments[0]
+        return
+      @trigger 'Remixer:' + arguments[0], @
 
     @summarySubview = new acorn.player.SummaryView
       eventhub: @eventhub
@@ -126,7 +129,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @dropdownView.setElement(@$('.dropdown-view')).render()
 
-    if @options.showToolbar
+    if @options.toolbarButtons.length > 0
       @toolbarView.setElement(@$('.toolbar-view')).render()
 
     @$('input#link').val @model.link?()

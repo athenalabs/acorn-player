@@ -242,15 +242,15 @@ describe 'acorn.player.ShellEditorView', ->
         expect(view.model.shells().models[0]).toEqual models[0]
 
 
-    describe 'on Remixer:Duplicate', ->
+    describe 'on Remixer:Toolbar:Click:Duplicate', ->
 
-      it 'should be triggered by a Remixer:Duplicate event', ->
+      it 'should be triggered by a Remixer:Toolbar:Click:Duplicate event', ->
         view = new ShellEditorView options
         view.render()
         remixer = view.remixerViews[0]
 
         spy = spyOn(view, 'addShell').andCallThrough()
-        remixer.trigger 'Remixer:Duplicate', remixer
+        remixer.trigger 'Remixer:Toolbar:Click:Duplicate', remixer
         expect(spy).toHaveBeenCalled()
 
       it 'should add a clone of the remixerView\'s shell', ->
@@ -259,21 +259,21 @@ describe 'acorn.player.ShellEditorView', ->
         remixer = view.remixerViews[0]
 
         spy = spyOn(view, 'addShell').andCallThrough()
-        remixer.trigger 'Remixer:Duplicate', remixer
+        remixer.trigger 'Remixer:Toolbar:Click:Duplicate', remixer
 
         shell = spy.mostRecentCall.args[0]
         expect(shell instanceof Shell.Model).toBe true
         expect(shell.attributes).toEqual remixer.model.attributes
 
-    describe 'on Remixer:Delete', ->
+    describe 'on Remixer:Toolbar:Click:Delete', ->
 
-      it 'should be triggered by a Remixer:Delete event', ->
+      it 'should be triggered by a Remixer:Toolbar:Click:Delete event', ->
         view = new ShellEditorView options
         view.render()
         remixer = view.remixerViews[0]
 
         spy = spyOn(view, 'removeShell').andCallThrough()
-        remixer.trigger 'Remixer:Delete', remixer
+        remixer.trigger 'Remixer:Toolbar:Click:Delete', remixer
         expect(spy).toHaveBeenCalled()
 
       it 'should remove the remixerView\'s shell', ->
@@ -282,7 +282,7 @@ describe 'acorn.player.ShellEditorView', ->
         remixer = view.remixerViews[0]
 
         spy = spyOn(view, 'removeShell').andCallThrough()
-        remixer.trigger 'Remixer:Delete', remixer
+        remixer.trigger 'Remixer:Toolbar:Click:Delete', remixer
         expect(spy).toHaveBeenCalledWith remixer.model
 
     describe 'on Remixer:SwapShell', ->
