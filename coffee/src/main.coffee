@@ -27,5 +27,6 @@ goog.require 'acorn.player.MediaPlayerView'
 goog.require 'acorn.player.TimedMediaPlayerView'
 goog.require 'acorn.player.SummaryView'
 goog.require 'acorn.player.ShellSelectorView'
+goog.require 'acorn.player.EditSummaryView'
 
 (exports ? @).acorn = acorn

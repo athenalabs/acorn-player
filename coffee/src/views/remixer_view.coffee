@@ -70,9 +70,8 @@ class acorn.player.RemixerView extends athena.lib.View
         return
       @trigger 'Remixer:' + arguments[0], @
 
-    @summarySubview = new acorn.player.SummaryView
+    @summarySubview = new acorn.player.EditSummaryView
       eventhub: @eventhub
-      editable: true
       model: @model
 
     @remixSubview = new @model.module.RemixView
