@@ -30,9 +30,33 @@ class acorn.player.EditSummaryView extends acorn.player.SummaryView
     super
     @setModel @model # bind listener
 
+    imageModel = new ImageLinkShell.Model link: @model.thumbnail()
+    @editImageView = new acorn.player.EditImageView
+      eventhub: @eventhub
+      model: imageModel
+
+    @popoverView = new athena.lib.PopoverView
+      eventhub: @eventhub
+      content: @editImageView
+
+    @listenTo @editImageView, 'EditImage:Cancel', =>
+      @editImageView.model.link @model.thumbnail()
+      @popoverView.hide()
+
+    @listenTo @editImageView, 'EditImage:Save', =>
+      @model.thumbnail @editImageView.model.link()
+      @popoverView.hide()
+
+
+  onModelChange: =>
+    super
+    @editImageView?.model.link @model.thumbnail()
+
 
   render: =>
     super
+    @popoverView.options.popover = @$('.thumbnail-view')
+    @popoverView.render()
     @
 
 
