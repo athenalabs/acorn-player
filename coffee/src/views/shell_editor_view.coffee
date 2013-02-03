@@ -107,6 +107,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
     index ?= @model.shells().indexOf(remixerView.model)
 
     remixerView.render()
+    remixerView.$el.append $('<hr>')
     if index?
       @$('.remix-views').insertAt index, remixerView.el
     else

@@ -30,7 +30,6 @@ class acorn.player.RemixerView extends athena.lib.View
     </div>
     <div class="alert"></div>
     <div class="remixer-content"></div>
-    <hr />
     '''
 
 
