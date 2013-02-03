@@ -48,6 +48,9 @@ class acorn.player.RemixerView extends athena.lib.View
       {id:'Delete', icon: 'icon-remove', tooltip: 'Delete'}
     ]
 
+    # show summary view
+    showSummary: true
+
     # restrict the possible shells - default to all
     validShells: _.values acorn.shells.Registry.modules
 
@@ -69,9 +72,10 @@ class acorn.player.RemixerView extends athena.lib.View
         return
       @trigger 'Remixer:' + arguments[0], @
 
-    @summarySubview = new acorn.player.EditSummaryView
-      eventhub: @eventhub
-      model: @model
+    if @options.showSummary
+      @summarySubview = new acorn.player.EditSummaryView
+        eventhub: @eventhub
+        model: @model
 
     @remixSubview = new @model.module.RemixView
       eventhub: @eventhub
@@ -138,6 +142,9 @@ class acorn.player.RemixerView extends athena.lib.View
 
 
   renderSummarySubview: =>
+    unless @options.showSummary
+      return
+
     unless @model is @summarySubview.model
       @summarySubview.setModel @model
 

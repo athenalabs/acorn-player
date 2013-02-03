@@ -35,11 +35,21 @@ describe 'acorn.player.RemixerView', ->
     viewOptions: options
     checkDOM: (cEl, pEl) -> cEl.parentNode.parentNode is pEl
 
-  describeSubview
+  describeSubview {
     View: RemixerView
     Subview: acorn.player.SummaryView
     subviewAttr: 'summarySubview'
     viewOptions: options
+  }, ->
+
+    it 'should be initialized if options.showSummary is true', ->
+      view = new RemixerView _.extend {}, options, {showSummary: true}
+      expect(view.summarySubview).toBeDefined()
+
+    it 'should not be initialized if options.showSummary is false', ->
+      view = new RemixerView _.extend {}, options, {showSummary: false}
+      expect(view.summarySubview).not.toBeDefined()
+
 
   describeSubview
     View: RemixerView
