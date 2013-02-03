@@ -51,6 +51,9 @@ class acorn.player.RemixerView extends athena.lib.View
     # show summary view
     showSummary: true
 
+    # allow empty link
+    allowEmptyLink: false
+
     # restrict the possible shells - default to all
     validShells: _.values acorn.shells.Registry.modules
 
@@ -214,7 +217,11 @@ class acorn.player.RemixerView extends athena.lib.View
     if link is @model.link?()
       return
 
-    if acorn.util.isUrl link
+    if link is '' and @options.allowEmptyLink
+      @model.link link
+      @remixSubview.render()
+
+    else if acorn.util.isUrl link
       shell = LinkShell.Model.withLink link
 
       unless @shellIsValid shell

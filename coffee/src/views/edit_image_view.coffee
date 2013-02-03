@@ -32,6 +32,7 @@ class acorn.player.EditImageView extends athena.lib.View
       eventhub: @eventhub
       model: @model
       showSummary: false
+      allowEmptyLink: true
       toolbarButtons: [
         {id:'Cancel', icon: 'icon-remove', tooltip: 'Cancel'}
         {id:'Save', icon: 'icon-ok', tooltip: 'Save'}
