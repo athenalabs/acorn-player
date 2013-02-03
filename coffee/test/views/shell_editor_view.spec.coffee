@@ -360,31 +360,31 @@ describe 'acorn.player.ShellEditorView', ->
 
       it 'should be triggered initially with proper thumbnail', ->
         hub = new athena.lib.View
-        shell = new acorn.shells.LinkShell.Model thumbnail: 'foo'
+        shell = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
         view = new ShellEditorView model: shell, eventhub: hub
         spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
         view.render()
         expect(spy.arguments[0][0]).toBe shell.thumbnail()
-        expect(spy.arguments[0][0]).toBe 'foo'
+        expect(spy.arguments[0][0]).toBe 'foo.png'
 
       it 'should be triggered when thumbnail changes (swapping shells)', ->
         hub = new athena.lib.View
-        oldShell = new acorn.shells.LinkShell.Model thumbnail: 'foo'
-        newShell = new acorn.shells.ImageLinkShell.Model thumbnail: 'bar'
+        oldShell = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
+        newShell = new acorn.shells.ImageLinkShell.Model thumbnail: 'bar.png'
         view = new ShellEditorView model: oldShell, eventhub: hub
         spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
 
         view.render()
         expect(spy.triggerCount).toBe 1
-        expect(spy.arguments[0][0]).toBe 'foo'
+        expect(spy.arguments[0][0]).toBe 'foo.png'
         view.swapSubShell oldShell, newShell
         expect(spy.triggerCount).toBe 2
-        expect(spy.arguments[1][0]).toBe 'bar'
+        expect(spy.arguments[1][0]).toBe 'bar.png'
 
       it 'should NOT be triggered w/o thumbnail changes (swapping shells)', ->
         hub = new athena.lib.View
-        oldShell = new acorn.shells.LinkShell.Model thumbnail: 'foo'
-        newShell = new acorn.shells.ImageLinkShell.Model thumbnail: 'foo'
+        oldShell = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
+        newShell = new acorn.shells.ImageLinkShell.Model thumbnail: 'foo.png'
         view = new ShellEditorView model: oldShell, eventhub: hub
         spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
 
@@ -395,22 +395,22 @@ describe 'acorn.player.ShellEditorView', ->
 
       it 'should be triggered on adding shell as first (w. change)', ->
         hub = new athena.lib.View
-        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo'
-        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'bar'
+        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
+        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'bar.png'
         view = new ShellEditorView model: shell1, eventhub: hub
         spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
 
         view.render()
         expect(spy.triggerCount).toBe 1
-        expect(spy.arguments[0][0]).toBe 'foo'
+        expect(spy.arguments[0][0]).toBe 'foo.png'
         view.addShell shell2, 0
         expect(spy.triggerCount).toBe 2
-        expect(spy.arguments[1][0]).toBe 'bar'
+        expect(spy.arguments[1][0]).toBe 'bar.png'
 
       it 'should NOT be triggered on adding shell as first (wo. change)', ->
         hub = new athena.lib.View
-        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo'
-        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'foo'
+        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
+        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'foo.png'
         view = new ShellEditorView model: shell1, eventhub: hub
         spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
 
@@ -421,8 +421,8 @@ describe 'acorn.player.ShellEditorView', ->
 
       it 'should NOT be triggered on adding shells after first w. change', ->
         hub = new athena.lib.View
-        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo'
-        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'bar'
+        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
+        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'bar.png'
         view = new ShellEditorView model: shell1, eventhub: hub
         spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
 
@@ -433,8 +433,8 @@ describe 'acorn.player.ShellEditorView', ->
 
       it 'should NOT be triggered on adding shells after first wo. change', ->
         hub = new athena.lib.View
-        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo'
-        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'foo'
+        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
+        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'foo.png'
         view = new ShellEditorView model: shell1, eventhub: hub
         spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
 
@@ -445,8 +445,8 @@ describe 'acorn.player.ShellEditorView', ->
 
       it 'should be triggered upon removing first shell w. change', ->
         hub = new athena.lib.View
-        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo'
-        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'bar'
+        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
+        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'bar.png'
         view = new ShellEditorView model: shell1, eventhub: hub
         spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
 
@@ -454,15 +454,15 @@ describe 'acorn.player.ShellEditorView', ->
         expect(spy.triggerCount).toBe 1
         view.addShell shell2
         expect(spy.triggerCount).toBe 1
-        expect(spy.arguments[0][0]).toBe 'foo'
+        expect(spy.arguments[0][0]).toBe 'foo.png'
         view.removeShell shell1
         expect(spy.triggerCount).toBe 2
-        expect(spy.arguments[1][0]).toBe 'bar'
+        expect(spy.arguments[1][0]).toBe 'bar.png'
 
       it 'should NOT be triggered upon removing first shell wo. change', ->
         hub = new athena.lib.View
-        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo'
-        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'foo'
+        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
+        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'foo.png'
         view = new ShellEditorView model: shell1, eventhub: hub
         spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
 
