@@ -45,7 +45,9 @@ class acorn.Model extends athena.lib.Model
   title: @bindToShellProperty('title', 'New Acorn')
   description: @bindToShellProperty('description', '')
   thumbnail: @bindToShellProperty('thumbnail', ->
-    @get('shell')?.defaultThumbnail or acorn.config.img.acorn)
+    @get('shell')?.thumbnail or
+      @get('shell')?.defaultThumbnail or
+      acorn.config.img.acorn)
 
 
   # Backbone url base

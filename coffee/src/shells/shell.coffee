@@ -52,7 +52,7 @@ class Shell.Model extends athena.lib.Model
   description: (description) =>
     if description?
       @set 'description', description
-    @get('description') ? @defaultDescription()
+    @get('description') or @defaultDescription()
 
 
   defaultDescription: => ''
@@ -61,7 +61,7 @@ class Shell.Model extends athena.lib.Model
   thumbnail: (thumbnail) =>
     if thumbnail?
       @set 'thumbnail', thumbnail
-    @get('thumbnail') ? @defaultThumbnail()
+    @get('thumbnail') or @defaultThumbnail()
 
 
   defaultThumbnail: @property('defaultThumbnail',
