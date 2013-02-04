@@ -28,14 +28,14 @@ describe 'acorn.player.ShellEditorView', ->
       view = new EditImageView options
       view.render()
       spy = new test.EventSpy view, 'EditImage:Cancel'
-      view.remixerView.$('button#cancel').trigger 'click'
+      view.remixerView.$('button#Cancel').trigger 'click'
       expect(spy.triggered).toBe true
 
     it 'should fire `EditImage:Save` on `Remixer:Toolbar:Click:Save`', ->
       view = new EditImageView options
       view.render()
       spy = new test.EventSpy view, 'EditImage:Cancel'
-      view.remixerView.$('button#cancel').trigger 'click'
+      view.remixerView.$('button#Cancel').trigger 'click'
       expect(spy.triggered).toBe true
 
 
