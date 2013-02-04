@@ -113,9 +113,9 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
     @_timeTotal = undefined
     @_seekOffset = 0
 
-    @on 'Media:Play', => @player?.api 'play'
-    @on 'Media:Pause', => @player?.api 'pause'
-    @on 'Media:End', => @player?.api 'pause'
+    @on 'Media:Play', => @player?.api?('play')
+    @on 'Media:Pause', => @player?.api?('pause')
+    @on 'Media:End', => @player?.api?('pause')
 
     @initializeVimeoAPI()
 
@@ -149,8 +149,8 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
     # See https://github.com/vimeo/player-api/issues/27. In the case that
     # `seconds == 0`, we may need to handle things specially. Haven't yet QA'd
     # for bugs on this point, just ran across it once.
-    @player.api 'seekTo', 2
-    @player.api 'seekTo', seconds
+    @player.api?('seekTo', 2)
+    @player.api?('seekTo', seconds)
 
 
   seekOffset: =>
@@ -194,8 +194,8 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
       @_timeTotal = parseFloat params.duration
       @_seekOffset = parseFloat params.seconds
 
-    @player.api 'play'
-    @player.api 'pause'
+    @player.api?('play')
+    @player.api?('pause')
     @setMediaState 'ready'
 
 
@@ -207,11 +207,11 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
     wasPlaying = @isPlaying()
 
     # force state to `PLAYING`
-    @player.api 'play'
+    @player.api?('play')
 
     # pause if appropriate
     unless wasPlaying
-      @player.api 'pause'
+      @player.api?('pause')
 
 
 

@@ -118,9 +118,9 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
 
   initialize: =>
     super
-    @on 'Media:Play', => @player?.playVideo()
-    @on 'Media:Pause', => @player?.pauseVideo()
-    @on 'Media:End', => @player?.pauseVideo()
+    @on 'Media:Play', => @player?.playVideo?()
+    @on 'Media:Pause', => @player?.pauseVideo?()
+    @on 'Media:End', => @player?.pauseVideo?()
     @initializeYouTubeAPI()
 
 
@@ -156,9 +156,9 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
         seconds + 18
       else
         if seconds - 1 >= 0 then 0 else seconds
-      @player?.seekTo(wrongPlace, true)
+      @player?.seekTo?(wrongPlace, true)
 
-    @player?.seekTo(seconds, true)
+    @player?.seekTo?(seconds, true)
 
 
   duration: =>
