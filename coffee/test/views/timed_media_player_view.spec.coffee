@@ -111,6 +111,19 @@ describe 'acorn.player.TimedMediaPlayerView', ->
         view.elapsedLoops loops
         expect(view.elapsedLoops()).toBe loops
 
+    it 'should reset elapsedLoops when playing after being ended', ->
+      view = new TimedMediaPlayerView options()
+      view.setMediaState 'end'
+      view.elapsedLoops 1
+
+      # confirm background expectations
+      expect(view.isInState 'end').toBe true
+      expect(view.elapsedLoops()).toBe 1
+
+      view.setMediaState 'play'
+      expect(view.isInState 'play').toBe true
+      expect(view.elapsedLoops()).toBe 0
+
 
   describe 'TimedMediaPlayerView::onPlaybackTick', ->
 

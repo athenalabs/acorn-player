@@ -43,6 +43,7 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
 
   onMediaPlay: =>
     if @isInState 'end'
+      @elapsedLoops 0
       @seek (@model.timeStart() ? 0)
 
 
