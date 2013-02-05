@@ -354,7 +354,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     if seekOffset is @model.timeEnd() and @_playerView.isPlaying()
       seekOffset = Math.max(seekOffset - 2, @model.timeStart())
 
-    if seekOffset
+    if seekOffset?
       @_playerView.seek seekOffset
       @_playerView.looped = 0
 
