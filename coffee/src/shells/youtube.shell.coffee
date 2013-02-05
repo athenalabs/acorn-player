@@ -165,6 +165,13 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     @model.duration() or @player?.getDuration?() or 0
 
 
+  _playbackIsAfterEnd: (current) =>
+    if super
+      true
+    else
+      @_playerInEndedState ? false
+
+
   isInState: (state) =>
     isInState = super
     unless window.YT and @player?.getPlayerState
@@ -226,6 +233,11 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
         @player.playVideo()
         @player.pauseVideo()
         @setMediaState 'ready'
+
+
+      onStateChange: (event) =>
+        # track youtube ended state
+        @_playerInEndedState = event.data == 0
 
 
 # Register the shell with the acorn object.

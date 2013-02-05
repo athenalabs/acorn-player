@@ -153,6 +153,39 @@ describe 'acorn.shells.YouTubeShell', ->
           $hiddenPlayer.remove()
 
 
+      describe 'PlayerView::_playbackIsAfterEnd', ->
+
+        it 'should be a function', ->
+          pv = new PlayerView viewOptions()
+          expect(typeof pv._playbackIsAfterEnd).toBe 'function'
+
+        it 'should return true when super returns true', ->
+          _.each [23, 23.5, 24, 500], (offset, times) ->
+            options = viewOptions()
+            options.model.set 'timeEnd', 23
+            pv = new PlayerView options
+            expect(pv._playbackIsAfterEnd(offset)).toBe true
+
+        it 'should by default return false when super returns false', ->
+          _.each [0, 9, 9.9, 22, 22.9], (offset, times) ->
+            options = viewOptions()
+            options.model.set 'timeEnd', 23
+            pv = new PlayerView options
+            expect(pv._playbackIsAfterEnd(offset)).toBe false
+
+        it 'should return true if player is in ended state', ->
+          _.each [0, 9, 9.9, 22, 22.9], (offset, times) ->
+            options = viewOptions()
+            options.model.set 'timeEnd', 23
+            pv = new PlayerView options
+
+            # confirm background expectations
+            expect(pv._playbackIsAfterEnd(offset)).toBe false
+
+            pv._playerInEndedState = true
+            expect(pv._playbackIsAfterEnd(offset)).toBe true
+
+
       describe 'video player view api', ->
         pv = undefined
         $hiddenPlayer = undefined
