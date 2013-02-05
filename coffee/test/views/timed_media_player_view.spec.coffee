@@ -135,7 +135,7 @@ describe 'acorn.player.TimedMediaPlayerView', ->
         view.seekOffset.andReturn offset
         view.onPlaybackTick()
         expect(view.seek).toHaveBeenCalledWith 20
-        expect(view._loopsElapsed).toBe 0
+        expect(view._elapsedLoops).toBe 0
         expect(view._seeking).toBeDefined()
 
     it 'should clear _seeking flag if offset is within start and end', ->
@@ -148,10 +148,10 @@ describe 'acorn.player.TimedMediaPlayerView', ->
         view.seekOffset.andReturn offset
         view.onPlaybackTick()
         expect(view.seek).not.toHaveBeenCalled()
-        expect(view._loopsElapsed).toBe 0
+        expect(view._elapsedLoops).toBe 0
         expect(view._seeking).toBe false
 
-    it 'should increment loopsElapsed if offset is after end', ->
+    it 'should increment elapsedLoops if offset is after end', ->
       _.each [23, 23.5, 24, 500], (offset, times) ->
         view = new TimedMediaPlayerView options {timeStart: 20, timeEnd: 23}
         view.setMediaState 'play'
@@ -160,7 +160,7 @@ describe 'acorn.player.TimedMediaPlayerView', ->
 
         view.seekOffset.andReturn offset
         view.onPlaybackTick()
-        expect(view._loopsElapsed).toBe 1
+        expect(view._elapsedLoops).toBe 1
 
     it 'should seek start if offset is after end, and loops remain', ->
       _.each [23, 23.5, 24, 500], (offset) ->
@@ -174,7 +174,7 @@ describe 'acorn.player.TimedMediaPlayerView', ->
           view.seekOffset.andReturn offset
           view.onPlaybackTick()
           expect(view.seek).toHaveBeenCalledWith 20
-          expect(view._loopsElapsed).toBe 1
+          expect(view._elapsedLoops).toBe 1
           expect(view._seeking).toBe true
 
     it 'should end if offset is after end, and no loops remain', ->
@@ -188,11 +188,11 @@ describe 'acorn.player.TimedMediaPlayerView', ->
           spyOn view, 'setMediaState'
 
           view.seekOffset.andReturn offset
-          view._loopsElapsed = loops - 1
+          view._elapsedLoops = loops - 1
           view.onPlaybackTick()
 
           expect(view.seek).not.toHaveBeenCalled()
-          expect(view._loopsElapsed).toBe loops
+          expect(view._elapsedLoops).toBe loops
           expect(view._seeking).not.toBeDefined()
           expect(view.seek).not.toHaveBeenCalled()
           expect(view.setMediaState.argsForCall[0]).toEqual ['end']
