@@ -125,6 +125,39 @@ describe 'acorn.player.TimedMediaPlayerView', ->
       expect(view.elapsedLoops()).toBe 0
 
 
+  describe 'TimedMediaPlayerView::_playbackIsBeforeStart', ->
+
+    it 'should be a function', ->
+      expect(typeof TimedMediaPlayerView::_playbackIsBeforeStart)
+          .toBe 'function'
+
+    it 'should be true if current time is less than timeStart', ->
+      _.each [0, 9, 9.9, 22, 22.9], (offset, times) ->
+        view = new TimedMediaPlayerView options {timeStart: 23, timeEnd: 26}
+        expect(view._playbackIsBeforeStart(offset)).toBe true
+
+    it 'should be false if current time is at least timeStart', ->
+      _.each [23, 23.5, 24, 500], (offset, times) ->
+        view = new TimedMediaPlayerView options {timeStart: 23, timeEnd: 26}
+        expect(view._playbackIsBeforeStart(offset)).toBe false
+
+
+  describe 'TimedMediaPlayerView::_playbackIsAfterEnd', ->
+
+    it 'should be a function', ->
+      expect(typeof TimedMediaPlayerView::_playbackIsAfterEnd).toBe 'function'
+
+    it 'should be true if current time is equal to or greater than timeEnd', ->
+      _.each [23, 23.5, 24, 500], (offset, times) ->
+        view = new TimedMediaPlayerView options {timeStart: 20, timeEnd: 23}
+        expect(view._playbackIsAfterEnd(offset)).toBe true
+
+    it 'should be false if current time is less than timeEnd', ->
+      _.each [0, 9, 9.9, 22, 22.9], (offset, times) ->
+        view = new TimedMediaPlayerView options {timeStart: 20, timeEnd: 23}
+        expect(view._playbackIsAfterEnd(offset)).toBe false
+
+
   describe 'TimedMediaPlayerView::onPlaybackTick', ->
 
     it 'should be a function', ->
