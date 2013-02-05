@@ -193,74 +193,70 @@ describe 'acorn.player.TimedMediaPlayerView', ->
       expect(view.seekOffset).toHaveBeenCalled()
 
 
-    it 'should seek to start if offset is before startTime', ->
+    it 'should seek to start if playback is before start', ->
       view = new TimedMediaPlayerView options {timeStart: 20, timeEnd: 23}
       view.setMediaState 'play'
-      spyOn view, 'seekOffset'
+      spyOn(view, '_playbackIsBeforeStart').andReturn true
+      spyOn(view, '_playbackIsAfterEnd').andReturn false
       spyOn view, 'seek'
 
-      _.each [0, 0.1, 10, 15, 19.9], (offset) ->
-        view.seekOffset.andReturn offset
-        view.onPlaybackTick()
-        expect(view.seek).toHaveBeenCalledWith 20
-        expect(view.elapsedLoops()).toBe 0
-        expect(view._seeking).toBeDefined()
+      view.onPlaybackTick()
+      expect(view.seek).toHaveBeenCalledWith 20
+      expect(view.elapsedLoops()).toBe 0
+      expect(view._seeking).toBeDefined()
 
-    it 'should clear _seeking flag if offset is within start and end', ->
+    it 'should clear _seeking flag if playback is within range', ->
       view = new TimedMediaPlayerView options {timeStart: 20, timeEnd: 23}
       view.setMediaState 'play'
-      spyOn view, 'seekOffset'
+      spyOn(view, '_playbackIsBeforeStart').andReturn false
+      spyOn(view, '_playbackIsAfterEnd').andReturn false
       spyOn view, 'seek'
 
-      _.each [20, 20.5, 21, 22, 22.9], (offset) ->
-        view.seekOffset.andReturn offset
-        view.onPlaybackTick()
-        expect(view.seek).not.toHaveBeenCalled()
-        expect(view.elapsedLoops()).toBe 0
-        expect(view._seeking).toBe false
+      view._seeking = true
 
-    it 'should increment elapsedLoops if offset is after end', ->
-      _.each [23, 23.5, 24, 500], (offset, times) ->
-        view = new TimedMediaPlayerView options {timeStart: 20, timeEnd: 23}
+      view.onPlaybackTick()
+      expect(view.seek).not.toHaveBeenCalled()
+      expect(view.elapsedLoops()).toBe 0
+      expect(view._seeking).toBe false
+
+    it 'should increment elapsedLoops if playback is after end', ->
+      view = new TimedMediaPlayerView options {timeStart: 20, timeEnd: 23}
+      view.setMediaState 'play'
+      spyOn(view, '_playbackIsBeforeStart').andReturn false
+      spyOn(view, '_playbackIsAfterEnd').andReturn true
+
+      view.onPlaybackTick()
+      expect(view.elapsedLoops()).toBe 1
+
+    it 'should seek start if playback is after end, and loops remain', ->
+      _.each [100, 50, 5, 2], (loops) ->
+        opts = options {timeStart: 20, timeEnd: 23, loops: loops}
+        view = new TimedMediaPlayerView opts
         view.setMediaState 'play'
-        spyOn view, 'seekOffset'
+        spyOn(view, '_playbackIsBeforeStart').andReturn false
+        spyOn(view, '_playbackIsAfterEnd').andReturn true
         spyOn view, 'seek'
 
-        view.seekOffset.andReturn offset
         view.onPlaybackTick()
+        expect(view.seek).toHaveBeenCalledWith 20
         expect(view.elapsedLoops()).toBe 1
+        expect(view._seeking).toBe true
 
-    it 'should seek start if offset is after end, and loops remain', ->
-      _.each [23, 23.5, 24, 500], (offset) ->
-        _.each [100, 50, 2, 1], (loops) ->
-          opts = options {timeStart: 20, timeEnd: 23, loops: 100}
-          view = new TimedMediaPlayerView opts
-          view.setMediaState 'play'
-          spyOn view, 'seekOffset'
-          spyOn view, 'seek'
+    it 'should end if playback is after end, and no loops remain', ->
+      _.each [100, 50, 2, 1], (loops) ->
+        opts = options {timeStart: 20, timeEnd: 23, loops: loops}
+        view = new TimedMediaPlayerView opts
+        view.setMediaState 'play'
+        spyOn(view, '_playbackIsBeforeStart').andReturn false
+        spyOn(view, '_playbackIsAfterEnd').andReturn true
+        spyOn view, 'seek'
+        spyOn view, 'setMediaState'
 
-          view.seekOffset.andReturn offset
-          view.onPlaybackTick()
-          expect(view.seek).toHaveBeenCalledWith 20
-          expect(view.elapsedLoops()).toBe 1
-          expect(view._seeking).toBe true
+        view.elapsedLoops loops - 1
+        view.onPlaybackTick()
 
-    it 'should end if offset is after end, and no loops remain', ->
-      _.each [23, 23.5, 24, 500], (offset) ->
-        _.each [100, 50, 2, 1], (loops) ->
-          opts = options {timeStart: 20, timeEnd: 23, loops: loops}
-          view = new TimedMediaPlayerView opts
-          view.setMediaState 'play'
-          spyOn view, 'seekOffset'
-          spyOn view, 'seek'
-          spyOn view, 'setMediaState'
-
-          view.seekOffset.andReturn offset
-          view.elapsedLoops loops - 1
-          view.onPlaybackTick()
-
-          expect(view.seek).not.toHaveBeenCalled()
-          expect(view.elapsedLoops()).toBe loops
-          expect(view._seeking).not.toBeDefined()
-          expect(view.seek).not.toHaveBeenCalled()
-          expect(view.setMediaState.argsForCall[0]).toEqual ['end']
+        expect(view.seek).not.toHaveBeenCalled()
+        expect(view.elapsedLoops()).toBe loops
+        expect(view._seeking).not.toBeDefined()
+        expect(view.seek).not.toHaveBeenCalled()
+        expect(view.setMediaState.argsForCall[0]).toEqual ['end']
