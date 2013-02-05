@@ -356,7 +356,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
     if seekOffset?
       @_playerView.seek seekOffset
-      @_playerView.looped = 0
+      @_playerView.elapsedLoops 0
 
     @eventhub.trigger 'change:shell', @model, @
 
@@ -373,7 +373,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @model.loops(loops)
 
     # restart player loops
-    @_playerView.looped = 0
+    @_playerView.elapsedLoops 0
     if @_playerView.isPlaying()
       @_playerView.seek @model.timeStart()
 

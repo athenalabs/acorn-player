@@ -174,6 +174,30 @@ describe 'acorn.shells.VideoLinkShell', ->
               inputs[property].value time
               expect(rv.model.get property).toBe time
 
+        it 'should reset player elapsed loop count when start time changes', ->
+          rv = new RemixView viewOptions()
+          rv.render()
+          triv = rv._timeRangeInputView
+          rv._playerView.elapsedLoops 2
+
+          # confirm background expectations
+          expect(rv._playerView.elapsedLoops()).toBe 2
+
+          triv.values start: 20
+          expect(rv._playerView.elapsedLoops()).toBe 0
+
+        it 'should reset player elapsed loop count when end time changes', ->
+          rv = new RemixView viewOptions()
+          rv.render()
+          triv = rv._timeRangeInputView
+          rv._playerView.elapsedLoops 2
+
+          # confirm background expectations
+          expect(rv._playerView.elapsedLoops()).toBe 2
+
+          triv.values end: 20
+          expect(rv._playerView.elapsedLoops()).toBe 0
+
 
       describe 'looping: RemixView', ->
 
@@ -259,6 +283,20 @@ describe 'acorn.shells.VideoLinkShell', ->
           input.val '9'
           input.blur()
           expect(rv.model.get 'loops').toBe '9'
+
+        it 'should reset player elapsed loop count when loops value changes', ->
+          rv = new RemixView viewOptions()
+          rv.render()
+          lbv = rv._loopsButtonView
+          lbv.showView 0
+          rv._playerView.elapsedLoops 2
+
+          # confirm background expectations
+          expect(rv._playerView.elapsedLoops()).toBe 2
+          expect(rv.model.get 'loops').toBe 'one'
+
+          lbv.showView 2
+          expect(rv._playerView.elapsedLoops()).toBe 0
 
 
       it 'should look good', ->
