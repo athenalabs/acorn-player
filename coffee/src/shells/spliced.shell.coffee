@@ -32,6 +32,10 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
   className: @classNameExtend 'spliced-shell'
 
 
+  events: => _.extend super,
+    'click .click-capture': => @togglePlayPause()
+
+
   defaults: => _.extend super,
     playOnReady: true
     subshellPlayOnReady: false
@@ -84,6 +88,7 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
       @shellViews[index].pause()
       @hideView index
     @showView 0
+    @$el.append $('<div>').addClass('click-capture')
     @
 
 
