@@ -54,7 +54,7 @@ describe 'acorn.player.TimeInputView', ->
           expect(input.val()).toBe timestring time
           expect(tiv.value()).toBe time
 
-      for key in ['ENTER', 'ESC']
+      for key in ['ENTER', 'ESCAPE']
         for time in times
           input.val time
           expect(input.val()).toBe "#{time}"
