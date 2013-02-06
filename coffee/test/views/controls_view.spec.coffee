@@ -222,6 +222,69 @@ describe 'acorn.player.controls.ElapsedTimeControlView', ->
     view.model.set 'total', 10
     expect(view.refreshValues).toHaveBeenCalled()
 
+  it 'should have a showSeekField method that shows the seek field', ->
+    view = new ElapsedTimeControlView
+    view.render()
+
+    view.$el.removeClass 'active'
+    expect(view.$el.hasClass 'active').toBe false
+    view.showSeekField()
+    expect(view.$el.hasClass 'active').toBe true
+
+  it 'should have a hideSeekField method that hides the seek field', ->
+    view = new ElapsedTimeControlView
+    view.render()
+
+    view.$el.addClass 'active'
+    expect(view.$el.hasClass 'active').toBe true
+    view.hideSeekField()
+    expect(view.$el.hasClass 'active').toBe false
+
+
+  describe 'ElapsedTimeControlView::_seek', ->
+
+    it 'should trigger event `ElapsedTimeControl:Seek` if seek field has a valid
+        value', ->
+      view = new ElapsedTimeControlView
+      spy = new EventSpy view, 'ElapsedTimeControl:Seek'
+      view.render()
+
+      view.$('input').val 20
+      expect(spy.triggered).toBe false
+      view._seek()
+      expect(spy.triggered).toBe true
+
+    it 'should not trigger event `ElapsedTimeControl:Seek` if seek field is
+        empty', ->
+      view = new ElapsedTimeControlView
+      spy = new EventSpy view, 'ElapsedTimeControl:Seek'
+      view.render()
+
+      expect(spy.triggered).toBe false
+      view._seek()
+      expect(spy.triggered).toBe false
+
+    it 'should not trigger event `ElapsedTimeControl:Seek` if seek field lacks a
+        valid value', ->
+      view = new ElapsedTimeControlView
+      spy = new EventSpy view, 'ElapsedTimeControl:Seek'
+      view.render()
+
+      expect(spy.triggered).toBe false
+      for invalid in ['-13', 'number', ' ', '', 'lk90']
+        view.$('input').val invalid
+        view._seek()
+        expect(spy.triggered).toBe false
+
+    it 'should call hideSeekField', ->
+      view = new ElapsedTimeControlView
+      spyOn view, 'hideSeekField'
+      view.render()
+
+      expect(view.hideSeekField).not.toHaveBeenCalled()
+      view._seek()
+      expect(view.hideSeekField).toHaveBeenCalled()
+
 
   describe 'ElapsedTimeControlView: events', ->
 
@@ -231,6 +294,73 @@ describe 'acorn.player.controls.ElapsedTimeControlView', ->
       view.render()
       view.$el.trigger 'click'
       expect(spy.triggered).toBe true
+
+    it 'should call showSeekField on clicking elapsed-value timestring', ->
+      spyOn ElapsedTimeControlView::, 'showSeekField'
+      view = new ElapsedTimeControlView
+      view.render()
+
+      expect(ElapsedTimeControlView::showSeekField).not.toHaveBeenCalled()
+      view.$('.elapsed-value').trigger 'click'
+      expect(ElapsedTimeControlView::showSeekField).toHaveBeenCalled()
+
+    it 'should not call showSeekField on general clicking', ->
+      spyOn ElapsedTimeControlView::, 'showSeekField'
+      view = new ElapsedTimeControlView
+      view.render()
+
+      expect(ElapsedTimeControlView::showSeekField).not.toHaveBeenCalled()
+      view.$el.trigger 'click'
+      expect(ElapsedTimeControlView::showSeekField).not.toHaveBeenCalled()
+
+    it 'should call _onBlurSeekField when seek input field blurs', ->
+      spyOn ElapsedTimeControlView::, '_onBlurSeekField'
+      view = new ElapsedTimeControlView
+      view.render()
+
+      expect(ElapsedTimeControlView::_onBlurSeekField).not.toHaveBeenCalled()
+      view.$('.seek-field').trigger 'blur'
+      expect(ElapsedTimeControlView::_onBlurSeekField).toHaveBeenCalled()
+
+    it 'should call _onKeyupSeekField on seek input field keyup', ->
+      spyOn ElapsedTimeControlView::, '_onKeyupSeekField'
+      view = new ElapsedTimeControlView
+      view.render()
+
+      expect(ElapsedTimeControlView::_onKeyupSeekField).not.toHaveBeenCalled()
+      view.$('.seek-field').trigger 'keyup'
+      expect(ElapsedTimeControlView::_onKeyupSeekField).toHaveBeenCalled()
+
+    it 'should call _seek on input blur', ->
+      view = new ElapsedTimeControlView
+      spyOn view, '_seek'
+      view.render()
+
+      expect(view._seek).not.toHaveBeenCalled()
+      view.$('.seek-field').blur()
+      expect(view._seek).toHaveBeenCalled()
+
+    it 'should call _seek on input keyup enter', ->
+      view = new ElapsedTimeControlView
+      spyOn view, '_seek'
+      view.render()
+
+      expect(view._seek).not.toHaveBeenCalled()
+      e = $.Event 'keyup'
+      e.keyCode = athena.lib.util.keys.ENTER
+      view.$('.seek-field').trigger e
+      expect(view._seek).toHaveBeenCalled()
+
+    it 'should call hideSeekField on input keyup escape', ->
+      view = new ElapsedTimeControlView
+      spyOn view, 'hideSeekField'
+      view.render()
+
+      expect(view.hideSeekField).not.toHaveBeenCalled()
+      e = $.Event 'keyup'
+      e.keyCode = athena.lib.util.keys.ESCAPE
+      view.$('.seek-field').trigger e
+      expect(view.hideSeekField).toHaveBeenCalled()
 
 
   it 'should look good', ->

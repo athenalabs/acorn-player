@@ -214,6 +214,12 @@ class ElapsedTimeControlView extends ControlView
   className: @classNameExtend 'elapsed-time-control-view'
 
 
+  events: => _.extend super,
+    'click .elapsed-value': @showSeekField
+    'blur input.seek-field': @_onBlurSeekField
+    'keyup input.seek-field': @_onKeyupSeekField
+
+
   template: _.template '''
     <div>
       <span class="elapsed">
@@ -254,6 +260,36 @@ class ElapsedTimeControlView extends ControlView
   refreshValues: =>
     @$('.elapsed-value').text @formatTime @model.get 'elapsed'
     @$('.total').text @formatTime @model.get 'total'
+
+
+  showSeekField: =>
+    @$el.addClass 'active'
+    @$('input').focus()
+
+
+  hideSeekField: =>
+    @$el.removeClass 'active'
+    @$('input').val ''
+
+
+  _seek: =>
+    timestring = @$('input').val()
+
+    if parseFloat(timestring) >= 0
+      seconds = acorn.util.Time.timestringToSeconds timestring
+      @trigger 'ElapsedTimeControl:Seek', seconds
+
+    @hideSeekField()
+
+
+  _onBlurSeekField: (e) =>
+    @_seek()
+
+
+  _onKeyupSeekField: (e) =>
+    switch e.keyCode
+      when athena.lib.util.keys.ENTER then @_seek()
+      when athena.lib.util.keys.ESCAPE then @hideSeekField()
 
 
 
