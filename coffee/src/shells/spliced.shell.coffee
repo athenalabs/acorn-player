@@ -127,6 +127,11 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
     @controlsView.$('.control-view.pause').addClass 'hidden'
 
 
+  onMediaDidEnd: =>
+    @controlsView.$('.control-view.play').removeClass 'hidden'
+    @controlsView.$('.control-view.pause').addClass 'hidden'
+
+
 
 
 class SplicedShell.RemixView extends CollectionShell.RemixView
