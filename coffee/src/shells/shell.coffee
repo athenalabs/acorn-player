@@ -160,5 +160,12 @@ class Shell.RemixView extends athena.lib.View
       acorn.errors.MissingParameterError 'Shell.RemixView', 'model'
 
 
+Shell.derives = (OtherShell) ->
+  athena.lib.util.derives @, OtherShell
+
+
+Shell.isOrDerives = (OtherShell) ->
+  athena.lib.util.isOrDerives @, OtherShell
+
 
 acorn.registerShellModule Shell

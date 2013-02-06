@@ -4,8 +4,6 @@ goog.require 'acorn.shells.Registry'
 goog.require 'acorn.shells.Shell'
 goog.require 'acorn.player.DropdownView'
 goog.require 'acorn.player.EditSummaryView'
-goog.require 'acorn.shells.CollectionShell'
-goog.require 'acorn.shells.SplicedShell'
 
 
 # acorn player ShellOptionsView:
@@ -27,9 +25,8 @@ class acorn.player.ShellOptionsView extends athena.lib.View
   initialize: =>
     super
 
-    modules = [acorn.shells.CollectionShell, acorn.shells.SplicedShell]
-    modules = _.map modules, (module) =>
-      {id:module.id, name: module.title, icon: module.icon}
+    modules = _.map acorn.shells.Registry.collectionModules(), (m) =>
+      {id:m.id, name: m.title, icon: m.icon}
 
     @dropdownView = new acorn.player.DropdownView
       eventhub: @eventhub
