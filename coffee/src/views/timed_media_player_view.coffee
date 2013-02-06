@@ -45,9 +45,9 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
 
 
   onMediaPlay: =>
+    super
     if @isInState 'end'
       @elapsedLoops 0
-      @seek 0
 
 
   # executes periodically to adjust video playback.
