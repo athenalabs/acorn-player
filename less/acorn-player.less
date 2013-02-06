@@ -388,32 +388,32 @@ input {
       width: @main-control-icon-size;
       height: @main-control-icon-size;
     }
-  }
 
-  > .control-view[disabled="disabled"] > * {
-    pointer-events: none;
-    .opacity(0.3);
-  }
-
-  > .control-view:hover {
-    background: rgba(204, 204, 204, 0.2);
-
-    > * {
-      .opacity(1.0);
+    &[disabled="disabled"] > * {
+      pointer-events: none;
+      .opacity(0.3);
     }
-  }
 
-  > .control-view:active {
-    background: rgba(204, 204, 204, 0.1);
+    &:hover {
+      background: rgba(204, 204, 204, 0.2);
 
-    > * {
-      .opacity(0.7);
-      /*
-      margin-left: -1px;
-      font-size: @main-control-font-size + 2;
-      width: @main-control-icon-size + 1;
-      height: @main-control-icon-size + 1;
-      */
+      > * {
+        .opacity(1.0);
+      }
+    }
+
+    &:active {
+      background: rgba(204, 204, 204, 0.1);
+
+      > * {
+        .opacity(0.7);
+        /*
+        margin-left: -1px;
+        font-size: @main-control-font-size + 2;
+        width: @main-control-icon-size + 1;
+        height: @main-control-icon-size + 1;
+        */
+      }
     }
   }
 }
