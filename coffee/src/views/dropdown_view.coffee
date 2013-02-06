@@ -89,7 +89,8 @@ class acorn.player.DropdownView extends athena.lib.View
 
 
   itemWithId: (id) =>
-    _.find(@items, (item) => item.id == id)
+    _.find(@items, (item) => item.id == id) or
+      {id: id, text: id}
 
 
   formatItem: (item) ->
