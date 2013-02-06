@@ -216,18 +216,22 @@ describe 'acorn.player.controls.ElapsedTimeControlView', ->
     view.render()
     expect(view.$('.total').text()).toBe '00:20'
 
-  it 'should trigger event `ElapsedTimeControl:Click` on click', ->
-    view = new ElapsedTimeControlView
-    spy = new EventSpy view, 'ElapsedTimeControl:Click'
-    view.render()
-    view.$el.trigger 'click'
-    expect(spy.triggered).toBe true
-
   it 'should refresh values if model changes', ->
     view = new ElapsedTimeControlView
     spyOn view, 'refreshValues'
     view.model.set 'total', 10
     expect(view.refreshValues).toHaveBeenCalled()
+
+
+  describe 'ElapsedTimeControlView: events', ->
+
+    it 'should trigger event `ElapsedTimeControl:Click` on click', ->
+      view = new ElapsedTimeControlView
+      spy = new EventSpy view, 'ElapsedTimeControl:Click'
+      view.render()
+      view.$el.trigger 'click'
+      expect(spy.triggered).toBe true
+
 
   it 'should look good', ->
     # setup DOM
