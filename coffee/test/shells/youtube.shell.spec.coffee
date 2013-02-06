@@ -146,7 +146,7 @@ describe 'acorn.shells.YouTubeShell', ->
         runs -> $hiddenPlayer.append pv.render().el
         waitsFor (-> pv.player?.getPlayerState?() >= 0), 'cued video', 10000
 
-        runs -> pv.player.playVideo()
+        runs -> pv.play()
         waitsFor (-> stateChanged), 'state change event', 10000
         runs ->
           pv.destroy()
@@ -201,7 +201,7 @@ describe 'acorn.shells.YouTubeShell', ->
           waitsFor (-> pv.player?.getPlayerState?() >= 0), 'cued video', 10000
 
           # play video, wait for playing state
-          runs -> pv.player.playVideo()
+          runs -> pv.play()
           waitsFor (->
             pv.player.getPlayerState() == YT.PlayerState.PLAYING
           ), 'video to play', 10000
@@ -210,9 +210,22 @@ describe 'acorn.shells.YouTubeShell', ->
           pv.destroy()
           $hiddenPlayer.remove()
 
-        it 'should play', ->
+        it 'should play (yt api)', ->
           # pause video with youtube API, don't expect PLAYING state
           runs -> pv.player.pauseVideo()
+          waitsFor (->
+            pv.player.getPlayerState() != YT.PlayerState.PLAYING
+          ), 'video to pause with API', 10000
+
+          # play video, expect PLAYING state
+          runs -> pv.player.playVideo()
+          waitsFor (->
+            pv.player.getPlayerState() == YT.PlayerState.PLAYING
+          ), 'video to play after pausing', 10000
+
+        it 'should play (media api)', ->
+          # pause video with youtube API, don't expect PLAYING state
+          runs -> pv.pause()
           waitsFor (->
             pv.player.getPlayerState() != YT.PlayerState.PLAYING
           ), 'video to pause with API', 10000
@@ -223,30 +236,41 @@ describe 'acorn.shells.YouTubeShell', ->
             pv.player.getPlayerState() == YT.PlayerState.PLAYING
           ), 'video to play after pausing', 10000
 
-        it 'should pause', ->
+        it 'should pause (yt api)', ->
           # pause video, expect PAUSED state
+          runs -> pv.player.pauseVideo()
+          waitsFor (->
+            pv.player.getPlayerState() == YT.PlayerState.PAUSED
+          ), 'video to pause after playing', 10000
+
+        it 'should pause (media api)', ->
+          # pause video, expect PAUSED state
+          runs -> pv.play()
+          waitsFor (-> pv.isPlaying()), 'video should be playing', 10000
+
           runs -> pv.pause()
           waitsFor (->
             pv.player.getPlayerState() == YT.PlayerState.PAUSED
           ), 'video to pause after playing', 10000
 
+
         it 'should seek, both when playing and when paused', ->
-          runs -> pv.seek 30
+          runs -> pv._seek 30
           waitsFor (->
             pv.player.getCurrentTime() == 30
           ), 'video to seek to 30 while playing', 10000
 
-          runs -> pv.seek 40
+          runs -> pv._seek 40
           waitsFor (->
             pv.player.getCurrentTime() == 40
           ), 'video to seek to 40 while playing', 10000
 
-          runs -> pv.seek 10
+          runs -> pv._seek 10
           waitsFor (->
             pv.player.getCurrentTime() == 10
           ), 'video to seek to 10 while playing', 10000
 
-          runs -> pv.seek 20
+          runs -> pv._seek 20
           waitsFor (->
             pv.player.getCurrentTime() == 20
           ), 'video to seek to 20 while playing', 10000
@@ -257,22 +281,22 @@ describe 'acorn.shells.YouTubeShell', ->
             pv.player.getPlayerState() == YT.PlayerState.PAUSED
           ), 'video to pause with API', 10000
 
-          runs -> pv.seek 30
+          runs -> pv._seek 30
           waitsFor (->
             pv.player.getCurrentTime() == 30
           ), 'video to seek to 30 while paused', 10000
 
-          runs -> pv.seek 40
+          runs -> pv._seek 40
           waitsFor (->
             pv.player.getCurrentTime() == 40
           ), 'video to seek to 40 while paused', 10000
 
-          runs -> pv.seek 10
+          runs -> pv._seek 10
           waitsFor (->
             pv.player.getCurrentTime() == 10
           ), 'video to seek to 10 while paused', 10000
 
-          runs -> pv.seek 20
+          runs -> pv._seek 20
           waitsFor (->
             pv.player.getCurrentTime() == 20
           ), 'video to seek to 20 while paused', 10000
@@ -281,7 +305,7 @@ describe 'acorn.shells.YouTubeShell', ->
           runs -> expect(pv.isPlaying()).toBe true
 
           # pause video, expect PAUSED state
-          runs -> pv.player.pauseVideo()
+          runs -> pv.pause()
           waitsFor (->
             not pv.isPlaying()
           ), 'playerView to register paused state', 10000
@@ -289,23 +313,23 @@ describe 'acorn.shells.YouTubeShell', ->
         it 'should report seek offset', ->
           runs -> pv.player.seekTo 30
           waitsFor (->
-            pv.seekOffset() == 30
-          ), 'playerView to register seekOffset to 30 while playing', 10000
+            pv._seekOffset() == 30
+          ), 'playerView to register _seekOffset to 30 while playing', 10000
 
           runs -> pv.player.seekTo 40
           waitsFor (->
-            pv.seekOffset() == 40
-          ), 'playerView to register seekOffset to 40 while playing', 10000
+            pv._seekOffset() == 40
+          ), 'playerView to register _seekOffset to 40 while playing', 10000
 
           runs -> pv.player.seekTo 10
           waitsFor (->
-            pv.seekOffset() == 10
-          ), 'playerView to register seekOffset to 10 while playing', 10000
+            pv._seekOffset() == 10
+          ), 'playerView to register _seekOffset to 10 while playing', 10000
 
           runs -> pv.player.seekTo 20
           waitsFor (->
-            pv.seekOffset() == 20
-          ), 'playerView to register seekOffset to 20 while playing', 10000
+            pv._seekOffset() == 20
+          ), 'playerView to register _seekOffset to 20 while playing', 10000
 
           # achieve paused state
           runs -> pv.player.pauseVideo()
@@ -315,23 +339,23 @@ describe 'acorn.shells.YouTubeShell', ->
 
           runs -> pv.player.seekTo 30
           waitsFor (->
-            pv.seekOffset() == 30
-          ), 'playerView to register seekOffset to 30 while paused', 10000
+            pv._seekOffset() == 30
+          ), 'playerView to register _seekOffset to 30 while paused', 10000
 
           runs -> pv.player.seekTo 40
           waitsFor (->
-            pv.seekOffset() == 40
-          ), 'playerView to register seekOffset to 40 while paused', 10000
+            pv._seekOffset() == 40
+          ), 'playerView to register _seekOffset to 40 while paused', 10000
 
           runs -> pv.player.seekTo 10
           waitsFor (->
-            pv.seekOffset() == 10
-          ), 'playerView to register seekOffset to 10 while paused', 10000
+            pv._seekOffset() == 10
+          ), 'playerView to register _seekOffset to 10 while paused', 10000
 
           runs -> pv.player.seekTo 20
           waitsFor (->
-            pv.seekOffset() == 20
-          ), 'playerView to register seekOffset to 20 while paused', 10000
+            pv._seekOffset() == 20
+          ), 'playerView to register _seekOffset to 20 while paused', 10000
 
 
       it 'should look good', ->

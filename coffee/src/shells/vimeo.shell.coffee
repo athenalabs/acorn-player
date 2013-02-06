@@ -111,7 +111,7 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
   initialize: =>
     super
     @_timeTotal = undefined
-    @_seekOffset = 0
+    @_lastSeekOffset = 0
 
     @on 'Media:Play', => @player?.api?('play')
     @on 'Media:Pause', => @player?.api?('pause')
@@ -137,7 +137,7 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
 
 
   # Control the player
-  seek: (seconds) =>
+  _seek: (seconds) =>
     # Vimeo adds the original seekTo value to the current one. `seekTo n`
     # initially sends a user to t = n, but forever after will send the user to
     # t = 2n - 2. `seekTo 6` initially sends a user to t = 6, but will later
@@ -153,8 +153,8 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
     @player.api?('seekTo', seconds)
 
 
-  seekOffset: =>
-    @_seekOffset
+  _seekOffset: =>
+    @_lastSeekOffset
 
 
   # Vimeo API - communication between the Vimeo js API and the shell.
@@ -187,12 +187,12 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
     @player.addEvent 'play', => @play()
 
     @player.addEvent 'seek', (params) =>
-      @_seekOffset = parseFloat params.seconds
+      @_lastSeekOffset = parseFloat params.seconds
       @enforceVimeoPlaybackState()
 
     @player.addEvent 'playProgress', (params) =>
       @_timeTotal = parseFloat params.duration
-      @_seekOffset = parseFloat params.seconds
+      @_lastSeekOffset = parseFloat params.seconds
 
     @player.api?('play')
     @player.api?('pause')

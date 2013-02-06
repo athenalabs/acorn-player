@@ -30,21 +30,24 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
   loops: =>
     loops = @model.loops()
     if loops is 'infinity'
-      return Infinity
-    parseInt loops, 10
+      Infinity
+    else if loops is 'one'
+      1
+    else
+      parseInt(loops, 10) ? 1
 
 
   elapsedLoops: (elapsed) =>
+    @_elapsedLoops ?= 0
     if elapsed >= 0
       @_elapsedLoops = elapsed
-
-    @_elapsedLoops ?= 0
+    @_elapsedLoops
 
 
   onMediaPlay: =>
     if @isInState 'end'
       @elapsedLoops 0
-      @seek (@model.timeStart() ? 0)
+      @seek 0
 
 
   # executes periodically to adjust video playback.
@@ -56,12 +59,12 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
       @timer.stopTick()
       return
 
-    now = @seekOffset() ? 0
+    now = @_seekOffset() ? 0
     start = @model.timeStart() ? 0
     end = @model.timeEnd() ? @model.timeTotal()
 
     # advertise progress
-    @trigger 'Media:Progress', @, (now - start), (end - start)
+    @trigger 'Media:Progress', @, @seekOffset(), @duration()
 
     # if current playback is before the start time:
     if @_playbackIsBeforeStart(now)
@@ -69,7 +72,7 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
         # reset loop count in case user has manually restarted
         @elapsedLoops 0
         # seek to start
-        @seek start
+        @_seek start
         @_seeking = true
 
     # if current playback is after the end time, loop or end
@@ -79,7 +82,7 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
         @elapsedLoops @elapsedLoops() + 1
 
         if @loops() > @elapsedLoops()
-          @seek start
+          @_seek start
           @_seeking = true
         else
           @setMediaState 'end'
@@ -98,10 +101,32 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
 
 
   # duration of one loop - get from model
-  singleLoopDuration: =>
-    @model.singleRunDuration()
+  loopTime: =>
+    @model.loopTime()
 
 
   # duration of video given current splicing and looping - get from model
   duration: =>
-    @model.duration() or 0
+    @loopTime() * @loops()
+
+
+  # seek offset for the underlying player -- implement this to support seeking
+  _seekOffset: => 0
+  _seek: (offset) =>
+
+
+  # seek offset within one loop
+  loopSeekOffset: =>
+    @_seekOffset() - @model.timeStart()
+
+  loopSeek: (offset) =>
+    @_seek offset + @model.timeStart()
+
+
+  # seek offset (based on loop seek offset)
+  seekOffset: =>
+    @loopTime() * @elapsedLoops() + @loopSeekOffset()
+
+  seek: (offset) =>
+    @elapsedLoops Math.floor(offset / @loopTime())
+    @loopSeek(offset % @loopTime())

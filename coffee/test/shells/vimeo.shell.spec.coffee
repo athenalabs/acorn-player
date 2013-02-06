@@ -166,7 +166,16 @@ describe 'acorn.shells.VimeoShell', ->
           # wait for playing
           waitsFor (-> not paused), 'video to play', 10000
 
-        it 'should play', ->
+        it 'should play (vimeo api)', ->
+          # pause video with vimeo API, don't expect PLAYING state
+          runs -> pv.player.api 'pause'
+          waitsFor (-> paused), 'video to pause with API', 10000
+
+          # play video, expect PLAYING state
+          runs -> pv.player.api 'play'
+          waitsFor (-> not paused), 'video to play after pausing', 10000
+
+        it 'should play (media api)', ->
           # pause video with vimeo API, don't expect PLAYING state
           runs -> pv.player.api 'pause'
           waitsFor (-> paused), 'video to pause with API', 10000
@@ -175,8 +184,16 @@ describe 'acorn.shells.VimeoShell', ->
           runs -> pv.play()
           waitsFor (-> not paused), 'video to play after pausing', 10000
 
-        it 'should pause', ->
+        it 'should pause (vimeo api)', ->
           expect(not paused).toBe true
+
+          # pause video, expect PAUSED state
+          runs -> pv.player.api 'pause'
+          waitsFor (-> paused), 'video to pause after playing', 10000
+
+        it 'should pause (media api)', ->
+          runs -> pv.play()
+          waitsFor (-> not paused), 'video should not be paused', 10000
 
           # pause video, expect PAUSED state
           runs -> pv.pause()
@@ -187,22 +204,22 @@ describe 'acorn.shells.VimeoShell', ->
           pv.player.addEvent 'seek', (params) ->
             seekOffset = parseInt params.seconds
 
-          runs -> pv.seek 30
+          runs -> pv._seek 30
           waitsFor (->
             seekOffset == 30
           ), 'video to seek to 30 while playing', 10000
 
-          runs -> pv.seek 40
+          runs -> pv._seek 40
           waitsFor (->
             seekOffset == 40
           ), 'video to seek to 40 while playing', 10000
 
-          runs -> pv.seek 10
+          runs -> pv._seek 10
           waitsFor (->
             seekOffset == 10
           ), 'video to seek to 10 while playing', 10000
 
-          runs -> pv.seek 20
+          runs -> pv._seek 20
           waitsFor (->
             seekOffset == 20
           ), 'video to seek to 20 while playing', 10000
@@ -211,22 +228,22 @@ describe 'acorn.shells.VimeoShell', ->
           runs -> pv.player.api 'pause'
           waitsFor (-> paused), 'video to pause with API', 10000
 
-          runs -> pv.seek 30
+          runs -> pv._seek 30
           waitsFor (->
             seekOffset == 30
           ), 'video to seek to 30 while paused', 10000
 
-          runs -> pv.seek 40
+          runs -> pv._seek 40
           waitsFor (->
             seekOffset == 40
           ), 'video to seek to 40 while paused', 10000
 
-          runs -> pv.seek 10
+          runs -> pv._seek 10
           waitsFor (->
             seekOffset == 10
           ), 'video to seek to 10 while paused', 10000
 
-          runs -> pv.seek 20
+          runs -> pv._seek 20
           waitsFor (->
             seekOffset == 20
           ), 'video to seek to 20 while paused', 10000
@@ -254,22 +271,22 @@ describe 'acorn.shells.VimeoShell', ->
         it 'should report seek offset', ->
           runs -> pv.player.api 'seekTo', 30
           waitsFor (->
-            pv.seekOffset() == 30
+            pv._seekOffset() == 30
           ), 'playerView to register seekOffset to 30 while playing', 10000
 
           runs -> pv.player.api 'seekTo', 40
           waitsFor (->
-            pv.seekOffset() == 40
+            pv._seekOffset() == 40
           ), 'playerView to register seekOffset to 40 while playing', 10000
 
           runs -> pv.player.api 'seekTo', 10
           waitsFor (->
-            pv.seekOffset() == 10
+            pv._seekOffset() == 10
           ), 'playerView to register seekOffset to 10 while playing', 10000
 
           runs -> pv.player.api 'seekTo', 20
           waitsFor (->
-            pv.seekOffset() == 20
+            pv._seekOffset() == 20
           ), 'playerView to register seekOffset to 20 while playing', 10000
 
           # achieve paused state
@@ -278,22 +295,22 @@ describe 'acorn.shells.VimeoShell', ->
 
           runs -> pv.player.api 'seekTo', 30
           waitsFor (->
-            pv.seekOffset() == 30
+            pv._seekOffset() == 30
           ), 'playerView to register seekOffset to 30 while paused', 10000
 
           runs -> pv.player.api 'seekTo', 40
           waitsFor (->
-            pv.seekOffset() == 40
+            pv._seekOffset() == 40
           ), 'playerView to register seekOffset to 40 while paused', 10000
 
           runs -> pv.player.api 'seekTo', 10
           waitsFor (->
-            pv.seekOffset() == 10
+            pv._seekOffset() == 10
           ), 'playerView to register seekOffset to 10 while paused', 10000
 
           runs -> pv.player.api 'seekTo', 20
           waitsFor (->
-            pv.seekOffset() == 20
+            pv._seekOffset() == 20
           ), 'playerView to register seekOffset to 20 while paused', 10000
 
 

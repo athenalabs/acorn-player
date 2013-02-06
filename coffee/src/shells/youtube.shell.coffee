@@ -143,11 +143,11 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     "youtube-player-#{@cid}"
 
 
-  seekOffset: =>
+  _seekOffset: =>
     @player?.getCurrentTime?() ? 0
 
 
-  seek: (seconds) =>
+  _seek: (seconds) =>
     # Unless playing, seek first to the wrong place. YouTube's player has a bug
     # such that, when not playing, it occasionally seeks incorrectly (this seems
     # to happen after 2 correct seeks)
@@ -227,11 +227,11 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
         # this *should* initialize the playback at the correct point but
         # doesn't. Need a more robust solution (tick)
         start = parseInt(@model.timeStart() ? 0, 10)
-        @player.cueVideoById(@model.youtubeId(), start)
-
-        # playing still needs buffering sometimes. hack: play then pause
+        @player.loadVideoById(@model.youtubeId(), start)
         @player.playVideo()
         @player.pauseVideo()
+
+        # playing still needs buffering sometimes. hack: play then pause
         @setMediaState 'ready'
 
 

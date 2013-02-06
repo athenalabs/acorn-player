@@ -158,6 +158,65 @@ describe 'acorn.player.TimedMediaPlayerView', ->
         expect(view._playbackIsAfterEnd(offset)).toBe false
 
 
+  describe 'TimedMediaPlayerView::loopTime', ->
+
+    it 'should be a function', ->
+      expect(typeof TimedMediaPlayerView::loopTime).toBe 'function'
+
+    it 'should return duration of time clip', ->
+      opts = options {timeStart: 20, timeEnd: 23, loops: 100}
+      view = new TimedMediaPlayerView opts
+      expect(view.loopTime()).toBe 3
+
+
+  describe 'TimedMediaPlayerView::loopSeekOffset', ->
+
+    it 'should be _seekOffset minus timeStart', ->
+      opts = options {timeStart: 20, timeEnd: 23, loops: 100}
+      view = new TimedMediaPlayerView opts
+      spyOn view, '_seekOffset'
+      view._seekOffset.andReturn 22
+      expect(view.loopSeekOffset()).toBe 2
+
+
+  describe 'TimedMediaPlayerView::loopSeek', ->
+
+    it 'should call _seek + timeStart', ->
+      opts = options {timeStart: 20, timeEnd: 23, loops: 100}
+      view = new TimedMediaPlayerView opts
+      spyOn view, '_seek'
+      view.loopSeek 2
+      expect(view._seek).toHaveBeenCalledWith 22
+
+
+  describe 'TimedMediaPlayerView::seekOffset', ->
+
+    it 'should add up elapsed loop time + current loopSeekOffset', ->
+      opts = options {timeStart: 20, timeEnd: 23, loops: 100}
+      view = new TimedMediaPlayerView opts
+      spyOn view, '_seekOffset'
+      view.elapsedLoops 4
+      view._seekOffset.andReturn 22
+      expect(view.seekOffset()).toBe (4 * 3) + 2
+
+
+  describe 'TimedMediaPlayerView::seek', ->
+
+    it 'should call loopSeek with loopTime remainder', ->
+      opts = options {timeStart: 20, timeEnd: 23, loops: 100}
+      view = new TimedMediaPlayerView opts
+      spyOn view, 'loopSeek'
+      view.seek 50
+      expect(view.loopSeek).toHaveBeenCalledWith (50 % view.loopTime())
+
+    it 'should set elapsedLoops', ->
+      opts = options {timeStart: 20, timeEnd: 23, loops: 100}
+      view = new TimedMediaPlayerView opts
+      spyOn view, 'loopSeek'
+      view.seek 50
+      expect(view.elapsedLoops()).toBe Math.floor(50 / 3)
+
+
   describe 'TimedMediaPlayerView::onPlaybackTick', ->
 
     it 'should be a function', ->
@@ -166,31 +225,31 @@ describe 'acorn.player.TimedMediaPlayerView', ->
     it 'should stopTick and return unless isPlaying', ->
       view = new TimedMediaPlayerView options()
       spyOn view, 'isPlaying'
-      spyOn view, 'seekOffset'
+      spyOn view, '_seekOffset'
       spyOn view.timer, 'stopTick'
 
       view.isPlaying.andReturn false
       view.onPlaybackTick()
-      expect(view.seekOffset).not.toHaveBeenCalled()
+      expect(view._seekOffset).not.toHaveBeenCalled()
       expect(view.timer.stopTick.callCount).toBe 1
 
       view.isPlaying.andReturn true
       view.onPlaybackTick()
-      expect(view.seekOffset).toHaveBeenCalled()
+      expect(view._seekOffset).toHaveBeenCalled()
       expect(view.timer.stopTick.callCount).toBe 1
 
     it 'should return unless isPlaying', ->
       view = new TimedMediaPlayerView options()
       spyOn view, 'isPlaying'
-      spyOn view, 'seekOffset'
+      spyOn view, '_seekOffset'
 
       view.isPlaying.andReturn false
       view.onPlaybackTick()
-      expect(view.seekOffset).not.toHaveBeenCalled()
+      expect(view._seekOffset).not.toHaveBeenCalled()
 
       view.isPlaying.andReturn true
       view.onPlaybackTick()
-      expect(view.seekOffset).toHaveBeenCalled()
+      expect(view._seekOffset).toHaveBeenCalled()
 
 
     it 'should seek to start if playback is before start', ->
@@ -198,10 +257,10 @@ describe 'acorn.player.TimedMediaPlayerView', ->
       view.setMediaState 'play'
       spyOn(view, '_playbackIsBeforeStart').andReturn true
       spyOn(view, '_playbackIsAfterEnd').andReturn false
-      spyOn view, 'seek'
+      spyOn view, '_seek'
 
       view.onPlaybackTick()
-      expect(view.seek).toHaveBeenCalledWith 20
+      expect(view._seek).toHaveBeenCalledWith 20
       expect(view.elapsedLoops()).toBe 0
       expect(view._seeking).toBeDefined()
 
@@ -210,12 +269,12 @@ describe 'acorn.player.TimedMediaPlayerView', ->
       view.setMediaState 'play'
       spyOn(view, '_playbackIsBeforeStart').andReturn false
       spyOn(view, '_playbackIsAfterEnd').andReturn false
-      spyOn view, 'seek'
+      spyOn view, '_seek'
 
       view._seeking = true
 
       view.onPlaybackTick()
-      expect(view.seek).not.toHaveBeenCalled()
+      expect(view._seek).not.toHaveBeenCalled()
       expect(view.elapsedLoops()).toBe 0
       expect(view._seeking).toBe false
 
@@ -235,10 +294,10 @@ describe 'acorn.player.TimedMediaPlayerView', ->
         view.setMediaState 'play'
         spyOn(view, '_playbackIsBeforeStart').andReturn false
         spyOn(view, '_playbackIsAfterEnd').andReturn true
-        spyOn view, 'seek'
+        spyOn view, '_seek'
 
         view.onPlaybackTick()
-        expect(view.seek).toHaveBeenCalledWith 20
+        expect(view._seek).toHaveBeenCalledWith 20
         expect(view.elapsedLoops()).toBe 1
         expect(view._seeking).toBe true
 
@@ -249,14 +308,14 @@ describe 'acorn.player.TimedMediaPlayerView', ->
         view.setMediaState 'play'
         spyOn(view, '_playbackIsBeforeStart').andReturn false
         spyOn(view, '_playbackIsAfterEnd').andReturn true
-        spyOn view, 'seek'
+        spyOn view, '_seek'
         spyOn view, 'setMediaState'
 
         view.elapsedLoops loops - 1
         view.onPlaybackTick()
 
-        expect(view.seek).not.toHaveBeenCalled()
+        expect(view._seek).not.toHaveBeenCalled()
         expect(view.elapsedLoops()).toBe loops
         expect(view._seeking).not.toBeDefined()
-        expect(view.seek).not.toHaveBeenCalled()
+        expect(view._seek).not.toHaveBeenCalled()
         expect(view.setMediaState.argsForCall[0]).toEqual ['end']

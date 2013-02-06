@@ -41,7 +41,7 @@ class VideoLinkShell.Model extends LinkShell.Model
 
 
   # duration of one video loop given current splicing
-  singleLoopDuration: =>
+  loopTime: =>
     end = @timeEnd() ? @timeTotal()
     end - (@timeStart() ? 0)
 
@@ -55,7 +55,7 @@ class VideoLinkShell.Model extends LinkShell.Model
     else
       loops = parseInt(loops)
       loops = 1 unless loops >= 0
-      @singleLoopDuration() * loops
+      @loopTime() * loops
 
 
 
@@ -157,8 +157,8 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
   _onChangeProgressPercent: (progressPercent) =>
     # get progress that corresponds to slider value percent
     progress = util.fromPercent progressPercent,
-      low: @model.timeStart()
-      high: @model.timeEnd()
+      low: 0
+      high: @duration()
       bound: true
 
     # if slider progress differs from player progress, seek to new position
@@ -172,8 +172,8 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
     # get progress percent that corresponds with media player progress
     progressPercent = util.toPercent @_progress,
-      low: @model.timeStart()
-      high: @model.timeEnd()
+      low: 0
+      high: @duration()
       bound: true
 
     # keep progress bar in sync
@@ -375,7 +375,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     # restart player loops
     @_playerView.elapsedLoops 0
     if @_playerView.isPlaying()
-      @_playerView.seek @model.timeStart()
+      @_playerView.seek 0
 
 
 
