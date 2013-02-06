@@ -208,7 +208,7 @@ describe 'acorn.player.controls.ElapsedTimeControlView', ->
     model = new Backbone.Model elapsed: 10, total: 20
     view = new ElapsedTimeControlView model: model
     view.render()
-    expect(view.$('.elapsed').text()).toBe '00:10'
+    expect(view.$('.elapsed-value').text()).toBe '00:10'
 
   it 'should render total timestring', ->
     model = new Backbone.Model elapsed: 10, total: 20
@@ -233,6 +233,7 @@ describe 'acorn.player.controls.ElapsedTimeControlView', ->
     # setup DOM
     acorn.util.appendCss()
     $player = $('<div>').addClass('acorn-player').appendTo('body')
+    $mockToolbar = $('<div>').addClass('control-toolbar-view').appendTo($player)
 
     # add into the DOM to see how it looks.
 
@@ -240,4 +241,4 @@ describe 'acorn.player.controls.ElapsedTimeControlView', ->
       model = new Backbone.Model elapsed: pair[0], total: pair[1]
       view = new ElapsedTimeControlView model: model
       view.render()
-      $player.append view.el
+      $mockToolbar.append view.el

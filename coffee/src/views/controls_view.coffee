@@ -216,7 +216,10 @@ class ElapsedTimeControlView extends ControlView
 
   template: _.template '''
     <div>
-      <span class="elapsed"></span> /
+      <span class="elapsed">
+        <span class="elapsed-value"></span>
+        <input placeholder="seek" class="seek-field">
+      </span> /
       <span class="total"></span>
     </div>
     '''
@@ -249,7 +252,7 @@ class ElapsedTimeControlView extends ControlView
 
 
   refreshValues: =>
-    @$('.elapsed').text @formatTime @model.get 'elapsed'
+    @$('.elapsed-value').text @formatTime @model.get 'elapsed'
     @$('.total').text @formatTime @model.get 'total'
 
 

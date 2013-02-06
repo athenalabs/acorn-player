@@ -448,7 +448,26 @@ input {
 .control-toolbar-view .elapsed-time-control-view {
   font-size: 12px;
   width: 200px;
-  > * {
+
+  .seek-field {
+    width: 35px;
+    height: 14px;
+    margin-top: -1px;
+    padding-left: 3px;
+    font-size: 12px;
+    line-height: 14px;
+    .bordered(2px, #aaa);
+    display: none;
+  }
+
+  &.active {
+    .elapsed-value {
+      display: none;
+    }
+
+    .seek-field {
+      display: inline-block;
+    }
   }
 }
 
