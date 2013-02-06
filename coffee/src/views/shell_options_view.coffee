@@ -3,6 +3,7 @@ goog.provide 'acorn.player.ShellOptionsView'
 goog.require 'acorn.shells.Registry'
 goog.require 'acorn.shells.Shell'
 goog.require 'acorn.player.DropdownView'
+goog.require 'acorn.player.EditSummaryView'
 
 
 
@@ -38,9 +39,8 @@ class acorn.player.ShellOptionsView extends athena.lib.View
       unless shellid is @model.shellid()
         @trigger 'ShellOptions:SwapShell', shellid
 
-    @summaryView = new acorn.player.SummaryView
+    @summaryView = new acorn.player.EditSummaryView
       eventhub: @eventhub
-      editable: true
       model: @model
 
     @remixView = new @model.module.RemixView

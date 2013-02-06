@@ -27,7 +27,7 @@ describe 'acorn.player.ShellOptionsView', ->
 
   test.describeSubview
     View: ShellOptionsView
-    Subview: acorn.player.SummaryView
+    Subview: acorn.player.EditSummaryView
     subviewAttr: 'summaryView'
     viewOptions: options
 
