@@ -32,7 +32,7 @@ class ControlToolbarView extends athena.lib.ToolbarView
 
     # forward all events from buttons
     _.each @buttons, (btn) =>
-      btn.on 'all', (eventName) => @trigger eventName
+      btn.on 'all', => @trigger arguments...
 
 
 
