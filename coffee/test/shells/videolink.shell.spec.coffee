@@ -108,6 +108,108 @@ describe 'acorn.shells.VideoLinkShell', ->
         mv.seekOffset()
         expect(mv.playerView.seekOffset).toHaveBeenCalled()
 
+
+      describe 'MediaView::controlsView', ->
+
+        it 'should have a play button', ->
+          view = new MediaView viewOptions()
+          view.controlsView.render()
+          view.render()
+          playControl = view.controlsView.$ '.control-view.play'
+          expect(playControl.length).toBe 1
+
+        it 'should have a play button that is initially hidden', ->
+          view = new MediaView viewOptions()
+          view.controlsView.render()
+          view.render()
+          view.play()
+          playControl = view.controlsView.$ '.control-view.play'
+          expect(playControl.length).toBe 1
+          expect(playControl.hasClass 'hidden').toBe true
+
+        it 'should have a pause button', ->
+          view = new MediaView viewOptions()
+          view.controlsView.render()
+          view.render()
+          view.play()
+          pauseControl = view.controlsView.$ '.control-view.pause'
+          expect(pauseControl.length).toBe 1
+
+        it 'should have a pause button that is not initially hidden', ->
+          view = new MediaView viewOptions()
+          view.controlsView.render()
+          view.render()
+          view.play()
+          pauseControl = view.controlsView.$ '.control-view.pause'
+          expect(pauseControl.length).toBe 1
+          expect(pauseControl.hasClass 'hidden').toBe false
+
+        it 'should show play button when paused', ->
+          view = new MediaView viewOptions()
+          view.controlsView.render()
+          view.render()
+          view.play()
+          view.pause()
+          expect(view.isPaused()).toBe true
+
+          playControl = view.controlsView.$ '.control-view.play'
+          expect(playControl.hasClass 'hidden').toBe false
+
+        it 'should hide pause button when paused', ->
+          view = new MediaView viewOptions()
+          view.controlsView.render()
+          view.render()
+          view.play()
+          view.pause()
+          expect(view.isPaused()).toBe true
+
+          pauseControl = view.controlsView.$ '.control-view.pause'
+          expect(pauseControl.hasClass 'hidden').toBe true
+
+        it 'should hide play button when playing', ->
+          view = new MediaView viewOptions()
+          view.controlsView.render()
+          view.render()
+          view.play()
+          expect(view.isPlaying()).toBe true
+
+          playControl = view.controlsView.$ '.control-view.play'
+          expect(playControl.hasClass 'hidden').toBe true
+
+        it 'should show pause button when playing', ->
+          view = new MediaView viewOptions()
+          view.controlsView.render()
+          view.render()
+          view.play()
+          expect(view.isPlaying()).toBe true
+
+          pauseControl = view.controlsView.$ '.control-view.pause'
+          expect(pauseControl.hasClass 'hidden').toBe false
+
+        it 'should play when play button is clicked', ->
+          view = new MediaView viewOptions()
+          view.controlsView.render()
+          view.render()
+          view.play()
+          playControl = view.controlsView.$ '.control-view.play'
+          view.pause()
+
+          spyOn view, 'play'
+          playControl.click()
+          expect(view.play).toHaveBeenCalled()
+
+        it 'should pause when pause button is clicked', ->
+          view = new MediaView viewOptions()
+          view.controlsView.render()
+          view.render()
+          view.play()
+          pauseControl = view.controlsView.$ '.control-view.pause'
+
+          spyOn view, 'pause'
+          pauseControl.click()
+          expect(view.pause).toHaveBeenCalled()
+
+
       # TODO: test onPlaybackTick. waiting on integration with video start,
       # pause, and seek calls
       it '------ NOT TESTED ------ should enforce start time', ->
@@ -297,6 +399,107 @@ describe 'acorn.shells.VideoLinkShell', ->
 
           lbv.showView 2
           expect(rv._playerView.elapsedLoops()).toBe 0
+
+
+      describe 'RemixView::_controlsView', ->
+
+        it 'should have a play button', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          playControl = view._controlsView.$ '.control-view.play'
+          expect(playControl.length).toBe 1
+
+        it 'should have a play button that is initially hidden', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          playControl = view._controlsView.$ '.control-view.play'
+          expect(playControl.length).toBe 1
+          expect(playControl.hasClass 'hidden').toBe true
+
+        it 'should have a pause button', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          pauseControl = view._controlsView.$ '.control-view.pause'
+          expect(pauseControl.length).toBe 1
+
+        it 'should have a pause button that is not initially hidden', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          pauseControl = view._controlsView.$ '.control-view.pause'
+          expect(pauseControl.length).toBe 1
+          expect(pauseControl.hasClass 'hidden').toBe false
+
+        it 'should show play button when paused', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          view._playerView.pause()
+          expect(view._playerView.isPaused()).toBe true
+
+          playControl = view._controlsView.$ '.control-view.play'
+          expect(playControl.hasClass 'hidden').toBe false
+
+        it 'should hide pause button when paused', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          view._playerView.pause()
+          expect(view._playerView.isPaused()).toBe true
+
+          pauseControl = view._controlsView.$ '.control-view.pause'
+          expect(pauseControl.hasClass 'hidden').toBe true
+
+        it 'should hide play button when playing', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          expect(view._playerView.isPlaying()).toBe true
+
+          playControl = view._controlsView.$ '.control-view.play'
+          expect(playControl.hasClass 'hidden').toBe true
+
+        it 'should show pause button when playing', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          expect(view._playerView.isPlaying()).toBe true
+
+          pauseControl = view._controlsView.$ '.control-view.pause'
+          expect(pauseControl.hasClass 'hidden').toBe false
+
+        it 'should play when play button is clicked', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          playControl = view._controlsView.$ '.control-view.play'
+          view._playerView.pause()
+
+          spyOn view._playerView, 'play'
+          playControl.click()
+          expect(view._playerView.play).toHaveBeenCalled()
+
+        it 'should pause when pause button is clicked', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          pauseControl = view._controlsView.$ '.control-view.pause'
+
+          spyOn view._playerView, 'pause'
+          pauseControl.click()
+          expect(view._playerView.pause).toHaveBeenCalled()
 
 
       it 'should look good', ->
