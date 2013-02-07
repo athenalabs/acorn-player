@@ -59,6 +59,10 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
       @timer.stopTick()
       return
 
+    if @duration() == 0
+      @pause()
+      return
+
     now = @_seekOffset() ? 0
     start = @model.timeStart() ? 0
     end = @model.timeEnd() ? @model.timeTotal()

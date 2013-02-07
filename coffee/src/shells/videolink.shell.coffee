@@ -338,13 +338,13 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     changes = {}
     changes.timeStart = changed.start if _.isNumber changed?.start
     changes.timeEnd = changed.end if _.isNumber changed?.end
-    seekOffset = undefined
+
 
     # calculate seekOffset before changes take place.
     if changes.timeStart? and changes.timeStart isnt @model.timeStart()
-      seekOffset = changes.timeStart
+      seekOffset = 0
     else if changes.timeEnd? and changes.timeEnd isnt @model.timeEnd()
-      seekOffset = changes.timeEnd
+      seekOffset = Infinity # will be bounded to duration after changes
 
     @model.set changes
 
@@ -352,11 +352,9 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     unless @_playerView.isInState 'pause'
       @_playerView.play()
 
-    # when playing, rewind a bit to see the "end"
-    if seekOffset is @model.timeEnd() and @_playerView.isPlaying()
-      seekOffset = Math.max(seekOffset - 2, @model.timeStart())
-
     if seekOffset?
+      # bound between 0 <= seekOffset <= @duration() -2
+      seekOffset = Math.max(0, Math.min(seekOffset, @model.duration() - 2))
       @_playerView.seek seekOffset
       @_playerView.elapsedLoops 0
 

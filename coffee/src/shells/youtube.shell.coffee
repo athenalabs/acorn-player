@@ -162,7 +162,7 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
 
 
   duration: =>
-    @model.duration() or @player?.getDuration?() or 0
+    @model.duration() ? (@player?.getDuration?() or 0)
 
 
   _playbackIsAfterEnd: (current) =>
