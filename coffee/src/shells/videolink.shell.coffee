@@ -239,7 +239,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @_playerView.on 'Media:Progress', @_onMediaProgress
     @_controlsView.on 'PlayControl:Click', => @_playerView.play()
     @_controlsView.on 'PauseControl:Click', => @_playerView.pause()
-    @_controlsView.on 'ElapsedTimeControl:Seek', @_playerView.seek
+    @_controlsView.on 'ElapsedTimeControl:Seek', @_playerView._seek
     @_timeRangeInputView.on 'TimeRangeInputView:DidChangeTimes', @_onChangeTimes
     @_timeRangeInputView.on 'TimeRangeInputView:DidChangeProgress',
         @_onChangeProgress
@@ -357,7 +357,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
       seekOffset = Math.max(seekOffset - 2, @model.timeStart())
 
     if seekOffset?
-      @_playerView.seek seekOffset
+      @_playerView._seek seekOffset
       @_playerView.elapsedLoops 0
 
     @eventhub.trigger 'change:shell', @model, @
@@ -367,7 +367,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     # if slider progress differs from player progress, seek to new position
     unless progress.toFixed(5) == @_progress?.toFixed(5)
       @_progress = progress
-      @_playerView.seek progress
+      @_playerView._seek progress
 
 
   _onChangeLoops: (changed) =>
@@ -377,7 +377,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     # restart player loops
     @_playerView.elapsedLoops 0
     if @_playerView.isPlaying()
-      @_playerView.seek 0
+      @_playerView._seek 0
 
 
 

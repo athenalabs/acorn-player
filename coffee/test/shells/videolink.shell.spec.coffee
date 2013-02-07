@@ -535,7 +535,7 @@ describe 'acorn.shells.VideoLinkShell', ->
           expect(elapsedTimeControl.length).toBe 1
 
         it 'should call seek when elapsed time control seeks', ->
-          spyOn PlayerView::, 'seek'
+          spyOn PlayerView::, '_seek'
           view = new RemixView viewOptions()
           view._controlsView.render()
           view.render()
@@ -543,13 +543,13 @@ describe 'acorn.shells.VideoLinkShell', ->
           elapsedTimeControl = view._controlsView.$ '.elapsed-time-control-view'
           seekField = elapsedTimeControl.find 'input'
 
-          expect(PlayerView::seek).not.toHaveBeenCalled()
+          expect(PlayerView::_seek).not.toHaveBeenCalled()
 
           for offset in [0, 10, 20, 30, 40, 50]
             seekField.val offset
             seekField.blur()
-            expect(PlayerView::seek).toHaveBeenCalled()
-            expect(PlayerView::seek).toHaveBeenCalledWith offset
+            expect(PlayerView::_seek).toHaveBeenCalled()
+            expect(PlayerView::_seek).toHaveBeenCalledWith offset
 
 
       it 'should look good', ->
