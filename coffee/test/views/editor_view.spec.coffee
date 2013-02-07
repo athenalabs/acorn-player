@@ -144,6 +144,107 @@ describe 'acorn.player.EditorView', ->
       expect(spy).toHaveBeenCalled()
       expect(view.$('#editor-save-btn').attr 'disabled').toBe undefined
 
+    it 'should exit immediately if view cannot be saved', ->
+      view = new EditorView viewOptions()
+      view.render()
+      spyOn(view, 'canBeSaved').andReturn false
+      spyOn model, 'save'
+
+      expect(view.canBeSaved).not.toHaveBeenCalled()
+      expect(model.save).not.toHaveBeenCalled()
+
+      view.save()
+      expect(view.canBeSaved).toHaveBeenCalled()
+      expect(model.save).not.toHaveBeenCalled()
+
+
+  describe 'EditorView::_updateSaveButton', ->
+
+    it 'should be a function', ->
+      view = new EditorView viewOptions()
+      expect(typeof view._updateSaveButton).toBe 'function'
+
+    it 'should listen to shell editor view for shell updates', ->
+      view = new EditorView viewOptions()
+      spyOn view, '_updateSaveButton'
+
+      expect(view._updateSaveButton).not.toHaveBeenCalled()
+      view.render()
+      expect(view._updateSaveButton).toHaveBeenCalled()
+
+    it 'should listen to shell editor view for shell updates', ->
+      spy = spyOn EditorView::, '_updateSaveButton'
+      view = new EditorView viewOptions()
+      view.render()
+
+      initialCallCount = spy.callCount
+      view.shellEditorView.trigger 'ShellEditor:ShellsUpdated'
+      expect(spy.callCount).toBe initialCallCount + 1
+
+    it 'should check whether shell can be saved', ->
+      view = new EditorView viewOptions()
+      view.render()
+      spyOn view, 'canBeSaved'
+
+      expect(view.canBeSaved).not.toHaveBeenCalled()
+      view._updateSaveButton()
+      expect(view.canBeSaved).toHaveBeenCalled()
+
+    it 'should disable save button if acorn cannot currently be saved', ->
+      view = new EditorView viewOptions()
+      view.render()
+      spyOn(view, 'canBeSaved').andReturn false
+
+      expect(view.$('#editor-save-btn').attr 'disabled').toBeUndefined()
+      view._updateSaveButton()
+      expect(view.$('#editor-save-btn').attr 'disabled').toBe 'disabled'
+
+    it 'should enable save button if acorn can currently be saved', ->
+      view = new EditorView viewOptions()
+      view.render()
+      spyOn(view, 'canBeSaved').andReturn true
+
+      view.$('#editor-save-btn').attr 'disabled', 'disabled'
+      expect(view.$('#editor-save-btn').attr 'disabled').toBe 'disabled'
+      view._updateSaveButton()
+      expect(view.$('#editor-save-btn').attr 'disabled').toBeUndefined()
+
+
+  describe 'EditorView::canBeSaved', ->
+
+    it 'should be a function', ->
+      view = new EditorView viewOptions()
+      expect(typeof view.canBeSaved).toBe 'function'
+
+    it 'should return true if model is not new', ->
+      # saved, empty model
+      model = new acorn.Model
+        acornid: 'nyfskeqlyx'
+        shell: (new EmptyShell.Model).toJSON()
+
+      view = new EditorView model: model
+      expect(view.canBeSaved()).toBe true
+
+    it 'should return true if model is not empty', ->
+      # new, non-empty model
+      model = new acorn.Model
+        thumbnail: acorn.config.img.acorn
+        acornid: 'new'
+        title: 'The Differential'
+        shell: (new TextShell.Model).toJSON()
+
+      view = new EditorView model: model
+      expect(view.canBeSaved()).toBe true
+
+    it 'should return false if model is new and empty', ->
+      # new, empty model
+      model = new acorn.Model
+        acornid: 'new'
+        shell: (new EmptyShell.Model).toJSON()
+
+      view = new EditorView model: model
+      expect(view.canBeSaved()).toBe false
+
 
   it 'should look good', ->
     # setup DOM
