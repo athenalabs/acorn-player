@@ -172,9 +172,7 @@ input {
   width: 100%;
 
   > .shell-media-view {
-    .position-absolutely;
-    bottom: @main-control-height;
-    width: 100%;
+    .position-absolutely(0px, 0px, @main-control-height);
     overflow: scroll;
 
     .value-slider-view {
@@ -668,8 +666,7 @@ input {
     }
 
     .shell-controls {
-      position: absolute;
-      top: 15px;
+      .position-absolutely(15px, 0px, 0px);
     }
 
     .loops-button {
