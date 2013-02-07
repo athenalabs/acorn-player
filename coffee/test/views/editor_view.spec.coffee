@@ -22,7 +22,7 @@ describe 'acorn.player.EditorView', ->
   model.save = (attrs, opts) -> opts.error()
 
   # options for EditorView contruction
-  options = model: model
+  viewOptions = -> model: model
 
 
   it 'should be part of acorn.player', ->
@@ -41,23 +41,23 @@ describe 'acorn.player.EditorView', ->
       expect(model instanceof acorn.Model).toBe true
       expect(-> new EditorView model: model).not.toThrow()
 
-  describeView EditorView, athena.lib.View, options
+  describeView EditorView, athena.lib.View, viewOptions()
 
   describeSubview
     View: EditorView
     Subview: acorn.player.ShellEditorView
     subviewAttr: 'shellEditorView'
-    viewOptions: options
+    viewOptions: viewOptions()
 
   describeSubview
     View: EditorView
     Subview: athena.lib.ToolbarView
     subviewAttr: 'toolbarView'
-    viewOptions: options
+    viewOptions: viewOptions()
 
 
   it 'should trigger event `Editor:Cancel` on clicking Cancel', ->
-    view = new EditorView options
+    view = new EditorView viewOptions()
     spy = new EventSpy view.eventhub, 'Editor:Cancel'
     view.render()
     expect(spy.triggerCount).toBe 0
@@ -67,17 +67,18 @@ describe 'acorn.player.EditorView', ->
     expect(spy.triggerCount).toBe 2
 
   it 'should call `save` on clicking Save', ->
-    view = new EditorView options
+    view = new EditorView viewOptions()
     spy = spyOn view, 'save'
     view.render()
     expect(spy).not.toHaveBeenCalled()
     view.$('#editor-save-btn').trigger 'click'
     expect(spy).toHaveBeenCalled()
 
+
   describe '.save', ->
 
     it 'should update acornModel with shellModel attributes', ->
-      view = new EditorView options
+      view = new EditorView viewOptions()
       spy = spyOn model, 'shellData'
       view.render()
       expect(spy).not.toHaveBeenCalled()
@@ -87,7 +88,7 @@ describe 'acorn.player.EditorView', ->
       expect(spy).toHaveBeenCalledWith(view.shellEditorView.shell().attributes)
 
     it 'should call save on acornModel', ->
-      view = new EditorView options
+      view = new EditorView viewOptions()
       spy = spyOn model, 'save'
       view.render()
       expect(spy).not.toHaveBeenCalled()
@@ -96,7 +97,7 @@ describe 'acorn.player.EditorView', ->
       expect(spy).toHaveBeenCalled()
 
     it 'should disable `Save` button on calling save', ->
-      view = new EditorView options
+      view = new EditorView viewOptions()
       spy = spyOn model, 'save'
 
       view.render()
@@ -105,7 +106,7 @@ describe 'acorn.player.EditorView', ->
       expect(view.$('#editor-save-btn').attr 'disabled').toBe 'disabled'
 
     it 'should trigger `Editor:Saved` event on save success', ->
-      view = new EditorView options
+      view = new EditorView viewOptions()
 
       saveSpy = spyOn model, 'save'
       saveSpy.andCallFake (attrs, opts) -> opts.success()
@@ -119,7 +120,7 @@ describe 'acorn.player.EditorView', ->
       expect(eventSpy.triggered).toBe true
 
     it 'should NOT re-enable `Save` button on save success', ->
-      view = new EditorView options
+      view = new EditorView viewOptions()
       spy = spyOn model, 'save'
       spy.andCallFake (attrs, opts) -> opts.success()
 
@@ -132,7 +133,7 @@ describe 'acorn.player.EditorView', ->
 
 
     it 'should re-enable `Save` button on save error', ->
-      view = new EditorView options
+      view = new EditorView viewOptions()
       spy = spyOn model, 'save'
       spy = spy.andCallFake (attrs, opts) -> opts.error()
 
@@ -150,7 +151,7 @@ describe 'acorn.player.EditorView', ->
     $player = $('<div>').addClass('acorn-player').appendTo('body')
 
     # add a SplashView into the DOM to see how it looks.
-    view = new EditorView options
+    view = new EditorView viewOptions()
     view.$el.width 600
     view.$el.height 600
     view.render()
