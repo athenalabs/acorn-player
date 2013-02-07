@@ -62,6 +62,8 @@ class acorn.player.EditorView extends athena.lib.View
       buttons: btns
       eventhub: @eventhub
 
+    @listenTo @shellEditorView, 'ShellEditor:ShellsUpdated', @_updateSaveButton
+
 
   render: =>
     super
@@ -73,6 +75,8 @@ class acorn.player.EditorView extends athena.lib.View
 
     @$el.append @shellEditorView.render().el
     @$el.append @toolbarView.render().el
+
+    @_updateSaveButton()
 
     @
 
@@ -110,3 +114,10 @@ class acorn.player.EditorView extends athena.lib.View
       false
     else
       true
+
+
+  _updateSaveButton: =>
+    if @canBeSaved()
+      @$('#editor-save-btn').removeAttr 'disabled'
+    else
+      @$('#editor-save-btn').attr 'disabled', 'disabled'
