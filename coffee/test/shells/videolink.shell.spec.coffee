@@ -209,6 +209,31 @@ describe 'acorn.shells.VideoLinkShell', ->
           pauseControl.click()
           expect(view.pause).toHaveBeenCalled()
 
+        it 'should have an elapsed time control', ->
+          view = new MediaView viewOptions()
+          view.controlsView.render()
+          view.render()
+          view.play()
+          elapsedTimeControl = view.controlsView.$ '.elapsed-time-control-view'
+          expect(elapsedTimeControl.length).toBe 1
+
+        it 'should call seek when elapsed time control seeks', ->
+          spyOn MediaView::, 'seek'
+          view = new MediaView viewOptions()
+          view.controlsView.render()
+          view.render()
+          view.play()
+          elapsedTimeControl = view.controlsView.$ '.elapsed-time-control-view'
+          seekField = elapsedTimeControl.find 'input'
+
+          expect(MediaView::seek).not.toHaveBeenCalled()
+
+          for offset in [0, 10, 20, 30, 40, 50]
+            seekField.val offset
+            seekField.blur()
+            expect(MediaView::seek).toHaveBeenCalled()
+            expect(MediaView::seek).toHaveBeenCalledWith offset
+
 
       # TODO: test onPlaybackTick. waiting on integration with video start,
       # pause, and seek calls
@@ -500,6 +525,31 @@ describe 'acorn.shells.VideoLinkShell', ->
           spyOn view._playerView, 'pause'
           pauseControl.click()
           expect(view._playerView.pause).toHaveBeenCalled()
+
+        it 'should have an elapsed time control', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          elapsedTimeControl = view._controlsView.$ '.elapsed-time-control-view'
+          expect(elapsedTimeControl.length).toBe 1
+
+        it 'should call seek when elapsed time control seeks', ->
+          spyOn PlayerView::, 'seek'
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          elapsedTimeControl = view._controlsView.$ '.elapsed-time-control-view'
+          seekField = elapsedTimeControl.find 'input'
+
+          expect(PlayerView::seek).not.toHaveBeenCalled()
+
+          for offset in [0, 10, 20, 30, 40, 50]
+            seekField.val offset
+            seekField.blur()
+            expect(PlayerView::seek).toHaveBeenCalled()
+            expect(PlayerView::seek).toHaveBeenCalledWith offset
 
 
       it 'should look good', ->

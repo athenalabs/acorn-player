@@ -86,6 +86,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
     @controlsView.on 'PlayControl:Click', => @play()
     @controlsView.on 'PauseControl:Click', => @pause()
+    @controlsView.on 'ElapsedTimeControl:Seek', @seek
     @progressBarView.on 'ValueSliderView:ValueDidChange',
         @_onChangeProgressPercent
     @playerView.on 'Media:Progress', @_onMediaProgress
@@ -238,6 +239,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @_playerView.on 'Media:Progress', @_onMediaProgress
     @_controlsView.on 'PlayControl:Click', => @_playerView.play()
     @_controlsView.on 'PauseControl:Click', => @_playerView.pause()
+    @_controlsView.on 'ElapsedTimeControl:Seek', @_playerView.seek
     @_timeRangeInputView.on 'TimeRangeInputView:DidChangeTimes', @_onChangeTimes
     @_timeRangeInputView.on 'TimeRangeInputView:DidChangeProgress',
         @_onChangeProgress

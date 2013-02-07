@@ -126,6 +126,31 @@ describe 'acorn.shells.SplicedShell', ->
           pauseControl.click()
           expect(view.pause).toHaveBeenCalled()
 
+        it 'should have an elapsed time control', ->
+          view = new MediaView viewOptions()
+          view.controlsView.render()
+          view.render()
+          view.play()
+          elapsedTimeControl = view.controlsView.$ '.elapsed-time-control-view'
+          expect(elapsedTimeControl.length).toBe 1
+
+        it 'should call seek when elapsed time control seeks', ->
+          spyOn MediaView::, 'seek'
+          view = new MediaView viewOptions()
+          view.controlsView.render()
+          view.render()
+          view.play()
+          elapsedTimeControl = view.controlsView.$ '.elapsed-time-control-view'
+          seekField = elapsedTimeControl.find 'input'
+
+          expect(MediaView::seek).not.toHaveBeenCalled()
+
+          for offset in [0, 10, 20, 30, 40, 50]
+            seekField.val offset
+            seekField.blur()
+            expect(MediaView::seek).toHaveBeenCalled()
+            expect(MediaView::seek).toHaveBeenCalledWith offset
+
 
 
       test.describeDefaults SplicedShell.MediaView, {

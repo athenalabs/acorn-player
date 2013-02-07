@@ -56,6 +56,7 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
 
     @controlsView.on 'PlayControl:Click', => @play()
     @controlsView.on 'PauseControl:Click', => @pause()
+    @controlsView.on 'ElapsedTimeControl:Seek', @seek
 
 
   initializeElapsedTimeView: =>
