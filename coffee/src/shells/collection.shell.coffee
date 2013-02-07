@@ -179,6 +179,9 @@ class CollectionShell.MediaView extends Shell.MediaView
     # whether or not to advance to the next shell once one ends
     autoAdvanceOnEnd: true
 
+    # whether next/prev cycle
+    shellsCycle: false
+
 
   initialize: =>
     super
@@ -367,13 +370,19 @@ class CollectionShell.MediaView extends Shell.MediaView
   showPrevious: =>
     unless @options.playOnChangeShell
       @pause()
-    @switchShell @currentIndex - 1
+    @switchShell @correctedIndex @currentIndex - 1
 
   showNext: =>
     unless @options.playOnChangeShell
       @pause()
-    @switchShell @currentIndex + 1
+    @switchShell @correctedIndex @currentIndex + 1
 
+
+  correctedIndex: (index) =>
+    if @options.shellsCycle
+      index = (index + @shellViews.length) % @shellViews.length
+    else
+      index
 
 
 # uniform view to edit shell data.

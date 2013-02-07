@@ -27,6 +27,7 @@ describe 'acorn.shells.CollectionShell', ->
       showSubshellControls: true
       showSubshellSummary: true
       autoAdvanceOnEnd: true
+      shellsCycle: false
     }, options
 
 
@@ -170,3 +171,20 @@ describe 'acorn.shells.CollectionShell', ->
         c.reset [new Model, new Model, new Model]
         expect(spy1.triggered).toBe true
         expect(spy2.triggered).toBe true
+
+
+    describe 'CollectionShell.MediaView', ->
+
+      describe 'MediaView::correctedIndex', ->
+
+        it 'should cycle index if options.shellsCycle', ->
+          model = new Model shells: [{shellid: Shell.id}, {shellid: Shell.id}]
+          view = new CollectionShell.MediaView model: model, shellsCycle: true
+          _.each [-1, 0, 1, 2, 3, 6, 10], (index) ->
+            expect(view.correctedIndex index).toBe ((index + 2) % 2)
+
+        it 'should not cycle index unless options.shellsCycle', ->
+          model = new Model shells: [{shellid: Shell.id}, {shellid: Shell.id}]
+          view = new CollectionShell.MediaView model: model, shellsCycle: false
+          _.each [-1, 0, 1, 2, 3, 6, 10], (index) ->
+            expect(view.correctedIndex index).toBe index

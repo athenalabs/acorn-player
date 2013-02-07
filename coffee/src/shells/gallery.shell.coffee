@@ -39,6 +39,7 @@ class GalleryShell.MediaView extends CollectionShell.MediaView
     showSubshellControls: true
     showSubshellSummary: true
     autoAdvanceOnEnd: false
+    shellsCycle: true
 
 
   initialize: =>
@@ -50,7 +51,8 @@ class GalleryShell.MediaView extends CollectionShell.MediaView
       tileOptions: @tileOptions
 
     @listenTo @gridView, 'GridTile:Click', (tile) =>
-      @showView @model.shells().indexOf tile.model
+      @switchShell @model.shells().indexOf tile.model
+      return false
 
 
   initializeControlsView: =>
@@ -60,14 +62,9 @@ class GalleryShell.MediaView extends CollectionShell.MediaView
       buttons: ['Previous', 'Grid', 'Next']
       eventhub: @eventhub
 
-    @controlsView.on 'PreviousControl:Click', => @showPrevious()
-    @controlsView.on 'GridControl:Click', => @hideView()
-    @controlsView.on 'NextControl:Click', => @showNext()
-
-
-  remove: =>
-    @controlsView.off 'GridControl:Click', @onTogglePlaylist
-    super
+    @listenTo @controlsView, 'PreviousControl:Click', => @showPrevious()
+    @listenTo @controlsView, 'GridControl:Click', => @showGrid()
+    @listenTo @controlsView, 'NextControl:Click', => @showNext()
 
 
   render: =>
@@ -76,16 +73,22 @@ class GalleryShell.MediaView extends CollectionShell.MediaView
     @
 
 
-  hideView: =>
-    super
+  showGrid: =>
+    @hideView()
     @gridView.$el.show()
     @controlsView.$el.hide()
+    @
+
+
+  hideGrid: =>
+    @gridView.$el.hide()
+    @controlsView.$el.show()
+    @
 
 
   showView: =>
+    @hideGrid()
     super
-    @gridView.$el.hide()
-    @controlsView.$el.show()
 
 
 
