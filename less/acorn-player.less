@@ -1,6 +1,8 @@
 @import 'elements.less';
 
 /* variables */
+// all heights and widths include border, padding, etc.
+
 @main-control-height: 29px;
 @main-control-font-size: 22px;
 @main-control-icon-size: 17px;
@@ -205,7 +207,7 @@ input {
     display: block;
     border-top: 1px solid #cccccc;
     padding: 0px;
-    height: @main-control-height;
+    height: @main-control-height - 1; // subtract one for border-top
 
     .gradient(#ffffff, #e6e6e6, #ffffff);
     .transition(0.35s, ease);
