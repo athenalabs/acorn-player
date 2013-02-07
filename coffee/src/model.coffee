@@ -25,6 +25,8 @@ class acorn.Model extends athena.lib.Model
   shellData: @property 'shell'
   owner: @property 'owner'
   parent: @property 'parent'
+  created: @property('created', setter: false)
+  updated: @property('updated', setter: false)
 
 
   # shell-bound properties

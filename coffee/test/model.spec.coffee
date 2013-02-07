@@ -43,6 +43,8 @@ describe 'acorn.Model', ->
   describeProperty = athena.lib.util.test.describeProperty
   describeProperty Model, 'owner', {},
   describeProperty Model, 'parent', {},
+  describeProperty Model, 'created', {}, setter: false
+  describeProperty Model, 'updated', {}, setter: false
 
   describeProperty Model, 'acornid', {}, {}, ->
     it 'acornid should match the id athena.lib.Model property', ->
