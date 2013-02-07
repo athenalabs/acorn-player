@@ -78,7 +78,8 @@ class acorn.player.EditorView extends athena.lib.View
 
 
   save: =>
-    # TODO add validation first
+    unless @canBeSaved()
+      return
 
     # update acornModel with edited shellModel data
     @model.shellData @shellEditorView.shell().attributes
@@ -96,3 +97,16 @@ class acorn.player.EditorView extends athena.lib.View
         @$('#editor-save-btn').removeAttr 'disabled'
 
     @
+
+
+  canBeSaved: =>
+    # TODO add more validation?
+
+    shellData = @shellEditorView.shell().attributes
+    isEmpty = shellData.shellid == 'acorn.CollectionShell' and
+        shellData.shells.length == 0
+
+    if @model.isNew() and isEmpty
+      false
+    else
+      true
