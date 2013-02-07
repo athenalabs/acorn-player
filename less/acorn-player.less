@@ -8,6 +8,11 @@
 @main-control-icon-size: 17px;
 @main-control-padding: 4px 9px;
 
+@sliding-object-width: 15px;
+@sliding-object-height: 15px;
+@slider-height: 8px;
+@slider-handle-radius: 7px;
+
 /* less functions */
 
 // position-absolutely: call with 0-4 parameters
@@ -714,8 +719,6 @@ input {
   }
 }
 
-@sliding-object-width: 15px;
-@sliding-object-height: 15px;
 .sliding-object-view {
   height: 0px;
   width: 100%;
@@ -738,8 +741,6 @@ input {
   }
 }
 
-@slider-height: 8px;
-@slider-handle-radius: 7px; // full radius, i.e. including 1px border
 .value-slider-view,
 .range-slider-view {
   height: @slider-height;
