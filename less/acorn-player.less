@@ -175,6 +175,11 @@ input {
     .position-absolutely(0px, 0px, @main-control-height);
     overflow: scroll;
 
+    // nested media-views should expand to full height
+    .shell-media-view {
+      .position-absolutely;
+    }
+
     .value-slider-view {
       position: absolute;
       bottom: 0px;
