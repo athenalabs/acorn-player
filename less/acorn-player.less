@@ -173,7 +173,6 @@ input {
 
   > .shell-media-view {
     .position-absolutely(0px, 0px, @main-control-height);
-    overflow: scroll;
 
     // nested media-views should expand to full height
     .shell-media-view {
@@ -184,6 +183,10 @@ input {
       position: absolute;
       bottom: 0px;
     }
+  }
+
+  .shell-media-view {
+    overflow: scroll;
 
     &.link-shell {
       > iframe {
