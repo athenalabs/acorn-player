@@ -60,7 +60,7 @@ describe 'acorn.player.TimeInputView', ->
           expect(input.val()).toBe "#{time}"
           expect(tiv.value()).not.toBe time
 
-          e = $.Event 'keyup', {which: athena.lib.util.keys[key]}
+          e = $.Event 'keyup', {keyCode: athena.lib.util.keys[key]}
           input.trigger e
           expect(input.val()).toBe timestring time
           expect(tiv.value()).toBe time
