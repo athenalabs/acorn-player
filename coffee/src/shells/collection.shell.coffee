@@ -62,10 +62,6 @@ class CollectionShell.Model extends Shell.Model
       @set 'shells', []
 
 
-  defaultThumbnail: =>
-    @shells().first()?.thumbnail() or super
-
-
   title: =>
     super or "#{@module.title} with #{@shells().length} items"
 
@@ -389,6 +385,16 @@ class CollectionShell.MediaView extends Shell.MediaView
 class CollectionShell.RemixView extends Shell.RemixView
 
   className: @classNameExtend 'collection-shell'
+
+
+  initialize: =>
+    super
+
+    @listenTo @model, 'change:shells', @_updateThumbnailWithDefault
+
+
+  defaultThumbnail: =>
+    @model.shells().first()?.thumbnail() or super
 
 
 

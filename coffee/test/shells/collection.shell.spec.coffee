@@ -10,8 +10,13 @@ describe 'acorn.shells.CollectionShell', ->
   Shell = acorn.shells.Shell
   CollectionShell = acorn.shells.CollectionShell
 
-  options =
-    model: new CollectionShell.Model {shellid: CollectionShell.id}
+  Model = CollectionShell.Model
+  MediaView = CollectionShell.MediaView
+  RemixView = CollectionShell.RemixView
+
+  viewOptions = ->
+    model: new Model {shellid: CollectionShell.id}
+    eventhub: _.extend {}, Backbone.Events
 
   it 'should be part of acorn.shells', ->
     expect(CollectionShell).toBeDefined()
@@ -28,11 +33,10 @@ describe 'acorn.shells.CollectionShell', ->
       showSubshellSummary: true
       autoAdvanceOnEnd: true
       shellsCycle: false
-    }, options
+    }, viewOptions()
 
 
   describe 'CollectionShell.Model', ->
-    Model = CollectionShell.Model
 
     describe 'Model::shells', ->
       it 'should be a Backbone.Collection', ->
@@ -188,3 +192,25 @@ describe 'acorn.shells.CollectionShell', ->
           view = new CollectionShell.MediaView model: model, shellsCycle: false
           _.each [-1, 0, 1, 2, 3, 6, 10], (index) ->
             expect(view.correctedIndex index).toBe index
+
+
+  describe 'CollectionShell.RemixView', ->
+
+    describe 'RemixView: default thumbnail', ->
+
+      it 'should use its first shell\'s thumbnail as its default thumbnail', ->
+        view = new RemixView viewOptions()
+        fakeShells = first: -> thumbnail: -> 'fake thumbnail'
+        spyOn(view.model, 'shells').andReturn fakeShells
+
+        expect(view.model.shells).not.toHaveBeenCalled()
+        expect(view.defaultThumbnail()).toBe 'fake thumbnail'
+        expect(view.model.shells).toHaveBeenCalled()
+
+      it 'should call _updateThumbnailWithDefault when shells change', ->
+        spyOn RemixView::, '_updateThumbnailWithDefault'
+        view = new RemixView viewOptions()
+
+        expect(RemixView::_updateThumbnailWithDefault.callCount).toBe 1
+        view.model.trigger 'change:shells'
+        expect(RemixView::_updateThumbnailWithDefault.callCount).toBe 2

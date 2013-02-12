@@ -365,14 +365,16 @@ describe 'acorn.shells.VimeoShell', ->
           waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
           runs -> expect(model.timeTotal()).toBe metaData.data()[0].duration
 
-        it 'should update defaultThumbnail', ->
+        it 'should update _fetchedThumbnail', ->
           view = new RemixView viewOptions()
           model = view.model
           metaData = view.metaData()
 
-          expect(model.defaultThumbnail()).toBe acorn.config.img.acorn
+          expect(view.defaultThumbnail()).toBe acorn.config.img.acorn
+          expect(view._fetchedThumbnail).toBe undefined
 
           waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
           runs ->
             thumbnail = metaData.data()[0].thumbnail_large
-            expect(model.defaultThumbnail()).toBe thumbnail
+            expect(view.defaultThumbnail()).toBe thumbnail
+            expect(view._fetchedThumbnail).toBe thumbnail

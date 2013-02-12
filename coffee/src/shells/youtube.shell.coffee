@@ -49,10 +49,6 @@ class YouTubeShell.Model extends VideoLinkShell.Model
     pattern.exec(link)[3]
 
 
-  defaultThumbnail: =>
-    "https://img.youtube.com/vi/#{@youtubeId()}/0.jpg"
-
-
   embedLink: (options) =>
     # see https://developers.google.com/youtube/player_parameters for options
     "https://www.youtube.com/embed/#{@youtubeId()}?" +
@@ -89,6 +85,10 @@ class YouTubeShell.RemixView extends VideoLinkShell.RemixView
   initialize: =>
     super
     @metaData().sync success: @onMetaDataSync
+
+
+  defaultThumbnail: =>
+    "https://img.youtube.com/vi/#{@model.youtubeId()}/0.jpg"
 
 
   onMetaDataSync: (data) =>

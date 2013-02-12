@@ -47,6 +47,7 @@ class Shell.Model extends athena.lib.Model
   title: @property('title', default: '')
   sources: @property('sources', default: [])
   timeTotal: @property('timeTotal', {default: Infinity})
+  thumbnail: @property 'thumbnail'
 
 
   description: (description) =>
@@ -56,16 +57,6 @@ class Shell.Model extends athena.lib.Model
 
 
   defaultDescription: => ''
-
-
-  thumbnail: (thumbnail) =>
-    if thumbnail?
-      @set 'thumbnail', thumbnail
-    @get('thumbnail') or @defaultThumbnail()
-
-
-  defaultThumbnail: =>
-    acorn.config.img.acorn
 
 
   toString: =>
@@ -158,6 +149,24 @@ class Shell.RemixView extends athena.lib.View
 
     unless @options.model
       acorn.errors.MissingParameterError 'Shell.RemixView', 'model'
+
+    # set default thumbnail if thumbnail is undefined
+    @_updateThumbnailWithDefault()
+
+
+  defaultThumbnail: =>
+    acorn.config.img.acorn
+
+
+  _updateThumbnailWithDefault: () =>
+    # retrieve previous and current default thumbnails
+    lastDefault = @_lastDefaultThumbnail
+    @_lastDefaultThumbnail = @defaultThumbnail()
+
+    # update model thumbnail if its value is the old default or empty/undefined
+    if @model.thumbnail() == lastDefault or not @model.thumbnail()
+      @model.thumbnail @defaultThumbnail()
+
 
 
 Shell.derives = (OtherShell) ->

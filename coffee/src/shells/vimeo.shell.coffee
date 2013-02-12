@@ -49,10 +49,6 @@ class VimeoShell.Model extends VideoLinkShell.Model
     "vimeo-player-#{@cid}"
 
 
-  defaultThumbnail: =>
-    @_fetchedThumbnail or super
-
-
   embedLink: =>
     # see http://developer.vimeo.com/player/embedding
     "https://player.vimeo.com/video/#{@vimeoId()}?" +
@@ -85,10 +81,15 @@ class VimeoShell.RemixView extends VideoLinkShell.RemixView
     @metaData().sync success: @onMetaDataSync
 
 
+  defaultThumbnail: =>
+    @_fetchedThumbnail or super
+
+
   onMetaDataSync: (data) =>
     @model.title data[0].title
     @model.timeTotal data[0].duration
-    @model._fetchedThumbnail = data[0].thumbnail_large
+    @_fetchedThumbnail = data[0].thumbnail_large
+    @_updateThumbnailWithDefault()
     @_setTimeInputMax()
 
 
