@@ -64,8 +64,8 @@ class Shell.Model extends athena.lib.Model
     @get('thumbnail') or @defaultThumbnail()
 
 
-  defaultThumbnail: @property('defaultThumbnail',
-    default: acorn.config.img.acorn)
+  defaultThumbnail: =>
+    acorn.config.img.acorn
 
 
   toString: =>

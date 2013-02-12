@@ -116,13 +116,6 @@ describe 'acorn.Model', ->
   describeShellProperty Model, 'description', 'description', ''
   describeShellProperty Model, 'thumbnail', 'thumbnail', img, ->
 
-    it 'should return shell.defaultThumbnail, if no thumbnail', ->
-      attrs =
-        shell:
-          defaultThumbnail: 'bar'
-
-      expect(new Model(attrs).thumbnail()).toBe 'bar'
-
 
 
   describe 'acorn.Model.withData', ->
