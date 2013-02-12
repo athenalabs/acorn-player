@@ -224,7 +224,12 @@ class acorn.player.RemixerView extends athena.lib.View
     if link is @model.link?()
       return
 
-    if link is '' and @options.allowEmptyLink
+    if link is ''
+      # cancel link change if no empty links
+      unless @options.allowEmptyLink
+        @$('input#link').val @model.link?()
+        return
+
       @model.link link
       @remixSubview.render()
 
