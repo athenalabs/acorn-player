@@ -22,8 +22,8 @@ class acorn.player.EditSummaryView extends acorn.player.SummaryView
     '''
 
   events: => _.extend super,
-    'keyup input': @saveData
-    'keyup textarea': @saveData
+    'blur input': @saveData
+    'blur textarea': @saveData
 
 
   initialize: =>
