@@ -35,9 +35,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
   events: => _.extend super,
     'blur input#link': => @onLinkChange()
-    'keyup input#link': (event) =>
-      if event.keyCode is athena.lib.util.keys.ENTER
-        @onLinkChange()
+    'keyup input#link': @onKeyupInput
 
 
   defaults: => _.extend super,
@@ -206,6 +204,15 @@ class acorn.player.RemixerView extends athena.lib.View
     @$('.remixer-header').addClass className
     alert.addClass("alert-#{className}")
     alert.show()
+
+
+  onKeyupInput: (event) =>
+    switch event.keyCode
+      when athena.lib.util.keys.ENTER
+        @onLinkChange()
+      when athena.lib.util.keys.ESCAPE
+        @$('input#link').val @model.link?() ? ''
+        @onLinkChange()
 
 
   onLinkChange: =>
