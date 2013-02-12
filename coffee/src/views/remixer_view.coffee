@@ -210,7 +210,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
   onLinkChange: =>
     @alert() # hide
-    link = @$('input#link').val().trim();
+    link = @$('input#link').val().trim()
     link = acorn.util.urlFix link
 
     # idempotent
