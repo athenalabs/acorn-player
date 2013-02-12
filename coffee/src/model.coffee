@@ -40,8 +40,8 @@ class acorn.Model extends athena.lib.Model
         # re-set so that change:shell is triggered
 
       # return the value or a default
-      @get('shell')?[property] or
-        if _.isFunction(defaultVal) then defaultVal.call(this) else defaultVal
+      @get('shell')?[property] ?
+          if _.isFunction(defaultVal) then defaultVal.call(@) else defaultVal
 
 
   title: @bindToShellProperty('title', 'New Acorn')
