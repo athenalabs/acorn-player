@@ -53,5 +53,9 @@ class ImageLinkShell.RemixView extends LinkShell.RemixView
     @
 
 
+  defaultThumbnail: =>
+    @model.link()
+
+
 
 acorn.registerShellModule ImageLinkShell
