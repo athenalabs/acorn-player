@@ -177,21 +177,21 @@ describe 'acorn.shells.CollectionShell', ->
         expect(spy2.triggered).toBe true
 
 
-    describe 'CollectionShell.MediaView', ->
+  describe 'CollectionShell.MediaView', ->
 
-      describe 'MediaView::correctedIndex', ->
+    describe 'MediaView::correctedIndex', ->
 
-        it 'should cycle index if options.shellsCycle', ->
-          model = new Model shells: [{shellid: Shell.id}, {shellid: Shell.id}]
-          view = new CollectionShell.MediaView model: model, shellsCycle: true
-          _.each [-1, 0, 1, 2, 3, 6, 10], (index) ->
-            expect(view.correctedIndex index).toBe ((index + 2) % 2)
+      it 'should cycle index if options.shellsCycle', ->
+        model = new Model shells: [{shellid: Shell.id}, {shellid: Shell.id}]
+        view = new CollectionShell.MediaView model: model, shellsCycle: true
+        _.each [-1, 0, 1, 2, 3, 6, 10], (index) ->
+          expect(view.correctedIndex index).toBe ((index + 2) % 2)
 
-        it 'should not cycle index unless options.shellsCycle', ->
-          model = new Model shells: [{shellid: Shell.id}, {shellid: Shell.id}]
-          view = new CollectionShell.MediaView model: model, shellsCycle: false
-          _.each [-1, 0, 1, 2, 3, 6, 10], (index) ->
-            expect(view.correctedIndex index).toBe index
+      it 'should not cycle index unless options.shellsCycle', ->
+        model = new Model shells: [{shellid: Shell.id}, {shellid: Shell.id}]
+        view = new CollectionShell.MediaView model: model, shellsCycle: false
+        _.each [-1, 0, 1, 2, 3, 6, 10], (index) ->
+          expect(view.correctedIndex index).toBe index
 
 
   describe 'CollectionShell.RemixView', ->
