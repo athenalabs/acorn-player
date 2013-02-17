@@ -223,11 +223,15 @@ class acorn.player.ShellEditorView extends athena.lib.View
       model: shell
 
     view.on 'Remixer:Toolbar:Click:Duplicate', (remixer) =>
-      index = @model.shells().indexOf(remixer.model)
-      @addShell remixer.model.clone(), index + 1
+      # duplicate remixer unless it is just a placeholder
+      unless @shellIsEmpty remixer.model
+        index = @model.shells().indexOf(remixer.model)
+        @addShell remixer.model.clone(), index + 1
 
     view.on 'Remixer:Toolbar:Click:Delete', (remixer) =>
-      @removeShell remixer.model
+      # delete remixer unless it is just a placeholder
+      unless @shellIsEmpty remixer.model
+        @removeShell remixer.model
 
     view.on 'Remixer:SwapShell', (remixer, oldShell, newShell) =>
       @swapSubShell oldShell, newShell
