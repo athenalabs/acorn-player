@@ -155,9 +155,8 @@ class acorn.player.ShellEditorView extends athena.lib.View
       else
         @$('.shell-options-view').addClass 'hidden'
 
-      # update first shell heading
-      prefix = "Item 1" if (shellCount - emptyCount) > 1
-      @renderSectionHeading @remixerViews[0], (prefix ? '')
+      # update remixView headers
+      _.each @remixerViews, @renderRemixerViewHeading
 
     # notify of any thumbnail changes
     unless @lastThumbnail is @model.thumbnail()
