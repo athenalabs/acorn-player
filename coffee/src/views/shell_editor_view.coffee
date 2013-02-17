@@ -137,22 +137,27 @@ class acorn.player.ShellEditorView extends athena.lib.View
     view.$el.prepend $('<h3>').addClass('editor-section').text(text)
 
 
-
   renderUpdates: =>
     shellCount = @model.shells().length
     emptyCount = _.size @model.shells().filter (shell) =>
       shell.module is @defaultShell
 
-    # hide the options view if there is only one shell
+    # ensure there is a placeholder shell
+    if emptyCount is 0
+      @addShell new @defaultShell.Model, shellCount
+      shellCount++
+      emptyCount++
+
     if @rendering
+      # hide the options view if there is only one shell
       if (shellCount - emptyCount) > 1
         @$('.shell-options-view').removeClass 'hidden'
       else
         @$('.shell-options-view').addClass 'hidden'
 
-    # ensure there is a placeholder shell
-    if emptyCount is 0
-      @addShell new @defaultShell.Model, shellCount
+      # update first shell heading
+      prefix = "Item 1" if (shellCount - emptyCount) > 1
+      @renderSectionHeading @remixerViews[0], (prefix ? '')
 
     # notify of any thumbnail changes
     unless @lastThumbnail is @model.thumbnail()
@@ -160,10 +165,6 @@ class acorn.player.ShellEditorView extends athena.lib.View
       @trigger 'ShellEditor:Thumbnail:Change', @lastThumbnail
       @eventhub.trigger 'ShellEditor:Thumbnail:Change', @lastThumbnail
       @shellOptionsView.model.trigger 'change'
-
-    # update first shell heading
-    prefix = "Item 1" if (shellCount - emptyCount) > 1
-    @renderSectionHeading @remixerViews[0], (prefix ? '')
 
     @
 
