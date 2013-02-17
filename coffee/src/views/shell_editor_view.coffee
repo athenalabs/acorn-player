@@ -150,7 +150,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
       else
         @$('.shell-options-view').addClass 'hidden'
 
-    # if there are no shells, add an empty one
+    # ensure there is a placeholder shell
     if emptyCount is 0
       @addShell new @defaultShell.Model, shellCount
 
