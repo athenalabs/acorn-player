@@ -97,6 +97,7 @@ input {
 .splash-view {
   text-align: center;
   position: relative;
+  cursor: pointer;
 
   > .splash-image {
     width: 100%;
@@ -409,6 +410,11 @@ input {
       }
     }
 
+    &.icon-control-view,
+    &.image-control-view {
+      cursor: pointer;
+    }
+
     &.elapsed-time-control-view {
       &:hover {
         background: none;
@@ -418,8 +424,12 @@ input {
         }
       }
 
-      .elapsed-value:hover {
-        background: rgba(64, 64, 64, 0.2);
+      .elapsed-value {
+        cursor: pointer;
+
+        &:hover {
+          background: rgba(64, 64, 64, 0.2);
+        }
       }
     }
 
@@ -837,6 +847,7 @@ input {
 
 
 .click-capture {
+  cursor: pointer;
   .position-absolutely;
 }
 
