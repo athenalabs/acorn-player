@@ -171,35 +171,35 @@ describe 'acorn.player.ShellEditorView', ->
       expect(view.remixerViews.length).toBe 2
       expect(view.model.shells().models[0].module).not.toBe EmptyShell
       expect(view.model.shells().models[1].module).toBe EmptyShell
-      expect(view.shellOptionsView.$el.css 'display').toBe 'none'
+      expect(view.shellOptionsView.$el.hasClass 'hidden').toBe true
 
     it 'should hide the ShellOptionsView with < 2 non-empty shells', ->
       view = new ShellEditorView options
       view.render()
       expect(view.remixerViews.length).toBe 2
-      expect(view.shellOptionsView.$el.css 'display').toBe 'none'
+      expect(view.shellOptionsView.$el.hasClass 'hidden').toBe true
 
       _.each _.range(10), (i) =>
         view.addShell new TextShell.Model
         expect(view.remixerViews.length).toBe 3 + i
-        expect(view.shellOptionsView.$el.css 'display').toBe 'block'
+        expect(view.shellOptionsView.$el.hasClass 'hidden').toBe false
 
       _.each _.range(10), (i) =>
         view.removeShell view.model.shells().models[1]
 
       expect(view.remixerViews.length).toBe 2
-      expect(view.shellOptionsView.$el.css 'display').toBe 'none'
+      expect(view.shellOptionsView.$el.hasClass 'hidden').toBe true
 
     it 'should show the ShellOptionsView with > 1 non-empty shells', ->
       view = new ShellEditorView options
       view.render()
       expect(view.remixerViews.length).toBe 2
-      expect(view.shellOptionsView.$el.css 'display').toBe 'none'
+      expect(view.shellOptionsView.$el.hasClass 'hidden').toBe true
 
       _.each _.range(10), (i) =>
         view.addShell new Shell.Model
         expect(view.remixerViews.length).toBe 3 + i
-        expect(view.shellOptionsView.$el.css 'display').toBe 'block'
+        expect(view.shellOptionsView.$el.hasClass 'hidden').toBe false
 
     it 'should add an empty shell when going to 0 shells', ->
       view = new ShellEditorView options

@@ -145,8 +145,10 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
     # hide the options view if there is only one shell
     if @rendering
-      display = if (shellCount - emptyCount) > 1 then 'block' else 'none'
-      @$('.shell-options-view').css 'display', display
+      if (shellCount - emptyCount) > 1
+        @$('.shell-options-view').removeClass 'hidden'
+      else
+        @$('.shell-options-view').addClass 'hidden'
 
     # if there are no shells, add an empty one
     if emptyCount is 0
