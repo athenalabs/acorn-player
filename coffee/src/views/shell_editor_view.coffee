@@ -119,7 +119,9 @@ class acorn.player.ShellEditorView extends athena.lib.View
   renderRemixerViewHeading: (remixerView, index) =>
     index ?= @model.shells().indexOf(remixerView.model)
 
-    prefix = "Item #{index + 1}" if 1 < (index + 1) < @model.shells().length
+    unless @model.shells().length < 3 or @shellIsEmpty remixerView.model
+      prefix = "Item #{index + 1}"
+
     @renderSectionHeading remixerView, (prefix ? '')
     @
 
