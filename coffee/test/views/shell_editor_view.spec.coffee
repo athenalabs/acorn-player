@@ -217,6 +217,46 @@ describe 'acorn.player.ShellEditorView', ->
       expect(view.remixerViews.length).toBe 1 # stay at 1
       expect(firstShell() instanceof EmptyShell.Model).toBe true
 
+    it 'should not prefix remixer headers when < 2 non-empty shells', ->
+      view = new ShellEditorView options
+      view.render()
+      expect(view.remixerViews.length).toBe 2
+      _.each view.remixerViews, (rv) ->
+        unless view.shellIsEmpty rv.model
+          headerText = rv.$('.editor-section').text()
+          expect(headerText.match '^Item [0-9]+: ').toBeFalsy()
+
+      _.each _.range(10), (i) =>
+        view.addShell new TextShell.Model
+        expect(view.remixerViews.length).toBe 3 + i
+
+      _.each _.range(10), (i) =>
+        view.removeShell view.model.shells().models[1]
+
+      expect(view.remixerViews.length).toBe 2
+      _.each view.remixerViews, (rv) ->
+        unless view.shellIsEmpty rv.model
+          headerText = rv.$('.editor-section').text()
+          expect(headerText.match '^Item [0-9]+: ').toBeFalsy()
+
+    it 'should prefix remixer headers when > 1 non-empty shells', ->
+      view = new ShellEditorView options
+      view.render()
+      expect(view.remixerViews.length).toBe 2
+      _.each view.remixerViews, (rv) ->
+        unless view.shellIsEmpty rv.model
+          headerText = rv.$('.editor-section').text()
+          expect(headerText.match '^Item [0-9]+: ').toBeFalsy()
+
+      _.each _.range(10), (i) =>
+        view.addShell new TextShell.Model
+        expect(view.remixerViews.length).toBe 3 + i
+        _.each view.remixerViews, (rv) ->
+          unless view.shellIsEmpty rv.model
+            headerText = rv.$('.editor-section').text()
+            expect(headerText.match '^Item [0-9]+: ').toBeTruthy()
+
+
   describe 'ShellEditorView events', ->
 
     describe 'on ShellOptions:SwapShell', ->
