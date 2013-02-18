@@ -230,28 +230,19 @@ input {
     .transition(0.5s, ease);
 
     /*top: -100%;*/
-    opacity: 0.0;
+    .transparent;
+
+    &.opaque, // enforce precedence of opaque class when added to element
+    &.opaque-lock {
+      .opaque;
+    }
 
     > .summary-view {
       margin-top: 20px;
       margin-left: 30px;
     }
   }
-
-  > .summary-view:hover {
-    /*top: 0px;*/
-    opacity: 1.0;
-  }
-
 }
-
-.content-view:hover.mouse-moving.off {
-  > .summary-view {
-    /*top: 0px;*/
-    opacity: 1.0;
-  }
-}
-
 
 .summary-view {
   height: 44px;

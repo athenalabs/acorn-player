@@ -49,11 +49,74 @@ describe 'acorn.player.ContentView', ->
     viewOptions: options
     checkDOM: (childEl, parentEl) -> childEl.parentNode.parentNode is parentEl
 
-  athena.lib.util.test.describeSubview
+  athena.lib.util.test.describeSubview {
     View: ContentView
     Subview: acorn.player.SummaryView
     subviewAttr: 'summaryView'
     viewOptions: options
+  }, ->
+
+    describe 'hovering', ->
+
+      it 'should call onMouseenterSummaryView when mouse enters summaryView', ->
+        spyOn ContentView::, 'onMouseenterSummaryView'
+        contentView = new ContentView options
+        contentView.render()
+
+        expect(ContentView::onMouseenterSummaryView).not.toHaveBeenCalled()
+        contentView.summaryView.$el.trigger 'mouseenter'
+        expect(ContentView::onMouseenterSummaryView).toHaveBeenCalled()
+
+      it 'should call onMouseleaveSummaryView when mouse enters summaryView', ->
+        spyOn ContentView::, 'onMouseleaveSummaryView'
+        contentView = new ContentView options
+        contentView.render()
+
+        expect(ContentView::onMouseleaveSummaryView).not.toHaveBeenCalled()
+        contentView.summaryView.$el.trigger 'mouseleave'
+        expect(ContentView::onMouseleaveSummaryView).toHaveBeenCalled()
+
+      it 'should add \'opaque\' class when mouse enters summaryView', ->
+        contentView = new ContentView options
+        contentView.render()
+
+        expect(contentView.summaryView.$el.hasClass 'opaque').toBe false
+        contentView.summaryView.$el.trigger 'mouseenter'
+        expect(contentView.summaryView.$el.hasClass 'opaque').toBe true
+
+      it 'should add \'opaque-lock\' class when mouse enters summaryView', ->
+        contentView = new ContentView options
+        contentView.render()
+
+        expect(contentView.summaryView.$el.hasClass 'opaque-lock').toBe false
+        contentView.summaryView.$el.trigger 'mouseenter'
+        expect(contentView.summaryView.$el.hasClass 'opaque-lock').toBe true
+
+      it 'should remove \'opaque\' class when mouse leaves summaryView', ->
+        contentView = new ContentView options
+        contentView.render()
+
+        contentView.summaryView.$el.addClass 'opaque'
+        expect(contentView.summaryView.$el.hasClass 'opaque').toBe true
+        contentView.summaryView.$el.trigger 'mouseleave'
+        expect(contentView.summaryView.$el.hasClass 'opaque').toBe false
+
+      it 'should remove \'opaque-lock\' class 1.5s after mouse enters summaryView',
+          ->
+        contentView = new ContentView options
+        contentView.render()
+        jasmine.Clock.useMock()
+
+        expect(contentView.summaryView.$el.hasClass 'opaque-lock').toBe false
+        contentView.summaryView.$el.trigger 'mouseenter'
+        expect(contentView.summaryView.$el.hasClass 'opaque-lock').toBe true
+
+        jasmine.Clock.tick 1499
+        expect(contentView.summaryView.$el.hasClass 'opaque-lock').toBe true
+
+        jasmine.Clock.tick 2
+        expect(contentView.summaryView.$el.hasClass 'opaque-lock').toBe false
+
 
   it 'should render controlsView before shellView', ->
     contentView = new ContentView options

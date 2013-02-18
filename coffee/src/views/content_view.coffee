@@ -46,6 +46,9 @@ class acorn.player.ContentView extends athena.lib.View
 
   events: => _.extend super,
     'mousemove': @onMouseMoved
+    'mouseenter .summary-view': @onMouseenterSummaryView
+    'mouseleave .summary-view': @onMouseleaveSummaryView
+
 
   initialize: =>
     super
@@ -103,6 +106,20 @@ class acorn.player.ContentView extends athena.lib.View
     # for now, hide sources control
     @acornControlsView.$('.control-view.sources').addClass 'hidden'
     @
+
+
+  onMouseenterSummaryView: =>
+    clearTimeout @_summaryHoverTimeout
+    @summaryView.$el.addClass 'opaque opaque-lock'
+
+    # lock opaque for 2 seconds
+    @_summaryHoverTimeout = setTimeout (=>
+      @summaryView.$el.removeClass 'opaque-lock'
+    ), 1500
+
+
+  onMouseleaveSummaryView: =>
+    @summaryView.$el.removeClass 'opaque'
 
 
   onMouseMoved: (event) =>
