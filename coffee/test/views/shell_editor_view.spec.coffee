@@ -244,7 +244,7 @@ describe 'acorn.player.ShellEditorView', ->
 
     describe 'on Remixer:Toolbar:Click:Duplicate', ->
 
-      it 'should be triggered by a Remixer:Toolbar:Click:Duplicate event', ->
+      it 'should call add shell', ->
         view = new ShellEditorView options
         view.render()
         remixer = view.remixerViews[0]
@@ -267,7 +267,7 @@ describe 'acorn.player.ShellEditorView', ->
 
     describe 'on Remixer:Toolbar:Click:Delete', ->
 
-      it 'should be triggered by a Remixer:Toolbar:Click:Delete event', ->
+      it 'should call remove shell', ->
         view = new ShellEditorView options
         view.render()
         remixer = view.remixerViews[0]
@@ -287,7 +287,7 @@ describe 'acorn.player.ShellEditorView', ->
 
     describe 'on Remixer:SwapShell', ->
 
-      it 'should be triggered by a Remixer:SwapShell event ', ->
+      it 'should call swapSubShell', ->
         oldShell = new acorn.shells.LinkShell.Model
         newShell = new acorn.shells.ImageLinkShell.Model
         view = new ShellEditorView model: oldShell
@@ -336,7 +336,7 @@ describe 'acorn.player.ShellEditorView', ->
 
     describe 'on Remixer:LinkChanged', ->
 
-      it 'should be triggered by a Remixer:LinkChanged event ', ->
+      it 'should trigger ShellEditor:ShellsUpdated', ->
         oldShell = new acorn.shells.LinkShell.Model
         newShell = new acorn.shells.ImageLinkShell.Model
         view = new ShellEditorView model: oldShell
