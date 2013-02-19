@@ -152,7 +152,6 @@ describe 'acorn.shells.SplicedShell', ->
             expect(MediaView::seek).toHaveBeenCalledWith offset
 
 
-
       test.describeDefaults SplicedShell.MediaView, {
         playOnReady: true
         subshellPlayOnReady: false
@@ -160,8 +159,6 @@ describe 'acorn.shells.SplicedShell', ->
         showSubshellSummary: false
         autoAdvanceOnEnd: true
       }, viewOptions()
-
-
 
 
     it 'should look good', ->

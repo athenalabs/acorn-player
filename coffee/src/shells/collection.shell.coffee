@@ -251,8 +251,6 @@ class CollectionShell.MediaView extends Shell.MediaView
         @pause()
 
 
-
-
   initializeControlsView: =>
     # construct a ControlToolbar for the acorn controls
     @controlsView = new ControlToolbarView

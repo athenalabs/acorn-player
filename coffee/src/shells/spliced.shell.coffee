@@ -93,7 +93,6 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
     @
 
 
-
   seekOffset: =>
     viewsBefore = _.map _.range(@currentIndex), @shellView
     @shellView().seekOffset() + @duration viewsBefore
@@ -131,7 +130,6 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
   onMediaDidEnd: =>
     @controlsView.$('.control-view.play').removeClass 'hidden'
     @controlsView.$('.control-view.pause').addClass 'hidden'
-
 
 
 
