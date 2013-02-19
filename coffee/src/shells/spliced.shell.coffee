@@ -138,7 +138,7 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
 class SplicedShell.RemixView extends CollectionShell.RemixView
 
 
-  className: @classNameExtend 'slideshow-shell'
+  className: @classNameExtend 'spliced-shell'
 
 
 
