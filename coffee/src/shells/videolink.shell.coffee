@@ -81,6 +81,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
       eventhub: @eventhub
 
     @progressBarView = new acorn.player.ValueSliderView
+      eventhub: @eventhub
       value: 0
       extraClasses: 'progress-bar-view'
 
