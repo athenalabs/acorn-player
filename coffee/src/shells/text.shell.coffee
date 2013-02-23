@@ -46,7 +46,7 @@ class TextShell.RemixView extends Shell.RemixView
 
 
   template: _.template '''
-    <textarea class="span12"><%= text %></textarea>
+    <textarea><%= text %></textarea>
     '''
 
 
