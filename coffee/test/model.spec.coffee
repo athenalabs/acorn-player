@@ -192,15 +192,15 @@ describe 'acorn.Model', ->
       m1 = new Model acornid: acornid
       m2 = new Model acornid: acornid
       spy = new EventSpy m1, 'sync'
-      date = new Date().toString()
+      testval = 'test'
 
       runs -> m1.fetch()
 
       waitsFor (-> spy.triggered), 'fetch should complete',
         acorn.config.test.timeout
       runs ->
-        expect(m1.get 'updated').not.toEqual date
-        m1.set({updated: date})
+        expect(m1.get 'test').not.toEqual testval
+        m1.set({test: testval})
         m1.synced = false
         m1.save {},
           success: => m1.synced = true
@@ -211,9 +211,9 @@ describe 'acorn.Model', ->
       waitsFor (=> m1.synced), 'sync should complete',
         acorn.config.test.timeout
       runs ->
-        expect(m1.get 'updated').toEqual date
-        expect(m2.get 'updated').not.toEqual date
-        expect(m2.get 'updated').not.toEqual m1.get 'updated'
+        expect(m1.get 'test').toEqual testval
+        expect(m2.get 'test').not.toEqual testval
+        expect(m2.get 'test').not.toEqual m1.get 'test'
 
         spy = new EventSpy m2, 'change'
         m2.fetch()
@@ -222,9 +222,9 @@ describe 'acorn.Model', ->
         acorn.config.test.timeout
 
       runs ->
-        expect(m1.get 'updated').toEqual date
-        expect(m2.get 'updated').toEqual date
-        expect(m2.get 'updated').toEqual m1.get 'updated'
+        expect(m1.get 'test').toEqual testval
+        expect(m2.get 'test').toEqual testval
+        expect(m2.get 'test').toEqual m1.get 'test'
 
 
     it 'should be able to delete', ->
