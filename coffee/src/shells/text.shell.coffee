@@ -45,8 +45,11 @@ class TextShell.RemixView extends Shell.RemixView
   className: @classNameExtend 'text-shell row-fluid'
 
 
+  placeholder: 'enter text here'
+
+
   template: _.template '''
-    <textarea><%= text %></textarea>
+    <textarea placeholder="<%= placeholder %>"><%= text %></textarea>
     '''
 
 
@@ -56,8 +59,12 @@ class TextShell.RemixView extends Shell.RemixView
 
   render: =>
     super
+
     @$el.empty()
-    @$el.html @template text: @model.get 'text'
+    @$el.html @template
+      placeholder: @placeholder
+      text: @model.get 'text'
+
     @
 
 

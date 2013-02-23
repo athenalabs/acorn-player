@@ -52,6 +52,9 @@ class DocShell.MediaView extends TextShell.MediaView
 class DocShell.RemixView extends TextShell.RemixView
 
 
+  placeholder: 'enter text here - DocShell text is processed with Markdown'
+
+
   className: @classNameExtend 'doc-shell row-fluid'
 
   # TODO: pick language
