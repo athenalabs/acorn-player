@@ -87,8 +87,11 @@ class YouTubeShell.RemixView extends VideoLinkShell.RemixView
     @metaData().sync success: @onMetaDataSync
 
 
-  defaultThumbnail: =>
-    "https://img.youtube.com/vi/#{@model.youtubeId()}/0.jpg"
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      thumbnail: "https://img.youtube.com/vi/#{@model.youtubeId()}/0.jpg"
 
 
   onMetaDataSync: (data) =>

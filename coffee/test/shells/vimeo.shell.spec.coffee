@@ -370,11 +370,11 @@ describe 'acorn.shells.VimeoShell', ->
           model = view.model
           metaData = view.metaData()
 
-          expect(view.defaultThumbnail()).toBe acorn.config.img.acorn
+          expect(view.defaultAttributes().thumbnail).toBe acorn.config.img.acorn
           expect(view._fetchedThumbnail).toBe undefined
 
           waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
           runs ->
             thumbnail = metaData.data()[0].thumbnail_large
-            expect(view.defaultThumbnail()).toBe thumbnail
+            expect(view.defaultAttributes().thumbnail).toBe thumbnail
             expect(view._fetchedThumbnail).toBe thumbnail

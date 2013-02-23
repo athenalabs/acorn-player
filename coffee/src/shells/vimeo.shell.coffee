@@ -81,15 +81,18 @@ class VimeoShell.RemixView extends VideoLinkShell.RemixView
     @metaData().sync success: @onMetaDataSync
 
 
-  defaultThumbnail: =>
-    @_fetchedThumbnail or super
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      thumbnail: @_fetchedThumbnail or superDefaults.thumbnail
 
 
   onMetaDataSync: (data) =>
     @model.title data[0].title
     @model.timeTotal data[0].duration
     @_fetchedThumbnail = data[0].thumbnail_large
-    @_updateThumbnailWithDefault()
+    @_updateAttributesWithDefaults()
     @_setTimeInputMax()
 
 

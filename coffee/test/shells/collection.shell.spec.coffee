@@ -204,13 +204,13 @@ describe 'acorn.shells.CollectionShell', ->
         spyOn(view.model, 'shells').andReturn fakeShells
 
         expect(view.model.shells).not.toHaveBeenCalled()
-        expect(view.defaultThumbnail()).toBe 'fake thumbnail'
+        expect(view.defaultAttributes().thumbnail).toBe 'fake thumbnail'
         expect(view.model.shells).toHaveBeenCalled()
 
-      it 'should call _updateThumbnailWithDefault when shells change', ->
-        spyOn RemixView::, '_updateThumbnailWithDefault'
+      it 'should call _updateAttributesWithDefaults when shells change', ->
+        spyOn RemixView::, '_updateAttributesWithDefaults'
         view = new RemixView viewOptions()
 
-        expect(RemixView::_updateThumbnailWithDefault.callCount).toBe 1
+        expect(RemixView::_updateAttributesWithDefaults.callCount).toBe 1
         view.model.trigger 'change:shells'
-        expect(RemixView::_updateThumbnailWithDefault.callCount).toBe 2
+        expect(RemixView::_updateAttributesWithDefaults.callCount).toBe 2

@@ -151,21 +151,21 @@ class Shell.RemixView extends athena.lib.View
       acorn.errors.MissingParameterError 'Shell.RemixView', 'model'
 
     # set default thumbnail if thumbnail is undefined
-    @_updateThumbnailWithDefault()
+    @_updateAttributesWithDefaults()
 
 
-  defaultThumbnail: =>
-    acorn.config.img.acorn
+  defaultAttributes: =>
+    thumbnail: acorn.config.img.acorn
 
 
-  _updateThumbnailWithDefault: () =>
+  _updateAttributesWithDefaults: =>
     # retrieve previous and current default thumbnails
-    lastDefault = @_lastDefaultThumbnail
-    @_lastDefaultThumbnail = @defaultThumbnail()
+    lastDefaults = @_lastDefaults ? {}
+    currentDefaults = @_lastDefaults = @defaultAttributes()
 
     # update model thumbnail if its value is the old default or empty/undefined
-    if @model.thumbnail() == lastDefault or not @model.thumbnail()
-      @model.thumbnail @defaultThumbnail()
+    if @model.thumbnail() == lastDefaults.thumbnail or not @model.thumbnail()
+      @model.thumbnail currentDefaults.thumbnail
 
 
 

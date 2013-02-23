@@ -388,11 +388,14 @@ class CollectionShell.RemixView extends Shell.RemixView
   initialize: =>
     super
 
-    @listenTo @model, 'change:shells', @_updateThumbnailWithDefault
+    @listenTo @model, 'change:shells', @_updateAttributesWithDefaults
 
 
-  defaultThumbnail: =>
-    @model.shells().first()?.thumbnail() or super
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      thumbnail: @model.shells().first()?.thumbnail() or superDefaults.thumbnail
 
 
 

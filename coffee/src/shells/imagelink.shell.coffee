@@ -53,8 +53,11 @@ class ImageLinkShell.RemixView extends LinkShell.RemixView
     @
 
 
-  defaultThumbnail: =>
-    @model.link()
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      thumbnail: @model.link()
 
 
 
