@@ -45,9 +45,9 @@ class Shell.Model extends athena.lib.Model
   # property managers
   shellid: @property('shellid', setter: false)
   title: @property('title', default: '')
-  sources: @property('sources', default: [])
-  timeTotal: @property('timeTotal', {default: Infinity})
   thumbnail: @property 'thumbnail'
+  sources: @property('sources', default: [])
+  timeTotal: @property('timeTotal', default: Infinity)
 
 
   description: (description) =>
