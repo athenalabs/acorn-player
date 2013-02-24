@@ -21,8 +21,17 @@ describe 'acorn.shells.VideoLinkShell', ->
   acorn.util.test.describeShellModule VideoLinkShell, ->
 
     timestring = acorn.util.Time.secondsToTimestring
+    videoLink = 'http://video.com/video.mov'
+
+    modelOptions = ->
+      link: videoLink
+      timeStart: 33
+      timeEnd: 145
+      timeTotal: 300
+      loops: 2
+
     viewOptions = ->
-      model: new Model {timeTotal: 300}
+      model: new Model modelOptions()
       eventhub: _.extend {}, Backbone.Events
 
     validLinks = VideoLinkShell.validLinkPatterns
@@ -44,23 +53,18 @@ describe 'acorn.shells.VideoLinkShell', ->
 
     describe 'VideoLinkShell.Model', ->
 
-      link = 'http://video.com/video.mov'
-      options  =
-        link: link
-        timeStart: 33
-        timeEnd: 145
-        loops: 2
-
       it 'should have a description method that describes the shell', ->
-        model = new Model options
+        model = new Model modelOptions()
         expect(model.description()).toBe(
-          "Video \"#{link}\" from 00:33 to 02:25.")
+          "Video \"#{videoLink}\" from 00:33 to 02:25.")
 
       it 'should have a duration method that returns a number', ->
-        model = new Model options
+        model = new Model modelOptions()
         expect(typeof model.duration()).toBe 'number'
 
       it 'should have a timeTotal property', ->
+        options = modelOptions()
+        delete options.timeTotal
         model = new Model options
         expect(model.timeTotal()).toBe Infinity
         expect(model.timeTotal(1)).toBe 1

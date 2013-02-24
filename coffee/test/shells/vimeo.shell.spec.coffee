@@ -13,7 +13,15 @@ describe 'acorn.shells.VimeoShell', ->
   RemixView = VimeoShell.RemixView
 
   vimeoId = '8201078'
-  modelOptions = -> link: "http://www.vimeo.com/#{vimeoId}"
+  videoLink = "http://www.vimeo.com/#{vimeoId}"
+
+  modelOptions = ->
+    link: videoLink
+    timeStart: 33
+    timeEnd: 145
+    timeTotal: 300
+    loops: 2
+
   viewOptions = ->
     model: new Model modelOptions()
     eventhub: _.extend {}, Backbone.Events
@@ -63,15 +71,10 @@ describe 'acorn.shells.VimeoShell', ->
             "#{vimeoId}.json?callback=?"
 
       it 'should have a description based on title, timeStart, and timeEnd', ->
-        _modelOptions = _.extend modelOptions(),
-          timeStart: 33
-          timeEnd: 145
-
-        view = new RemixView
-          model: new Model _modelOptions
+        view = new RemixView viewOptions()
 
         expect(view.model.description()).toBe(
-          "Vimeo video \"#{_modelOptions.link}\" from 00:33 to 02:25.")
+          "Vimeo video \"#{videoLink}\" from 00:33 to 02:25.")
 
         view.model.title 'foo'
 
@@ -350,7 +353,7 @@ describe 'acorn.shells.VimeoShell', ->
           model = view.model
           metaData = view.metaData()
 
-          expect(model.title()).toBe modelOptions().link
+          expect(model.title()).toBe videoLink
 
           waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
           runs -> expect(model.title()).toBe metaData.data()[0].title
@@ -360,7 +363,7 @@ describe 'acorn.shells.VimeoShell', ->
           model = view.model
           metaData = view.metaData()
 
-          expect(model.timeTotal()).toBe Infinity
+          expect(model.timeTotal()).toBe 300
 
           waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
           runs -> expect(model.timeTotal()).toBe metaData.data()[0].duration

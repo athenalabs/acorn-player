@@ -13,7 +13,15 @@ describe 'acorn.shells.YouTubeShell', ->
   RemixView = YouTubeShell.RemixView
 
   youtubeId = 'WgBeu3FVi60'
-  modelOptions = -> link: "http://www.youtube.com/watch?v=#{youtubeId}"
+  videoLink = "http://www.youtube.com/watch?v=#{youtubeId}"
+
+  modelOptions = ->
+    link: videoLink
+    timeStart: 33
+    timeEnd: 145
+    timeTotal: 300
+    loops: 2
+
   viewOptions = ->
     model: new Model modelOptions()
     eventhub: _.extend {}, Backbone.Events
@@ -72,15 +80,10 @@ describe 'acorn.shells.YouTubeShell', ->
 
 
       it 'should have a description based on title, timeStart, and timeEnd', ->
-        _modelOptions = _.extend modelOptions(),
-          timeStart: 33
-          timeEnd: 145
-
-        view = new RemixView
-          model: new Model _modelOptions
+        view = new RemixView viewOptions()
 
         expect(view.model.description()).toBe(
-          "YouTube video \"#{_modelOptions.link}\" from 00:33 to 02:25.")
+          "YouTube video \"#{videoLink}\" from 00:33 to 02:25.")
 
         view.model.title 'foo'
 
@@ -390,7 +393,7 @@ describe 'acorn.shells.YouTubeShell', ->
           model = view.model
           metaData = view.metaData()
 
-          expect(model.title()).toBe modelOptions().link
+          expect(model.title()).toBe videoLink
 
           waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
           runs -> expect(model.title()).toBe metaData.data().data.title
@@ -400,7 +403,7 @@ describe 'acorn.shells.YouTubeShell', ->
           model = view.model
           metaData = view.metaData()
 
-          expect(model.timeTotal()).toBe Infinity
+          expect(model.timeTotal()).toBe 300
 
           waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
           runs -> expect(model.timeTotal()).toBe metaData.data().data.duration
