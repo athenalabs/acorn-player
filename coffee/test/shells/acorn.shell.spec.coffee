@@ -8,6 +8,10 @@ describe 'acorn.shells.AcornLinkShell', ->
   Shell = acorn.shells.Shell
   AcornLinkShell = acorn.shells.AcornLinkShell
 
+  Model = AcornLinkShell.Model
+  MediaView = AcornLinkShell.MediaView
+  RemixView = AcornLinkShell.RemixView
+
   options =
     shellid: 'acorn.AcornLinkShell'
     link: 'http://acorn.athena.ai/nyfskeqlyx'
@@ -44,16 +48,16 @@ describe 'acorn.shells.AcornLinkShell', ->
   describe 'AcornLinkShell.Model', ->
 
     it 'should retrieve acornid from link correctly', ->
-      model = new AcornLinkShell.Model options
+      model = new Model options
       expect(model.acornid()).toBe 'nyfskeqlyx'
 
     it 'should have an acornModel', ->
-      model = new AcornLinkShell.Model options
+      model = new Model options
       expect(model.acornModel instanceof acorn.Model).toBe true
 
     it 'should load (and call `onceLoaded` callbacks)', ->
       spy = jasmine.createSpy()
-      model = new AcornLinkShell.Model options
+      model = new Model options
       model.onceLoaded spy
       model.onceLoaded spy
       model.onceLoaded spy
@@ -64,13 +68,13 @@ describe 'acorn.shells.AcornLinkShell', ->
         expect(spy.callCount).toBe 3
 
     it 'should have a shellModel (onceLoaded)', ->
-      model = new AcornLinkShell.Model options
+      model = new Model options
       model.onceLoaded =>
         expect(model.shellModel instanceof Shell.Model).toBe true
       waitsFor (-> model.shellModel), 'model to load', 10000
 
     it 'description should use acornModel.title', ->
-      model = new AcornLinkShell.Model options
+      model = new Model options
       spyOn model.acornModel, 'title'
       waitsFor (-> model.shellModel), 'model to load', 10000
       runs ->
@@ -85,15 +89,15 @@ describe 'acorn.shells.AcornLinkShell', ->
     acorn.util.appendCss()
     $player = $('<div>').addClass('acorn-player').appendTo('body')
 
-    model = new AcornLinkShell.Model options
+    model = new Model options
 
-    contentView = new AcornLinkShell.MediaView model: model
+    contentView = new MediaView model: model
     contentView.$el.width 600
     contentView.render()
     $player.append contentView.el
 
 
-    remixView = new AcornLinkShell.RemixView model: model
+    remixView = new RemixView model: model
     remixView.$el.width 600
     remixView.render()
     $player.append remixView.el
