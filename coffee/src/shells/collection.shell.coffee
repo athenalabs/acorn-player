@@ -62,10 +62,6 @@ class CollectionShell.Model extends Shell.Model
       @set 'shells', []
 
 
-  title: =>
-    super or "#{@module.title} with #{@shells().length} items"
-
-
   # lazily construct shells collection
   shells: =>
     unless @_shells
@@ -395,6 +391,7 @@ class CollectionShell.RemixView extends Shell.RemixView
     superDefaults = super
 
     _.extend superDefaults,
+      title: "#{@module.title} with #{@model.shells().length} items"
       thumbnail: @model.shells().first()?.thumbnail() or superDefaults.thumbnail
 
 

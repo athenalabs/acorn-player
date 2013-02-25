@@ -196,21 +196,40 @@ describe 'acorn.shells.CollectionShell', ->
 
   describe 'CollectionShell.RemixView', ->
 
-    describe 'RemixView: default thumbnail', ->
+    describe 'RemixView::defaultAttributes', ->
 
-      it 'should use its first shell\'s thumbnail as its default thumbnail', ->
-        view = new RemixView viewOptions()
-        fakeShells = first: -> thumbnail: -> 'fake thumbnail'
-        spyOn(view.model, 'shells').andReturn fakeShells
+      it 'should default title to a message about its collection', ->
+        rv = new RemixView viewOptions()
+        expect(rv.model.title()).toBe "Collection with 0 items"
 
-        expect(view.model.shells).not.toHaveBeenCalled()
-        expect(view.defaultAttributes().thumbnail).toBe 'fake thumbnail'
-        expect(view.model.shells).toHaveBeenCalled()
+        fakeShells = new Backbone.Collection()
+        for i in [0..2]
+          fakeShell = new Backbone.Model()
+          fakeShell.thumbnail = -> 'thumbnails.com/fake.jpg'
+          fakeShells.add fakeShell
 
-      it 'should call _updateAttributesWithDefaults when shells change', ->
-        spyOn RemixView::, '_updateAttributesWithDefaults'
-        view = new RemixView viewOptions()
+        spyOn(rv.model, 'shells').andReturn fakeShells
+        rv._updateAttributesWithDefaults()
+        expect(rv.model.title()).toBe "Collection with 3 items"
 
-        expect(RemixView::_updateAttributesWithDefaults.callCount).toBe 1
-        view.model.trigger 'change:shells'
-        expect(RemixView::_updateAttributesWithDefaults.callCount).toBe 2
+      it 'should default thumbnail to the thumbnail of its first subshell', ->
+        rv = new RemixView viewOptions()
+
+        fakeShells = new Backbone.Collection()
+        for i in [0..2]
+          fakeShell = new Backbone.Model()
+          fakeShell.thumbnail = -> 'thumbnails.com/fake.jpg'
+          fakeShells.add fakeShell
+
+        spyOn(rv.model, 'shells').andReturn fakeShells
+        rv._updateAttributesWithDefaults()
+        expect(rv.model.thumbnail()).toBe 'thumbnails.com/fake.jpg'
+
+
+    it 'should call _updateAttributesWithDefaults when shells change', ->
+      spyOn RemixView::, '_updateAttributesWithDefaults'
+      view = new RemixView viewOptions()
+
+      expect(RemixView::_updateAttributesWithDefaults.callCount).toBe 1
+      view.model.trigger 'change:shells'
+      expect(RemixView::_updateAttributesWithDefaults.callCount).toBe 2

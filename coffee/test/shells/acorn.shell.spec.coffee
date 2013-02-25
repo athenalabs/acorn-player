@@ -73,15 +73,42 @@ describe 'acorn.shells.AcornLinkShell', ->
         expect(model.shellModel instanceof Shell.Model).toBe true
       waitsFor (-> model.shellModel), 'model to load', 10000
 
-    it 'description should use acornModel.title', ->
-      model = new Model options
-      spyOn model.acornModel, 'title'
-      waitsFor (-> model.shellModel), 'model to load', 10000
-      runs ->
-        expect(model.acornModel.title).not.toHaveBeenCalled()
-        model.description()
-        expect(model.acornModel.title).toHaveBeenCalled()
 
+  describe 'AcornLinkShell.RemixView', ->
+
+    it 'should update attributes with defaults once acorn model loads', ->
+      spyOn RemixView::, '_updateAttributesWithDefaults'
+      model = new Model options
+      remixView = new RemixView model: model
+      expect(RemixView::_updateAttributesWithDefaults.callCount).toBe 1
+
+      waitsFor (-> model.shellModel), 'model to load', 10000
+      runs -> expect(RemixView::_updateAttributesWithDefaults.callCount).toBe 2
+
+
+    describe 'RemixView::defaultAttributes', ->
+
+      it 'should default title to acornModel.title', ->
+        model = new Model options
+        remixView = new RemixView model: model
+
+        spyOn(model.acornModel, 'title').andReturn 'spyValue'
+
+        expect(model.acornModel.title).not.toHaveBeenCalled()
+        title = remixView.defaultAttributes().title
+        expect(model.acornModel.title).toHaveBeenCalled()
+        expect(title).toBe 'spyValue'
+
+      it 'should default description to acornModel.description', ->
+        model = new Model options
+        remixView = new RemixView model: model
+
+        spyOn(model.acornModel, 'description').andReturn 'spyValue'
+
+        expect(model.acornModel.description).not.toHaveBeenCalled()
+        description = remixView.defaultAttributes().description
+        expect(model.acornModel.description).toHaveBeenCalled()
+        expect(description).toBe 'spyValue'
 
 
   it 'its views should look good', ->

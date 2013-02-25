@@ -42,8 +42,8 @@ describe 'acorn.shells.Shell', ->
 
       describeProperty = athena.lib.util.test.describeProperty
       describeProperty Shell.Model, 'shellid', {}, setter: false
-      describeProperty Shell.Model, 'title', {}, default: ''
-      describeProperty Shell.Model, 'description', {}, default: ''
+      describeProperty Shell.Model, 'title'
+      describeProperty Shell.Model, 'description'
       describeProperty Shell.Model, 'sources', {}, default: []
       describeProperty Shell.Model, 'thumbnail'
 
@@ -101,9 +101,42 @@ describe 'acorn.shells.Shell', ->
           view = new RemixView viewOptions()
           expect(typeof view.defaultAttributes()).toBe 'object'
 
-        it 'should return an object with `thumbnail:acorn.config.img.acorn`', ->
+        it 'should default thumbnail to acorn.config.img.acorn', ->
           view = new RemixView viewOptions()
           expect(view.defaultAttributes().thumbnail).toBe acorn.config.img.acorn
+          expect(view.model.thumbnail()).toBe acorn.config.img.acorn
+
+        it 'should default title to an empty string', ->
+          view = new RemixView viewOptions()
+          expect(view.defaultAttributes().title).toBe ''
+          expect(view.model.title()).toBe ''
+
+        it 'should default description to an empty string', ->
+          view = new RemixView viewOptions()
+          expect(view.defaultAttributes().description).toBe ''
+          expect(view.model.description()).toBe ''
+
+
+      describe 'RemixView::_attributeCanBeEmpty', ->
+
+        it 'should be a function', ->
+          expect(typeof RemixView::_attributeCanBeEmpty).toBe 'function'
+
+        it 'should return an object', ->
+          view = new RemixView viewOptions()
+          expect(typeof view._attributeCanBeEmpty()).toBe 'object'
+
+        it 'should allow title to be empty', ->
+          view = new RemixView viewOptions()
+          expect(view._attributeCanBeEmpty().title).toBe true
+
+        it 'should allow description to be empty', ->
+          view = new RemixView viewOptions()
+          expect(view._attributeCanBeEmpty().description).toBe true
+
+        it 'should not allow thumbnail to be empty', ->
+          view = new RemixView viewOptions()
+          expect(view._attributeCanBeEmpty().thumbnail).toBe false
 
 
       describe 'RemixView::_updateAttributesWithDefaults', ->
@@ -122,12 +155,19 @@ describe 'acorn.shells.Shell', ->
 
         it 'should remember the previous default attribute values', ->
           view = new RemixView viewOptions()
-          view.model.set('thumbnail', undefined)
           spyOn(view, 'defaultAttributes').andReturn thumbnail: 'spyValue'
 
           expect(view._lastDefaults).not.toEqual thumbnail: 'spyValue'
           view._updateAttributesWithDefaults()
           expect(view._lastDefaults).toEqual thumbnail: 'spyValue'
+
+        it 'should remember the previous default attribute values', ->
+          view = new RemixView viewOptions()
+          view.model.set('thumbnail', undefined)
+          spyOn(view, 'defaultAttributes').andReturn thumbnail: 'spyValue'
+
+          expect(view._lastDefaults).not.toEqual thumbnail: 'spyValue'
+          view._updateAttributesWithDefaults()
 
 
         describe 'model.thumbnail property', ->

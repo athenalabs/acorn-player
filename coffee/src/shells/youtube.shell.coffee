@@ -32,12 +32,6 @@ class YouTubeShell.Model extends VideoLinkShell.Model
     "https://gdata.youtube.com/feeds/api/videos/#{@youtubeId()}?v=2&alt=jsonc"
 
 
-  defaultDescription: =>
-    start = acorn.util.Time.secondsToTimestring @timeStart()
-    end = acorn.util.Time.secondsToTimestring @timeEnd()
-    "YouTube video \"#{@title()}\" from #{start} to #{end}."
-
-
   # returns the youtube video id of this link.
   youtubeId: =>
     link = @get('link')
@@ -91,12 +85,22 @@ class YouTubeShell.RemixView extends VideoLinkShell.RemixView
     superDefaults = super
 
     _.extend superDefaults,
+      title: @_fetchedTitle or superDefaults.title
       thumbnail: "https://img.youtube.com/vi/#{@model.youtubeId()}/0.jpg"
 
 
+  _defaultDescription: =>
+    start = acorn.util.Time.secondsToTimestring @model.timeStart()
+    end = acorn.util.Time.secondsToTimestring @model.timeEnd()
+    "YouTube video \"#{@_fetchedTitle ? @model.link()}\" from #{start} to " +
+        "#{end}."
+
+
   onMetaDataSync: (data) =>
-    @model.title data.data.title
+    @_fetchedTitle = data.data.title
     @model.timeTotal data.data.duration
+
+    @_updateAttributesWithDefaults()
     @_setTimeInputMax()
 
 

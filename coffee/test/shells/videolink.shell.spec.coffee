@@ -53,11 +53,6 @@ describe 'acorn.shells.VideoLinkShell', ->
 
     describe 'VideoLinkShell.Model', ->
 
-      it 'should have a description method that describes the shell', ->
-        model = new Model modelOptions()
-        expect(model.description()).toBe(
-          "Video \"#{videoLink}\" from 00:33 to 02:25.")
-
       it 'should have a duration method that returns a number', ->
         model = new Model modelOptions()
         expect(typeof model.duration()).toBe 'number'
@@ -250,6 +245,32 @@ describe 'acorn.shells.VideoLinkShell', ->
 
 
     describe 'VideoLinkShell.RemixView', ->
+
+      describe 'RemixView::defaultAttributes', ->
+
+        it 'should default title to link', ->
+          rv = new RemixView viewOptions()
+          expect(rv.model.title()).toBe videoLink
+
+        it 'should default description to `_defaultDescription`', ->
+          rv = new RemixView viewOptions()
+          spyOn rv, '_defaultDescription'
+
+          expect(rv._defaultDescription).not.toHaveBeenCalled()
+          rv.defaultAttributes()
+          expect(rv._defaultDescription).toHaveBeenCalled()
+
+
+      describe 'RemixView::_defaultDescription', ->
+
+        it 'should be a function', ->
+          expect(typeof RemixView::_defaultDescription).toBe 'function'
+
+        it 'should return a message about video source and clipping', ->
+          rv = new RemixView viewOptions()
+          expect(rv._defaultDescription()).toBe "Video \"#{videoLink}\" from " +
+              "00:33 to 02:25."
+
 
       describe 'time management: RemixView', ->
 

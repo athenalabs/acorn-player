@@ -79,19 +79,6 @@ describe 'acorn.shells.YouTubeShell', ->
             "api/videos/#{youtubeId}?v=2&alt=jsonc"
 
 
-      it 'should have a description based on title, timeStart, and timeEnd', ->
-        view = new RemixView viewOptions()
-
-        expect(view.model.description()).toBe(
-          "YouTube video \"#{videoLink}\" from 00:33 to 02:25.")
-
-        view.model.title 'foo'
-
-        expect(view.model.description()).toBe(
-          "YouTube video \"foo\" from 00:33 to 02:25.")
-
-
-
     describe 'YouTubeShell.PlayerView', ->
       it '------ TODO ------ make PlayerView tests work with PhantomJS', ->
 
@@ -378,7 +365,44 @@ describe 'acorn.shells.YouTubeShell', ->
 
     describe 'YouTubeShell.RemixView', ->
 
+      describe 'RemixView::defaultAttributes', ->
+
+        it 'should default title to fetched youtube video title or url', ->
+          rv = new RemixView viewOptions()
+
+          rv._fetchedTitle = undefined
+          rv._updateAttributesWithDefaults()
+          expect(rv.model.title()).toBe videoLink
+
+          rv._fetchedTitle = 'FakeYouTubeTitle'
+          rv._updateAttributesWithDefaults()
+          expect(rv.model.title()).toBe 'FakeYouTubeTitle'
+
+        it 'should default thumbnail to youtube thumbnail link given id', ->
+          rv = new RemixView viewOptions()
+          ytThumbnailLink = "https://img.youtube.com/vi/#{youtubeId}/0.jpg"
+          expect(rv.model.thumbnail()).toBe ytThumbnailLink
+
+
+      describe 'RemixView::_defaultDescription', ->
+
+        it 'should be a function', ->
+          expect(typeof RemixView::_defaultDescription).toBe 'function'
+
+        it 'should return a message about video title and clipping', ->
+          rv = new RemixView viewOptions()
+
+          rv._fetchedTitle = undefined
+          expect(rv._defaultDescription()).toBe "YouTube video " +
+              "\"#{videoLink}\" from 00:33 to 02:25."
+
+          rv._fetchedTitle = 'FakeYouTubeTitle'
+          expect(rv._defaultDescription()).toBe "YouTube video \"FakeYouTube" +
+              "Title\" from 00:33 to 02:25."
+
+
       describe 'metaData', ->
+
         it 'should fetch properly', ->
           view = new RemixView viewOptions()
           metaData = view.metaData()
@@ -387,16 +411,6 @@ describe 'acorn.shells.YouTubeShell', ->
           runs ->
             expect(metaData.synced()).toBe true
             expect(_.isObject metaData.data().data).toBe true
-
-        it 'should update title', ->
-          view = new RemixView viewOptions()
-          model = view.model
-          metaData = view.metaData()
-
-          expect(model.title()).toBe videoLink
-
-          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
-          runs -> expect(model.title()).toBe metaData.data().data.title
 
         it 'should update timeTotal', ->
           view = new RemixView viewOptions()
@@ -407,3 +421,22 @@ describe 'acorn.shells.YouTubeShell', ->
 
           waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
           runs -> expect(model.timeTotal()).toBe metaData.data().data.duration
+
+        it 'should update _fetchedTitle', ->
+          view = new RemixView viewOptions()
+          model = view.model
+          metaData = view.metaData()
+
+          expect(view._fetchedTitle).toBeUndefined()
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs -> expect(view._fetchedTitle).toBe metaData.data().data.title
+
+        it 'should call `_updateAttributesWithDefaults`', ->
+          view = new RemixView viewOptions()
+          spyOn view, '_updateAttributesWithDefaults'
+          expect(view._updateAttributesWithDefaults).not.toHaveBeenCalled()
+
+          metaData = view.metaData()
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs -> expect(view._updateAttributesWithDefaults).toHaveBeenCalled()

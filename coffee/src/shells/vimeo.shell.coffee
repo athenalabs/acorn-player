@@ -26,12 +26,6 @@ class VimeoShell.Model extends VideoLinkShell.Model
     "https://vimeo.com/api/v2/video/#{@vimeoId()}.json?callback=?"
 
 
-  defaultDescription: =>
-    start = acorn.util.Time.secondsToTimestring @timeStart()
-    end = acorn.util.Time.secondsToTimestring @timeEnd()
-    "Vimeo video \"#{@title()}\" from #{start} to #{end}."
-
-
   # returns the vimeo video id of this link.
   vimeoId: =>
     link = @link()
@@ -85,13 +79,21 @@ class VimeoShell.RemixView extends VideoLinkShell.RemixView
     superDefaults = super
 
     _.extend superDefaults,
+      title: @_fetchedTitle or superDefaults.title
       thumbnail: @_fetchedThumbnail or superDefaults.thumbnail
 
 
+  _defaultDescription: =>
+    start = acorn.util.Time.secondsToTimestring @model.timeStart()
+    end = acorn.util.Time.secondsToTimestring @model.timeEnd()
+    "Vimeo video \"#{@_fetchedTitle ? @model.link()}\" from #{start} to #{end}."
+
+
   onMetaDataSync: (data) =>
-    @model.title data[0].title
-    @model.timeTotal data[0].duration
+    @_fetchedTitle = data[0].title
     @_fetchedThumbnail = data[0].thumbnail_large
+    @model.timeTotal data[0].duration
+
     @_updateAttributesWithDefaults()
     @_setTimeInputMax()
 

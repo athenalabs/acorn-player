@@ -46,10 +46,6 @@ class AcornLinkShell.Model extends LinkShell.Model
     pattern.exec(link)[2]
 
 
-  defaultDescription: =>
-    @acornModel.title() ? ''
-
-
   # duration of one video loop given current splicing
   duration: =>
     @shellModel?.duration() ? Infinity
@@ -139,6 +135,15 @@ class AcornLinkShell.RemixView extends LinkShell.RemixView
   initialize: =>
     super
     @player = new acorn.player.Player model: @model.acornModel
+    @model.onceLoaded @_updateAttributesWithDefaults
+
+
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      title: @model.acornModel.title() ? superDefaults.title
+      description: @model.acornModel.description() ? superDefaults.description
 
 
   render: =>

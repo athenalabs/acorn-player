@@ -44,19 +44,11 @@ class Shell.Model extends athena.lib.Model
 
   # property managers
   shellid: @property('shellid', setter: false)
-  title: @property('title', default: '')
+  title: @property 'title'
+  description: @property 'description'
   thumbnail: @property 'thumbnail'
   sources: @property('sources', default: [])
   timeTotal: @property('timeTotal', default: Infinity)
-
-
-  description: (description) =>
-    if description?
-      @set 'description', description
-    @get('description') or @defaultDescription()
-
-
-  defaultDescription: => ''
 
 
   toString: =>
@@ -155,10 +147,14 @@ class Shell.RemixView extends athena.lib.View
 
 
   defaultAttributes: =>
+    title: ''
+    description: ''
     thumbnail: acorn.config.img.acorn
 
 
   _attributeCanBeEmpty: =>
+    title: true
+    description: true
     thumbnail: false
 
 
