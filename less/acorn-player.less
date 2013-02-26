@@ -643,16 +643,25 @@ input {
   }
 }
 
-.text-shell.shell-remix-view {
-  position: relative;
-  min-height: 300px;
+.text-shell {
+  &.shell-media-view {
+    pre {
+      background-color: rgba(0,0,0,0);
+      border: none;
+    }
+  }
 
-  textarea {
-    .position-absolutely;
-    width: 100%;
-    .box-sizing;
-    margin: 0px;
-    border: 0px;
+  &.shell-remix-view {
+    position: relative;
+    min-height: 300px;
+
+    textarea {
+      .position-absolutely;
+      width: 100%;
+      .box-sizing;
+      margin: 0px;
+      border: 0px;
+    }
   }
 }
 

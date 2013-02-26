@@ -33,7 +33,11 @@ class TextShell.MediaView extends Shell.MediaView
   render: =>
     super
     @$el.empty()
-    @$el.text @model.get 'text'
+
+    container = $ '<pre>'
+    container.text @model.get 'text'
+    @$el.append container
+
     @
 
 
