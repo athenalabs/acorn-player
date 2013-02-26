@@ -24,6 +24,7 @@ class acorn.player.EditSummaryView extends acorn.player.SummaryView
   events: => _.extend super,
     'blur input': @saveData
     'blur textarea': @saveData
+    'click .thumbnail-view': => @popoverView.toggle()
 
 
   initialize: =>
@@ -38,6 +39,10 @@ class acorn.player.EditSummaryView extends acorn.player.SummaryView
     @popoverView = new athena.lib.PopoverView
       eventhub: @eventhub
       content: @editImageView
+      trigger: 'manual'
+
+    @listenTo @popoverView, 'PopoverView:PopoverDidShow', =>
+      @editImageView.$('#link').select()
 
     @listenTo @editImageView, 'EditImage:Cancel', =>
       @editImageView.model.link @model.thumbnail()
