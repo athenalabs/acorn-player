@@ -114,16 +114,16 @@ class Shell.MediaView extends athena.lib.View
   controls: []
 
 
-  # Returns the view's total duration in seconds
-  duration: =>
-    @model.timeTotal()
-
-
   render: =>
     super
     if @options.readyOnRender
       @setMediaState 'ready'
     @
+
+
+  # Returns the view's total duration in seconds
+  duration: =>
+    @model.timeTotal()
 
 
 
