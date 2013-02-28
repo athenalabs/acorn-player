@@ -146,6 +146,10 @@ class Shell.RemixView extends athena.lib.View
     @_updateAttributesWithDefaults()
 
 
+  # override with true to tell remixerView to enable the link input field
+  @activeLinkInput: false
+
+
   defaultAttributes: =>
     title: ''
     description: ''

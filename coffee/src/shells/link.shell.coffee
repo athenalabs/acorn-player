@@ -150,5 +150,8 @@ class LinkShell.RemixView extends Shell.RemixView
     @
 
 
+  @activeLinkInput: true
+
+
 
 acorn.registerShellModule LinkShell

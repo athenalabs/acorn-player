@@ -27,6 +27,8 @@ describe 'acorn.shells.EmptyShell', ->
         subviewAttr: 'selectorView'
         viewOptions: options
 
+      it 'should have an active link input', ->
+        expect(EmptyShell.RemixView.activeLinkInput).toBe true
 
       it 'should trigger Remix:SwapShell on ShellSelector:Selected', ->
         view = new EmptyShell.RemixView options

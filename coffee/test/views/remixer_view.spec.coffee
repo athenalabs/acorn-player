@@ -67,6 +67,34 @@ describe 'acorn.player.RemixerView', ->
     viewOptions: viewOptions()
     checkDOM: (cEl, pEl) -> cEl.parentNode.parentNode is pEl
 
+
+  describe 'RemixerView: link field', ->
+
+    it 'should be an uneditable-input span if RemixView.activeLinkInput is
+        false', ->
+      oldValue = Shell.RemixView.activeLinkInput
+      @after = -> Shell.RemixView.activeLinkInput = oldValue
+      Shell.RemixView.activeLinkInput = false
+
+      view = new RemixerView viewOptions()
+      view.render()
+
+      expect(view.$('#link').length).toBe 1
+      expect(view.$('span#link').length).toBe 1
+      expect(view.$('span#link').hasClass 'uneditable-input').toBe true
+
+    it 'should be an input field if RemixView.activeLinkInput is true', ->
+      oldValue = Shell.RemixView.activeLinkInput
+      @after = -> Shell.RemixView.activeLinkInput = oldValue
+      Shell.RemixView.activeLinkInput = true
+
+      view = new RemixerView viewOptions()
+      view.render()
+
+      expect(view.$('#link').length).toBe 1
+      expect(view.$('input#link').length).toBe 1
+
+
   describe 'events', ->
 
     it 'should trigger `Remixer:Toolbar:Click:Duplicate` on clicking btn', ->

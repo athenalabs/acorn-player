@@ -22,8 +22,14 @@ class acorn.player.RemixerView extends athena.lib.View
 
   template: _.template '''
     <div class="row-fluid control-group remixer-header">
+    <% if (activeLink) { %>
       <div class="input-append">
         <input id="link" type="text" placeholder="enter link" />
+    <% } else { %>
+      <div class="input-prepend input-append">
+        <span id="link" class="add-on uneditable-input"><%= linkFieldText
+            %></span>
+    <% } %>
         <div class="btn-group dropdown-view"></div>
       </div>
       <div class="btn-group toolbar-view"></div>
@@ -127,7 +133,9 @@ class acorn.player.RemixerView extends athena.lib.View
     super
     @$el.empty()
 
-    @$el.html @template()
+    @$el.html @template
+      activeLink: @model.module.RemixView.activeLinkInput
+      linkFieldText: "#{@model.module.title} - #{@model.module.description}"
     @alert() # hide
 
     @dropdownView.setElement(@$('.dropdown-view')).render()

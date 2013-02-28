@@ -92,6 +92,10 @@ describe 'acorn.shells.Shell', ->
 
     describe 'Shell.RemixView', ->
 
+      it 'should not have an active link input', ->
+        expect(Shell.RemixView.activeLinkInput).toBe false
+
+
       describe 'RemixView::defaultAttributes', ->
 
         it 'should be a function', ->

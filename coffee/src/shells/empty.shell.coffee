@@ -60,4 +60,8 @@ class EmptyShell.RemixView extends Shell.RemixView
     @
 
 
+  @activeLinkInput: true
+
+
+
 acorn.registerShellModule EmptyShell
