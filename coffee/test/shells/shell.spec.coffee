@@ -90,6 +90,32 @@ describe 'acorn.shells.Shell', ->
           expect(view.play).toHaveBeenCalled()
 
 
+      describe 'MediaView::percentProgress', ->
+
+        it 'should be a function', ->
+          expect(typeof MediaView::percentProgress).toBe 'function'
+
+        it 'should return the progress of total duration as a percent', ->
+          view = new MediaView viewOptions()
+          spyOn(view, 'duration').andReturn 80
+          spyOn view, 'seekOffset'
+
+          view.seekOffset.andReturn 0
+          expect(view.percentProgress()).toBe 0
+
+          view.seekOffset.andReturn 20
+          expect(view.percentProgress()).toBe 25
+
+          view.seekOffset.andReturn 40
+          expect(view.percentProgress()).toBe 50
+
+          view.seekOffset.andReturn 60
+          expect(view.percentProgress()).toBe 75
+
+          view.seekOffset.andReturn 80
+          expect(view.percentProgress()).toBe 100
+
+
     describe 'Shell.RemixView', ->
 
       it 'should not have an active link input', ->

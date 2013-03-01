@@ -89,11 +89,7 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
 
     # keep progress bar in sync with media
     @progressBarView.listenTo @, 'Media:Progress', (view, elapsed, total) =>
-      percentProgress = util.toPercent @seekOffset(),
-        low: 0
-        high: @duration()
-        bound: true
-      @progressBarView.value percentProgress
+      @progressBarView.value @percentProgress()
 
     @listenTo @progressBarView, 'ValueSliderView:ValueDidChange',
         @_onChangeProgressPercent

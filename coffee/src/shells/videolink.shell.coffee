@@ -159,14 +159,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
 
   _onMediaProgress: (view, elapsed, total) =>
-    # get progress percent that corresponds with media player progress
-    percentProgress = util.toPercent @seekOffset(),
-      low: 0
-      high: @duration()
-      bound: true
-
-    # keep progress bar in sync
-    @progressBarView.value percentProgress
+    @progressBarView.value @percentProgress()
 
 
   # forward state transitions

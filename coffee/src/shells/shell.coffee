@@ -126,6 +126,13 @@ class Shell.MediaView extends athena.lib.View
     @model.timeTotal()
 
 
+  percentProgress: =>
+    util.toPercent @seekOffset(),
+      low: 0
+      high: @duration()
+      bound: true
+
+
 
 # Shell.RemixView -- uniform view to edit shell data.
 # ---------------------------------------------------
