@@ -146,9 +146,9 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
       @controlsView.$('.control-view.pause').addClass 'hidden'
 
 
-  _onChangeProgressPercent: (progressPercent) =>
+  _onChangeProgressPercent: (percentProgress) =>
     # get progress that corresponds to slider value percent
-    progress = util.fromPercent progressPercent,
+    progress = util.fromPercent percentProgress,
       low: 0
       high: @duration()
       bound: true
@@ -160,13 +160,13 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
   _onMediaProgress: (view, elapsed, total) =>
     # get progress percent that corresponds with media player progress
-    progressPercent = util.toPercent @seekOffset(),
+    percentProgress = util.toPercent @seekOffset(),
       low: 0
       high: @duration()
       bound: true
 
     # keep progress bar in sync
-    @progressBarView.value progressPercent
+    @progressBarView.value percentProgress
 
 
   # forward state transitions
