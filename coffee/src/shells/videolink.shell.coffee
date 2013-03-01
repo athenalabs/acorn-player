@@ -154,16 +154,13 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
       bound: true
 
     # if slider progress differs from player progress, seek to new position
-    unless progress.toFixed(5) == @_progress?.toFixed(5)
-      @_progress = progress
+    unless progress.toFixed(5) == @seekOffset().toFixed(5)
       @seek progress
 
 
   _onMediaProgress: (view, elapsed, total) =>
-    @_progress = @seekOffset()
-
     # get progress percent that corresponds with media player progress
-    progressPercent = util.toPercent @_progress,
+    progressPercent = util.toPercent @seekOffset(),
       low: 0
       high: @duration()
       bound: true
