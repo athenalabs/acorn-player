@@ -14,14 +14,22 @@ describe 'acorn.shells.CollectionShell', ->
   MediaView = CollectionShell.MediaView
   RemixView = CollectionShell.RemixView
 
-  viewOptions = ->
-    model: new Model {shellid: CollectionShell.id}
-    eventhub: _.extend {}, Backbone.Events
+  modelOptions = ->
+    shellid: CollectionShell.id
+    shells: [
+      {shellid: Shell.id}
+      {shellid: Shell.id}
+    ]
+
+  viewOptions = (opts = {}) ->
+    _.defaults opts,
+      model: new Model modelOptions()
+      eventhub: _.extend {}, Backbone.Events
 
   it 'should be part of acorn.shells', ->
     expect(CollectionShell).toBeDefined()
 
-  acorn.util.test.describeShellModule CollectionShell, ->
+  acorn.util.test.describeShellModule CollectionShell, modelOptions(), ->
 
     test.describeDefaults CollectionShell.MediaView, {
       playOnReady: true
@@ -182,14 +190,12 @@ describe 'acorn.shells.CollectionShell', ->
     describe 'MediaView::correctedIndex', ->
 
       it 'should cycle index if options.shellsCycle', ->
-        model = new Model shells: [{shellid: Shell.id}, {shellid: Shell.id}]
-        view = new CollectionShell.MediaView model: model, shellsCycle: true
+        view = new MediaView viewOptions shellsCycle: true
         _.each [-1, 0, 1, 2, 3, 6, 10], (index) ->
           expect(view.correctedIndex index).toBe ((index + 2) % 2)
 
       it 'should not cycle index unless options.shellsCycle', ->
-        model = new Model shells: [{shellid: Shell.id}, {shellid: Shell.id}]
-        view = new CollectionShell.MediaView model: model, shellsCycle: false
+        view = new MediaView viewOptions shellsCycle: false
         _.each [-1, 0, 1, 2, 3, 6, 10], (index) ->
           expect(view.correctedIndex index).toBe index
 
@@ -200,7 +206,7 @@ describe 'acorn.shells.CollectionShell', ->
 
       it 'should default title to a message about its collection', ->
         rv = new RemixView viewOptions()
-        expect(rv.model.title()).toBe "Collection with 0 items"
+        expect(rv.model.title()).toBe "Collection with 2 items"
 
         fakeShells = new Backbone.Collection()
         for i in [0..2]

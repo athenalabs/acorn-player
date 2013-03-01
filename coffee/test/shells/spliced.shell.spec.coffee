@@ -5,14 +5,22 @@ goog.require 'acorn.player.Player'
 goog.require 'acorn.util.test'
 
 describe 'acorn.shells.SplicedShell', ->
+  Shell = acorn.shells.Shell
   SplicedShell = acorn.shells.SplicedShell
 
   Model = SplicedShell.Model
   MediaView = SplicedShell.MediaView
   RemixView = SplicedShell.RemixView
 
+  modelOptions = ->
+    shellid: SplicedShell.id
+    shells: [
+      {shellid: Shell.id}
+      {shellid: Shell.id}
+    ]
+
   viewOptions = ->
-    model: new Model
+    model: new Model modelOptions()
     eventhub: _.extend {}, Backbone.Events
 
   view = undefined
@@ -22,7 +30,7 @@ describe 'acorn.shells.SplicedShell', ->
   it 'should be part of acorn.shells', ->
     expect(SplicedShell).toBeDefined()
 
-  acorn.util.test.describeShellModule SplicedShell, ->
+  acorn.util.test.describeShellModule SplicedShell, modelOptions(), ->
 
     describe 'SplicedShell.MediaView', ->
 
