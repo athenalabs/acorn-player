@@ -143,7 +143,7 @@ class acorn.MediaInterface
 
 
   # Returns the view's total duration in seconds
-  duration: => 0
+  duration: => Infinity
 
 
   # Sets the media view's volume.
