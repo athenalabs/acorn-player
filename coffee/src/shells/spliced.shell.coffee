@@ -120,6 +120,8 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
 
 
   seek: (offset) =>
+    super
+
     for index in _.range @shellViews.length
       view = @shellView index
       if offset >= view.duration()

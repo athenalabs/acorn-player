@@ -123,6 +123,7 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
   loopSeekOffset: =>
     @_seekOffset() - @model.timeStart()
 
+
   loopSeek: (offset) =>
     @_seek offset + @model.timeStart()
 
@@ -131,6 +132,9 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
   seekOffset: =>
     @loopTime() * @elapsedLoops() + @loopSeekOffset()
 
+
   seek: (offset) =>
+    super
+
     @elapsedLoops Math.floor(offset / @loopTime())
     @loopSeek(offset % @loopTime())

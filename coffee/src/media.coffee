@@ -139,7 +139,12 @@ class acorn.MediaInterface
 
   # Seek to/return playback offset.
   seekOffset: => 0
+
   seek: (offset) =>
+    # if media has ended, it should enter the paused state upon seeking to a
+    # valid playback offset
+    if offset < @duration() and @isInState 'end'
+      @setMediaState 'pause'
 
 
   # Returns the view's total duration in seconds

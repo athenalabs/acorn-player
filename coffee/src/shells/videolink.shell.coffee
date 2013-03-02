@@ -149,7 +149,11 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
   setMediaState: (state) => @playerView.setMediaState state
 
 
-  seek: (seconds) => @playerView.seek seconds
+  seek: (seconds) =>
+    super
+    @playerView.seek seconds
+
+
   seekOffset: => @playerView.seekOffset() ? 0
 
 

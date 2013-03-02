@@ -118,7 +118,11 @@ class AcornLinkShell.MediaView extends LinkShell.MediaView
   setMediaState: (state) => @mediaView?.setMediaState state
 
 
-  seek: (seconds) => @mediaView.seek seconds
+  seek: (seconds) =>
+    super
+    @mediaView.seek seconds
+
+
   seekOffset: => @mediaView.seekOffset() ? 0
 
 
