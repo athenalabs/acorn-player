@@ -116,6 +116,23 @@ describe 'acorn.shells.Shell', ->
           expect(view.percentProgress()).toBe 100
 
 
+      describe 'MediaView::progressFromPercent', ->
+
+        it 'should be a function', ->
+          expect(typeof MediaView::progressFromPercent).toBe 'function'
+
+        it 'should return the progress that corresponds to a given percent of
+            total duration', ->
+          view = new MediaView viewOptions()
+          spyOn(view, 'duration').andReturn 80
+
+          expect(view.progressFromPercent 0).toBe 0
+          expect(view.progressFromPercent 25).toBe 20
+          expect(view.progressFromPercent 50).toBe 40
+          expect(view.progressFromPercent 75).toBe 60
+          expect(view.progressFromPercent 100).toBe 80
+
+
     describe 'Shell.RemixView', ->
 
       it 'should not have an active link input', ->

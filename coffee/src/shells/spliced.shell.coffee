@@ -138,11 +138,7 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
 
 
   _onChangeProgressPercent: (percentProgress) =>
-    # get progress that corresponds to slider value percent
-    progress = util.fromPercent percentProgress,
-      low: 0
-      high: @duration()
-      bound: true
+    progress = @progressFromPercent percentProgress
 
     # if slider progress differs from player progress, seek to new position
     unless progress.toFixed(5) == @seekOffset().toFixed(5)

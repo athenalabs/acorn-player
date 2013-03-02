@@ -133,6 +133,13 @@ class Shell.MediaView extends athena.lib.View
       bound: true
 
 
+  progressFromPercent: (percentProgress) =>
+    progress = util.fromPercent percentProgress,
+      low: 0
+      high: @duration()
+      bound: true
+
+
 
 # Shell.RemixView -- uniform view to edit shell data.
 # ---------------------------------------------------
