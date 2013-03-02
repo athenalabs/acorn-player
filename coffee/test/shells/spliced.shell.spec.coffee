@@ -159,52 +159,6 @@ describe 'acorn.shells.SplicedShell', ->
             expect(MediaView::seek).toHaveBeenCalled()
             expect(MediaView::seek).toHaveBeenCalledWith offset
 
-      test.describeSubview {
-        View: SplicedShell.MediaView
-        Subview: acorn.player.ValueSliderView
-        subviewAttr: 'progressBarView'
-        viewOptions: viewOptions()
-      }, ->
-
-
-        it 'should update value when media progresses', ->
-          view = new MediaView viewOptions()
-          view.render()
-          spyOn(view, 'duration').andReturn 50
-          spyOn(view, 'seekOffset').andCallFake -> progress
-
-          expect(view.progressBarView.value()).toBe 0
-
-          values = [10, 20, 30, 40, 50]
-          for progress in values
-            view.trigger 'Media:Progress'
-            expect(view.progressBarView.value()).toBe progress * 2
-
-        it 'should call _onChangeProgressPercent when value changes', ->
-          spyOn MediaView::, '_onChangeProgressPercent'
-          view = new MediaView viewOptions()
-          view.render()
-          spyOn(view, 'duration').andReturn 50
-
-          expect(MediaView::_onChangeProgressPercent).not.toHaveBeenCalled()
-          view.progressBarView.value 20
-          expect(MediaView::_onChangeProgressPercent).toHaveBeenCalled()
-
-        it 'should seek media to new offset when value changes', ->
-          view = new MediaView viewOptions()
-          view.render()
-          spyOn(view, 'duration').andReturn 50
-          spyOn view, 'seek'
-          spyOn(view, 'shellView').andReturn seekOffset: -> percent - 1
-
-          expect(view.seek).not.toHaveBeenCalled()
-
-          values = [20, 40, 60, 80, 100]
-          for percent in values
-            view.progressBarView.value percent
-            expect(view.seek).toHaveBeenCalled()
-            expect(view.seek).toHaveBeenCalledWith percent / 2
-
 
       test.describeDefaults SplicedShell.MediaView, {
         playOnReady: true
@@ -213,6 +167,76 @@ describe 'acorn.shells.SplicedShell', ->
         showSubshellSummary: false
         autoAdvanceOnEnd: true
       }, viewOptions()
+
+
+      describe 'MediaView::progressBarState', ->
+
+        it 'should return an object with showing: false when duration is
+            Infinity', ->
+          view = new MediaView viewOptions()
+          spyOn(view, 'duration').andReturn Infinity
+
+          expect(view.progressBarState().showing).toBe false
+
+        it 'should return an object with showing: true when duration is not
+            Infinity', ->
+          view = new MediaView viewOptions()
+          spyOn(view, 'duration').andReturn 50
+
+          expect(view.progressBarState().showing).toBe true
+
+        it 'should return an object with progress set to percentProgress when
+            duration is not Infinity', ->
+          view = new MediaView viewOptions()
+          spyOn(view, 'duration').andReturn 50
+          spyOn(view, 'percentProgress').andReturn 'fakeValue'
+
+          expect(view.progressBarState().progress).toBe 'fakeValue'
+
+
+      describe 'MediaView::_onProgressBarDidProgress', ->
+
+        it 'should make a call to progressFromPercent', ->
+          view = new MediaView viewOptions()
+          spyOn(view, 'duration').andReturn 80
+          spyOn(view, 'seekOffset').andReturn 10
+          spyOn(view, 'progressFromPercent').andReturn 10
+
+          expect(view.progressFromPercent).not.toHaveBeenCalled()
+          view._onProgressBarDidProgress 20
+          expect(view.progressFromPercent).toHaveBeenCalled()
+
+        it 'should make a call to progressFromPercent', ->
+          view = new MediaView viewOptions()
+          spyOn(view, 'duration').andReturn 80
+          spyOn(view, 'seekOffset').andReturn 10
+          spyOn view, 'seek'
+
+          view._onProgressBarDidProgress 0
+          expect(view.seek.mostRecentCall.args[0]).toBe 0
+
+          view._onProgressBarDidProgress 25
+          expect(view.seek.mostRecentCall.args[0]).toBe 20
+
+          view._onProgressBarDidProgress 50
+          expect(view.seek.mostRecentCall.args[0]).toBe 40
+
+          view._onProgressBarDidProgress 75
+          expect(view.seek.mostRecentCall.args[0]).toBe 60
+
+          view._onProgressBarDidProgress 100
+          expect(view.seek.mostRecentCall.args[0]).toBe 80
+
+
+      describe 'MediaView: events', ->
+
+        it 'should update progress bar on Media:Progress event', ->
+          spyOn MediaView::, '_updateProgressBar'
+          view = new MediaView viewOptions()
+
+          expect(MediaView::_updateProgressBar).not.toHaveBeenCalled()
+          view.trigger 'Media:Progress'
+          expect(MediaView::_updateProgressBar).toHaveBeenCalled()
 
 
     it 'should look good', ->

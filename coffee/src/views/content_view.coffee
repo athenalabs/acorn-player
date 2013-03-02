@@ -1,5 +1,6 @@
 goog.provide 'acorn.player.ContentView'
 
+goog.require 'acorn.player.ValueSliderView'
 goog.require 'acorn.player.controls.ControlToolbarView'
 goog.require 'acorn.shells.Shell'
 
@@ -63,6 +64,12 @@ class acorn.player.ContentView extends athena.lib.View
       eventhub: @eventhub
       playOnReady: true
 
+    # construct a progressBarView
+    @progressBarView = new acorn.player.ValueSliderView
+      extraClasses: ['progress-bar-view']
+      eventhub: @eventhub
+      value: 0
+
     # construct a ControlToolbar for the acorn controls
     @acornControlsView = new ControlToolbarView
       extraClasses: ['acorn-controls']
@@ -90,6 +97,9 @@ class acorn.player.ContentView extends athena.lib.View
 
     # setup events
     @acornControlsView.on 'all', (name) => @eventhub.trigger name
+    @progressBarView.on 'ValueSliderView:ValueDidChange',
+        @_onProgressBarValueChange
+    @shellView.on 'Shell:UpdateProgressBar', @_onUpdateProgressBar
     @eventhub.on 'Keypress:SPACEBAR', => @shellView.togglePlayPause()
     @eventhub.on 'show:editor', => @shellView.pause()
 
@@ -98,14 +108,29 @@ class acorn.player.ContentView extends athena.lib.View
     super
     @$el.empty()
 
-    # add controlsView to DOM first so that shellView can interact with it
     @$el.append @summaryView.render().el
+    @$el.append @progressBarView.render().el
     @$el.append @controlsView.render().el
-    @$el.prepend @shellView.render().el
+
+    # Add shellView last so that it can interact with other views.
+    # ShellView must follow progressBarView in order to be sized correctly.
+    @$el.append @shellView.render().el
 
     # for now, hide sources control
     @acornControlsView.$('.control-view.sources').addClass 'hidden'
     @
+
+
+  _onProgressBarValueChange: (percentProgress) =>
+    @shellView.trigger 'ProgressBar:DidProgress', percentProgress
+
+
+  _onUpdateProgressBar: (visible, percentProgress) =>
+    if visible
+      @progressBarView.$el.removeClass 'hidden'
+      @progressBarView.value percentProgress
+    else
+      @progressBarView.$el.addClass 'hidden'
 
 
   onMouseenterSummaryView: =>

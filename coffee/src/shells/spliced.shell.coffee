@@ -1,7 +1,6 @@
 goog.provide 'acorn.shells.SplicedShell'
 
 goog.require 'acorn.shells.CollectionShell'
-goog.require 'acorn.player.ValueSliderView'
 
 
 CollectionShell = acorn.shells.CollectionShell
@@ -41,19 +40,14 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
     autoAdvanceOnEnd: true
 
 
-  initializeSubshellMediaView: (shellModel) =>
-    view = super
-
-    # hide subshell progress bars
-    view.progressBarView?.$el.addClass 'hidden'
-
-    view
+  initialize: =>
+    super
+    @on 'Media:Progress', @_updateProgressBar
 
 
   initializeControlsView: =>
 
     @initializeElapsedTimeView()
-    @initializeProgressBarView()
 
     # construct a ControlToolbar for the acorn controls
     @controlsView = new ControlToolbarView
@@ -81,20 +75,6 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
       tvModel.set 'total', total or 0
 
 
-  initializeProgressBarView: =>
-    @progressBarView = new acorn.player.ValueSliderView
-      eventhub: @eventhub
-      value: 0
-      extraClasses: 'progress-bar-view'
-
-    # keep progress bar in sync with media
-    @progressBarView.listenTo @, 'Media:Progress', (view, elapsed, total) =>
-      @progressBarView.value @percentProgress()
-
-    @listenTo @progressBarView, 'ValueSliderView:ValueDidChange',
-        @_onChangeProgressPercent
-
-
   remove: =>
     @controlsView.off 'PlayControl:Click'
     @controlsView.off 'PauseControl:Click'
@@ -114,10 +94,24 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
 
     @$el.append $('<div>').addClass('click-capture')
 
-    # TODO: move progress bar to controlsView or an equivalent
-    @$el.append @progressBarView.render().el
-
     @
+
+
+  progressBarState: =>
+    if _.isFinite(@duration())
+      showing: true
+      progress: @percentProgress()
+    else
+      showing: false
+      progress: 0
+
+
+  _onProgressBarDidProgress: (percentProgress) =>
+    progress = @progressFromPercent percentProgress
+
+    # if slider progress differs from player progress, seek to new position
+    unless progress.toFixed(5) == @seekOffset().toFixed(5)
+      @seek progress
 
 
   seekOffset: =>
@@ -135,14 +129,6 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
       @switchShell index
       view.seek offset
       return
-
-
-  _onChangeProgressPercent: (percentProgress) =>
-    progress = @progressFromPercent percentProgress
-
-    # if slider progress differs from player progress, seek to new position
-    unless progress.toFixed(5) == @seekOffset().toFixed(5)
-      @seek progress
 
 
   showNext: =>

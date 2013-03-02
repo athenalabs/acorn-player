@@ -246,6 +246,9 @@ class CollectionShell.MediaView extends Shell.MediaView
       unless @_switchingShell or @isPaused()
         @pause()
 
+    @on 'Subshell:Shell:UpdateProgressBar', =>
+      @_updateProgressBar()
+
 
   initializeControlsView: =>
     # construct a ControlToolbar for the acorn controls
@@ -288,6 +291,14 @@ class CollectionShell.MediaView extends Shell.MediaView
     _.reduce shellViews, sum, 0
 
 
+  progressBarState: =>
+    @shellView().progressBarState()
+
+
+  _onProgressBarDidProgress: (percentProgress) =>
+    @shellView().trigger 'ProgressBar:DidProgress', arguments...
+
+
   shellView: (index) =>
     index ?= @currentIndex
     @shellViews[index]
@@ -300,6 +311,7 @@ class CollectionShell.MediaView extends Shell.MediaView
     @_switchingShell = true
     @hideView()
     @currentIndex = index
+    @_updateProgressBar()
     view = @showView()
 
     if @isPlaying() and not view.isPlaying() and view.canPlay()

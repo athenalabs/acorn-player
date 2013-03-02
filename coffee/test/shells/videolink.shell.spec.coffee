@@ -234,6 +234,51 @@ describe 'acorn.shells.VideoLinkShell', ->
             expect(MediaView::seek).toHaveBeenCalledWith offset
 
 
+      describe 'MediaView::_onProgressBarDidProgress', ->
+
+        it 'should make a call to progressFromPercent', ->
+          view = new MediaView viewOptions()
+          spyOn(view, 'duration').andReturn 80
+          spyOn(view, 'seekOffset').andReturn 10
+          spyOn(view, 'progressFromPercent').andReturn 10
+
+          expect(view.progressFromPercent).not.toHaveBeenCalled()
+          view._onProgressBarDidProgress 20
+          expect(view.progressFromPercent).toHaveBeenCalled()
+
+        it 'should make a call to progressFromPercent', ->
+          view = new MediaView viewOptions()
+          spyOn(view, 'duration').andReturn 80
+          spyOn(view, 'seekOffset').andReturn 10
+          spyOn view, 'seek'
+
+          view._onProgressBarDidProgress 0
+          expect(view.seek.mostRecentCall.args[0]).toBe 0
+
+          view._onProgressBarDidProgress 25
+          expect(view.seek.mostRecentCall.args[0]).toBe 20
+
+          view._onProgressBarDidProgress 50
+          expect(view.seek.mostRecentCall.args[0]).toBe 40
+
+          view._onProgressBarDidProgress 75
+          expect(view.seek.mostRecentCall.args[0]).toBe 60
+
+          view._onProgressBarDidProgress 100
+          expect(view.seek.mostRecentCall.args[0]).toBe 80
+
+
+      describe 'MediaView: events', ->
+
+        it 'should update progress bar on playerView Media:Progress event', ->
+          spyOn MediaView::, '_updateProgressBar'
+          view = new MediaView viewOptions()
+
+          expect(MediaView::_updateProgressBar).not.toHaveBeenCalled()
+          view.playerView.trigger 'Media:Progress'
+          expect(MediaView::_updateProgressBar).toHaveBeenCalled()
+
+
       # TODO: test onPlaybackTick. waiting on integration with video start,
       # pause, and seek calls
       it '------ NOT TESTED ------ should enforce start time', ->

@@ -35,6 +35,76 @@ describe 'acorn.player.ContentView', ->
     subviewAttr: 'shellView'
     viewOptions: viewOptions()
 
+  athena.lib.util.test.describeSubview {
+    View: ContentView
+    Subview: acorn.player.ValueSliderView
+    subviewAttr: 'progressBarView'
+    viewOptions: viewOptions()
+  }, ->
+
+    describe '_onUpdateProgressBar', ->
+
+      it 'should be called with shellView fires "Shell:UpdateProgressBar"
+          event', ->
+        spyOn ContentView::, '_onUpdateProgressBar'
+        view = new ContentView viewOptions()
+        view.render()
+
+        expect(ContentView::_onUpdateProgressBar).not.toHaveBeenCalled()
+        view.shellView.trigger 'Shell:UpdateProgressBar'
+        expect(ContentView::_onUpdateProgressBar).toHaveBeenCalled()
+
+      it 'should hide progress bar when called with false', ->
+        view = new ContentView viewOptions()
+        view.render()
+        view.progressBarView.$el.removeClass 'hidden'
+
+        expect(view.progressBarView.$el.hasClass 'hidden').toBe false
+        view._onUpdateProgressBar false
+        expect(view.progressBarView.$el.hasClass 'hidden').toBe true
+
+      it 'should show progress bar when called with true', ->
+        view = new ContentView viewOptions()
+        view.render()
+        view.progressBarView.$el.addClass 'hidden'
+
+        expect(view.progressBarView.$el.hasClass 'hidden').toBe true
+        view._onUpdateProgressBar true
+        expect(view.progressBarView.$el.hasClass 'hidden').toBe false
+
+      it 'should set progress bar value when called with true', ->
+        view = new ContentView viewOptions()
+        view.render()
+        view.progressBarView.value 0
+
+        expect(view.progressBarView.value()).toBe 0
+
+        view._onUpdateProgressBar true, 25
+        expect(view.progressBarView.value()).toBe 25
+
+        view._onUpdateProgressBar true, 50
+        expect(view.progressBarView.value()).toBe 50
+
+        view._onUpdateProgressBar true, 75
+        expect(view.progressBarView.value()).toBe 75
+
+        view._onUpdateProgressBar true, 100
+        expect(view.progressBarView.value()).toBe 100
+
+
+    it 'should trigger "ProgressBar:DidProgress" on shellView when progress bar
+        value changes', ->
+      view = new ContentView viewOptions()
+      view.render()
+      view.progressBarView.value 0
+      spy = new athena.lib.util.test.EventSpy view.shellView,
+          'ProgressBar:DidProgress'
+
+      expect(spy.triggered).toBe false
+      view.progressBarView.value 10
+      expect(spy.triggered).toBe true
+
+
   athena.lib.util.test.describeSubview
     View: ContentView
     Subview: ControlToolbarView

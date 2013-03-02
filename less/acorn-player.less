@@ -180,8 +180,13 @@ input {
   height: 100%;
   width: 100%;
 
-  > .shell-media-view {
+  > .progress-bar-view.hidden~.shell-media-view {
     .position-absolutely(0px, 0px, @main-control-height);
+  }
+
+  > .shell-media-view {
+    .position-absolutely(0px, 0px, @main-control-height + @slider-height);
+    z-index: 0;
 
     // nested media-views should expand to full height
     .shell-media-view {
@@ -202,20 +207,23 @@ input {
         overflow: hidden; // no scroll bars when watching a video
 
         .video-player-view {
-          .position-absolutely(0px, 0px, @slider-height);
+          width: 100%;
+          height: 100%;
+          position: relative;
         }
       }
     }
+  }
 
-    // TODO: move progress bar to controlsView or an equivalent
-    .progress-bar-view {
-      position: absolute;
-      bottom: 0px;
-    }
+  > .progress-bar-view {
+    position: absolute;
+    z-index: 1;
+    bottom: @main-control-height;
   }
 
   > .control-toolbar-view {
     .position-absolutely;
+    z-index: 1;
     top: auto;
 
     display: block;
@@ -229,6 +237,7 @@ input {
 
   > .summary-view {
     .position-absolutely(0px, 0px, auto);
+    z-index: 1;
     width: auto;
     height: auto;
     padding: 10px 30px;

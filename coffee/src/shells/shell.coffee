@@ -105,6 +105,8 @@ class Shell.MediaView extends athena.lib.View
       eventhub: @eventhub
       model: @options.model
 
+    @on 'ProgressBar:DidProgress', @_onProgressBarDidProgress
+
 
   initializeMedia: =>
     @initializeMediaEvents @options
@@ -116,14 +118,29 @@ class Shell.MediaView extends athena.lib.View
 
   render: =>
     super
+
     if @options.readyOnRender
       @setMediaState 'ready'
+
+    # update progress bar after render finishes
+    setTimeout @_updateProgressBar, 0
+
     @
 
 
   # Returns the view's total duration in seconds
   duration: =>
     @model.timeTotal()
+
+
+  # Returns the current state that the progress bar should be in
+  progressBarState: =>
+    if _.isFinite(@duration())
+      showing: true
+      progress: @percentProgress()
+    else
+      showing: false
+      progress: 0
 
 
   percentProgress: =>
@@ -138,6 +155,15 @@ class Shell.MediaView extends athena.lib.View
       low: 0
       high: @duration()
       bound: true
+
+
+  _updateProgressBar: =>
+    state = @progressBarState()
+    @trigger 'Shell:UpdateProgressBar', state.showing, state.progress
+
+
+  # override as desired
+  _onProgressBarDidProgress: (percentProgress) =>
 
 
 

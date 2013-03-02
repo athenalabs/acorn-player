@@ -200,6 +200,48 @@ describe 'acorn.shells.CollectionShell', ->
           expect(view.correctedIndex index).toBe index
 
 
+    describe 'MediaView::progressBarState', ->
+
+      it 'should return progressBarState of active subshell', ->
+        view = new MediaView viewOptions()
+        subshellState = jasmine.createSpy()
+        spyOn(view, 'shellView').andReturn
+          progressBarState: subshellState
+
+        expect(subshellState).not.toHaveBeenCalled()
+        view.progressBarState()
+        expect(subshellState).toHaveBeenCalled()
+
+
+    describe 'MediaView::_progressBarDidProgress', ->
+
+      it 'should forward "ProgressBar:DidProgress" event to active subshell', ->
+        view = new MediaView viewOptions()
+        subshellTrigger = jasmine.createSpy()
+        spyOn(view, 'shellView').andReturn
+          trigger: subshellTrigger
+
+        expect(subshellTrigger).not.toHaveBeenCalled()
+        view._onProgressBarDidProgress 'fakeArg1', 'fakeArg2'
+        expect(subshellTrigger).toHaveBeenCalled()
+        args = subshellTrigger.mostRecentCall.args
+        expect(args[0]).toBe 'ProgressBar:DidProgress'
+        expect(args[1]).toBe 'fakeArg1'
+        expect(args[2]).toBe 'fakeArg2'
+
+
+    describe 'MediaView: events', ->
+
+      it 'should call `_updateProgressBar` on "Subshell:Shell:UpdateProgress' +
+          'Bar"', ->
+        spyOn MediaView::, '_updateProgressBar'
+        view = new MediaView viewOptions()
+
+        expect(MediaView::_updateProgressBar).not.toHaveBeenCalled()
+        view.trigger 'Subshell:Shell:UpdateProgressBar'
+        expect(MediaView::_updateProgressBar).toHaveBeenCalled()
+
+
   describe 'CollectionShell.RemixView', ->
 
     describe 'RemixView::defaultAttributes', ->

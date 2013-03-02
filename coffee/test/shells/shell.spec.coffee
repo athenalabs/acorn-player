@@ -133,6 +133,93 @@ describe 'acorn.shells.Shell', ->
           expect(view.progressFromPercent 100).toBe 80
 
 
+      describe 'MediaView::progressBarState', ->
+
+        it 'should be a function', ->
+          expect(typeof MediaView::progressBarState).toBe 'function'
+
+        it 'should return an object with showing and progress properties', ->
+          view = new MediaView viewOptions()
+          state = view.progressBarState()
+          expect(state.showing).toBeDefined()
+          expect(state.progress).toBeDefined()
+
+        it 'should return an object with showing: false when duration is
+            Infinity', ->
+          view = new MediaView viewOptions()
+          spyOn(view, 'duration').andReturn Infinity
+
+          expect(view.progressBarState().showing).toBe false
+
+        it 'should return an object with showing: true when duration is not
+            Infinity', ->
+          view = new MediaView viewOptions()
+          spyOn(view, 'duration').andReturn 50
+
+          expect(view.progressBarState().showing).toBe true
+
+        it 'should return an object with progress set to percentProgress when
+            duration is not Infinity', ->
+          view = new MediaView viewOptions()
+          spyOn(view, 'duration').andReturn 50
+          spyOn(view, 'percentProgress').andReturn 'fakeValue'
+
+          expect(view.progressBarState().progress).toBe 'fakeValue'
+
+
+      describe 'MediaView::_updateProgressBar', ->
+
+        it 'should be a function', ->
+          expect(typeof MediaView::_updateProgressBar).toBe 'function'
+
+        it 'should trigger "Shell:UpdateProgressBar" event', ->
+          view = new MediaView viewOptions()
+          spy = new EventSpy view, 'Shell:UpdateProgressBar'
+
+          expect(spy.triggered).toBe false
+          view._updateProgressBar()
+          expect(spy.triggered).toBe true
+
+        it 'should trigger "Shell:UpdateProgressBar" event with showing and
+            progress values', ->
+          view = new MediaView viewOptions()
+          spy = new EventSpy view, 'Shell:UpdateProgressBar'
+          spyOn(view, 'progressBarState').andReturn
+            showing: 'fakeShowing'
+            progress: 'fakeProgress'
+
+          expect(spy.triggered).toBe false
+          view._updateProgressBar()
+          expect(spy.triggered).toBe true
+          console.log spy.arguments
+          expect(spy.arguments[0][0]).toBe 'fakeShowing'
+          expect(spy.arguments[0][1]).toBe 'fakeProgress'
+
+        it 'should be called after call stack clears following a call to
+            render', ->
+          view = new MediaView viewOptions()
+          spy = new EventSpy view, 'Shell:UpdateProgressBar'
+
+          expect(spy.triggered).toBe false
+
+          view.render()
+          setTimeout (-> expect(spy.triggered).toBe true), 0
+
+
+      describe 'MediaView::_onProgressBarDidProgress', ->
+
+        it 'should be a function', ->
+          expect(typeof MediaView::_onProgressBarDidProgress).toBe 'function'
+
+        it 'should be called to handle a "ProgressBar:DidProgress" event', ->
+          spyOn MediaView::, '_onProgressBarDidProgress'
+          view = new MediaView viewOptions()
+
+          expect(MediaView::_onProgressBarDidProgress).not.toHaveBeenCalled()
+          view.trigger 'ProgressBar:DidProgress'
+          expect(MediaView::_onProgressBarDidProgress).toHaveBeenCalled()
+
+
     describe 'Shell.RemixView', ->
 
       it 'should not have an active link input', ->

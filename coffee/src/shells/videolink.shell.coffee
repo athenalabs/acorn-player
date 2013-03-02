@@ -2,7 +2,6 @@ goog.provide 'acorn.shells.VideoLinkShell'
 
 goog.require 'acorn.shells.LinkShell'
 goog.require 'acorn.shells.Registry'
-goog.require 'acorn.player.ValueSliderView'
 goog.require 'acorn.player.TimeRangeInputView'
 goog.require 'acorn.player.CycleButtonView'
 goog.require 'acorn.player.TimedMediaPlayerView'
@@ -70,17 +69,10 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
       buttons: ['Play', 'Pause', @elapsedTimeView]
       eventhub: @eventhub
 
-    @progressBarView = new acorn.player.ValueSliderView
-      eventhub: @eventhub
-      value: 0
-      extraClasses: 'progress-bar-view'
-
     @controlsView.on 'PlayControl:Click', => @play()
     @controlsView.on 'PauseControl:Click', => @pause()
     @controlsView.on 'ElapsedTimeControl:Seek', @seek
-    @progressBarView.on 'ValueSliderView:ValueDidChange',
-        @_onChangeProgressPercent
-    @playerView.on 'Media:Progress', @_onMediaProgress
+    @playerView.on 'Media:Progress', @_updateProgressBar
 
 
   initializeElapsedTimeView: =>
@@ -124,15 +116,10 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     @initializeMediaEvents @options
 
 
-
   render: =>
     super
     @$el.empty()
     @$el.append @playerView.render().el
-
-    # TODO: move progress bar to controlsView or an equivalent
-    @$el.append @progressBarView.render().el
-
     @togglePlayPauseControls()
     @
 
@@ -146,16 +133,12 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
       @controlsView.$('.control-view.pause').addClass 'hidden'
 
 
-  _onChangeProgressPercent: (percentProgress) =>
+  _onProgressBarDidProgress: (percentProgress) =>
     progress = @progressFromPercent percentProgress
 
     # if slider progress differs from player progress, seek to new position
     unless progress.toFixed(5) == @seekOffset().toFixed(5)
       @seek progress
-
-
-  _onMediaProgress: (view, elapsed, total) =>
-    @progressBarView.value @percentProgress()
 
 
   # forward state transitions
