@@ -62,17 +62,27 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
   initialize: =>
     super
 
+    @initializePlayPauseToggleView()
     @initializeElapsedTimeView()
 
     @controlsView = new ControlToolbarView
       extraClasses: ['shell-controls']
-      buttons: ['Play', 'Pause', @elapsedTimeView]
+      buttons: [@playPauseToggleView, @elapsedTimeView]
       eventhub: @eventhub
 
     @controlsView.on 'PlayControl:Click', => @play()
     @controlsView.on 'PauseControl:Click', => @pause()
     @controlsView.on 'ElapsedTimeControl:Seek', @seek
     @playerView.on 'Media:Progress', @_updateProgressBar
+
+
+  initializePlayPauseToggleView: =>
+    model = new Backbone.Model
+    model.isPlaying = => @isPlaying()
+
+    @playPauseToggleView = new acorn.player.controls.PlayPauseControlToggleView
+      eventhub: @eventhub
+      model: model
 
 
   initializeElapsedTimeView: =>
@@ -111,7 +121,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
       @trigger.apply @, args
 
-    @on 'Media:StateChange', @togglePlayPauseControls
+    @on 'Media:StateChange', => @playPauseToggleView.refreshToggle()
 
     @initializeMediaEvents @options
 
@@ -120,17 +130,8 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
     super
     @$el.empty()
     @$el.append @playerView.render().el
-    @togglePlayPauseControls()
+    @playPauseToggleView.refreshToggle()
     @
-
-
-  togglePlayPauseControls: =>
-    if @isPlaying()
-      @controlsView.$('.control-view.play').addClass 'hidden'
-      @controlsView.$('.control-view.pause').removeClass 'hidden'
-    else
-      @controlsView.$('.control-view.play').removeClass 'hidden'
-      @controlsView.$('.control-view.pause').addClass 'hidden'
 
 
   _onProgressBarDidProgress: (percentProgress) =>
@@ -183,11 +184,12 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
       eventhub: @eventhub
       noControls: true
 
+    @_initializePlayPauseToggleView()
     @_initializeElapsedTimeView()
 
     @_controlsView = new ControlToolbarView
       extraClasses: ['shell-controls']
-      buttons: ['Play', 'Pause', @_elapsedTimeView]
+      buttons: [@_playPauseToggleView, @_elapsedTimeView]
       eventhub: @eventhub
 
     @_timeRangeInputView = new acorn.player.TimeRangeInputView
@@ -199,7 +201,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
     @_initializeLoopsButton()
 
-    @_playerView.on 'Media:StateChange', @_togglePlayPauseControls
+    @_playerView.on 'Media:StateChange', => @_playPauseToggleView.refreshToggle()
     @_playerView.on 'Media:Progress', @_onMediaProgress
     @_controlsView.on 'PlayControl:Click', => @_playerView.play()
     @_controlsView.on 'PauseControl:Click', => @_playerView.pause()
@@ -208,6 +210,15 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @_timeRangeInputView.on 'TimeRangeInputView:DidChangeProgress',
         @_onChangeProgress
     @_loopsButtonView.on 'CycleButtonView:ValueDidChange', @_onChangeLoops
+
+
+  _initializePlayPauseToggleView: =>
+    model = new Backbone.Model
+    model.isPlaying = => @_playerView.isPlaying()
+
+    @_playPauseToggleView = new acorn.player.controls.PlayPauseControlToggleView
+      eventhub: @eventhub
+      model: model
 
 
   _initializeElapsedTimeView: =>
@@ -295,15 +306,6 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
   _setTimeInputMax: =>
     @_timeRangeInputView.setMax @model.timeTotal()
-
-
-  _togglePlayPauseControls: =>
-    if @_playerView.isPlaying()
-      @_controlsView.$('.control-view.play').addClass 'hidden'
-      @_controlsView.$('.control-view.pause').removeClass 'hidden'
-    else
-      @_controlsView.$('.control-view.play').removeClass 'hidden'
-      @_controlsView.$('.control-view.pause').addClass 'hidden'
 
 
   _onMediaProgress: (view, elapsed, total) =>
