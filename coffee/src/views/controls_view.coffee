@@ -1,4 +1,6 @@
 goog.provide 'acorn.player.controls.ControlToolbarView'
+goog.provide 'acorn.player.controls.ControlToggleView'
+goog.provide 'acorn.player.controls.PlayPauseControlToggleView'
 goog.provide 'acorn.player.controls.ControlView'
 goog.provide 'acorn.player.controls.IconControlView'
 goog.provide 'acorn.player.controls.ImageControlView'
@@ -19,6 +21,7 @@ class ControlToolbarView extends athena.lib.ToolbarView
     super
     @initializeButtons()
 
+
   initializeButtons: =>
 
     # construct any ControlViews referenced by id
@@ -33,6 +36,91 @@ class ControlToolbarView extends athena.lib.ToolbarView
     # forward all events from buttons
     _.each @buttons, (btn) =>
       btn.on 'all', => @trigger arguments...
+
+
+
+# view that toggles control buttons
+class ControlToggleView extends ControlToolbarView
+
+
+  className: @classNameExtend 'control-toggle-view'
+
+
+  initialize: =>
+    super
+    @model ?= new Backbone.Model
+    @listenTo @model, 'change', => @refreshToggle()
+
+
+  initializeButtons: =>
+    # construct fresh object mapping button name to button
+    buttons = @buttons
+    @buttons = {}
+
+    _.each buttons, (btn, key) =>
+      # accept object or array
+      unless _.isString key
+        key = btn
+
+      unless _.isString key
+        TypeError 'buttons', 'array of strings or object'
+
+      @buttons[key] = btn
+
+    # construct any ControlViews referenced by id
+    for key, btn of @buttons
+      @buttons[key] = if _.isString btn then ControlView.withId btn else btn
+
+    # ensure all toolbar buttons are Controls or ControlToolbars
+    _.each @buttons, (btn) =>
+      unless btn instanceof ControlToolbarView or btn instanceof ControlView
+        TypeError 'button', "ControlToolbarView or ControlView"
+
+    # forward all events from buttons
+    _.each @buttons, (btn) =>
+      btn.on 'all', => @trigger arguments...
+
+
+  render: =>
+    super
+    @refreshToggle()
+    @
+
+
+  activeControl: =>
+    activeControl = @model.get 'activeControl'
+    @buttons[activeControl] ? _.values(@buttons)[0]
+
+
+  refreshToggle: =>
+    for key, controlView of @buttons
+      controlView.$el.addClass 'hidden'
+
+    @activeControl().$el.removeClass 'hidden'
+
+
+
+# view that toggles control buttons
+class PlayPauseControlToggleView extends ControlToggleView
+
+
+  className: @classNameExtend 'play-pause-control-toggle-view'
+
+
+  initializeButtons: =>
+    @buttons =
+      Play: ControlView.withId 'Play'
+      Pause: ControlView.withId 'Pause'
+
+    # forward all events from buttons
+    _.each @buttons, (btn) =>
+      btn.on 'all', => @trigger arguments...
+
+
+  activeControl: =>
+    playing = @model.isPlaying?() ? @model.get 'playing'
+    activeControl = if playing then 'Pause' else 'Play'
+    @buttons[activeControl]
 
 
 
@@ -294,6 +382,8 @@ class ElapsedTimeControlView extends ControlView
 
 
 acorn.player.controls.ControlToolbarView = ControlToolbarView
+acorn.player.controls.ControlToggleView = ControlToggleView
+acorn.player.controls.PlayPauseControlToggleView = PlayPauseControlToggleView
 acorn.player.controls.ControlView = ControlView
 
 acorn.player.controls.IconControlView = IconControlView

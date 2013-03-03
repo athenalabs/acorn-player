@@ -1,6 +1,8 @@
 goog.provide 'acorn.specs.player.controls.ControlToolbarView'
 
 goog.require 'acorn.player.controls.ControlToolbarView'
+goog.require 'acorn.player.controls.ControlToggleView'
+goog.require 'acorn.player.controls.PlayPauseControlToggleView'
 goog.require 'acorn.player.controls.ControlView'
 goog.require 'acorn.player.controls.IconControlView'
 goog.require 'acorn.player.controls.ImageControlView'
@@ -62,6 +64,190 @@ describe 'acorn.player.controls.ControlToolbarView', ->
 
     btns = ['Icon', 'Icon', 'Icon', 'Icon', 'Icon']
     view = new ControlToolbarView buttons: btns
+    view.$el.width 600
+    view.render()
+    $player.append view.el
+
+
+describe 'acorn.player.controls.ControlToggleView', ->
+  EventSpy = athena.lib.util.test.EventSpy
+  ControlToolbarView = acorn.player.controls.ControlToolbarView
+  ControlToggleView = acorn.player.controls.ControlToggleView
+
+  modelOptions = ->
+    activeControl: 'Grid'
+
+  viewOptions = (opts = {}) ->
+    _.defaults opts,
+      model: new Backbone.Model modelOptions()
+      buttons: ['Grid', 'Next', 'Play', 'Acorn', 'Previous', 'Pause']
+
+  describeView = athena.lib.util.test.describeView
+  describeView ControlToggleView, ControlToolbarView, viewOptions()
+
+  it 'should be part of acorn.player.controls', ->
+    expect(ControlToggleView).toBeDefined()
+
+
+  describe 'ControlToggleView::activeControl', ->
+
+    it 'should be a function', ->
+      expect(typeof ControlToggleView::activeControl).toBe 'function'
+
+    it 'should return the control that matches model.get "activeControl"', ->
+      options = viewOptions()
+      view = new ControlToggleView options
+      view.render()
+
+      for controlName in options.buttons
+        options.model.set 'activeControl', controlName
+        controlName = controlName.toLowerCase()
+        control = view.$ ".#{controlName}.control-view"
+        expect(view.activeControl().el).toBe control[0]
+
+
+  describe 'ControlToggleView::refreshToggle', ->
+
+    it 'should be a function', ->
+      expect(typeof ControlToggleView::refreshToggle).toBe 'function'
+
+    it 'should be called when model changes', ->
+      spyOn ControlToggleView::, 'refreshToggle'
+      options = viewOptions()
+      view = new ControlToggleView options
+
+      expect(ControlToggleView::refreshToggle).not.toHaveBeenCalled()
+      options.model.trigger 'change'
+      expect(ControlToggleView::refreshToggle).toHaveBeenCalled()
+
+    it 'should show the active control and hide all others', ->
+      options = viewOptions()
+      view = new ControlToggleView options
+      view.render()
+      spyOn view, 'activeControl'
+
+      for controlName in options.buttons
+        controlName = controlName.toLowerCase()
+        activeControl = view.$ ".#{controlName}.control-view"
+        view.activeControl.andReturn $el: activeControl
+        view.refreshToggle()
+
+        for controlName in options.buttons
+          controlName = controlName.toLowerCase()
+          control = view.$ ".#{controlName}.control-view"
+          expect(control.hasClass 'hidden').toBe control[0] != activeControl[0]
+
+
+  it 'should forward all button events', ->
+    view = new ControlToggleView viewOptions()
+    view.render()
+    spy = new EventSpy view, 'all'
+    expect(spy.triggerCount).toBe 0
+
+    view.$('.grid.icon-control-view').click()
+    expect(spy.triggerCount).toBe 1
+
+    view.$('.next.icon-control-view').click()
+    expect(spy.triggerCount).toBe 2
+
+    view.$('.play.icon-control-view').click()
+    expect(spy.triggerCount).toBe 3
+
+    view.$('.acorn.image-control-view').click()
+    expect(spy.triggerCount).toBe 4
+
+    view.$('.previous.icon-control-view').click()
+    expect(spy.triggerCount).toBe 5
+
+    view.$('.pause.icon-control-view').click()
+    expect(spy.triggerCount).toBe 6
+
+  it 'should look good', ->
+    # setup DOM
+    acorn.util.appendCss()
+    $player = $('<div>').addClass('acorn-player').appendTo('body')
+
+    # add into the DOM to see how it looks.
+
+    options = viewOptions()
+    view = new ControlToggleView options
+    view.on 'GridControl:Click', -> options.model.set 'activeControl', 'Next'
+    view.on 'NextControl:Click', -> options.model.set 'activeControl', 'Play'
+    view.on 'PlayControl:Click', -> options.model.set 'activeControl', 'Acorn'
+    view.on 'AcornControl:Click', -> options.model.set 'activeControl', 'Previous'
+    view.on 'PreviousControl:Click', -> options.model.set 'activeControl', 'Pause'
+    view.on 'PauseControl:Click', -> options.model.set 'activeControl', 'Grid'
+    view.$el.width 600
+    view.render()
+    $player.append view.el
+
+
+describe 'acorn.player.controls.PlayPauseControlToggleView', ->
+  EventSpy = athena.lib.util.test.EventSpy
+  ControlToggleView = acorn.player.controls.ControlToggleView
+  PlayPauseControlToggleView = acorn.player.controls.PlayPauseControlToggleView
+
+  modelOptions = ->
+    playing: true
+
+  viewOptions = ->
+    model: new Backbone.Model modelOptions()
+
+  describeView = athena.lib.util.test.describeView
+  describeView PlayPauseControlToggleView, ControlToggleView, viewOptions()
+
+  it 'should be part of acorn.player.controls', ->
+    expect(PlayPauseControlToggleView).toBeDefined()
+
+  it 'should contain Play and Pause control views', ->
+    view = new PlayPauseControlToggleView viewOptions()
+    view.render()
+
+    expect(view.$('.play.icon-control-view').length).toBe 1
+    expect(view.$('.pause.icon-control-view').length).toBe 1
+
+  it 'should hide play control and show pause control when model is playing', ->
+    options = viewOptions()
+    options.model.set 'playing', true
+    view = new PlayPauseControlToggleView options
+    view.render()
+
+    expect(view.$('.play.icon-control-view').hasClass 'hidden').toBe true
+    expect(view.$('.pause.icon-control-view').hasClass 'hidden').toBe false
+
+  it 'should show play control and hide pause control when model is not
+      playing', ->
+    options = viewOptions()
+    options.model.set 'playing', false
+    view = new PlayPauseControlToggleView options
+    view.render()
+
+    expect(view.$('.play.icon-control-view').hasClass 'hidden').toBe false
+    expect(view.$('.pause.icon-control-view').hasClass 'hidden').toBe true
+
+  it 'should forward all button events', ->
+    view = new PlayPauseControlToggleView viewOptions()
+    view.render()
+    spy = new EventSpy view, 'all'
+    expect(spy.triggerCount).toBe 0
+
+    view.$('.play.icon-control-view').click()
+    expect(spy.triggerCount).toBe 1
+
+    view.$('.pause.icon-control-view').click()
+    expect(spy.triggerCount).toBe 2
+
+  it 'should look good', ->
+    # setup DOM
+    acorn.util.appendCss()
+    $player = $('<div>').addClass('acorn-player').appendTo('body')
+
+    # add into the DOM to see how it looks.
+
+    options = viewOptions()
+    view = new PlayPauseControlToggleView options
+    view.on 'PlayControl:Click', -> options.model.set 'playing', true
+    view.on 'PauseControl:Click', -> options.model.set 'playing', false
     view.$el.width 600
     view.render()
     $player.append view.el
