@@ -47,17 +47,27 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
 
   initializeControlsView: =>
 
+    @initializePlayPauseToggleView()
     @initializeElapsedTimeView()
 
     # construct a ControlToolbar for the acorn controls
     @controlsView = new ControlToolbarView
       extraClasses: ['shell-controls']
-      buttons: ['Play', 'Pause', @elapsedTimeView]
+      buttons: [@playPauseToggleView, @elapsedTimeView]
       eventhub: @eventhub
 
     @controlsView.on 'PlayControl:Click', => @play()
     @controlsView.on 'PauseControl:Click', => @pause()
     @controlsView.on 'ElapsedTimeControl:Seek', @seek
+
+
+  initializePlayPauseToggleView: =>
+    model = new Backbone.Model
+    model.isPlaying = => @isPlaying()
+
+    @playPauseToggleView = new acorn.player.controls.PlayPauseControlToggleView
+      eventhub: @eventhub
+      model: model
 
 
   initializeElapsedTimeView: =>
@@ -140,19 +150,16 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
 
   onMediaDidPlay: =>
     super
-    @controlsView.$('.control-view.play').addClass 'hidden'
-    @controlsView.$('.control-view.pause').removeClass 'hidden'
+    @playPauseToggleView.refreshToggle()
 
 
   onMediaDidPause: =>
     super
-    @controlsView.$('.control-view.play').removeClass 'hidden'
-    @controlsView.$('.control-view.pause').addClass 'hidden'
+    @playPauseToggleView.refreshToggle()
 
 
   onMediaDidEnd: =>
-    @controlsView.$('.control-view.play').removeClass 'hidden'
-    @controlsView.$('.control-view.pause').addClass 'hidden'
+    @playPauseToggleView.refreshToggle()
 
 
 

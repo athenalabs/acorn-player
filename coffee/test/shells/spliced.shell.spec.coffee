@@ -36,128 +36,101 @@ describe 'acorn.shells.SplicedShell', ->
 
       describe 'MediaView::controlsView', ->
 
-        it 'should have a play button', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          playControl = view.controlsView.$ '.control-view.play'
-          expect(playControl.length).toBe 1
+        describe 'MediaView::playPauseToggleView', ->
 
-        it 'should have a play button that is initially hidden', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.play()
-          playControl = view.controlsView.$ '.control-view.play'
-          expect(playControl.length).toBe 1
-          expect(playControl.hasClass 'hidden').toBe true
+          it 'should get created', ->
+            view = new MediaView viewOptions()
+            Toggle = acorn.player.controls.PlayPauseControlToggleView
+            expect(view.playPauseToggleView instanceof Toggle).toBe true
 
-        it 'should have a pause button', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.play()
-          pauseControl = view.controlsView.$ '.control-view.pause'
-          expect(pauseControl.length).toBe 1
+          it 'should get added to controlsView', ->
+            view = new MediaView viewOptions()
+            expect(_.contains view.controlsView.buttons,
+                view.playPauseToggleView).toBe true
 
-        it 'should have a pause button that is not initially hidden', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.play()
-          pauseControl = view.controlsView.$ '.control-view.pause'
-          expect(pauseControl.length).toBe 1
-          expect(pauseControl.hasClass 'hidden').toBe false
+          it 'should get refreshed when media plays', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            toggle = view.playPauseToggleView
+            spyOn toggle, 'refreshToggle'
 
-        it 'should show play button when paused', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.play()
-          view.pause()
-          expect(view.isPaused()).toBe true
+            expect(toggle.refreshToggle).not.toHaveBeenCalled()
+            view.setMediaState 'play'
+            expect(toggle.refreshToggle).toHaveBeenCalled()
 
-          playControl = view.controlsView.$ '.control-view.play'
-          expect(playControl.hasClass 'hidden').toBe false
+          it 'should get refreshed when media pauses', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            toggle = view.playPauseToggleView
+            spyOn toggle, 'refreshToggle'
 
-        it 'should hide pause button when paused', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.play()
-          view.pause()
-          expect(view.isPaused()).toBe true
+            expect(toggle.refreshToggle).not.toHaveBeenCalled()
+            view.setMediaState 'pause'
+            expect(toggle.refreshToggle).toHaveBeenCalled()
 
-          pauseControl = view.controlsView.$ '.control-view.pause'
-          expect(pauseControl.hasClass 'hidden').toBe true
+          it 'should get refreshed when media ends', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            toggle = view.playPauseToggleView
+            spyOn toggle, 'refreshToggle'
 
-        it 'should hide play button when playing', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.play()
-          expect(view.isPlaying()).toBe true
+            expect(toggle.refreshToggle).not.toHaveBeenCalled()
+            view.setMediaState 'end'
+            expect(toggle.refreshToggle).toHaveBeenCalled()
 
-          playControl = view.controlsView.$ '.control-view.play'
-          expect(playControl.hasClass 'hidden').toBe true
+          it 'should play mediaView when play button is clicked', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            view.play()
+            playControl = view.controlsView.$ '.control-view.play'
+            view.pause()
 
-        it 'should show pause button when playing', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.play()
-          expect(view.isPlaying()).toBe true
+            spyOn view, 'play'
+            playControl.click()
+            expect(view.play).toHaveBeenCalled()
 
-          pauseControl = view.controlsView.$ '.control-view.pause'
-          expect(pauseControl.hasClass 'hidden').toBe false
+          it 'should pause mediaView when pause button is clicked', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            view.play()
+            pauseControl = view.controlsView.$ '.control-view.pause'
 
-        it 'should play when play button is clicked', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.play()
-          playControl = view.controlsView.$ '.control-view.play'
-          view.pause()
+            spyOn view, 'pause'
+            pauseControl.click()
+            expect(view.pause).toHaveBeenCalled()
 
-          spyOn view, 'play'
-          playControl.click()
-          expect(view.play).toHaveBeenCalled()
 
-        it 'should pause when pause button is clicked', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.play()
-          pauseControl = view.controlsView.$ '.control-view.pause'
+        describe 'MediaView::elapsedTimeView', ->
 
-          spyOn view, 'pause'
-          pauseControl.click()
-          expect(view.pause).toHaveBeenCalled()
+          it 'should have an elapsed time control', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            view.play()
+            elapsedTimeControl = view.controlsView.$ '.elapsed-time-control-view'
+            expect(elapsedTimeControl.length).toBe 1
 
-        it 'should have an elapsed time control', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.play()
-          elapsedTimeControl = view.controlsView.$ '.elapsed-time-control-view'
-          expect(elapsedTimeControl.length).toBe 1
+          it 'should call seek when elapsed time control seeks', ->
+            spyOn MediaView::, 'seek'
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            view.play()
+            elapsedTimeControl = view.controlsView.$ '.elapsed-time-control-view'
+            seekField = elapsedTimeControl.find 'input'
 
-        it 'should call seek when elapsed time control seeks', ->
-          spyOn MediaView::, 'seek'
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.play()
-          elapsedTimeControl = view.controlsView.$ '.elapsed-time-control-view'
-          seekField = elapsedTimeControl.find 'input'
+            expect(MediaView::seek).not.toHaveBeenCalled()
 
-          expect(MediaView::seek).not.toHaveBeenCalled()
-
-          for offset in [0, 10, 20, 30, 40, 50]
-            seekField.val offset
-            seekField.blur()
-            expect(MediaView::seek).toHaveBeenCalled()
-            expect(MediaView::seek).toHaveBeenCalledWith offset
+            for offset in [0, 10, 20, 30, 40, 50]
+              seekField.val offset
+              seekField.blur()
+              expect(MediaView::seek).toHaveBeenCalled()
+              expect(MediaView::seek).toHaveBeenCalledWith offset
 
 
       test.describeDefaults SplicedShell.MediaView, {
