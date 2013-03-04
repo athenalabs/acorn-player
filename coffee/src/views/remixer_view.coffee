@@ -48,6 +48,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
     # toolbar buttons
     toolbarButtons: [
+      {id:'Clear', icon: 'icon-undo', tooltip: 'Clear'}
       {id:'Duplicate', icon: 'icon-copy', tooltip: 'Duplicate'}
       {id:'Delete', icon: 'icon-remove', tooltip: 'Delete'}
     ]
@@ -78,6 +79,9 @@ class acorn.player.RemixerView extends athena.lib.View
       unless /Toolbar:Click:/.test arguments[0]
         return
       @trigger 'Remixer:' + arguments[0], @
+
+    @toolbarView.on 'Toolbar:Click:Clear', =>
+      @swapShell new EmptyShell.Model
 
     if @options.showSummary
       @summarySubview = new acorn.player.EditSummaryView

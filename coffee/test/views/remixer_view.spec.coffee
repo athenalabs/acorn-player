@@ -2,6 +2,7 @@ goog.provide 'acorn.specs.player.RemixerView'
 
 goog.require 'acorn.player.RemixerView'
 goog.require 'acorn.shells.Shell'
+goog.require 'acorn.shells.EmptyShell'
 goog.require 'acorn.shells.LinkShell'
 goog.require 'acorn.shells.ImageLinkShell'
 goog.require 'acorn.shells.TextShell'
@@ -11,6 +12,7 @@ describe 'acorn.player.RemixerView', ->
   EventSpy = athena.lib.util.test.EventSpy
 
   Shell = acorn.shells.Shell
+  EmptyShell = acorn.shells.EmptyShell
   LinkShell = acorn.shells.LinkShell
   ImageLinkShell = acorn.shells.ImageLinkShell
   TextShell = acorn.shells.TextShell
@@ -96,6 +98,24 @@ describe 'acorn.player.RemixerView', ->
 
 
   describe 'events', ->
+
+    it 'should trigger `Remixer:Toolbar:Click:Clear` on clicking btn', ->
+      view = new RemixerView viewOptions()
+      spy = new EventSpy view, 'Remixer:Toolbar:Click:Clear'
+
+      view.render()
+      expect(spy.triggered).toBe false
+      view.toolbarView.$('button#Clear').trigger 'click'
+      expect(spy.triggered).toBe true
+      expect(spy.arguments[0]).toEqual [view]
+
+    it 'should reset to empty shell on `Toolbar:Click:Clear` event', ->
+      view = new RemixerView viewOptions()
+      view.render()
+
+      expect(view.model instanceof EmptyShell.Model).toBe false
+      view.toolbarView.trigger 'Toolbar:Click:Clear'
+      expect(view.model instanceof EmptyShell.Model).toBe true
 
     it 'should trigger `Remixer:Toolbar:Click:Duplicate` on clicking btn', ->
       view = new RemixerView viewOptions()
