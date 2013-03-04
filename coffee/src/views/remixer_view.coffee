@@ -161,7 +161,7 @@ class acorn.player.RemixerView extends athena.lib.View
     unless @model is @summarySubview.model
       @summarySubview.setModel @model
 
-    unless @model.module is acorn.shells.EmptyShell
+    unless @model.module is EmptyShell
       if @rendering
         @$('.remixer-content').before @summarySubview.render().el
 
@@ -178,7 +178,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @$el.removeClass 'empty'
     @toolbarView.$('.btn').removeClass 'disabled'
-    if @model.module is acorn.shells.EmptyShell
+    if @model.module is EmptyShell
       @$el.addClass 'empty'
       @toolbarView.$('.btn').addClass 'disabled'
 
@@ -196,6 +196,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @trigger 'Remixer:SwapShell', @, oldShell, newShell
     @
+
 
   shellIsValid: (shell) =>
     _.any @options.validShells, (ValidShell) =>
