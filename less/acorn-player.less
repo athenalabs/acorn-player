@@ -406,6 +406,30 @@ input {
   display: inline-block;
   height: @main-control-height;
 
+  &.left {
+    float: left;
+
+    &,
+    .control-toolbar-view {
+      > .control-view {
+        border-left: 0px;
+        border-right: 1px solid rgba(204, 204, 204, 0.5);
+      }
+    }
+  }
+
+  &.right {
+    float: right;
+
+    &,
+    .control-toolbar-view {
+      > .control-view {
+        border-right: 0px;
+        border-left: 1px solid rgba(204, 204, 204, 0.5);
+      }
+    }
+  }
+
   > .control-view {
     display: inline-block;
     position: relative;
@@ -415,7 +439,6 @@ input {
     height: @main-control-height;
     padding: 0px;
     margin: 0px;
-    border-left: 1px solid rgba(204, 204, 204, 0.5);
 
     > * {
       .position-absolutely;
@@ -478,29 +501,6 @@ input {
         */
       }
     }
-  }
-}
-
-.control-toolbar-view.left {
-  float: left;
-
-  > .control-view:first-child {
-    border-left: 0px;
-  }
-  > .control-view:last-child {
-    border-right: 1px solid rgba(204, 204, 204, 0.5);
-
-  }
-}
-
-.control-toolbar-view.right {
-  float: right;
-
-  > .control-view:first-child {
-    border-right: 0px;
-  }
-  > .control-view:last-child {
-    border-left: 1px solid rgba(204, 204, 204, 0.5);
   }
 }
 
