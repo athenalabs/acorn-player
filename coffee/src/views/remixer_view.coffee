@@ -241,7 +241,7 @@ class acorn.player.RemixerView extends athena.lib.View
         return
 
       @model.link link
-      @remixSubview.render()
+      @renderRemixSubview()
 
     else if acorn.util.isUrl link
       shell = LinkShell.Model.withLink link
@@ -256,7 +256,7 @@ class acorn.player.RemixerView extends athena.lib.View
         @swapShell shell
       else
         @model.link link
-        @remixSubview.render()
+        @renderRemixSubview()
 
     # set link to whatever our model is
     @$('input#link').val @model.link?()
