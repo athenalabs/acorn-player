@@ -68,7 +68,7 @@ class acorn.player.RemixerView extends athena.lib.View
     unless @model instanceof acorn.shells.Shell.Model
       TypeError @model, 'Shell.Model'
 
-    @initializeDropdownView()
+    @_initializeDropdownView()
 
     @toolbarView = new athena.lib.ToolbarView
       eventhub: @eventhub
@@ -87,7 +87,7 @@ class acorn.player.RemixerView extends athena.lib.View
     @_initializeRemixSubview()
 
 
-  initializeDropdownView: =>
+  _initializeDropdownView: =>
 
     moduleObject = (Shell) ->
       {id:Shell.id, name:Shell.title, icon:Shell.icon}
