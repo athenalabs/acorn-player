@@ -42,18 +42,28 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
         @showNext()
 
 
-
   initializeControlsView: =>
+    @initializePlayPauseToggleView()
+
     # construct a ControlToolbar for the acorn controls
     @controlsView = new ControlToolbarView
       extraClasses: ['shell-controls']
-      buttons: ['Previous', 'Play', 'Pause', 'Next']
+      buttons: ['Previous', @playPauseToggleView, 'Next']
       eventhub: @eventhub
 
     @controlsView.on 'PreviousControl:Click', @showPrevious
     @controlsView.on 'NextControl:Click', @showNext
     @controlsView.on 'PlayControl:Click', => @play()
     @controlsView.on 'PauseControl:Click', => @pause()
+
+
+  initializePlayPauseToggleView: =>
+    model = new Backbone.Model
+    model.isPlaying = => @isPlaying()
+
+    @playPauseToggleView = new acorn.player.controls.PlayPauseControlToggleView
+      eventhub: @eventhub
+      model: model
 
 
   remove: =>
@@ -67,14 +77,17 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
 
 
   onMediaDidPlay: =>
-    @controlsView.$('.control-view.play').addClass 'hidden'
-    @controlsView.$('.control-view.pause').removeClass 'hidden'
+    @playPauseToggleView.refreshToggle()
     @_countdown()
 
 
   onMediaDidPause: =>
-    @controlsView.$('.control-view.play').removeClass 'hidden'
-    @controlsView.$('.control-view.pause').addClass 'hidden'
+    @playPauseToggleView.refreshToggle()
+    @_clearCountdown()
+
+
+  onMediaDidEnd: =>
+    @playPauseToggleView.refreshToggle()
     @_clearCountdown()
 
 
