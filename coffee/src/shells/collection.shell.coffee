@@ -299,6 +299,17 @@ class CollectionShell.MediaView extends Shell.MediaView
     @shellView().trigger 'ProgressBar:DidProgress', arguments...
 
 
+  updateControls: =>
+    unless @options.shellsCycle
+      @controlsView.$('.previous.control-view').removeAttr 'disabled'
+      @controlsView.$('.next.control-view').removeAttr 'disabled'
+
+      if @currentIndex == 0
+        @controlsView.$('.previous.control-view').attr 'disabled', 'disabled'
+      if @currentIndex == @shellViews.length - 1
+        @controlsView.$('.next.control-view').attr 'disabled', 'disabled'
+
+
   shellView: (index) =>
     index ?= @currentIndex
     @shellViews[index]
@@ -365,6 +376,8 @@ class CollectionShell.MediaView extends Shell.MediaView
       # add view.controlsView
       @controlsView.buttons.push view.controlsView
       @controlsView.render()
+
+    @updateControls()
 
     view
 
