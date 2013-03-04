@@ -84,12 +84,7 @@ class acorn.player.RemixerView extends athena.lib.View
         eventhub: @eventhub
         model: @model
 
-    @remixSubview = new @model.module.RemixView
-      eventhub: @eventhub
-      model: @model
-
-    @remixSubview.on 'Remix:SwapShell', (oldShell, newShell) =>
-      @swapShell newShell
+    @_initializeRemixSubview()
 
 
   initializeDropdownView: =>
@@ -127,6 +122,15 @@ class acorn.player.RemixerView extends athena.lib.View
         @swapShell Shell.Model.withData
           shellid: value
           link: @model.link()
+
+
+  _initializeRemixSubview: =>
+    @remixSubview = new @model.module.RemixView
+      eventhub: @eventhub
+      model: @model
+
+    @remixSubview.on 'Remix:SwapShell', (oldShell, newShell) =>
+      @swapShell newShell
 
 
   render: =>
@@ -167,9 +171,7 @@ class acorn.player.RemixerView extends athena.lib.View
   renderRemixSubview: =>
     unless @model is @remixSubview.model
       @remixSubview?.destroy()
-      @remixSubview = new @model.module.RemixView
-        eventhub: @eventhub
-        model: @model
+      @_initializeRemixSubview()
 
     if @rendering
       @$('.remixer-content').append @remixSubview.render().el
