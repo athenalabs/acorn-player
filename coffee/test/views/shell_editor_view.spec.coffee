@@ -302,7 +302,7 @@ describe 'acorn.player.ShellEditorView', ->
       view.render()
       expect(view.remixerViews.length).toBe 2
       _.each view.remixerViews, (rv) ->
-        unless view.shellIsEmpty rv.model
+        unless view._shellIsStub rv.model
           headerText = rv.$('.editor-section').text()
           expect(headerText.match '^Item [0-9]+: ').toBeFalsy()
 
@@ -315,7 +315,7 @@ describe 'acorn.player.ShellEditorView', ->
 
       expect(view.remixerViews.length).toBe 2
       _.each view.remixerViews, (rv) ->
-        unless view.shellIsEmpty rv.model
+        unless view._shellIsStub rv.model
           headerText = rv.$('.editor-section').text()
           expect(headerText.match '^Item [0-9]+: ').toBeFalsy()
 
@@ -324,7 +324,7 @@ describe 'acorn.player.ShellEditorView', ->
       view.render()
       expect(view.remixerViews.length).toBe 2
       _.each view.remixerViews, (rv) ->
-        unless view.shellIsEmpty rv.model
+        unless view._shellIsStub rv.model
           headerText = rv.$('.editor-section').text()
           expect(headerText.match '^Item [0-9]+: ').toBeFalsy()
 
@@ -332,7 +332,7 @@ describe 'acorn.player.ShellEditorView', ->
         view.addShell new TextShell.Model
         expect(view.remixerViews.length).toBe 3 + i
         _.each view.remixerViews, (rv) ->
-          unless view.shellIsEmpty rv.model
+          unless view._shellIsStub rv.model
             headerText = rv.$('.editor-section').text()
             expect(headerText.match '^Item [0-9]+: ').toBeTruthy()
 

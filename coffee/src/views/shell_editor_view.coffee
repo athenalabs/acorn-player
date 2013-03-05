@@ -62,8 +62,8 @@ class acorn.player.ShellEditorView extends athena.lib.View
       @model = new CollectionShell.Model
       @model.shells().push model if model
 
-    # add an empty shell at the end, ready for a new link
-    unless @shellIsEmpty @model.shells().last()
+    # add a default shell at the end, ready for a new link
+    unless @_shellIsStub @model.shells().last()
       @model.shells().push new @defaultShell.Model
 
     @initializeShellOptionsView()
@@ -118,7 +118,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
   renderRemixerViewHeading: (remixerView, index) =>
     index ?= @model.shells().indexOf(remixerView.model)
 
-    unless @model.shells().length < 3 or @shellIsEmpty remixerView.model
+    unless @model.shells().length < 3 or @_shellIsStub remixerView.model
       prefix = "Item #{index + 1}"
 
     @renderSectionHeading remixerView, (prefix ? '')
@@ -128,7 +128,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
   renderSectionHeading: (view, prefix='') =>
     view.$('.editor-section').remove()
 
-    if @shellIsEmpty view.model
+    if @_shellIsStub view.model
       text = 'add a media item by entering a link:'
     else
       text = view.model.module.title
@@ -139,19 +139,13 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
 
   renderUpdates: =>
-    shellCount = @model.shells().length
-    emptyCount = _.size @model.shells().filter (shell) =>
-      shell.module is @defaultShell
-
-    # ensure there is a placeholder shell
-    if emptyCount is 0
-      @addShell new @defaultShell.Model, shellCount
-      shellCount++
-      emptyCount++
+    # ensure there is a stub shell
+    unless @_shellIsStub @model.shells().last()
+      @addShell new @defaultShell.Model, @model.shells().length
 
     if @rendering
       # hide the options view if there is only one shell
-      if (shellCount - emptyCount) > 1
+      if @_lastNonDefaultShellIndex() > 0
         @$('.shell-options-view').removeClass 'hidden'
       else
         @$('.shell-options-view').addClass 'hidden'
@@ -171,14 +165,14 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
   # retrieves the finalized shell. @model should not be used directly.
   shell: =>
+    # retrieve shells from views, leaving out any trailing default shells
+    lastIndex = @_lastNonDefaultShellIndex()
+    shells = if lastIndex < 0 then [] else
+      for i in [0..@_lastNonDefaultShellIndex()]
+        @remixerViews[i].model
+
     shell = @model.clone()
-
-    # retrieve shells from views. seem to be out of sync. Bug?
-    shells = _.map @remixerViews, (view) => view.model
-
-    # clear out any empty shells
-    shell.shells().reset _.filter shells, (shell) =>
-      not @shellIsEmpty shell
+    shell.shells().reset shells
 
     # unwrap from collection if there is only one shell
     if shell.shells().length is 1
@@ -211,14 +205,6 @@ class acorn.player.ShellEditorView extends athena.lib.View
     @
 
 
-  # whether the shell is considered empty (placeholders)
-  shellIsEmpty: (shell) =>
-    shell &&
-    (shell.constructor is Shell.Model or
-     shell.constructor is EmptyShell.Model or
-     shell.constructor is @defaultShell.Model)
-
-
   # whether this is the stub shell (last shell and empty)
   _shellIsStub: (shell) =>
     shell?.constructor is @defaultShell.Model &&
@@ -242,14 +228,13 @@ class acorn.player.ShellEditorView extends athena.lib.View
       model: shell
 
     view.on 'Remixer:Toolbar:Click:Duplicate', (remixer) =>
-      # duplicate remixer unless it is just a placeholder
-      unless @shellIsEmpty remixer.model
-        index = @model.shells().indexOf(remixer.model)
-        @addShell remixer.model.clone(), index + 1
+      # duplicate shell
+      index = @model.shells().indexOf(remixer.model)
+      @addShell remixer.model.clone(), index + 1
 
     view.on 'Remixer:Toolbar:Click:Delete', (remixer) =>
-      # delete remixer unless it is just a placeholder
-      unless @shellIsEmpty remixer.model
+      # delete remixer unless it is the stub
+      unless @_shellIsStub remixer.model
         @removeShell remixer.model
 
     view.on 'Remixer:SwapShell', (remixer, oldShell, newShell) =>
