@@ -9,7 +9,7 @@ DocShell = acorn.shells.DocShell =
 
   id: 'acorn.DocShell'
   title: 'Doc'
-  description: 'a rendered document'
+  description: 'a formatted document'
   icon: 'icon-align-justify'
 
 
