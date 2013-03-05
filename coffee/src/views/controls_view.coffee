@@ -138,14 +138,66 @@ class ControlView extends athena.lib.View
 
   events: => _.extend super,
     'click': => @trigger "#{@controlName()}:Click", @
+    'mouseenter': @_onMouseenter
+    'mouseleave': @_onMouseleave
 
 
   render: =>
     super
     tooltip = @tooltip()
     if tooltip
+      tooltip.trigger = 'manual'
       @$el.tooltip(tooltip)
+      @hasTooltip = true
+      @showingTooltip = false
     @
+
+
+  showTooltip: =>
+    unless @hasTooltip
+      return
+
+    # show tooltip unless already showing (re-showing causes flicker)
+    unless @showingTooltip
+      @showingTooltip = true
+      @$el.tooltip 'show'
+
+
+  hideTooltip: =>
+    unless @hasTooltip
+      return
+
+    # hide tooltip
+    @showingTooltip = false
+    @$el.tooltip 'hide'
+
+
+  _onMouseenter: =>
+    @_clearTimeouts()
+
+    # calculate appropriate delay
+    delay = @tooltip()?.delay?.show or @tooltip()?.delay
+    unless delay > 0
+      delay = 0
+
+    @_showTooltip = setTimeout @showTooltip, delay
+
+
+  _onMouseleave: =>
+    @_clearTimeouts()
+
+    # calculate appropriate delay
+    delay = @tooltip()?.delay?.hide or @tooltip()?.delay
+    unless delay > 0
+      delay = 0
+
+    @_hideTooltip = setTimeout @hideTooltip, delay
+
+
+  # clear any lingering timeouts that haven't arrived yet
+  _clearTimeouts: =>
+    clearTimeout @_showTooltip
+    clearTimeout @_hideTooltip
 
 
   @withId: (id) =>

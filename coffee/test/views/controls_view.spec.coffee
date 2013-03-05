@@ -270,12 +270,161 @@ describe 'acorn.player.controls.ControlView', ->
   it 'should construct controls `withId`', ->
     expect(ControlView.withId('Icon') instanceof IconControlView).toBe true
 
-  it 'should trigger event `Control:Click` on click', ->
-    view = new ControlView
-    spy = new EventSpy view, 'Control:Click'
-    view.render()
-    view.$el.trigger 'click'
-    expect(spy.triggered).toBe true
+
+  describe 'ControlView: tooltip', ->
+
+    describe 'ControlView::showTooltip', ->
+
+      it 'should show tooltip if one exists', ->
+        view = new ControlView
+        spyOn(view, 'tooltip').andReturn title: 'Edit'
+        view.render()
+        spyOn view.$el, 'tooltip'
+
+        expect(view.$el.tooltip).not.toHaveBeenCalled()
+        view.showTooltip()
+        expect(view.$el.tooltip).toHaveBeenCalled()
+        expect(view.$el.tooltip.mostRecentCall.args[0]).toBe 'show'
+
+      it 'should not show tooltip again if tooltip is already showing', ->
+        view = new ControlView
+        spyOn(view, 'tooltip').andReturn title: 'Edit'
+        view.render()
+        spyOn view.$el, 'tooltip'
+
+        view.showingTooltip = true
+        expect(view.$el.tooltip).not.toHaveBeenCalled()
+        view.showTooltip()
+        expect(view.$el.tooltip).not.toHaveBeenCalled()
+
+      it 'should set showingTooltip to true', ->
+        view = new ControlView
+        spyOn(view, 'tooltip').andReturn title: 'Edit'
+        view.render()
+
+        expect(view.showingTooltip).toBe false
+        view.showTooltip()
+        expect(view.showingTooltip).toBe true
+
+
+    describe 'ControlView::hideTooltip', ->
+
+      it 'should hide tooltip if one exists', ->
+        view = new ControlView
+        spyOn(view, 'tooltip').andReturn title: 'Edit'
+        view.render()
+        spyOn view.$el, 'tooltip'
+
+        expect(view.$el.tooltip).not.toHaveBeenCalled()
+        view.hideTooltip()
+        expect(view.$el.tooltip).toHaveBeenCalled()
+        expect(view.$el.tooltip.mostRecentCall.args[0]).toBe 'hide'
+
+      it 'should set showingTooltip to false', ->
+        view = new ControlView
+        spyOn(view, 'tooltip').andReturn title: 'Edit'
+        view.render()
+
+        view.showingTooltip = true
+        expect(view.showingTooltip).toBe true
+        view.hideTooltip()
+        expect(view.showingTooltip).toBe false
+
+
+    describe 'ControlView::_onMouseenter', ->
+
+      it 'should call `showTooltip` on stack clear if no delay is set', ->
+        view = new ControlView
+        spyOn view, 'showTooltip'
+
+        expect(view.showTooltip).not.toHaveBeenCalled()
+        view._onMouseenter()
+        expect(view.showTooltip).not.toHaveBeenCalled()
+        setTimeout (-> expect(view.showTooltip).toHaveBeenCalled()), 0
+
+      it 'should call `showTooltip` after delay if one is set', ->
+        view = new ControlView
+        spyOn(view, 'tooltip').andReturn title: 'Edit', delay: show: 500
+        spyOn view, 'showTooltip'
+
+        jasmine.Clock.useMock()
+
+        expect(view.showTooltip).not.toHaveBeenCalled()
+        view._onMouseenter()
+        jasmine.Clock.tick 499
+        expect(view.showTooltip).not.toHaveBeenCalled()
+        jasmine.Clock.tick 2
+        expect(view.showTooltip).toHaveBeenCalled()
+
+      it 'should clear lingering timeouts', ->
+        view = new ControlView
+        spyOn view, '_clearTimeouts'
+
+        expect(view._clearTimeouts).not.toHaveBeenCalled()
+        view._onMouseenter()
+        expect(view._clearTimeouts).toHaveBeenCalled()
+
+
+    describe 'ControlView::_onMouseleave', ->
+
+      it 'should call `hideTooltip` on stack clear if no delay is set', ->
+        view = new ControlView
+        spyOn view, 'hideTooltip'
+
+        expect(view.hideTooltip).not.toHaveBeenCalled()
+        view._onMouseleave()
+        expect(view.hideTooltip).not.toHaveBeenCalled()
+        setTimeout (-> expect(view.hideTooltip).toHaveBeenCalled()), 0
+
+      it 'should call `hideTooltip` after delay if one is set', ->
+        view = new ControlView
+        spyOn(view, 'tooltip').andReturn title: 'Edit', delay: hide: 500
+        spyOn view, 'hideTooltip'
+
+        jasmine.Clock.useMock()
+
+        expect(view.hideTooltip).not.toHaveBeenCalled()
+        view._onMouseleave()
+        jasmine.Clock.tick 499
+        expect(view.hideTooltip).not.toHaveBeenCalled()
+        jasmine.Clock.tick 2
+        expect(view.hideTooltip).toHaveBeenCalled()
+
+      it 'should clear lingering timeouts', ->
+        view = new ControlView
+        spyOn view, '_clearTimeouts'
+
+        expect(view._clearTimeouts).not.toHaveBeenCalled()
+        view._onMouseleave()
+        expect(view._clearTimeouts).toHaveBeenCalled()
+
+
+  describe 'ControlView: events', ->
+
+    it 'should trigger event `Control:Click` on click', ->
+      view = new ControlView
+      spy = new EventSpy view, 'Control:Click'
+      view.render()
+      view.$el.trigger 'click'
+      expect(spy.triggered).toBe true
+
+    it 'should call `_onMouseenter` on mouseenter', ->
+      spyOn ControlView::, '_onMouseenter'
+      view = new ControlView
+      view.render()
+
+      expect(ControlView::_onMouseenter).not.toHaveBeenCalled()
+      view.$el.trigger 'mouseenter'
+      expect(ControlView::_onMouseenter).toHaveBeenCalled()
+
+    it 'should call `_onMouseleave` on mouseleave', ->
+      spyOn ControlView::, '_onMouseleave'
+      view = new ControlView
+      view.render()
+
+      expect(ControlView::_onMouseleave).not.toHaveBeenCalled()
+      view.$el.trigger 'mouseleave'
+      expect(ControlView::_onMouseleave).toHaveBeenCalled()
 
 
 describe 'acorn.player.controls.IconControlView', ->
