@@ -181,10 +181,8 @@ class acorn.player.RemixerView extends athena.lib.View
       @$('.remixer-content').append @remixSubview.render().el
 
     @$el.removeClass 'empty'
-    @toolbarView.$('.btn').removeClass 'disabled'
     if @model.module is EmptyShell
       @$el.addClass 'empty'
-      @toolbarView.$('.btn').addClass 'disabled'
 
     @
 
