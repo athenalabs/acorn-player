@@ -191,7 +191,6 @@ describe 'acorn.shells.Shell', ->
           expect(spy.triggered).toBe false
           view._updateProgressBar()
           expect(spy.triggered).toBe true
-          console.log spy.arguments
           expect(spy.arguments[0][0]).toBe 'fakeShowing'
           expect(spy.arguments[0][1]).toBe 'fakeProgress'
 
