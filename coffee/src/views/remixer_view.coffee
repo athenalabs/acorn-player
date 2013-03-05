@@ -165,9 +165,8 @@ class acorn.player.RemixerView extends athena.lib.View
     unless @model is @summarySubview.model
       @summarySubview.setModel @model
 
-    unless @model.module is EmptyShell
-      if @rendering
-        @$('.remixer-content').before @summarySubview.render().el
+    if @rendering
+      @$('.remixer-content').before @summarySubview.render().el
 
     @
 
