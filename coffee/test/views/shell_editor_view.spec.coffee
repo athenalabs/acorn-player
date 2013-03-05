@@ -18,27 +18,31 @@ describe 'acorn.player.ShellEditorView', ->
   CollectionShell = acorn.shells.CollectionShell
   ShellEditorView = acorn.player.ShellEditorView
 
-  # model for EditorView contruction
   model = new TextShell.Model
+  eventhub = new Backbone.View
 
   # options for EditorView contruction
-  options = model: model
+  viewOptions = (opts = {}) ->
+    _.defaults opts,
+      model: model
+      eventhub: eventhub
 
 
   it 'should be part of acorn.player', ->
     expect(ShellEditorView).toBeDefined()
 
-  describeView ShellEditorView, athena.lib.View, options
+  describeView ShellEditorView, athena.lib.View, viewOptions()
+
 
   describe 'construction', ->
 
     it 'should wrap single-shells in a CollectionShell.Model', ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       expect(view.model instanceof CollectionShell.Model).toBe true
       expect(view.model.shells().models[0]).toBe model
 
     it 'should add an EmptyShell to the collectionShell', ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       coll = view.model.shells()
       expect(coll.models[1] instanceof EmptyShell.Model).toBe true
 
@@ -65,11 +69,11 @@ describe 'acorn.player.ShellEditorView', ->
       expect(view.model.shells().models[0]).toBe model
       expect(view.model.shells().models[1]).toBe empty
 
+
   describe 'finalized shell retrieval', ->
 
     it 'should return single shells', ->
-      model = new TextShell.Model
-      view = new ShellEditorView model: model
+      view = new ShellEditorView viewOptions()
       shell = view.shell()
       expect(shell instanceof TextShell.Model).toBe true
       expect(shell.attributes).toEqual model.attributes
@@ -86,12 +90,11 @@ describe 'acorn.player.ShellEditorView', ->
       expect(shell.shells().models[1].attributes).toEqual models[1].attributes
 
 
-
   describeSubview
     View: ShellEditorView
     Subview: acorn.player.ShellOptionsView
     subviewAttr: 'shellOptionsView'
-    viewOptions: options
+    viewOptions: viewOptions()
 
 
   describe 'ShellEditorView::remixerViews subviews', ->
@@ -102,45 +105,45 @@ describe 'acorn.player.ShellEditorView', ->
     anotherShell = acorn.shellWithData shellid: 'acorn.TextShell'
 
     it 'should be defined on init', ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       expect(view.remixerViews).toBeDefined()
       expect(view.remixerViews.length).toBe 2 # +1 empty shell
 
     it "should be instancesof RemixerView", ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       expect(view.remixerViews.length).toBe 2 # +1 empty shell
       _.map view.remixerViews, (rv) ->
         expect(rv instanceof acorn.player.RemixerView).toBe true
 
     it "should be instancesof RemixerView (added)", ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       view.addShell anotherShell
       expect(view.remixerViews.length).toBe 3 # +1 empty shell
       _.map view.remixerViews, (rv) ->
         expect(rv instanceof acorn.player.RemixerView).toBe true
 
     it 'should not be rendering initially', ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       expect(view.remixerViews.length).toBe 2 # +1 empty shell
       _.map view.remixerViews, (rv) ->
         expect(rv.rendering).toBe false
 
     it 'should not be rendering initially (added)', ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       view.addShell anotherShell
       expect(view.remixerViews.length).toBe 3 # +1 empty shell
       _.map view.remixerViews, (rv) ->
         expect(rv.rendering).toBe false
 
     it "should be rendering with ShellEditorView", ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       view.render()
       expect(view.remixerViews.length).toBe 2 # +1 empty shell
       _.map view.remixerViews, (rv) ->
         expect(rv.rendering).toBe true
 
     it "should be rendering with ShellEditorView (added)", ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       view.render()
       view.addShell anotherShell
       expect(view.remixerViews.length).toBe 3 # +1 empty shell
@@ -148,14 +151,14 @@ describe 'acorn.player.ShellEditorView', ->
         expect(rv.rendering).toBe true
 
     it "should be DOM descendants of the ShellEditorView", ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       view.render()
       expect(view.remixerViews.length).toBe 2 # +1 empty shell
       _.map view.remixerViews, (rv) ->
         expect(rv.el.parentNode.parentNode).toBe view.el
 
     it "should be DOM descendants of the ShellEditorView (added)", ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       view.render()
       view.addShell anotherShell
       expect(view.remixerViews.length).toBe 3 # +1 empty shell
@@ -166,7 +169,7 @@ describe 'acorn.player.ShellEditorView', ->
   describe 'ShellEditorView::renderUpdates', ->
 
     it 'should have ShellOptionsView hidden with one non-empty shell', ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       view.render()
       expect(view.remixerViews.length).toBe 2
       expect(view.model.shells().models[0].module).not.toBe EmptyShell
@@ -174,7 +177,7 @@ describe 'acorn.player.ShellEditorView', ->
       expect(view.shellOptionsView.$el.hasClass 'hidden').toBe true
 
     it 'should hide the ShellOptionsView with < 2 non-empty shells', ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       view.render()
       expect(view.remixerViews.length).toBe 2
       expect(view.shellOptionsView.$el.hasClass 'hidden').toBe true
@@ -191,7 +194,7 @@ describe 'acorn.player.ShellEditorView', ->
       expect(view.shellOptionsView.$el.hasClass 'hidden').toBe true
 
     it 'should show the ShellOptionsView with > 1 non-empty shells', ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       view.render()
       expect(view.remixerViews.length).toBe 2
       expect(view.shellOptionsView.$el.hasClass 'hidden').toBe true
@@ -202,7 +205,7 @@ describe 'acorn.player.ShellEditorView', ->
         expect(view.shellOptionsView.$el.hasClass 'hidden').toBe false
 
     it 'should add an empty shell when going to 0 shells', ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       firstShell = -> view.model.shells().models[0]
 
       expect(view.remixerViews.length).toBe 2
@@ -218,7 +221,7 @@ describe 'acorn.player.ShellEditorView', ->
       expect(firstShell() instanceof EmptyShell.Model).toBe true
 
     it 'should not prefix remixer headers when < 2 non-empty shells', ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       view.render()
       expect(view.remixerViews.length).toBe 2
       _.each view.remixerViews, (rv) ->
@@ -240,7 +243,7 @@ describe 'acorn.player.ShellEditorView', ->
           expect(headerText.match '^Item [0-9]+: ').toBeFalsy()
 
     it 'should prefix remixer headers when > 1 non-empty shells', ->
-      view = new ShellEditorView options
+      view = new ShellEditorView viewOptions()
       view.render()
       expect(view.remixerViews.length).toBe 2
       _.each view.remixerViews, (rv) ->
@@ -262,7 +265,7 @@ describe 'acorn.player.ShellEditorView', ->
     describe 'on ShellOptions:SwapShell', ->
 
       it 'should call swap the top level shell', ->
-        view = new ShellEditorView options
+        view = new ShellEditorView viewOptions()
         view.render()
         spyOn view, 'swapTopLevelShell'
         view.shellOptionsView.trigger 'ShellOptions:SwapShell', GalleryShell.id
@@ -270,7 +273,7 @@ describe 'acorn.player.ShellEditorView', ->
 
 
       it 'should swap the shell seamlessly', ->
-        view = new ShellEditorView options
+        view = new ShellEditorView viewOptions()
         view.render()
         expect(view.model.shellid()).toBe CollectionShell.id
         models = _.clone view.model.shells().models
@@ -285,7 +288,7 @@ describe 'acorn.player.ShellEditorView', ->
     describe 'on Remixer:Toolbar:Click:Duplicate', ->
 
       it 'should call add shell', ->
-        view = new ShellEditorView options
+        view = new ShellEditorView viewOptions()
         view.render()
         remixer = view.remixerViews[0]
 
@@ -294,7 +297,7 @@ describe 'acorn.player.ShellEditorView', ->
         expect(spy).toHaveBeenCalled()
 
       it 'should add a clone of the remixerView\'s shell', ->
-        view = new ShellEditorView options
+        view = new ShellEditorView viewOptions()
         view.render()
         remixer = view.remixerViews[0]
 
@@ -308,7 +311,7 @@ describe 'acorn.player.ShellEditorView', ->
     describe 'on Remixer:Toolbar:Click:Delete', ->
 
       it 'should call remove shell', ->
-        view = new ShellEditorView options
+        view = new ShellEditorView viewOptions()
         view.render()
         remixer = view.remixerViews[0]
 
@@ -317,7 +320,7 @@ describe 'acorn.player.ShellEditorView', ->
         expect(spy).toHaveBeenCalled()
 
       it 'should remove the remixerView\'s shell', ->
-        view = new ShellEditorView options
+        view = new ShellEditorView viewOptions()
         view.render()
         remixer = view.remixerViews[0]
 
@@ -520,7 +523,7 @@ describe 'acorn.player.ShellEditorView', ->
     $player = $('<div>').addClass('acorn-player').appendTo('body')
 
     # add to the DOM to see how it looks.
-    view = new ShellEditorView options
+    view = new ShellEditorView viewOptions()
     view.$el.width 600
     view.$el.height 600
     view.render()
