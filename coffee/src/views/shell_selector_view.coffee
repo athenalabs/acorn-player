@@ -33,6 +33,7 @@ class acorn.player.ShellSelectorView extends athena.lib.View
       new Backbone.Model
         text: Shell.title
         icon: Shell.icon
+        tooltip: title: Shell.description
         shell: Shell.id
 
     @gridView = new athena.lib.GridView
