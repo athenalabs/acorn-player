@@ -219,6 +219,22 @@ class acorn.player.ShellEditorView extends athena.lib.View
      shell.constructor is @defaultShell.Model)
 
 
+  # whether this is the stub shell (last shell and empty)
+  _shellIsStub: (shell) =>
+    shell?.constructor is @defaultShell.Model &&
+    shell is @model.shells().last()
+
+
+  # the index of the last shell that is not a default shell
+  _lastNonDefaultShellIndex: =>
+    shells = @model.shells()
+    index = shells.length
+    while index--
+      unless shells.at(index)?.constructor is @defaultShell.Model
+        return index
+    -1
+
+
   # initializes a RemixerView for given shell
   remixerForShell: (shell) =>
     view = new acorn.player.RemixerView

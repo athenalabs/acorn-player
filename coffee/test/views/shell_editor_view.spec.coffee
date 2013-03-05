@@ -90,6 +90,83 @@ describe 'acorn.player.ShellEditorView', ->
       expect(shell.shells().models[1].attributes).toEqual models[1].attributes
 
 
+  describe 'ShellEditorView::_shellIsStub', ->
+
+    it 'should be a function', ->
+      expect(typeof ShellEditorView::_shellIsStub).toBe 'function'
+
+    it 'should return false if shell is not a defaultShell (EmptyShell)', ->
+      view = new ShellEditorView viewOptions()
+      expect(view._shellIsStub model).toBe false
+
+    it 'should return false if shell is not the last shell', ->
+      collection = new acorn.shells.CollectionShell.Model
+        shellid: 'acorn.CollectionShell'
+      collection.shells().add model
+
+      empties = for i in [0..3]
+        empty = new acorn.shells.EmptyShell.Model shellid: 'acorn.EmptyShell'
+        collection.shells().add empty
+        empty
+
+      view = new ShellEditorView model: collection
+
+      for i in [0..2]
+        empty = empties[i]
+        expect(view._shellIsStub empty).toBe false
+
+    it 'should return true if shell is both a default shell (EmptyShell) and the
+        last shell', ->
+      collection = new acorn.shells.CollectionShell.Model
+        shellid: 'acorn.CollectionShell'
+      collection.shells().add model
+
+      empties = for i in [0..3]
+        empty = new acorn.shells.EmptyShell.Model shellid: 'acorn.EmptyShell'
+        collection.shells().add empty
+        empty
+
+      view = new ShellEditorView model: collection
+      expect(view._shellIsStub empties[3]).toBe true
+
+
+  describe 'ShellEditorView::_lastNonDefaultShellIndex', ->
+
+    it 'should be a function', ->
+      expect(typeof ShellEditorView::_lastNonDefaultShellIndex).toBe 'function'
+
+    it 'should return the index of the last shell that is not a default shell
+        (EmptyShell)', ->
+      for i in [0..5]
+        collection = new acorn.shells.CollectionShell.Model
+          shellid: 'acorn.CollectionShell'
+
+        for j in [0...i]
+          collection.shells().add new acorn.shells.TextShell.Model
+
+        for j in [0..3]
+          collection.shells().add new acorn.shells.EmptyShell.Model
+
+        view = new ShellEditorView model: collection
+        expect(view._lastNonDefaultShellIndex()).toBe i - 1
+
+    it 'should not treat default shells (EmptyShells) succeeded by non-default
+        specially', ->
+      for i in [0..5]
+        collection = new acorn.shells.CollectionShell.Model
+          shellid: 'acorn.CollectionShell'
+
+        for j in [0...i]
+          collection.shells().add new acorn.shells.EmptyShell.Model
+          collection.shells().add new acorn.shells.TextShell.Model
+
+        for j in [0..3]
+          collection.shells().add new acorn.shells.EmptyShell.Model
+
+        view = new ShellEditorView model: collection
+        expect(view._lastNonDefaultShellIndex()).toBe 2 * i - 1
+
+
   describeSubview
     View: ShellEditorView
     Subview: acorn.player.ShellOptionsView
