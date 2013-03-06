@@ -15,7 +15,7 @@ VideoLinkShell = acorn.shells.VideoLinkShell =
 
   id: 'acorn.VideoLinkShell'
   title: 'Video Link'
-  description: 'Videos embedded via link.'
+  description: 'a video embedded via link'
   icon: 'icon-play'
   validLinkPatterns: [ acorn.util.urlRegEx('.*\.(avi|mov|wmv)') ]
 

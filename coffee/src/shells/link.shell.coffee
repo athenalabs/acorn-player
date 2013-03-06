@@ -20,7 +20,7 @@ LinkShell = acorn.shells.LinkShell =
 
   id: 'acorn.LinkShell'
   title: 'Link'
-  description: 'Embedded websites.'
+  description: 'an embedded website'
   icon: 'icon-link'
 
 

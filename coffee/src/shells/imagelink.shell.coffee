@@ -12,7 +12,7 @@ ImageLinkShell = acorn.shells.ImageLinkShell =
 
   id: 'acorn.ImageLinkShell'
   title: 'Image'
-  description: 'Embdedded images.'
+  description: 'an embedded image'
   icon: 'icon-picture'
   validLinkPatterns: [ acorn.util.urlRegEx '.*\.(jpg|jpeg|gif|png|svg)' ]
 

@@ -11,7 +11,7 @@ SlideshowShell = acorn.shells.SlideshowShell =
 
   id: 'acorn.SlideshowShell'
   title: 'Slideshow'
-  description: 'Media displayed in a slideshow.'
+  description: 'media displayed in a slideshow'
   icon: 'icon-play-circle'
 
 

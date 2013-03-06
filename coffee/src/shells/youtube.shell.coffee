@@ -12,7 +12,7 @@ YouTubeShell = acorn.shells.YouTubeShell =
 
   id: 'acorn.YouTubeShell'
   title: 'YouTube'
-  description: 'YouTube videos.'
+  description: 'a YouTube video'
   icon: 'icon-play'
   validLinkPatterns: [
     acorn.util.urlRegEx('(www\.)?youtube\.com\/v\/([A-Za-z0-9\-_]+).*')

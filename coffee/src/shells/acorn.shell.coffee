@@ -12,7 +12,7 @@ AcornLinkShell = acorn.shells.AcornLinkShell =
 
   id: 'acorn.AcornLinkShell'
   title: 'Acorn'
-  description: 'An acorn within an acorn.'
+  description: 'an acorn within an acorn'
   icon: 'icon-play'
   validLinkPatterns: [
     acorn.util.urlRegEx('acorn\.athena\.ai\/([A-Za-z]{10})/?')
