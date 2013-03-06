@@ -159,9 +159,6 @@ class CollectionShell.MediaView extends Shell.MediaView
     # whether or not to show first subshell on render
     showFirstSubshellOnRender: true
 
-    # whether play continues between subshell transitions
-    playOnChangeShell: true
-
     # whether or not to show subshell controls
     showSubshellControls: true
 
@@ -170,6 +167,9 @@ class CollectionShell.MediaView extends Shell.MediaView
 
     # whether or not to advance to the next shell once one ends
     autoAdvanceOnEnd: true
+
+    # whether play continues between subshell transitions
+    playSubshellOnProgression: true
 
     # whether to restart a subshell when transitioning to it
     restartSubshellOnProgression: false
@@ -238,7 +238,7 @@ class CollectionShell.MediaView extends Shell.MediaView
         @setMediaState 'ready'
 
       # if this just loaded, we're playing, and we want it to keep playing
-      if @isPlaying() and @options.playOnChangeShell
+      if @isPlaying() and @options.playSubshellOnProgression
         view.play()
 
     @on 'Subshell:Media:DidPlay', =>
@@ -389,7 +389,7 @@ class CollectionShell.MediaView extends Shell.MediaView
 
 
   showPrevious: =>
-    unless @options.playOnChangeShell
+    unless @options.playSubshellOnProgression
       @pause()
 
     offset = if @options.restartSubshellOnProgression then 0 else undefined
@@ -397,7 +397,7 @@ class CollectionShell.MediaView extends Shell.MediaView
 
 
   showNext: =>
-    unless @options.playOnChangeShell
+    unless @options.playSubshellOnProgression
       @pause()
 
     offset = if @options.restartSubshellOnProgression then 0 else undefined

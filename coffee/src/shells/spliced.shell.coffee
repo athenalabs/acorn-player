@@ -38,6 +38,7 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
     showSubshellControls: false
     showSubshellSummary: false
     autoAdvanceOnEnd: true
+    playSubshellOnProgression: true
     restartSubshellOnProgression: true
 
 

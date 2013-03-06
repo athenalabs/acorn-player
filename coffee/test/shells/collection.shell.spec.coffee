@@ -36,10 +36,10 @@ describe 'acorn.shells.CollectionShell', ->
       readyOnRender: false
       readyOnFirstShellReady: true
       showFirstSubshellOnRender: true
-      playOnChangeShell: true
       showSubshellControls: true
       showSubshellSummary: true
       autoAdvanceOnEnd: true
+      playSubshellOnProgression: true
       restartSubshellOnProgression: false
       shellsCycle: false
     }, viewOptions()
@@ -341,16 +341,16 @@ describe 'acorn.shells.CollectionShell', ->
       it 'should be a function', ->
         expect(typeof MediaView::showPrevious).toBe 'function'
 
-      it 'should pause playback if playOnChangeShell is false', ->
-        view = new MediaView viewOptions playOnChangeShell: false
+      it 'should pause playback if playSubshellOnProgression is false', ->
+        view = new MediaView viewOptions playSubshellOnProgression: false
         spyOn view, 'pause'
 
         expect(view.pause).not.toHaveBeenCalled()
         view.showPrevious()
         expect(view.pause).toHaveBeenCalled()
 
-      it 'should not pause playback if playOnChangeShell is true', ->
-        view = new MediaView viewOptions playOnChangeShell: true
+      it 'should not pause playback if playSubshellOnProgression is true', ->
+        view = new MediaView viewOptions playSubshellOnProgression: true
         spyOn view, 'pause'
 
         expect(view.pause).not.toHaveBeenCalled()
@@ -358,7 +358,7 @@ describe 'acorn.shells.CollectionShell', ->
         expect(view.pause).not.toHaveBeenCalled()
 
       it 'should get index of previous shell', ->
-        view = new MediaView viewOptions playOnChangeShell: true
+        view = new MediaView viewOptions playSubshellOnProgression: true
         spyOn(view, 'correctedIndex').andReturn 0
         view.currentIndex = 8
 
@@ -368,7 +368,7 @@ describe 'acorn.shells.CollectionShell', ->
         expect(view.correctedIndex).toHaveBeenCalledWith 7
 
       it 'should call switchShell with index of previous shell', ->
-        view = new MediaView viewOptions playOnChangeShell: true
+        view = new MediaView viewOptions playSubshellOnProgression: true
         spyOn(view, 'correctedIndex').andReturn 'fakeIndex'
         spyOn view, 'switchShell'
 
@@ -393,16 +393,16 @@ describe 'acorn.shells.CollectionShell', ->
       it 'should be a function', ->
         expect(typeof MediaView::showNext).toBe 'function'
 
-      it 'should pause playback if playOnChangeShell is false', ->
-        view = new MediaView viewOptions playOnChangeShell: false
+      it 'should pause playback if playSubshellOnProgression is false', ->
+        view = new MediaView viewOptions playSubshellOnProgression: false
         spyOn view, 'pause'
 
         expect(view.pause).not.toHaveBeenCalled()
         view.showNext()
         expect(view.pause).toHaveBeenCalled()
 
-      it 'should not pause playback if playOnChangeShell is true', ->
-        view = new MediaView viewOptions playOnChangeShell: true
+      it 'should not pause playback if playSubshellOnProgression is true', ->
+        view = new MediaView viewOptions playSubshellOnProgression: true
         spyOn view, 'pause'
 
         expect(view.pause).not.toHaveBeenCalled()
@@ -410,7 +410,7 @@ describe 'acorn.shells.CollectionShell', ->
         expect(view.pause).not.toHaveBeenCalled()
 
       it 'should get index of next shell', ->
-        view = new MediaView viewOptions playOnChangeShell: true
+        view = new MediaView viewOptions playSubshellOnProgression: true
         spyOn(view, 'correctedIndex').andReturn 0
         view.currentIndex = 8
 
@@ -420,7 +420,7 @@ describe 'acorn.shells.CollectionShell', ->
         expect(view.correctedIndex).toHaveBeenCalledWith 9
 
       it 'should call switchShell with index of next shell', ->
-        view = new MediaView viewOptions playOnChangeShell: true
+        view = new MediaView viewOptions playSubshellOnProgression: true
         spyOn(view, 'correctedIndex').andReturn 'fakeIndex'
         spyOn view, 'switchShell'
 

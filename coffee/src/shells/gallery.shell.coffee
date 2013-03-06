@@ -35,10 +35,10 @@ class GalleryShell.MediaView extends CollectionShell.MediaView
     playOnReady: false
     readyOnRender: true
     showFirstSubshellOnRender: false
-    playOnChangeShell: true
     showSubshellControls: true
     showSubshellSummary: true
     autoAdvanceOnEnd: false
+    playSubshellOnProgression: true
     shellsCycle: true
 
 
