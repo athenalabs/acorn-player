@@ -187,6 +187,227 @@ describe 'acorn.shells.CollectionShell', ->
 
   describe 'CollectionShell.MediaView', ->
 
+    describe 'MediaView::switchShell', ->
+
+      it 'should be a function', ->
+        expect(typeof MediaView::switchShell).toBe 'function'
+
+      it 'should call `hideView`', ->
+        view = new MediaView viewOptions()
+        spyOn view, 'hideView'
+
+        expect(view.hideView).not.toHaveBeenCalled()
+        view.switchShell 0
+        expect(view.hideView).toHaveBeenCalled()
+
+      it 'should set currentIndex to index', ->
+        view = new MediaView viewOptions()
+        view.currentIndex = 5
+
+        expect(view.currentIndex).toBe 5
+        view.switchShell 0
+        expect(view.currentIndex).toBe 0
+
+      it 'should call `showView`', ->
+        view = new MediaView viewOptions()
+        spyOn view, 'showView'
+
+        expect(view.showView).not.toHaveBeenCalled()
+        view.switchShell 0
+        expect(view.showView).toHaveBeenCalled()
+
+      it 'should call `showView` with index', ->
+        view = new MediaView viewOptions()
+        spyOn view, 'showView'
+
+        expect(view.showView).not.toHaveBeenCalled()
+        view.switchShell 0
+        expect(view.showView).toHaveBeenCalled()
+        expect(view.showView.mostRecentCall.args[0]).toBe 0
+
+      it 'should call `_updateProgressBar`', ->
+        view = new MediaView viewOptions()
+        spyOn view, '_updateProgressBar'
+
+        expect(view._updateProgressBar).not.toHaveBeenCalled()
+        view.switchShell 0
+        expect(view._updateProgressBar).toHaveBeenCalled()
+
+
+    describe 'MediaView::showView', ->
+
+      it 'should be a function', ->
+        expect(typeof MediaView::showView).toBe 'function'
+
+      it 'should access shellView at given index', ->
+        view = new MediaView viewOptions()
+        spyOn(view, 'shellView').andCallThrough()
+
+        expect(view.shellView).not.toHaveBeenCalled()
+        view.showView 0
+        expect(view.shellView).toHaveBeenCalled()
+        expect(view.shellView).toHaveBeenCalledWith 0
+
+      it 'should return shellView at given index', ->
+        view = new MediaView viewOptions()
+        spyOn(view, 'shellView').andCallThrough()
+
+        expect(view.shellView).not.toHaveBeenCalled()
+        shellView = view.showView 0
+        expect(view.shellView).toHaveBeenCalled()
+        expect(view.shellView).toHaveBeenCalledWith 0
+        expect(shellView).toBe view.shellView 0
+
+      it 'should append shellView at given index to $el', ->
+        view = new MediaView viewOptions()
+        view.render()
+        shellView = view.shellView 0
+        shellView.$el.remove()
+
+        expect(shellView.el.parentNode).not.toBe view.el
+        view.showView 0
+        expect(shellView.el.parentNode).toBe view.el
+
+      it 'should show the shellView at given index', ->
+        view = new MediaView viewOptions()
+        view.render()
+        shellView = view.shellView 0
+        shellView.$el.addClass 'hidden'
+
+        expect(shellView.$el.hasClass 'hidden').toBe true
+        view.showView 0
+        expect(shellView.$el.hasClass 'hidden').toBe false
+
+
+    describe 'MediaView::hideView', ->
+
+      it 'should be a function', ->
+        expect(typeof MediaView::hideView).toBe 'function'
+
+      it 'should access shellView at given index', ->
+        view = new MediaView viewOptions()
+        spyOn(view, 'shellView').andCallThrough()
+
+        expect(view.shellView).not.toHaveBeenCalled()
+        view.hideView 0
+        expect(view.shellView).toHaveBeenCalled()
+        expect(view.shellView).toHaveBeenCalledWith 0
+
+      it 'should return shellView at given index', ->
+        view = new MediaView viewOptions()
+        spyOn(view, 'shellView').andCallThrough()
+
+        expect(view.shellView).not.toHaveBeenCalled()
+        shellView = view.hideView 0
+        expect(view.shellView).toHaveBeenCalled()
+        expect(view.shellView).toHaveBeenCalledWith 0
+        expect(shellView).toBe view.shellView 0
+
+      it 'should hide the shellView at given index', ->
+        view = new MediaView viewOptions()
+        view.render()
+        shellView = view.shellView 0
+        shellView.$el.removeClass 'hidden'
+
+        expect(shellView.$el.hasClass 'hidden').toBe false
+        view.hideView 0
+        expect(shellView.$el.hasClass 'hidden').toBe true
+
+      it 'should pause the shellView at given index', ->
+        view = new MediaView viewOptions()
+        view.render()
+        shellView = view.shellView 0
+        spyOn shellView, 'pause'
+
+        expect(shellView.pause).not.toHaveBeenCalled()
+        view.hideView 0
+        expect(shellView.pause).toHaveBeenCalled()
+
+
+    describe 'MediaView::showPrevious', ->
+
+      it 'should be a function', ->
+        expect(typeof MediaView::showPrevious).toBe 'function'
+
+      it 'should pause playback if playOnChangeShell is false', ->
+        view = new MediaView viewOptions playOnChangeShell: false
+        spyOn view, 'pause'
+
+        expect(view.pause).not.toHaveBeenCalled()
+        view.showPrevious()
+        expect(view.pause).toHaveBeenCalled()
+
+      it 'should not pause playback if playOnChangeShell is true', ->
+        view = new MediaView viewOptions playOnChangeShell: true
+        spyOn view, 'pause'
+
+        expect(view.pause).not.toHaveBeenCalled()
+        view.showPrevious()
+        expect(view.pause).not.toHaveBeenCalled()
+
+      it 'should get index of previous shell', ->
+        view = new MediaView viewOptions playOnChangeShell: true
+        spyOn(view, 'correctedIndex').andReturn 0
+        view.currentIndex = 8
+
+        expect(view.correctedIndex).not.toHaveBeenCalled()
+        view.showPrevious()
+        expect(view.correctedIndex).toHaveBeenCalled()
+        expect(view.correctedIndex).toHaveBeenCalledWith 7
+
+      it 'should call switchShell with index of previous shell', ->
+        view = new MediaView viewOptions playOnChangeShell: true
+        spyOn(view, 'correctedIndex').andReturn 'fakeIndex'
+        spyOn view, 'switchShell'
+
+        expect(view.switchShell).not.toHaveBeenCalled()
+        view.showPrevious()
+        expect(view.switchShell).toHaveBeenCalled()
+        expect(view.switchShell.mostRecentCall.args[0]).toBe 'fakeIndex'
+
+
+    describe 'MediaView::showNext', ->
+
+      it 'should be a function', ->
+        expect(typeof MediaView::showNext).toBe 'function'
+
+      it 'should pause playback if playOnChangeShell is false', ->
+        view = new MediaView viewOptions playOnChangeShell: false
+        spyOn view, 'pause'
+
+        expect(view.pause).not.toHaveBeenCalled()
+        view.showNext()
+        expect(view.pause).toHaveBeenCalled()
+
+      it 'should not pause playback if playOnChangeShell is true', ->
+        view = new MediaView viewOptions playOnChangeShell: true
+        spyOn view, 'pause'
+
+        expect(view.pause).not.toHaveBeenCalled()
+        view.showNext()
+        expect(view.pause).not.toHaveBeenCalled()
+
+      it 'should get index of next shell', ->
+        view = new MediaView viewOptions playOnChangeShell: true
+        spyOn(view, 'correctedIndex').andReturn 0
+        view.currentIndex = 8
+
+        expect(view.correctedIndex).not.toHaveBeenCalled()
+        view.showNext()
+        expect(view.correctedIndex).toHaveBeenCalled()
+        expect(view.correctedIndex).toHaveBeenCalledWith 9
+
+      it 'should call switchShell with index of next shell', ->
+        view = new MediaView viewOptions playOnChangeShell: true
+        spyOn(view, 'correctedIndex').andReturn 'fakeIndex'
+        spyOn view, 'switchShell'
+
+        expect(view.switchShell).not.toHaveBeenCalled()
+        view.showNext()
+        expect(view.switchShell).toHaveBeenCalled()
+        expect(view.switchShell.mostRecentCall.args[0]).toBe 'fakeIndex'
+
+
     describe 'MediaView::correctedIndex', ->
 
       it 'should cycle index if options.shellsCycle', ->
