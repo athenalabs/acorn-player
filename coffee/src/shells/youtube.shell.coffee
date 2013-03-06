@@ -160,7 +160,7 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     # to happen after 2 correct seeks)
     unless @isPlaying()
       wrongPlace = if seconds + 1 < @model.timeTotal()
-        seconds + 18
+        seconds + 1
       else
         if seconds - 1 >= 0 then 0 else seconds
       @player?.seekTo?(wrongPlace, true)
