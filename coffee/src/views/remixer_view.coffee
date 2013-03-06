@@ -22,14 +22,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
   template: _.template '''
     <div class="row-fluid control-group remixer-header">
-    <% if (activeLink) { %>
       <div class="input-append">
-        <input id="link" type="text" placeholder="enter link" />
-    <% } else { %>
-      <div class="input-prepend input-append">
-        <span id="link" class="add-on uneditable-input"><%= linkFieldText
-            %></span>
-    <% } %>
         <div class="btn-group dropdown-view"></div>
       </div>
       <div class="btn-group toolbar-view"></div>
@@ -141,9 +134,7 @@ class acorn.player.RemixerView extends athena.lib.View
     super
     @$el.empty()
 
-    @$el.html @template
-      activeLink: @model.module.RemixView.activeLinkInput
-      linkFieldText: "#{@model.module.title} - #{@model.module.description}"
+    @$el.html @template()
     @alert() # hide
 
     @dropdownView.setElement(@$('.dropdown-view')).render()
@@ -151,11 +142,27 @@ class acorn.player.RemixerView extends athena.lib.View
     if @options.toolbarButtons.length > 0
       @toolbarView.setElement(@$('.toolbar-view')).render()
 
-    @$('input#link').val @model.link?()
+    @renderInputField()
     @renderSummarySubview()
     @renderRemixSubview()
 
     @
+
+
+  renderInputField: =>
+    shell = @model.module
+    inputDiv = @$ '.remixer-header > .input-append'
+    @$('#link').remove()
+
+    if shell.RemixView.activeLinkInput
+      inputDiv.removeClass 'input-prepend'
+      inputDiv.prepend '<input id="link" type="text" placeholder="enter link"/>'
+      @$('input#link').val @model.link?()
+
+    else
+      inputDiv.addClass 'input-prepend'
+      inputDiv.prepend '<span id="link" class="add-on uneditable-input"></span>'
+      @$('span#link').text "#{shell.title} - #{shell.description}"
 
 
   renderSummarySubview: =>
@@ -190,8 +197,8 @@ class acorn.player.RemixerView extends athena.lib.View
     oldShell = @model
     @model = newShell
 
-    @$('input#link').val @model.link?()
     @dropdownView.selected @model.shellid()
+    @renderInputField()
     @renderSummarySubview()
     @renderRemixSubview()
 
