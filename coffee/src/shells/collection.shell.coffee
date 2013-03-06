@@ -315,15 +315,15 @@ class CollectionShell.MediaView extends Shell.MediaView
     @shellViews[index]
 
 
-  switchShell: (index) =>
+  switchShell: (index, offset) =>
     unless 0 <= index < @shellViews.length
       return
 
     @_switchingShell = true
     @hideView()
     @currentIndex = index
+    view = @showView @currentIndex, offset
     @_updateProgressBar()
-    view = @showView()
 
     if @isPlaying() and not view.isPlaying() and view.canPlay()
       view.play()
@@ -358,7 +358,7 @@ class CollectionShell.MediaView extends Shell.MediaView
     view
 
 
-  showView: (index) =>
+  showView: (index, offset) =>
     view = @shellView index
     unless view
       return
@@ -367,6 +367,9 @@ class CollectionShell.MediaView extends Shell.MediaView
     view.$el.removeClass 'hidden'
     unless view.el.parentNode is @el
       @$el.append view.render().el
+
+    if offset
+      view.seek offset
 
     if @options.showSubshellSummary
       view.summaryView.$el.removeClass 'hidden'

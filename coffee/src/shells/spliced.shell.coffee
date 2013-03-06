@@ -138,8 +138,7 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
         offset -= view.duration()
         continue
 
-      @switchShell index
-      view.seek offset
+      @switchShell index, offset
       return
 
 

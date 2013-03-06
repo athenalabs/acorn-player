@@ -216,14 +216,15 @@ describe 'acorn.shells.CollectionShell', ->
         view.switchShell 0
         expect(view.showView).toHaveBeenCalled()
 
-      it 'should call `showView` with index', ->
+      it 'should call `showView` with index and offset', ->
         view = new MediaView viewOptions()
         spyOn view, 'showView'
 
         expect(view.showView).not.toHaveBeenCalled()
-        view.switchShell 0
+        view.switchShell 0, 10
         expect(view.showView).toHaveBeenCalled()
         expect(view.showView.mostRecentCall.args[0]).toBe 0
+        expect(view.showView.mostRecentCall.args[1]).toBe 10
 
       it 'should call `_updateProgressBar`', ->
         view = new MediaView viewOptions()
@@ -277,6 +278,16 @@ describe 'acorn.shells.CollectionShell', ->
         expect(shellView.$el.hasClass 'hidden').toBe true
         view.showView 0
         expect(shellView.$el.hasClass 'hidden').toBe false
+
+      it 'should call `shellView.seek offset` if passed an offset', ->
+        view = new MediaView viewOptions()
+        shellView = view.showView 0
+        spyOn shellView, 'seek'
+
+        expect(shellView.seek).not.toHaveBeenCalled()
+        view.showView 0, 'fakeOffset'
+        expect(shellView.seek).toHaveBeenCalled()
+        expect(shellView.seek).toHaveBeenCalledWith 'fakeOffset'
 
 
     describe 'MediaView::hideView', ->
