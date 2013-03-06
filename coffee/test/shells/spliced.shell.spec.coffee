@@ -139,6 +139,7 @@ describe 'acorn.shells.SplicedShell', ->
         showSubshellControls: false
         showSubshellSummary: false
         autoAdvanceOnEnd: true
+        restartSubshellOnProgression: true
       }, viewOptions()
 
 

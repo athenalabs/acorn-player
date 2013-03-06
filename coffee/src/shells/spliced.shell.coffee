@@ -38,6 +38,7 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
     showSubshellControls: false
     showSubshellSummary: false
     autoAdvanceOnEnd: true
+    restartSubshellOnProgression: true
 
 
   initialize: =>
@@ -100,7 +101,7 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
       @showView index
       @shellViews[index].pause()
       @hideView index
-    @showView 0
+    @showView 0, 0
 
     @$el.append $('<div>').addClass('click-capture')
 
@@ -140,11 +141,6 @@ class SplicedShell.MediaView extends CollectionShell.MediaView
 
       @switchShell index, offset
       return
-
-
-  showNext: =>
-    @shellView(@currentIndex + 1)?.seek 0
-    super
 
 
   onMediaDidPlay: =>

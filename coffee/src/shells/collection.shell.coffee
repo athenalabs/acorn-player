@@ -171,6 +171,9 @@ class CollectionShell.MediaView extends Shell.MediaView
     # whether or not to advance to the next shell once one ends
     autoAdvanceOnEnd: true
 
+    # whether to restart a subshell when transitioning to it
+    restartSubshellOnProgression: false
+
     # whether next/prev cycle
     shellsCycle: false
 
@@ -388,12 +391,17 @@ class CollectionShell.MediaView extends Shell.MediaView
   showPrevious: =>
     unless @options.playOnChangeShell
       @pause()
-    @switchShell @correctedIndex @currentIndex - 1
+
+    offset = if @options.restartSubshellOnProgression then 0 else undefined
+    @switchShell @correctedIndex(@currentIndex - 1), offset
+
 
   showNext: =>
     unless @options.playOnChangeShell
       @pause()
-    @switchShell @correctedIndex @currentIndex + 1
+
+    offset = if @options.restartSubshellOnProgression then 0 else undefined
+    @switchShell @correctedIndex(@currentIndex + 1), offset
 
 
   correctedIndex: (index) =>

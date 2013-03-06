@@ -40,6 +40,7 @@ describe 'acorn.shells.CollectionShell', ->
       showSubshellControls: true
       showSubshellSummary: true
       autoAdvanceOnEnd: true
+      restartSubshellOnProgression: false
       shellsCycle: false
     }, viewOptions()
 
@@ -376,6 +377,16 @@ describe 'acorn.shells.CollectionShell', ->
         expect(view.switchShell).toHaveBeenCalled()
         expect(view.switchShell.mostRecentCall.args[0]).toBe 'fakeIndex'
 
+      it 'should call switchShell with an offset of 0 if
+          restartSubshellOnProgression is true', ->
+        view = new MediaView viewOptions restartSubshellOnProgression: true
+        spyOn view, 'switchShell'
+
+        expect(view.switchShell).not.toHaveBeenCalled()
+        view.showPrevious()
+        expect(view.switchShell).toHaveBeenCalled()
+        expect(view.switchShell.mostRecentCall.args[1]).toBe 0
+
 
     describe 'MediaView::showNext', ->
 
@@ -417,6 +428,16 @@ describe 'acorn.shells.CollectionShell', ->
         view.showNext()
         expect(view.switchShell).toHaveBeenCalled()
         expect(view.switchShell.mostRecentCall.args[0]).toBe 'fakeIndex'
+
+      it 'should call switchShell with an offset of 0 if
+          restartSubshellOnProgression is true', ->
+        view = new MediaView viewOptions restartSubshellOnProgression: true
+        spyOn view, 'switchShell'
+
+        expect(view.switchShell).not.toHaveBeenCalled()
+        view.showPrevious()
+        expect(view.switchShell).toHaveBeenCalled()
+        expect(view.switchShell.mostRecentCall.args[1]).toBe 0
 
 
     describe 'MediaView::correctedIndex', ->
