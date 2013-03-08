@@ -28,6 +28,7 @@ class acorn.player.RemixerView extends athena.lib.View
       <div class="btn-group toolbar-view"></div>
     </div>
     <div class="alert"></div>
+    <div class="remixer-summary"></div>
     <div class="remixer-content"></div>
     '''
 
@@ -173,7 +174,8 @@ class acorn.player.RemixerView extends athena.lib.View
       @summarySubview.setModel @model
 
     if @rendering
-      @$('.remixer-content').before @summarySubview.render().el
+      @$('.remixer-summary').empty()
+      @$('.remixer-summary').append @summarySubview.render().el
 
     @
 
@@ -184,6 +186,7 @@ class acorn.player.RemixerView extends athena.lib.View
       @_initializeRemixSubview()
 
     if @rendering
+      @$('.remixer-content').empty()
       @$('.remixer-content').append @remixSubview.render().el
 
     @$el.removeClass 'empty'

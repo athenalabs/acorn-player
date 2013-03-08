@@ -51,6 +51,7 @@ describe 'acorn.player.RemixerView', ->
     Subview: acorn.player.SummaryView
     subviewAttr: 'summarySubview'
     viewOptions: viewOptions()
+    checkDOM: (cEl, pEl) -> cEl.parentNode.parentNode is pEl
   }, ->
 
     it 'should be initialized if options.showSummary is true', ->
