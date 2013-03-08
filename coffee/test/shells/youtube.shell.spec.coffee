@@ -116,7 +116,7 @@ describe 'acorn.shells.YouTubeShell', ->
         # ytPlayer.getPlayerState returns a non-negative integer value if video is
         # ended (0), playing (1), paused (2), buffering (3), or cued (5); any of
         # these corresponds to the player being ready with a cued/loaded video
-        waitsFor (-> pv.player?.getPlayerState?() >= 0), 'cued video', 10000
+        waitsFor (-> pv.player?.getPlayerState?()?), 'cued video', 10000
         runs ->
           pv.destroy()
           $hiddenPlayer.remove()
@@ -134,7 +134,7 @@ describe 'acorn.shells.YouTubeShell', ->
             .height(400).appendTo('body')
 
         runs -> $hiddenPlayer.append pv.render().el
-        waitsFor (-> pv.player?.getPlayerState?() >= 0), 'cued video', 10000
+        waitsFor (-> pv.player?.getPlayerState?()?), 'cued video', 10000
 
         runs -> pv.play()
         waitsFor (-> stateChanged), 'state change event', 10000
@@ -188,7 +188,7 @@ describe 'acorn.shells.YouTubeShell', ->
           $hiddenPlayer = $('<div>').addClass('acorn-player hidden').width(600)
               .height(400).appendTo('body')
           runs -> $hiddenPlayer.append pv.render().el
-          waitsFor (-> pv.player?.getPlayerState?() >= 0), 'cued video', 10000
+          waitsFor (-> pv.player?.getPlayerState?()?), 'cued video', 10000
 
           # play video, wait for playing state
           runs -> pv.play()
@@ -360,7 +360,7 @@ describe 'acorn.shells.YouTubeShell', ->
         runs ->
           $player.append pv.render().el
           pv.$el.find('iframe').width(600).height(371)
-        waitsFor (-> pv.player?.getPlayerState?() >= 0), 'cued video', 10000
+        waitsFor (-> pv.player?.getPlayerState?()?), 'cued video', 10000
 
 
     describe 'YouTubeShell.RemixView', ->
