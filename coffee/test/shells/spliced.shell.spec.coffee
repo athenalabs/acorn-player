@@ -32,6 +32,26 @@ describe 'acorn.shells.SplicedShell', ->
 
   acorn.util.test.describeShellModule SplicedShell, modelOptions(), ->
 
+    describe 'SplicedShell.Model', ->
+
+      describe 'Model::defaultAttributes', ->
+
+        it 'should default title to the title of its first subshell', ->
+          model = new Model modelOptions()
+
+          fakeShells = new Backbone.Collection()
+          for i in [0..2]
+            do (i) ->
+              fakeShell = new Backbone.Model()
+              fakeShell.title = -> "A Fake Title #{i}"
+              fakeShell.thumbnail = -> 'thumbnails.com/fake.jpg'
+              fakeShells.add fakeShell
+
+          spyOn(model, 'shells').andReturn fakeShells
+          window.fs = fakeShells
+          expect(model.defaultAttributes().title).toBe 'A Fake Title 0'
+
+
     describe 'SplicedShell.MediaView', ->
 
       describe 'MediaView::controlsView', ->
@@ -245,22 +265,3 @@ describe 'acorn.shells.SplicedShell', ->
 
       player.render()
       player.appendTo $player
-
-
-    describe 'CollectionShell.RemixView', ->
-
-      describe 'RemixView::defaultAttributes', ->
-
-        it 'should default title to the title of its first subshell', ->
-          rv = new RemixView viewOptions()
-
-          fakeShells = new Backbone.Collection()
-          for i in [0..2]
-            fakeShell = new Backbone.Model()
-            fakeShell.title = -> 'A Fake Title'
-            fakeShell.thumbnail = -> 'thumbnails.com/fake.jpg'
-            fakeShells.add fakeShell
-
-          spyOn(rv.model, 'shells').andReturn fakeShells
-          rv._updateAttributesWithDefaults()
-          expect(rv.model.title()).toBe 'A Fake Title'

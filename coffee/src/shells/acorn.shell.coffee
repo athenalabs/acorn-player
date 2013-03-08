@@ -22,6 +22,14 @@ AcornLinkShell = acorn.shells.AcornLinkShell =
 class AcornLinkShell.Model extends LinkShell.Model
 
 
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      title: @acornModel.title() ? superDefaults.title
+      description: @acornModel.description() ? superDefaults.description
+
+
   initialize: =>
     super
     @acornModel = acorn @acornid()
@@ -139,15 +147,7 @@ class AcornLinkShell.RemixView extends LinkShell.RemixView
   initialize: =>
     super
     @player = new acorn.player.Player model: @model.acornModel
-    @model.onceLoaded @_updateAttributesWithDefaults
-
-
-  defaultAttributes: =>
-    superDefaults = super
-
-    _.extend superDefaults,
-      title: @model.acornModel.title() ? superDefaults.title
-      description: @model.acornModel.description() ? superDefaults.description
+    @model.onceLoaded @model._updateAttributesWithDefaults
 
 
   render: =>

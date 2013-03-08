@@ -47,6 +47,35 @@ describe 'acorn.shells.CollectionShell', ->
 
   describe 'CollectionShell.Model', ->
 
+    describe 'Model::defaultAttributes', ->
+
+      it 'should default title to a message about its collection', ->
+        model = new Model modelOptions()
+        expect(model.defaultAttributes().title).toBe "Collection with 2 items"
+
+        fakeShells = new Backbone.Collection()
+        for i in [0..2]
+          fakeShell = new Backbone.Model()
+          fakeShell.thumbnail = -> 'thumbnails.com/fake.jpg'
+          fakeShells.add fakeShell
+
+        spyOn(model, 'shells').andReturn fakeShells
+        expect(model.defaultAttributes().title).toBe "Collection with 3 items"
+
+      it 'should default thumbnail to the thumbnail of its first subshell', ->
+        model = new Model modelOptions()
+
+        fakeShells = new Backbone.Collection()
+        for i in [0..2]
+          fakeShell = new Backbone.Model()
+          fakeShell.thumbnail = -> 'thumbnails.com/fake.jpg'
+          fakeShells.add fakeShell
+
+        spyOn(model, 'shells').andReturn fakeShells
+        model._updateAttributesWithDefaults()
+        expect(model.thumbnail()).toBe 'thumbnails.com/fake.jpg'
+
+
     describe 'Model::shells', ->
       it 'should be a Backbone.Collection', ->
         m = new Model shellid: CollectionShell.id
@@ -497,40 +526,10 @@ describe 'acorn.shells.CollectionShell', ->
 
   describe 'CollectionShell.RemixView', ->
 
-    describe 'RemixView::defaultAttributes', ->
-
-      it 'should default title to a message about its collection', ->
-        rv = new RemixView viewOptions()
-        expect(rv.model.title()).toBe "Collection with 2 items"
-
-        fakeShells = new Backbone.Collection()
-        for i in [0..2]
-          fakeShell = new Backbone.Model()
-          fakeShell.thumbnail = -> 'thumbnails.com/fake.jpg'
-          fakeShells.add fakeShell
-
-        spyOn(rv.model, 'shells').andReturn fakeShells
-        rv._updateAttributesWithDefaults()
-        expect(rv.model.title()).toBe "Collection with 3 items"
-
-      it 'should default thumbnail to the thumbnail of its first subshell', ->
-        rv = new RemixView viewOptions()
-
-        fakeShells = new Backbone.Collection()
-        for i in [0..2]
-          fakeShell = new Backbone.Model()
-          fakeShell.thumbnail = -> 'thumbnails.com/fake.jpg'
-          fakeShells.add fakeShell
-
-        spyOn(rv.model, 'shells').andReturn fakeShells
-        rv._updateAttributesWithDefaults()
-        expect(rv.model.thumbnail()).toBe 'thumbnails.com/fake.jpg'
-
-
     it 'should call _updateAttributesWithDefaults when shells change', ->
-      spyOn RemixView::, '_updateAttributesWithDefaults'
+      spyOn Model::, '_updateAttributesWithDefaults'
       view = new RemixView viewOptions()
 
-      expect(RemixView::_updateAttributesWithDefaults.callCount).toBe 1
+      expect(Model::_updateAttributesWithDefaults.callCount).toBe 1
       view.model.trigger 'change:shells'
-      expect(RemixView::_updateAttributesWithDefaults.callCount).toBe 2
+      expect(Model::_updateAttributesWithDefaults.callCount).toBe 2

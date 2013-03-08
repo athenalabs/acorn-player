@@ -71,6 +71,45 @@ describe 'acorn.shells.VimeoShell', ->
             "#{vimeoId}.json?callback=?"
 
 
+      describe 'Model::defaultAttributes', ->
+
+        it 'should default title to fetched vimeo video title or url', ->
+          model = new Model modelOptions()
+
+          model._fetchedDefaults = title: undefined
+          model._updateAttributesWithDefaults()
+          expect(model.title()).toBe videoLink
+
+          model._fetchedDefaults = title: 'FakeVimeoTitle'
+          model._updateAttributesWithDefaults()
+          expect(model.title()).toBe 'FakeVimeoTitle'
+
+        it 'should default thumbnail to fetched vimeo video thumbnail if it
+            exists', ->
+          model = new Model modelOptions()
+
+          model._fetchedDefaults = thumbnail: 'thumbnails.com/fake.jpg'
+          model._updateAttributesWithDefaults()
+          expect(model.thumbnail()).toBe 'thumbnails.com/fake.jpg'
+
+
+      describe 'Model::_defaultDescription', ->
+
+        it 'should be a function', ->
+          expect(typeof Model::_defaultDescription).toBe 'function'
+
+        it 'should return a message about video title and clipping', ->
+          model = new Model modelOptions()
+
+          model._fetchedDefaults = title: undefined
+          expect(model._defaultDescription()).toBe "Vimeo video \"#{videoLink}\"" +
+              " from 00:33 to 02:25."
+
+          model._fetchedDefaults = title: 'FakeVimeoTitle'
+          expect(model._defaultDescription()).toBe "Vimeo video \"FakeVimeo" +
+              "Title\" from 00:33 to 02:25."
+
+
     describe 'VimeoShell.PlayerView', ->
       it '------ TODO ------ make PlayerView tests work with PhantomJS', ->
 
@@ -327,45 +366,6 @@ describe 'acorn.shells.VimeoShell', ->
 
     describe 'VimeoShell.RemixView', ->
 
-      describe 'RemixView::defaultAttributes', ->
-
-        it 'should default title to fetched vimeo video title or url', ->
-          rv = new RemixView viewOptions()
-
-          rv._fetchedTitle = undefined
-          rv._updateAttributesWithDefaults()
-          expect(rv.model.title()).toBe videoLink
-
-          rv._fetchedTitle = 'FakeVimeoTitle'
-          rv._updateAttributesWithDefaults()
-          expect(rv.model.title()).toBe 'FakeVimeoTitle'
-
-        it 'should default thumbnail to fetched vimeo video thumbnail if it
-            exists', ->
-          rv = new RemixView viewOptions()
-
-          rv._fetchedThumbnail = 'thumbnails.com/fake.jpg'
-          rv._updateAttributesWithDefaults()
-          expect(rv.model.thumbnail()).toBe 'thumbnails.com/fake.jpg'
-
-
-      describe 'RemixView::_defaultDescription', ->
-
-        it 'should be a function', ->
-          expect(typeof RemixView::_defaultDescription).toBe 'function'
-
-        it 'should return a message about video title and clipping', ->
-          rv = new RemixView viewOptions()
-
-          rv._fetchedTitle = undefined
-          expect(rv._defaultDescription()).toBe "Vimeo video \"#{videoLink}\"" +
-              " from 00:33 to 02:25."
-
-          rv._fetchedTitle = 'FakeVimeoTitle'
-          expect(rv._defaultDescription()).toBe "Vimeo video \"FakeVimeoTitle" +
-              "\" from 00:33 to 02:25."
-
-
       describe 'metaData', ->
 
         it 'should fetch properly', ->
@@ -387,33 +387,34 @@ describe 'acorn.shells.VimeoShell', ->
           waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
           runs -> expect(model.timeTotal()).toBe metaData.data()[0].duration
 
-        it 'should update _fetchedTitle', ->
+        it 'should update model._fetchedDefaults.title', ->
           view = new RemixView viewOptions()
           model = view.model
           metaData = view.metaData()
 
-          expect(view._fetchedTitle).toBeUndefined()
+          expect(view._fetchedDefaults?.title).toBeUndefined()
 
           waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
           runs -> expect(model.title()).toBe metaData.data()[0].title
 
-        it 'should update _fetchedThumbnail', ->
+        it 'should update model._fetchedDefaults.thumbnail', ->
           view = new RemixView viewOptions()
           model = view.model
           metaData = view.metaData()
 
-          expect(view._fetchedThumbnail).toBeUndefined()
+          expect(model._fetchedDefaults?.thumbnail).toBeUndefined()
 
           waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
           runs ->
             thumbnail = metaData.data()[0].thumbnail_large
-            expect(view._fetchedThumbnail).toBe thumbnail
+            expect(model._fetchedDefaults?.thumbnail).toBe thumbnail
 
         it 'should call `_updateAttributesWithDefaults`', ->
           view = new RemixView viewOptions()
-          spyOn view, '_updateAttributesWithDefaults'
-          expect(view._updateAttributesWithDefaults).not.toHaveBeenCalled()
+          model = view.model
+          spyOn model, '_updateAttributesWithDefaults'
+          expect(model._updateAttributesWithDefaults).not.toHaveBeenCalled()
 
           metaData = view.metaData()
           waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
-          runs -> expect(view._updateAttributesWithDefaults).toHaveBeenCalled()
+          runs -> expect(model._updateAttributesWithDefaults).toHaveBeenCalled()

@@ -23,6 +23,13 @@ ImageLinkShell = acorn.shells.ImageLinkShell =
 class ImageLinkShell.Model extends LinkShell.Model
 
 
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      thumbnail: @link()
+
+
 
 class ImageLinkShell.MediaView extends LinkShell.MediaView
 
@@ -51,13 +58,6 @@ class ImageLinkShell.RemixView extends LinkShell.RemixView
     img = $('<img>').attr 'src', @model.get 'link'
     @$el.append img
     @
-
-
-  defaultAttributes: =>
-    superDefaults = super
-
-    _.extend superDefaults,
-      thumbnail: @model.link()
 
 
 

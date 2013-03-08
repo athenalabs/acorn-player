@@ -51,6 +51,27 @@ class Shell.Model extends athena.lib.Model
   timeTotal: @property('timeTotal', default: Infinity)
 
 
+  defaultAttributes: =>
+    title: ''
+    description: ''
+    thumbnail: acorn.config.img.acorn
+
+
+  _updateAttributesWithDefaults: =>
+    # retrieve previous and current default thumbnails
+    lastDefaults = @_lastDefaults ? {}
+    currentDefaults = @_lastDefaults = @defaultAttributes()
+
+    # update default values where appropriate
+    for attr, currentDefault of currentDefaults
+      modelVal = @[attr]()
+
+      # update a model attribute if its value is the old default, is undefined,
+      # or is empty
+      if modelVal == lastDefaults[attr] or not modelVal? or modelVal == ''
+        @[attr] currentDefault
+
+
   toString: =>
     "#{@shellid()} #{@title()}"
 
@@ -183,32 +204,11 @@ class Shell.RemixView extends athena.lib.View
       acorn.errors.MissingParameterError 'Shell.RemixView', 'model'
 
     # set default thumbnail if thumbnail is undefined
-    @_updateAttributesWithDefaults()
+    @model._updateAttributesWithDefaults()
 
 
   # override with true to tell remixerView to enable the link input field
   @activeLinkInput: false
-
-
-  defaultAttributes: =>
-    title: ''
-    description: ''
-    thumbnail: acorn.config.img.acorn
-
-
-  _updateAttributesWithDefaults: =>
-    # retrieve previous and current default thumbnails
-    lastDefaults = @_lastDefaults ? {}
-    currentDefaults = @_lastDefaults = @defaultAttributes()
-
-    # update default values where appropriate
-    for attr, currentDefault of currentDefaults
-      modelVal = @model[attr]()
-
-      # update a model attribute if its value is the old default, is undefined,
-      # or is empty
-      if modelVal == lastDefaults[attr] or not modelVal? or modelVal == ''
-        @model[attr] currentDefault
 
 
 

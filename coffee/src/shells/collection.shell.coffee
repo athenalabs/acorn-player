@@ -55,6 +55,14 @@ CollectionShell = acorn.shells.CollectionShell =
 class CollectionShell.Model extends Shell.Model
 
 
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      title: "#{@module.title} with #{@shells().length} items"
+      thumbnail: @shells().first()?.thumbnail() or superDefaults.thumbnail
+
+
   initialize: =>
     super
 
@@ -420,15 +428,7 @@ class CollectionShell.RemixView extends Shell.RemixView
   initialize: =>
     super
 
-    @listenTo @model, 'change:shells', @_updateAttributesWithDefaults
-
-
-  defaultAttributes: =>
-    superDefaults = super
-
-    _.extend superDefaults,
-      title: "#{@module.title} with #{@model.shells().length} items"
-      thumbnail: @model.shells().first()?.thumbnail() or superDefaults.thumbnail
+    @listenTo @model, 'change:shells', @model._updateAttributesWithDefaults
 
 
 

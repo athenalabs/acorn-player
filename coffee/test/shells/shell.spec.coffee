@@ -48,6 +48,94 @@ describe 'acorn.shells.Shell', ->
       describeProperty Shell.Model, 'thumbnail'
 
 
+      describe 'Model::defaultAttributes', ->
+
+        it 'should be a function', ->
+          expect(typeof Model::defaultAttributes).toBe 'function'
+
+        it 'should return an object', ->
+          model = new Model
+          expect(typeof model.defaultAttributes()).toBe 'object'
+
+        it 'should default thumbnail to acorn.config.img.acorn', ->
+          model = new Model
+          expect(model.defaultAttributes().thumbnail).toBe acorn.config.img.acorn
+
+        it 'should default title to an empty string', ->
+          model = new Model
+          expect(model.defaultAttributes().title).toBe ''
+
+        it 'should default description to an empty string', ->
+          model = new Model
+          expect(model.defaultAttributes().description).toBe ''
+
+
+      describe 'Model::_updateAttributesWithDefaults', ->
+
+        it 'should be a function', ->
+          expect(typeof Model::_updateAttributesWithDefaults).toBe 'function'
+
+        it 'should remember the previous default attribute values', ->
+          model = new Model
+          spyOn(model, 'defaultAttributes').andReturn thumbnail: 'spyValue'
+
+          expect(model._lastDefaults).not.toEqual thumbnail: 'spyValue'
+          model._updateAttributesWithDefaults()
+          expect(model._lastDefaults).toEqual thumbnail: 'spyValue'
+
+        it 'should remember the previous default attribute values', ->
+          model = new Model
+          model.set('thumbnail', undefined)
+          spyOn(model, 'defaultAttributes').andReturn thumbnail: 'spyValue'
+
+          expect(model._lastDefaults).not.toEqual thumbnail: 'spyValue'
+          model._updateAttributesWithDefaults()
+
+
+        describe 'setting attributes to defaults', ->
+
+          it 'should happen when an attribute\'s value is undefined', ->
+            model = new Model
+            model.set('fakeAttr', undefined)
+            model.fakeAttr = Model.property 'fakeAttr'
+            spyOn(model, 'defaultAttributes').andReturn fakeAttr: 'spyValue'
+
+            expect(model.fakeAttr()).toBeUndefined()
+            expect(model.defaultAttributes).not.toHaveBeenCalled()
+
+            model._updateAttributesWithDefaults()
+            expect(model.fakeAttr()).toBe 'spyValue'
+            expect(model.defaultAttributes).toHaveBeenCalled()
+
+          it 'should happen when an attribute\'s value is empty string', ->
+            model = new Model
+            model.set('fakeAttr', '')
+            model.fakeAttr = Model.property 'fakeAttr'
+            spyOn(model, 'defaultAttributes').andReturn fakeAttr: 'spyValue'
+
+            expect(model.fakeAttr()).toBe ''
+            expect(model.defaultAttributes).not.toHaveBeenCalled()
+
+            model._updateAttributesWithDefaults()
+            expect(model.fakeAttr()).toBe 'spyValue'
+            expect(model.defaultAttributes).toHaveBeenCalled()
+
+          it 'should happen when an attribute\'s value matches that of
+              _lastDefaults', ->
+            model = new Model
+            model.set('fakeAttr', 'lastDefault')
+            model.fakeAttr = Model.property 'fakeAttr'
+            model._lastDefaults = fakeAttr: 'lastDefault'
+            spyOn(model, 'defaultAttributes').andReturn fakeAttr: 'spyValue'
+
+            expect(model.fakeAttr()).toBe 'lastDefault'
+            expect(model.defaultAttributes).not.toHaveBeenCalled()
+
+            model._updateAttributesWithDefaults()
+            expect(model.fakeAttr()).toBe 'spyValue'
+            expect(model.defaultAttributes).toHaveBeenCalled()
+
+
     describe 'Shell.MediaView', ->
 
       describe '\'Media:Ready\' event', ->
@@ -224,109 +312,10 @@ describe 'acorn.shells.Shell', ->
       it 'should not have an active link input', ->
         expect(Shell.RemixView.activeLinkInput).toBe false
 
+      it 'should call model._updateAttributesWithDefaults on initialize', ->
+        spyOn Model::, '_updateAttributesWithDefaults'
+        expect(Model::_updateAttributesWithDefaults).not
+            .toHaveBeenCalled()
 
-      describe 'RemixView::defaultAttributes', ->
-
-        it 'should be a function', ->
-          expect(typeof RemixView::defaultAttributes).toBe 'function'
-
-        it 'should return an object', ->
-          view = new RemixView viewOptions()
-          expect(typeof view.defaultAttributes()).toBe 'object'
-
-        it 'should default thumbnail to acorn.config.img.acorn', ->
-          view = new RemixView viewOptions()
-          expect(view.defaultAttributes().thumbnail).toBe acorn.config.img.acorn
-          expect(view.model.thumbnail()).toBe acorn.config.img.acorn
-
-        it 'should default title to an empty string', ->
-          view = new RemixView viewOptions()
-          expect(view.defaultAttributes().title).toBe ''
-          expect(view.model.title()).toBe ''
-
-        it 'should default description to an empty string', ->
-          view = new RemixView viewOptions()
-          expect(view.defaultAttributes().description).toBe ''
-          expect(view.model.description()).toBe ''
-
-
-      describe 'RemixView::_updateAttributesWithDefaults', ->
-
-        it 'should be a function', ->
-          expect(typeof RemixView::_updateAttributesWithDefaults)
-              .toBe 'function'
-
-        it 'should be called on initialize', ->
-          spyOn RemixView::, '_updateAttributesWithDefaults'
-          expect(RemixView::_updateAttributesWithDefaults).not
-              .toHaveBeenCalled()
-
-          view = new RemixView viewOptions()
-          expect(RemixView::_updateAttributesWithDefaults).toHaveBeenCalled()
-
-        it 'should remember the previous default attribute values', ->
-          view = new RemixView viewOptions()
-          spyOn(view, 'defaultAttributes').andReturn thumbnail: 'spyValue'
-
-          expect(view._lastDefaults).not.toEqual thumbnail: 'spyValue'
-          view._updateAttributesWithDefaults()
-          expect(view._lastDefaults).toEqual thumbnail: 'spyValue'
-
-        it 'should remember the previous default attribute values', ->
-          view = new RemixView viewOptions()
-          view.model.set('thumbnail', undefined)
-          spyOn(view, 'defaultAttributes').andReturn thumbnail: 'spyValue'
-
-          expect(view._lastDefaults).not.toEqual thumbnail: 'spyValue'
-          view._updateAttributesWithDefaults()
-
-
-        describe 'model.thumbnail property', ->
-
-          it 'should be set to defaultAttributes().thumbnail on initialize', ->
-            spyOn(RemixView::, 'defaultAttributes').andReturn
-                thumbnail: 'spyValue'
-
-            expect(RemixView::defaultAttributes).not.toHaveBeenCalled()
-            view = new RemixView viewOptions()
-
-            expect(view.model.thumbnail()).toBe 'spyValue'
-            expect(RemixView::defaultAttributes).toHaveBeenCalled()
-
-          it 'should be set when its value is undefined', ->
-            view = new RemixView viewOptions()
-            view.model.set('thumbnail', undefined)
-            spyOn(view, 'defaultAttributes').andReturn thumbnail: 'spyValue'
-
-            expect(view.model.thumbnail()).toBeUndefined()
-            expect(view.defaultAttributes).not.toHaveBeenCalled()
-
-            view._updateAttributesWithDefaults()
-            expect(view.model.thumbnail()).toBe 'spyValue'
-            expect(view.defaultAttributes).toHaveBeenCalled()
-
-          it 'should be set when its value is empty string', ->
-            view = new RemixView viewOptions()
-            view.model.set('thumbnail', '')
-            spyOn(view, 'defaultAttributes').andReturn thumbnail: 'spyValue'
-
-            expect(view.model.thumbnail()).toBe ''
-            expect(view.defaultAttributes).not.toHaveBeenCalled()
-
-            view._updateAttributesWithDefaults()
-            expect(view.model.thumbnail()).toBe 'spyValue'
-            expect(view.defaultAttributes).toHaveBeenCalled()
-
-          it 'should be set when its value is that of _lastDefaults.thumbnail',
-              ->
-            view = new RemixView viewOptions()
-            view.model.set('thumbnail', 'lastDefault')
-            view._lastDefaults.thumbnail = 'lastDefault'
-            spyOn(view, 'defaultAttributes').andReturn thumbnail: 'spyValue'
-
-            expect(view.model.thumbnail()).toBe 'lastDefault'
-            expect(view.defaultAttributes).not.toHaveBeenCalled()
-
-            view._updateAttributesWithDefaults()
-            expect(view.model.thumbnail()).toBe 'spyValue'
-            expect(view.defaultAttributes).toHaveBeenCalled()
+        view = new RemixView viewOptions()
+        expect(Model::_updateAttributesWithDefaults).toHaveBeenCalled()

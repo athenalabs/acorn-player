@@ -29,6 +29,20 @@ class VideoLinkShell.Model extends LinkShell.Model
   loops: @property 'loops'
 
 
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      title: @link()
+      description: @_defaultDescription()
+
+
+  _defaultDescription: =>
+    start = acorn.util.Time.secondsToTimestring @timeStart()
+    end = acorn.util.Time.secondsToTimestring @timeEnd()
+    "Video \"#{@link()}\" from #{start} to #{end}."
+
+
   # duration of one video loop given current splicing
   loopTime: =>
     end = @timeEnd() ? @timeTotal()
@@ -270,20 +284,6 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
       data: loopsButtonData
       initialView: initialView
       extraClasses: ['loops-button']
-
-
-  defaultAttributes: =>
-    superDefaults = super
-
-    _.extend superDefaults,
-      title: @model.link()
-      description: @_defaultDescription()
-
-
-  _defaultDescription: =>
-    start = acorn.util.Time.secondsToTimestring @model.timeStart()
-    end = acorn.util.Time.secondsToTimestring @model.timeEnd()
-    "Video \"#{@model.link()}\" from #{start} to #{end}."
 
 
   render: =>

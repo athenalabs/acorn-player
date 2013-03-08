@@ -22,6 +22,21 @@ VimeoShell = acorn.shells.VimeoShell =
 class VimeoShell.Model extends VideoLinkShell.Model
 
 
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      title: @_fetchedDefaults?.title or superDefaults.title
+      thumbnail: @_fetchedDefaults?.thumbnail or superDefaults.thumbnail
+
+
+  _defaultDescription: =>
+    start = acorn.util.Time.secondsToTimestring @timeStart()
+    end = acorn.util.Time.secondsToTimestring @timeEnd()
+    "Vimeo video \"#{@_fetchedDefaults?.title ? @link()}\" from #{start} to " +
+        "#{end}."
+
+
   metaDataUrl: =>
     "https://vimeo.com/api/v2/video/#{@vimeoId()}.json?callback=?"
 
@@ -75,26 +90,13 @@ class VimeoShell.RemixView extends VideoLinkShell.RemixView
     @metaData().sync success: @onMetaDataSync
 
 
-  defaultAttributes: =>
-    superDefaults = super
-
-    _.extend superDefaults,
-      title: @_fetchedTitle or superDefaults.title
-      thumbnail: @_fetchedThumbnail or superDefaults.thumbnail
-
-
-  _defaultDescription: =>
-    start = acorn.util.Time.secondsToTimestring @model.timeStart()
-    end = acorn.util.Time.secondsToTimestring @model.timeEnd()
-    "Vimeo video \"#{@_fetchedTitle ? @model.link()}\" from #{start} to #{end}."
-
-
   onMetaDataSync: (data) =>
-    @_fetchedTitle = data[0].title
-    @_fetchedThumbnail = data[0].thumbnail_large
+    @model._fetchedDefaults ?= {}
+    @model._fetchedDefaults.title = data[0].title
+    @model._fetchedDefaults.thumbnail = data[0].thumbnail_large
     @model.timeTotal data[0].duration
 
-    @_updateAttributesWithDefaults()
+    @model._updateAttributesWithDefaults()
     @_setTimeInputMax()
 
 

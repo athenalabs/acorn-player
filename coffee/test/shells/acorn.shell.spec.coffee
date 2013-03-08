@@ -74,18 +74,6 @@ describe 'acorn.shells.AcornLinkShell', ->
       waitsFor (-> model.shellModel), 'model to load', 10000
 
 
-  describe 'AcornLinkShell.RemixView', ->
-
-    it 'should update attributes with defaults once acorn model loads', ->
-      spyOn RemixView::, '_updateAttributesWithDefaults'
-      model = new Model options
-      remixView = new RemixView model: model
-      expect(RemixView::_updateAttributesWithDefaults.callCount).toBe 1
-
-      waitsFor (-> model.shellModel), 'model to load', 10000
-      runs -> expect(RemixView::_updateAttributesWithDefaults.callCount).toBe 2
-
-
     describe 'RemixView::defaultAttributes', ->
 
       it 'should default title to acornModel.title', ->
@@ -95,7 +83,7 @@ describe 'acorn.shells.AcornLinkShell', ->
         spyOn(model.acornModel, 'title').andReturn 'spyValue'
 
         expect(model.acornModel.title).not.toHaveBeenCalled()
-        title = remixView.defaultAttributes().title
+        title = model.defaultAttributes().title
         expect(model.acornModel.title).toHaveBeenCalled()
         expect(title).toBe 'spyValue'
 
@@ -106,9 +94,21 @@ describe 'acorn.shells.AcornLinkShell', ->
         spyOn(model.acornModel, 'description').andReturn 'spyValue'
 
         expect(model.acornModel.description).not.toHaveBeenCalled()
-        description = remixView.defaultAttributes().description
+        description = model.defaultAttributes().description
         expect(model.acornModel.description).toHaveBeenCalled()
         expect(description).toBe 'spyValue'
+
+
+  describe 'AcornLinkShell.RemixView', ->
+
+    it 'should update attributes with defaults once acorn model loads', ->
+      spyOn Model::, '_updateAttributesWithDefaults'
+      model = new Model options
+      remixView = new RemixView model: model
+      expect(Model::_updateAttributesWithDefaults.callCount).toBe 1
+
+      waitsFor (-> model.shellModel), 'model to load', 10000
+      runs -> expect(Model::_updateAttributesWithDefaults.callCount).toBe 2
 
 
   it 'its views should look good', ->

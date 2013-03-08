@@ -65,6 +65,32 @@ describe 'acorn.shells.VideoLinkShell', ->
         expect(model.timeTotal(1)).toBe 1
         expect(model.timeTotal()).toBe 1
 
+      describe 'Model::defaultAttributes', ->
+
+        it 'should default title to link', ->
+          model = new Model modelOptions()
+          expect(model.defaultAttributes().title).toBe videoLink
+
+        it 'should default description to `_defaultDescription`', ->
+          model = new Model modelOptions()
+          spyOn(model, '_defaultDescription').andReturn 'fake description'
+
+          expect(model._defaultDescription).not.toHaveBeenCalled()
+          description = model.defaultAttributes().description
+          expect(model._defaultDescription).toHaveBeenCalled()
+          expect(description).toBe 'fake description'
+
+
+      describe 'Model::_defaultDescription', ->
+
+        it 'should be a function', ->
+          expect(typeof Model::_defaultDescription).toBe 'function'
+
+        it 'should return a message about video source and clipping', ->
+          model = new Model modelOptions()
+          expect(model._defaultDescription()).toBe "Video \"#{videoLink}\" " +
+              "from 00:33 to 02:25."
+
 
     describe 'VideoLinkShell.MediaView', ->
 
@@ -263,32 +289,6 @@ describe 'acorn.shells.VideoLinkShell', ->
 
 
     describe 'VideoLinkShell.RemixView', ->
-
-      describe 'RemixView::defaultAttributes', ->
-
-        it 'should default title to link', ->
-          rv = new RemixView viewOptions()
-          expect(rv.model.title()).toBe videoLink
-
-        it 'should default description to `_defaultDescription`', ->
-          rv = new RemixView viewOptions()
-          spyOn rv, '_defaultDescription'
-
-          expect(rv._defaultDescription).not.toHaveBeenCalled()
-          rv.defaultAttributes()
-          expect(rv._defaultDescription).toHaveBeenCalled()
-
-
-      describe 'RemixView::_defaultDescription', ->
-
-        it 'should be a function', ->
-          expect(typeof RemixView::_defaultDescription).toBe 'function'
-
-        it 'should return a message about video source and clipping', ->
-          rv = new RemixView viewOptions()
-          expect(rv._defaultDescription()).toBe "Video \"#{videoLink}\" from " +
-              "00:33 to 02:25."
-
 
       describe 'time management: RemixView', ->
 

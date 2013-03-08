@@ -21,6 +21,13 @@ class SplicedShell.Model extends CollectionShell.Model
   transition: @property('transition')
 
 
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      title: @shells().first()?.title() ? superDefaults.title
+
+
 
 class SplicedShell.MediaView extends CollectionShell.MediaView
 
@@ -163,13 +170,6 @@ class SplicedShell.RemixView extends CollectionShell.RemixView
 
 
   className: @classNameExtend 'spliced-shell'
-
-
-  defaultAttributes: =>
-    superDefaults = super
-
-    _.extend superDefaults,
-      title: @model.shells().first()?.title() ? superDefaults.title
 
 
 

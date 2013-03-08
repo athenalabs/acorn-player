@@ -28,6 +28,21 @@ YouTubeShell = acorn.shells.YouTubeShell =
 class YouTubeShell.Model extends VideoLinkShell.Model
 
 
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      title: @_fetchedDefaults?.title or superDefaults.title
+      thumbnail: "https://img.youtube.com/vi/#{@youtubeId()}/0.jpg"
+
+
+  _defaultDescription: =>
+    start = acorn.util.Time.secondsToTimestring @timeStart()
+    end = acorn.util.Time.secondsToTimestring @timeEnd()
+    "YouTube video \"#{@_fetchedDefaults?.title ? @link()}\" from #{start} to" +
+        " #{end}."
+
+
   metaDataUrl: =>
     "https://gdata.youtube.com/feeds/api/videos/#{@youtubeId()}?v=2&alt=jsonc"
 
@@ -81,26 +96,12 @@ class YouTubeShell.RemixView extends VideoLinkShell.RemixView
     @metaData().sync success: @onMetaDataSync
 
 
-  defaultAttributes: =>
-    superDefaults = super
-
-    _.extend superDefaults,
-      title: @_fetchedTitle or superDefaults.title
-      thumbnail: "https://img.youtube.com/vi/#{@model.youtubeId()}/0.jpg"
-
-
-  _defaultDescription: =>
-    start = acorn.util.Time.secondsToTimestring @model.timeStart()
-    end = acorn.util.Time.secondsToTimestring @model.timeEnd()
-    "YouTube video \"#{@_fetchedTitle ? @model.link()}\" from #{start} to " +
-        "#{end}."
-
-
   onMetaDataSync: (data) =>
-    @_fetchedTitle = data.data.title
+    @model._fetchedDefaults ?= {}
+    @model._fetchedDefaults = title: data.data.title
     @model.timeTotal data.data.duration
 
-    @_updateAttributesWithDefaults()
+    @model._updateAttributesWithDefaults()
     @_setTimeInputMax()
 
 
