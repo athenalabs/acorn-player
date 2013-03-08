@@ -291,6 +291,13 @@ describe 'acorn.shells.YouTubeShell', ->
             pv.player.getCurrentTime() == 20
           ), 'video to seek to 20 while paused', 10000
 
+        it 'should call `_monitorSeeking` on `_seek`', ->
+          spyOn pv, '_monitorSeeking'
+          expect(pv._monitorSeeking).not.toHaveBeenCalled()
+          pv._seek 30
+          expect(pv._monitorSeeking).toHaveBeenCalled()
+          expect(pv._monitorSeeking).toHaveBeenCalledWith 30
+
         it 'should report whether or not it is playing', ->
           runs -> expect(pv.isPlaying()).toBe true
 
@@ -301,24 +308,26 @@ describe 'acorn.shells.YouTubeShell', ->
           ), 'playerView to register paused state', 10000
 
         it 'should report seek offset', ->
+          opts = bypassMonitor: true
+
           runs -> pv.player.seekTo 30
           waitsFor (->
-            pv._seekOffset() == 30
+            pv._seekOffset(opts) == 30
           ), 'playerView to register _seekOffset to 30 while playing', 10000
 
           runs -> pv.player.seekTo 40
           waitsFor (->
-            pv._seekOffset() == 40
+            pv._seekOffset(opts) == 40
           ), 'playerView to register _seekOffset to 40 while playing', 10000
 
           runs -> pv.player.seekTo 10
           waitsFor (->
-            pv._seekOffset() == 10
+            pv._seekOffset(opts) == 10
           ), 'playerView to register _seekOffset to 10 while playing', 10000
 
           runs -> pv.player.seekTo 20
           waitsFor (->
-            pv._seekOffset() == 20
+            pv._seekOffset(opts) == 20
           ), 'playerView to register _seekOffset to 20 while playing', 10000
 
           # achieve paused state
@@ -329,23 +338,107 @@ describe 'acorn.shells.YouTubeShell', ->
 
           runs -> pv.player.seekTo 30
           waitsFor (->
-            pv._seekOffset() == 30
+            pv._seekOffset(opts) == 30
           ), 'playerView to register _seekOffset to 30 while paused', 10000
 
           runs -> pv.player.seekTo 40
           waitsFor (->
-            pv._seekOffset() == 40
+            pv._seekOffset(opts) == 40
           ), 'playerView to register _seekOffset to 40 while paused', 10000
 
           runs -> pv.player.seekTo 10
           waitsFor (->
-            pv._seekOffset() == 10
+            pv._seekOffset(opts) == 10
           ), 'playerView to register _seekOffset to 10 while paused', 10000
 
           runs -> pv.player.seekTo 20
           waitsFor (->
-            pv._seekOffset() == 20
+            pv._seekOffset(opts) == 20
           ), 'playerView to register _seekOffset to 20 while paused', 10000
+
+        it 'should report seek offset from seeking monitor if it is set', ->
+          expect(pv._seekOffset()).not.toBe 'fakeOffset'
+          pv._seekingMonitor?.destroy()
+          pv._seekingMonitor = newOffset: 'fakeOffset', destroy: ->
+          expect(pv._seekOffset()).toBe 'fakeOffset'
+
+
+        describe 'PlayerView::_monitorSeeking', ->
+
+          # destroy any existing _seekingMonitor
+          beforeEach ->
+            pv._seekingMonitor?.destroy()
+
+          it 'should be a function', ->
+            expect(typeof PlayerView::_monitorSeeking).toBe 'function'
+
+          it 'should create a seeking monitor', ->
+            expect(pv._seekingMonitor).not.toBeDefined()
+            pv._monitorSeeking()
+            expect(pv._seekingMonitor).toBeDefined()
+
+          it 'should create a seeking monitor with the new offset', ->
+            expect(pv._seekingMonitor).not.toBeDefined()
+            pv._monitorSeeking 15
+            expect(pv._seekingMonitor).toBeDefined()
+            expect(pv._seekingMonitor.newOffset).toBe 15
+
+          it 'should create a seeking monitor with a destroy method', ->
+            expect(pv._seekingMonitor).not.toBeDefined()
+            pv._monitorSeeking 15
+            expect(pv._seekingMonitor).toBeDefined()
+            expect(typeof pv._seekingMonitor.destroy).toBe 'function'
+
+          it 'should create a seeking monitor with a destroy method that
+              will destroy it', ->
+            expect(pv._seekingMonitor).not.toBeDefined()
+            pv._monitorSeeking 15
+            expect(pv._seekingMonitor).toBeDefined()
+            pv._seekingMonitor.destroy()
+            expect(pv._seekingMonitor).not.toBeDefined()
+
+          it 'should create a seeking monitor that self-destructs when the seek
+              has completed', ->
+            spyOn(pv, '_seekOffset').andReturn 0
+            jasmine.Clock.useMock()
+            expect(pv._seekingMonitor).not.toBeDefined()
+
+            pv._monitorSeeking 15
+            expect(pv._seekingMonitor).toBeDefined()
+
+            jasmine.Clock.tick 200
+            expect(pv._seekingMonitor).toBeDefined()
+
+            pv._seekOffset.andReturn 15.1
+            jasmine.Clock.tick 200
+            expect(pv._seekingMonitor).not.toBeDefined()
+
+          it 'should create a seeking monitor that self-destructs after 5
+              seconds', ->
+            spyOn(pv, 'seekOffset').andReturn 0
+            jasmine.Clock.useMock()
+            expect(pv._seekingMonitor).not.toBeDefined()
+
+            pv._monitorSeeking 15
+            expect(pv._seekingMonitor).toBeDefined()
+
+            jasmine.Clock.tick 4999
+            expect(pv._seekingMonitor).toBeDefined()
+
+            jasmine.Clock.tick 2
+            expect(pv._seekingMonitor).not.toBeDefined()
+
+          it 'should create a seeking monitor that is destroyed by
+              playerView.destroy', ->
+            expect(pv._seekingMonitor).not.toBeDefined()
+            pv._monitorSeeking 15
+            expect(pv._seekingMonitor).toBeDefined()
+
+            spy = spyOn(pv._seekingMonitor, 'destroy').andCallThrough()
+
+            expect(spy).not.toHaveBeenCalled()
+            pv.destroy()
+            expect(spy).toHaveBeenCalled()
 
 
       it 'should look good', ->

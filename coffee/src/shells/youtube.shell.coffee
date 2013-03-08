@@ -131,6 +131,11 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     @initializeYouTubeAPI()
 
 
+  destroy: =>
+    @_seekingMonitor?.destroy()
+    super
+
+
   render: =>
     super
     @$el.empty()
@@ -150,11 +155,51 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     "youtube-player-#{@cid}"
 
 
-  _seekOffset: =>
-    @player?.getCurrentTime?() ? 0
+  _seekOffset: (options = {}) =>
+    # return target new offset if currently seeking
+    if @_seekingMonitor and not options.bypassMonitor
+      @_seekingMonitor.newOffset
+    else
+      @player?.getCurrentTime?() ? 0
+
+
+  # bridge seekOffsets during asynchronous youtube player seeking
+  _monitorSeeking: (seconds) =>
+    # config values
+    validMargin = 0.3
+    interval = 100
+    timeout = 5000
+
+    # function to destroy an existing seek monitor
+    destroySeekingMonitor = =>
+      if @_seekingMonitor
+        clearInterval @_seekingMonitor.interval
+        clearTimeout @_seekingMonitor.timeout
+        delete @_seekingMonitor
+
+    # function to check if a seek has completed
+    checkSeekCompletion = =>
+      target = @_seekingMonitor.newOffset
+      offset = @_seekOffset bypassMonitor: true
+
+      offsetChanged = offset != @_seekingMonitor.oldOffset
+      validOffset = target <= offset < target + validMargin
+      if offsetChanged and validOffset
+        destroySeekingMonitor()
+
+    # create new monitor
+    destroySeekingMonitor()
+    @_seekingMonitor =
+      oldOffset: @_seekOffset()
+      newOffset: seconds
+      interval: setInterval checkSeekCompletion, interval
+      timeout: setTimeout destroySeekingMonitor, timeout
+      destroy: destroySeekingMonitor
 
 
   _seek: (seconds) =>
+    @_monitorSeeking seconds
+
     # Unless playing, seek first to the wrong place. YouTube's player has a bug
     # such that, when not playing, it occasionally seeks incorrectly (this seems
     # to happen after 2 correct seeks)
