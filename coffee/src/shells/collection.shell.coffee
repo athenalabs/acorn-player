@@ -371,7 +371,7 @@ class CollectionShell.MediaView extends Shell.MediaView
     unless view.el.parentNode is @el
       @$el.append view.render().el
 
-    if offset
+    if offset?
       view.seek offset
 
     if @options.showSubshellSummary
