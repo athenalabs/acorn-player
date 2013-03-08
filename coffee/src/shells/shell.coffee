@@ -196,12 +196,6 @@ class Shell.RemixView extends athena.lib.View
     thumbnail: acorn.config.img.acorn
 
 
-  _attributeCanBeEmpty: =>
-    title: true
-    description: true
-    thumbnail: false
-
-
   _updateAttributesWithDefaults: =>
     # retrieve previous and current default thumbnails
     lastDefaults = @_lastDefaults ? {}
@@ -210,11 +204,10 @@ class Shell.RemixView extends athena.lib.View
     # update default values where appropriate
     for attr, currentDefault of currentDefaults
       modelVal = @model[attr]()
-      invalidEmpty = modelVal == '' and not @_attributeCanBeEmpty()[attr]
 
       # update a model attribute if its value is the old default, is undefined,
-      # or is improperly empty
-      if modelVal == lastDefaults[attr] or not modelVal? or invalidEmpty
+      # or is empty
+      if modelVal == lastDefaults[attr] or not modelVal? or modelVal == ''
         @model[attr] currentDefault
 
 

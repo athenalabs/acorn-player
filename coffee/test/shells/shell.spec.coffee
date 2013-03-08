@@ -250,28 +250,6 @@ describe 'acorn.shells.Shell', ->
           expect(view.model.description()).toBe ''
 
 
-      describe 'RemixView::_attributeCanBeEmpty', ->
-
-        it 'should be a function', ->
-          expect(typeof RemixView::_attributeCanBeEmpty).toBe 'function'
-
-        it 'should return an object', ->
-          view = new RemixView viewOptions()
-          expect(typeof view._attributeCanBeEmpty()).toBe 'object'
-
-        it 'should allow title to be empty', ->
-          view = new RemixView viewOptions()
-          expect(view._attributeCanBeEmpty().title).toBe true
-
-        it 'should allow description to be empty', ->
-          view = new RemixView viewOptions()
-          expect(view._attributeCanBeEmpty().description).toBe true
-
-        it 'should not allow thumbnail to be empty', ->
-          view = new RemixView viewOptions()
-          expect(view._attributeCanBeEmpty().thumbnail).toBe false
-
-
       describe 'RemixView::_updateAttributesWithDefaults', ->
 
         it 'should be a function', ->
