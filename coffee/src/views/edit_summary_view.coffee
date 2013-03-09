@@ -22,9 +22,13 @@ class acorn.player.EditSummaryView extends acorn.player.SummaryView
     '''
 
   events: => _.extend super,
+    'keyup input': @_markupDefaults
+    'keyup textarea': @_markupDefaults
     'blur input': @saveData
     'blur textarea': @saveData
-    'click .thumbnail-view': => @popoverView.toggle()
+    'click .thumbnail-view': =>
+      @popoverView.toggle()
+      @_markupDefaults()
 
 
   initialize: =>
@@ -69,14 +73,29 @@ class acorn.player.EditSummaryView extends acorn.player.SummaryView
     @$('.title').val @model.title()
     @$('.description').val @model.description()
     @$('.thumbnail-view img').attr 'src', @model.thumbnail()
+    @_markupDefaults()
     @
 
 
   saveData: =>
-    @model.title @value 'title'
-    @model.description @value 'description'
+    @model.title @value 'title' if @value 'title'
+    @model.description @value 'description' if @value 'description'
+    @renderData()
     @
 
 
   value: (field) =>
     @$(".#{field}")?.val()?.trim()
+
+
+  _markupDefaults: =>
+    fields =
+      title: @$ '.title'
+      description: @$ '.description'
+      thumbnail: @$ '.popover-view #link'
+
+    for attribute, field of fields
+      if field.val()?.trim() == @model.defaultAttributes()[attribute]
+        field.addClass 'default'
+      else
+        field.removeClass 'default'
