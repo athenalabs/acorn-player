@@ -57,6 +57,13 @@ class acorn.player.EditSummaryView extends acorn.player.SummaryView
       @popoverView.hide()
 
 
+  setModel: (model) =>
+    oldModel = @model
+    super
+
+    @_transferNonDefaultValues @model, oldModel
+
+
   onModelChange: =>
     super
     @editImageView?.model.link @model.thumbnail()
@@ -99,3 +106,15 @@ class acorn.player.EditSummaryView extends acorn.player.SummaryView
         field.addClass 'default'
       else
         field.removeClass 'default'
+
+
+  _transferNonDefaultValues: (newModel, oldModel) =>
+    unless newModel and oldModel
+      return
+
+    attributes = ['title', 'description', 'thumbnail']
+
+    # transfer attributes that have been changed from their defaults
+    for attr in attributes
+      unless oldModel[attr]() == oldModel.defaultAttributes()[attr]
+        newModel[attr] oldModel[attr]()

@@ -9,7 +9,7 @@ describe 'acorn.player.EditSummaryView', ->
   TextShell = acorn.shells.TextShell
 
   # model for EditorView contruction
-  model = -> new TextShell.Model
+  model = (opts = {}) -> new TextShell.Model _.defaults opts,
     title: 'Title of the Best Acorn Ever'
     description: 'Description of the Best Acorn Ever: this acorn is the
       absolute best acorn ever, \'tis true. Description of the Best Acorn Ever:
@@ -169,6 +169,79 @@ describe 'acorn.player.EditSummaryView', ->
         expect(view._markupDefaults).not.toHaveBeenCalled()
         view.renderData()
         expect(view._markupDefaults).toHaveBeenCalled()
+
+
+    describe 'EditSummaryView::_transferNonDefaultValues', ->
+
+      it 'should be a function', ->
+        expect(typeof EditSummaryView::_transferNonDefaultValues)
+            .toBe 'function'
+
+      it 'should be called by setModel', ->
+        view = new EditSummaryView viewOptions()
+        spyOn view, '_transferNonDefaultValues'
+
+        expect(view._transferNonDefaultValues).not.toHaveBeenCalled()
+        view.setModel model()
+        expect(view._transferNonDefaultValues).toHaveBeenCalled()
+
+      it 'should transfer to the new model attributes on the old model that were
+          different from their default values', ->
+        model0 = model
+          title: 'title0'
+          description: 'description0'
+          thumbnail: 'thumbnail0.jpg'
+
+        spyOn(model0, 'defaultAttributes').andReturn
+          title: 'La La La'
+          description: 'La la la'
+          thumbnail: 'lalala.jpg'
+
+        model1 = model
+          title: 'title1'
+          description: 'description1'
+          thumbnail: 'thumbnail1.jpg'
+
+        view = new EditSummaryView viewOptions model: model0
+
+        expect(model1.title()).toBe 'title1'
+        expect(model1.description()).toBe 'description1'
+        expect(model1.thumbnail()).toBe 'thumbnail1.jpg'
+
+        view.setModel model1
+
+        expect(model1.title()).toBe 'title0'
+        expect(model1.description()).toBe 'description0'
+        expect(model1.thumbnail()).toBe 'thumbnail0.jpg'
+
+      it 'should not transfer to the new model attributes on the old model that
+          were set to their default values', ->
+        model0 = model
+          title: 'title0'
+          description: 'description0'
+          thumbnail: 'thumbnail0.jpg'
+
+        spyOn(model0, 'defaultAttributes').andReturn
+          title: 'title0'
+          description: 'description0'
+          thumbnail: 'thumbnail0.jpg'
+
+        model1 = model
+          title: 'title1'
+          description: 'description1'
+          thumbnail: 'thumbnail1.jpg'
+
+        view = new EditSummaryView viewOptions model: model0
+
+        expect(model1.title()).toBe 'title1'
+        expect(model1.description()).toBe 'description1'
+        expect(model1.thumbnail()).toBe 'thumbnail1.jpg'
+
+        view.setModel model1
+
+        expect(model1.title()).toBe 'title1'
+        expect(model1.description()).toBe 'description1'
+        expect(model1.thumbnail()).toBe 'thumbnail1.jpg'
 
 
   it 'should look good', ->
