@@ -333,15 +333,6 @@ describe 'acorn.player.controls.ControlView', ->
 
     describe 'ControlView::_onMouseenter', ->
 
-      it 'should call `showTooltip` on stack clear if no delay is set', ->
-        view = new ControlView
-        spyOn view, 'showTooltip'
-
-        expect(view.showTooltip).not.toHaveBeenCalled()
-        view._onMouseenter()
-        expect(view.showTooltip).not.toHaveBeenCalled()
-        setTimeout (-> expect(view.showTooltip).toHaveBeenCalled()), 0
-
       it 'should call `showTooltip` after delay if one is set', ->
         view = new ControlView
         spyOn(view, 'tooltip').andReturn title: 'Edit', delay: show: 500
@@ -366,15 +357,6 @@ describe 'acorn.player.controls.ControlView', ->
 
 
     describe 'ControlView::_onMouseleave', ->
-
-      it 'should call `hideTooltip` on stack clear if no delay is set', ->
-        view = new ControlView
-        spyOn view, 'hideTooltip'
-
-        expect(view.hideTooltip).not.toHaveBeenCalled()
-        view._onMouseleave()
-        expect(view.hideTooltip).not.toHaveBeenCalled()
-        setTimeout (-> expect(view.hideTooltip).toHaveBeenCalled()), 0
 
       it 'should call `hideTooltip` after delay if one is set', ->
         view = new ControlView

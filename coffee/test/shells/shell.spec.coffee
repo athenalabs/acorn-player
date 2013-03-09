@@ -282,16 +282,6 @@ describe 'acorn.shells.Shell', ->
           expect(spy.arguments[0][0]).toBe 'fakeShowing'
           expect(spy.arguments[0][1]).toBe 'fakeProgress'
 
-        it 'should be called after call stack clears following a call to
-            render', ->
-          view = new MediaView viewOptions()
-          spy = new EventSpy view, 'Shell:UpdateProgressBar'
-
-          expect(spy.triggered).toBe false
-
-          view.render()
-          setTimeout (-> expect(spy.triggered).toBe true), 0
-
 
       describe 'MediaView::_onProgressBarDidProgress', ->
 
