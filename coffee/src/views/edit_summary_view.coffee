@@ -15,8 +15,8 @@ class acorn.player.EditSummaryView extends acorn.player.SummaryView
       <img class="img-rounded" src="" />
     </div>
     <div class="span9">
-      <input type="text" class="title">
-      <textarea class="description"></textarea>
+      <input type="text" placeholder="title" class="title">
+      <textarea placeholder="description" class="description"></textarea>
       <div class="buttons"></div>
     </div>
     '''
