@@ -109,6 +109,20 @@ describe 'acorn.shells.VimeoShell', ->
           expect(model._defaultDescription()).toBe "Vimeo video \"FakeVimeo" +
               "Title\" from 00:33 to 02:25."
 
+        it 'should return a message about video title only when lacking valid
+            start/end times', ->
+          options = modelOptions()
+          options.timeStart = NaN
+          model = new Model options
+
+          model._fetchedDefaults = title: undefined
+          expect(model._defaultDescription()).toBe "Vimeo video " +
+              "\"#{videoLink}\"."
+
+          model._fetchedDefaults = title: 'FakeVimeoTitle'
+          expect(model._defaultDescription()).toBe "Vimeo video \"FakeVimeo" +
+              "Title\"."
+
 
     describe 'VimeoShell.PlayerView', ->
       it '------ TODO ------ make PlayerView tests work with PhantomJS', ->

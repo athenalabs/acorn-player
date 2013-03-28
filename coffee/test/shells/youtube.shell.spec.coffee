@@ -114,6 +114,20 @@ describe 'acorn.shells.YouTubeShell', ->
           expect(model._defaultDescription()).toBe "YouTube video " +
               "\"FakeYouTubeTitle\" from 00:33 to 02:25."
 
+        it 'should return a message about video title only when lacking valid
+            start/end times', ->
+          options = modelOptions()
+          options.timeStart = NaN
+          model = new Model options
+
+          model._fetchedDefaults = title: undefined
+          expect(model._defaultDescription()).toBe "YouTube video " +
+              "\"#{videoLink}\"."
+
+          model._fetchedDefaults = title: 'FakeYouTubeTitle'
+          expect(model._defaultDescription()).toBe "YouTube video " +
+              "\"FakeYouTubeTitle\"."
+
 
 
     describe 'YouTubeShell.PlayerView', ->

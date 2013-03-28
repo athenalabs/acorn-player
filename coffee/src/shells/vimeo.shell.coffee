@@ -31,10 +31,12 @@ class VimeoShell.Model extends VideoLinkShell.Model
 
 
   _defaultDescription: =>
-    start = acorn.util.Time.secondsToTimestring @timeStart()
-    end = acorn.util.Time.secondsToTimestring @timeEnd()
-    "Vimeo video \"#{@_fetchedDefaults?.title ? @link()}\" from #{start} to " +
-        "#{end}."
+    if _.isFinite(@timeStart()) and _.isFinite @timeEnd()
+      start = acorn.util.Time.secondsToTimestring @timeStart()
+      end = acorn.util.Time.secondsToTimestring @timeEnd()
+      clipping = " from #{start} to #{end}"
+
+    "Vimeo video \"#{@_fetchedDefaults?.title ? @link()}\"#{clipping ? ''}."
 
 
   metaDataUrl: =>
