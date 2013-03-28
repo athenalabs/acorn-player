@@ -52,8 +52,26 @@ class acorn.Model extends athena.lib.Model
 
   # Backbone url base
   urlRoot: => "#{acorn.config.url.api}/acorn"
-  pageUrl: => "#{acorn.config.url.base}/#{@acornid()}"
-  embedUrl: => "#{acorn.config.url.base}/embed/#{@acornid()}"
+
+
+  pageUrl: (options = {}) =>
+    # construct query parameters
+    params = ''
+    for param, value of options
+      params = if params then params + '&' else '?'
+      params += "#{param}=#{value}"
+
+    "#{acorn.config.url.base}/#{@acornid()}#{params}"
+
+
+  embedUrl: (options = {}) =>
+    # construct query parameters
+    params = ''
+    for param, value of options
+      params = if params then params + '&' else '?'
+      params += "#{param}=#{value}"
+
+    "#{acorn.config.url.base}/embed/#{@acornid()}#{params}"
 
 
   isNew: =>

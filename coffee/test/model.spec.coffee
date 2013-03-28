@@ -23,6 +23,16 @@ describe 'acorn.Model', ->
     expect(m.pageUrl()).toBe "#{acorn.config.url.base}/#{m.acornid()}"
     expect(m.embedUrl()).toBe "#{acorn.config.url.base}/embed/#{m.acornid()}"
 
+  it 'should have a pageUrl method that optionally appends query params', ->
+    m = new Model {acornid:'hi'}
+    pageUrl = m.pageUrl()
+    expect(m.pageUrl(play: 500, v: 4)).toBe "#{pageUrl}?play=500&v=4"
+
+  it 'should have an embedUrl method that optionally appends query params', ->
+    m = new Model {acornid:'hi'}
+    embedUrl = m.embedUrl()
+    expect(m.embedUrl(play: 500, v: 4)).toBe "#{embedUrl}?play=500&v=4"
+
   it 'should be clonable (with deep-copies)', ->
     deep = {'a': 5}
     m = new Model {acornid:'deep', a: b: c: deep}
