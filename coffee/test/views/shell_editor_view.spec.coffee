@@ -36,58 +36,209 @@ describe 'acorn.player.ShellEditorView', ->
 
   describe 'construction', ->
 
-    it 'should wrap single-shells in a CollectionShell.Model', ->
+    it 'should set model to an instance of defaultShell.Model if no model is
+        given', ->
+      opts = viewOptions()
+      delete opts.model
+      view = new ShellEditorView opts
+      expect(view.model instanceof view.defaultShell.Model).toBe true
+
+
+  describe 'ShellEditorView::remixerViews', ->
+    # below, tests marked `(added)` add another shell after construction
+    # and even after rendering, to ensure the suviews work well given
+    # shell additions.
+
+    it 'should be an array defined on init', ->
       view = new ShellEditorView viewOptions()
-      expect(view.model instanceof CollectionShell.Model).toBe true
-      expect(view.model.shells().models[0]).toBe model
+      expect(view.remixerViews).toBeDefined()
+      expect(_.isArray view.remixerViews).toBe true
 
-    it 'should add an EmptyShell to the collectionShell', ->
+    it 'should be an array of length 1', ->
       view = new ShellEditorView viewOptions()
-      coll = view.model.shells()
-      expect(coll.models[1] instanceof EmptyShell.Model).toBe true
+      expect(view.remixerViews).toBeDefined()
+      expect(view.remixerViews.length).toBe 1
 
-    it 'should add an EmptyShell to a provided collectionShell', ->
-      collection = new acorn.shells.CollectionShell.Model
-        shellid: 'acorn.CollectionShell'
-      collection.shells().add model
-
-      view = new ShellEditorView model: collection
-      coll = view.model.shells()
-      expect(coll.models[1] instanceof EmptyShell.Model).toBe true
-
-    it 'should not mess with CollectionShell with EmptyShells', ->
-      collection = new acorn.shells.CollectionShell.Model
-        shellid: 'acorn.CollectionShell'
-      collection.shells().add model
-
-      empty = new acorn.shells.EmptyShell.Model
-        shellid: 'acorn.EmptyShell'
-      collection.shells().add empty
-
-      view = new ShellEditorView model: collection
-      expect(view.model).toBe collection
-      expect(view.model.shells().models[0]).toBe model
-      expect(view.model.shells().models[1]).toBe empty
-
-
-  describe 'finalized shell retrieval', ->
-
-    it 'should return single shells', ->
+    it "should contain an instance of RemixerView", ->
       view = new ShellEditorView viewOptions()
-      shell = view.shell()
-      expect(shell instanceof TextShell.Model).toBe true
-      expect(shell.attributes).toEqual model.attributes
+      expect(view.remixerViews[0] instanceof acorn.player.RemixerView).toBe true
 
-    it 'should return a collection shell when it has multiple shells', ->
-      models = [new TextShell.Model, new CollectionShell.Model]
-      view = new ShellEditorView
-      view.addShell models[0]
-      view.addShell models[1]
+    it 'should not be rendering initially', ->
+      view = new ShellEditorView viewOptions()
+      expect(view.remixerViews[0].rendering).toBe false
 
-      shell = view.shell()
-      expect(shell instanceof CollectionShell.Model).toBe true
-      expect(shell.shells().models[0].attributes).toEqual models[0].attributes
-      expect(shell.shells().models[1].attributes).toEqual models[1].attributes
+    it "should be rendering with ShellEditorView", ->
+      view = new ShellEditorView viewOptions()
+      view.render()
+      expect(view.remixerViews[0].rendering).toBe true
+
+    it "should be DOM descendants of the ShellEditorView", ->
+      view = new ShellEditorView viewOptions()
+      view.render()
+      expect(view.remixerViews[0].el.parentNode.parentNode).toBe view.el
+
+
+  describe 'ShellEditorView::render', ->
+
+    it 'should call _renderHeader', ->
+      view = new ShellEditorView viewOptions()
+      spyOn(view, '_renderHeader').andCallThrough()
+
+      expect(view._renderHeader).not.toHaveBeenCalled()
+      view.render()
+      expect(view._renderHeader).toHaveBeenCalled()
+
+    it 'should call _renderRemixerViews', ->
+      view = new ShellEditorView viewOptions()
+      spyOn(view, '_renderRemixerViews').andCallThrough()
+
+      expect(view._renderRemixerViews).not.toHaveBeenCalled()
+      view.render()
+      expect(view._renderRemixerViews).toHaveBeenCalled()
+
+    it 'should call _renderFooter', ->
+      view = new ShellEditorView viewOptions()
+      spyOn(view, '_renderFooter').andCallThrough()
+
+      expect(view._renderFooter).not.toHaveBeenCalled()
+      view.render()
+      expect(view._renderFooter).toHaveBeenCalled()
+
+    it 'should call _renderUpdates', ->
+      view = new ShellEditorView viewOptions()
+      spyOn(view, '_renderUpdates').andCallThrough()
+
+      expect(view._renderUpdates).not.toHaveBeenCalled()
+      view.render()
+      expect(view._renderUpdates).toHaveBeenCalled()
+
+    it 'should render header, remixerViews, footer, and updates, in order', ->
+      view = new ShellEditorView viewOptions()
+      callStack = []
+      spyOn(view, '_renderHeader').andCallFake -> callStack.push 'header'
+      spyOn(view, '_renderRemixerViews').andCallFake -> callStack.push 'remixer'
+      spyOn(view, '_renderFooter').andCallFake -> callStack.push 'footer'
+      spyOn(view, '_renderUpdates').andCallFake -> callStack.push 'updates'
+
+      view.render()
+      expect(callStack[0]).toBe 'header'
+      expect(callStack[1]).toBe 'remixer'
+      expect(callStack[2]).toBe 'footer'
+      expect(callStack[3]).toBe 'updates'
+
+
+  describe 'ShellEditorView::_renderRemixerViews', ->
+
+    it 'should pass each remixerView to _renderRemixerView', ->
+      view = new ShellEditorView viewOptions()
+      rvs = view.remixerViews = for i in [0..4]
+        (new Backbone.View).render()
+      spyOn view, '_renderRemixerView'
+
+      expect(view._renderRemixerView).not.toHaveBeenCalled()
+      view._renderRemixerViews()
+      expect(view._renderRemixerView).toHaveBeenCalled()
+      expect(view._renderRemixerView.callCount).toBe 5
+      expect(view._renderRemixerView.argsForCall[0][0]).toBe rvs[0]
+      expect(view._renderRemixerView.argsForCall[1][0]).toBe rvs[1]
+      expect(view._renderRemixerView.argsForCall[2][0]).toBe rvs[2]
+      expect(view._renderRemixerView.argsForCall[3][0]).toBe rvs[3]
+      expect(view._renderRemixerView.argsForCall[4][0]).toBe rvs[4]
+
+
+  describe 'ShellEditorView::_renderUpdates', ->
+
+    it 'should pass each remixerView to _renderRemixerViewHeading', ->
+      view = new ShellEditorView viewOptions()
+      view.render()
+      rvs = view.remixerViews = for i in [0..4]
+        (new Backbone.View).render()
+      spyOn view, '_renderRemixerViewHeading'
+
+      expect(view._renderRemixerViewHeading).not.toHaveBeenCalled()
+      view._renderUpdates()
+      expect(view._renderRemixerViewHeading).toHaveBeenCalled()
+      expect(view._renderRemixerViewHeading.callCount).toBe 5
+      expect(view._renderRemixerViewHeading.argsForCall[0][0]).toBe rvs[0]
+      expect(view._renderRemixerViewHeading.argsForCall[1][0]).toBe rvs[1]
+      expect(view._renderRemixerViewHeading.argsForCall[2][0]).toBe rvs[2]
+      expect(view._renderRemixerViewHeading.argsForCall[3][0]).toBe rvs[3]
+      expect(view._renderRemixerViewHeading.argsForCall[4][0]).toBe rvs[4]
+
+    it 'should call _onThumbnailChange if thumbnail changed', ->
+      view = new ShellEditorView viewOptions()
+      spyOn view, '_onThumbnailChange'
+      spyOn(view.model, 'thumbnail').andReturn 'model thumbnail'
+      view._lastThumbnail = 'not model thumbnail'
+
+      expect(view._onThumbnailChange).not.toHaveBeenCalled()
+      view._renderUpdates()
+      expect(view._onThumbnailChange).toHaveBeenCalled()
+
+    it 'should not call _onThumbnailChange if thumbnail did not change', ->
+      view = new ShellEditorView viewOptions()
+      spyOn view, '_onThumbnailChange'
+      spyOn(view.model, 'thumbnail').andReturn 'model thumbnail'
+      view._lastThumbnail = 'model thumbnail'
+
+      expect(view._onThumbnailChange).not.toHaveBeenCalled()
+      view._renderUpdates()
+      expect(view._onThumbnailChange).not.toHaveBeenCalled()
+
+
+  describe 'ShellEditorView::_renderSectionHeading', ->
+
+    it 'should be a function', ->
+      expect(typeof ShellEditorView::_renderSectionHeading).toBe 'function'
+
+    it 'should prepend an <h3> tag to the given view', ->
+      view = new Backbone.View
+      view.$el.append $ '<p>'
+      expect(view.$('h3').length).toBe 0
+      spyOn(ShellEditorView::, '_shellIsStub').andReturn true
+      ShellEditorView::_renderSectionHeading view
+      expect(view.$('h3').length).toBe 1
+      expect(view.$('h3')[0]).toBe view.$el.children()[0]
+
+    it 'should prepend an invitational message to stub remixers', ->
+      view = new Backbone.View
+      view.$el.append $ '<p>'
+      expect(view.$('h3').length).toBe 0
+      spyOn(ShellEditorView::, '_shellIsStub').andReturn true
+      ShellEditorView::_renderSectionHeading view
+      expect(view.$('h3').length).toBe 1
+      expect(view.$('h3').text()).toBe 'add a media item by entering a link:'
+
+    it 'should prepend the shell\'s module title to non-stub remixers', ->
+      view = new Backbone.View
+      view.$el.append $ '<p>'
+      view.model = module: title: 'shell title'
+      expect(view.$('h3').length).toBe 0
+      spyOn(ShellEditorView::, '_shellIsStub').andReturn false
+      ShellEditorView::_renderSectionHeading view
+      expect(view.$('h3').length).toBe 1
+      expect(view.$('h3').text()).toBe 'shell title'
+
+
+  describe 'ShellEditorView::shell', ->
+
+    it 'should return a clone of the model', ->
+      view = new ShellEditorView viewOptions()
+      spyOn(view.model, 'clone').andReturn 'cloned model'
+      expect(view.shell()).toBe 'cloned model'
+
+
+  describe 'ShellEditorView::isEmpty', ->
+
+    it 'should return true if the model is a stub', ->
+      view = new ShellEditorView viewOptions()
+      spyOn(view, '_shellIsStub').andReturn true
+      expect(view.isEmpty()).toBe true
+
+    it 'should return false if the model is not a stub', ->
+      view = new ShellEditorView viewOptions()
+      spyOn(view, '_shellIsStub').andReturn false
+      expect(view.isEmpty()).toBe false
 
 
   describe 'ShellEditorView::_shellIsStub', ->
@@ -97,501 +248,148 @@ describe 'acorn.player.ShellEditorView', ->
 
     it 'should return false if shell is not a defaultShell (EmptyShell)', ->
       view = new ShellEditorView viewOptions()
-      expect(view._shellIsStub model).toBe false
+      expect(view._shellIsStub view.model).toBe false
 
-    it 'should return false if shell is not the last shell', ->
-      collection = new acorn.shells.CollectionShell.Model
-        shellid: 'acorn.CollectionShell'
-      collection.shells().add model
-
-      empties = for i in [0..3]
-        empty = new acorn.shells.EmptyShell.Model shellid: 'acorn.EmptyShell'
-        collection.shells().add empty
-        empty
-
-      view = new ShellEditorView model: collection
-
-      for i in [0..2]
-        empty = empties[i]
-        expect(view._shellIsStub empty).toBe false
-
-    it 'should return true if shell is both a default shell (EmptyShell) and the
-        last shell', ->
-      collection = new acorn.shells.CollectionShell.Model
-        shellid: 'acorn.CollectionShell'
-      collection.shells().add model
-
-      empties = for i in [0..3]
-        empty = new acorn.shells.EmptyShell.Model shellid: 'acorn.EmptyShell'
-        collection.shells().add empty
-        empty
-
-      view = new ShellEditorView model: collection
-      expect(view._shellIsStub empties[3]).toBe true
+    it 'should return true if shell is a default shell (EmptyShell)', ->
+      view = new ShellEditorView viewOptions model: new EmptyShell.Model
+      expect(view._shellIsStub view.model).toBe true
 
 
-  describe 'ShellEditorView::_lastNonDefaultShellIndex', ->
+  describe 'ShellEditorView::_onThumbnailChange', ->
 
-    it 'should be a function', ->
-      expect(typeof ShellEditorView::_lastNonDefaultShellIndex).toBe 'function'
-
-    it 'should return the index of the last shell that is not a default shell
-        (EmptyShell)', ->
-      for i in [0..5]
-        collection = new acorn.shells.CollectionShell.Model
-          shellid: 'acorn.CollectionShell'
-
-        for j in [0...i]
-          collection.shells().add new acorn.shells.TextShell.Model
-
-        for j in [0..3]
-          collection.shells().add new acorn.shells.EmptyShell.Model
-
-        view = new ShellEditorView model: collection
-        expect(view._lastNonDefaultShellIndex()).toBe i - 1
-
-    it 'should not treat default shells (EmptyShells) succeeded by non-default
-        specially', ->
-      for i in [0..5]
-        collection = new acorn.shells.CollectionShell.Model
-          shellid: 'acorn.CollectionShell'
-
-        for j in [0...i]
-          collection.shells().add new acorn.shells.EmptyShell.Model
-          collection.shells().add new acorn.shells.TextShell.Model
-
-        for j in [0..3]
-          collection.shells().add new acorn.shells.EmptyShell.Model
-
-        view = new ShellEditorView model: collection
-        expect(view._lastNonDefaultShellIndex()).toBe 2 * i - 1
-
-
-  describeSubview
-    View: ShellEditorView
-    Subview: acorn.player.ShellOptionsView
-    subviewAttr: 'shellOptionsView'
-    viewOptions: viewOptions()
-
-
-  describe 'ShellEditorView::remixerViews subviews', ->
-    # below, tests marked `(added)` add another shell after construction
-    # and even after rendering, to ensure the suviews work well given
-    # shell additions.
-
-    anotherShell = acorn.shellWithData shellid: 'acorn.TextShell'
-
-    it 'should be defined on init', ->
+    it 'should update the _lastThumbnail property', ->
       view = new ShellEditorView viewOptions()
-      expect(view.remixerViews).toBeDefined()
-      expect(view.remixerViews.length).toBe 2 # +1 empty shell
+      view._lastThumbnail = 'old thumbnail'
+      spyOn(view.model, 'thumbnail').andReturn 'new thumbnail'
+      expect(view._lastThumbnail).toBe 'old thumbnail'
+      view._onThumbnailChange()
+      expect(view._lastThumbnail).toBe 'new thumbnail'
 
-    it "should be instancesof RemixerView", ->
+    it 'should announce thumbnail change on itself', ->
       view = new ShellEditorView viewOptions()
-      expect(view.remixerViews.length).toBe 2 # +1 empty shell
-      _.map view.remixerViews, (rv) ->
-        expect(rv instanceof acorn.player.RemixerView).toBe true
+      spy = new test.EventSpy view, 'ShellEditor:Thumbnail:Change'
+      expect(spy.triggered).toBe false
+      view._onThumbnailChange()
+      expect(spy.triggered).toBe true
 
-    it "should be instancesof RemixerView (added)", ->
+    it 'should announce thumbnail change on eventhub', ->
       view = new ShellEditorView viewOptions()
-      view.addShell anotherShell
-      expect(view.remixerViews.length).toBe 3 # +1 empty shell
-      _.map view.remixerViews, (rv) ->
-        expect(rv instanceof acorn.player.RemixerView).toBe true
+      spy = new test.EventSpy view.eventhub, 'ShellEditor:Thumbnail:Change'
+      expect(spy.triggered).toBe false
+      view._onThumbnailChange()
+      expect(spy.triggered).toBe true
 
-    it 'should not be rendering initially', ->
-      view = new ShellEditorView viewOptions()
-      expect(view.remixerViews.length).toBe 2 # +1 empty shell
-      _.map view.remixerViews, (rv) ->
-        expect(rv.rendering).toBe false
 
-    it 'should not be rendering initially (added)', ->
-      view = new ShellEditorView viewOptions()
-      view.addShell anotherShell
-      expect(view.remixerViews.length).toBe 3 # +1 empty shell
-      _.map view.remixerViews, (rv) ->
-        expect(rv.rendering).toBe false
+  describe 'ShellEditorView::_onRemixerSwapShell', ->
 
-    it "should be rendering with ShellEditorView", ->
+    it 'should update model', ->
+      oldShell = new acorn.shells.LinkShell.Model
+      newShell = new acorn.shells.ImageLinkShell.Model
+      view = new ShellEditorView viewOptions model: oldShell
+      view.render()
+
+      expect(view.model).toBe oldShell
+      remixer = view.remixerViews[0]
+      view._onRemixerSwapShell remixer, oldShell, newShell
+      expect(view.model).toBe newShell
+
+    it 'should destroy remixerView if model has changed', ->
+      oldShell = new acorn.shells.LinkShell.Model
+      newShell = new acorn.shells.ImageLinkShell.Model
+      view = new ShellEditorView viewOptions model: oldShell
+      view.render()
+
+      remixer = view.remixerViews[0]
+      spy = spyOn(remixer, 'destroy').andCallThrough()
+
+      expect(spy).not.toHaveBeenCalled()
+      view._onRemixerSwapShell remixer, oldShell, newShell
+      expect(spy).toHaveBeenCalled()
+
+    it 'should not destroy remixerView if model has not changed', ->
+      oldShell = new acorn.shells.LinkShell.Model
+      newShell = new acorn.shells.ImageLinkShell.Model
+      view = new ShellEditorView viewOptions model: oldShell
+      view.render()
+
+      remixer = view.remixerViews[0]
+      spy = spyOn(remixer, 'destroy').andCallThrough()
+
+      expect(spy).not.toHaveBeenCalled()
+      view._onRemixerSwapShell remixer, oldShell, oldShell
+      expect(spy).not.toHaveBeenCalled()
+
+    it 'should create a new remixer if the model has changed', ->
+      oldShell = new acorn.shells.LinkShell.Model
+      newShell = new acorn.shells.ImageLinkShell.Model
+      view = new ShellEditorView viewOptions model: oldShell
+      view.render()
+      spyOn(view, '_initializeRemixerForShell').andCallThrough()
+
+      expect(view._initializeRemixerForShell).not.toHaveBeenCalled()
+      oldRemixer = view.remixerViews[0]
+      expect(oldRemixer.model).toBe oldShell
+
+      view._onRemixerSwapShell oldRemixer, oldShell, newShell
+      expect(view._initializeRemixerForShell).toHaveBeenCalled()
+      expect(view._initializeRemixerForShell).toHaveBeenCalledWith newShell
+      newRemixer = view.remixerViews[0]
+      expect(newRemixer.model).toBe newShell
+      expect(newRemixer).not.toEqual oldRemixer
+
+    it 'should trigger ShellEditor:ShellsUpdated', ->
+      oldShell = new acorn.shells.LinkShell.Model
+      newShell = new acorn.shells.ImageLinkShell.Model
+      view = new ShellEditorView viewOptions model: oldShell
+      view.render()
+      spy = new test.EventSpy view, 'ShellEditor:ShellsUpdated'
+
+      expect(spy.triggered).toBe false
+      remixer = view.remixerViews[0]
+      view._onRemixerSwapShell remixer, oldShell, newShell
+      expect(spy.triggered).toBe true
+
+
+  describe 'ShellEditorView::_onRemixerLinkChanged', ->
+
+    it 'should trigger ShellEditor:ShellsUpdated', ->
       view = new ShellEditorView viewOptions()
       view.render()
-      expect(view.remixerViews.length).toBe 2 # +1 empty shell
-      _.map view.remixerViews, (rv) ->
-        expect(rv.rendering).toBe true
+      spy = new test.EventSpy view, 'ShellEditor:ShellsUpdated'
 
-    it "should be rendering with ShellEditorView (added)", ->
-      view = new ShellEditorView viewOptions()
-      view.render()
-      view.addShell anotherShell
-      expect(view.remixerViews.length).toBe 3 # +1 empty shell
-      _.map view.remixerViews, (rv) ->
-        expect(rv.rendering).toBe true
-
-    it "should be DOM descendants of the ShellEditorView", ->
-      view = new ShellEditorView viewOptions()
-      view.render()
-      expect(view.remixerViews.length).toBe 2 # +1 empty shell
-      _.map view.remixerViews, (rv) ->
-        expect(rv.el.parentNode.parentNode).toBe view.el
-
-    it "should be DOM descendants of the ShellEditorView (added)", ->
-      view = new ShellEditorView viewOptions()
-      view.render()
-      view.addShell anotherShell
-      expect(view.remixerViews.length).toBe 3 # +1 empty shell
-      _.map view.remixerViews, (rv) ->
-        expect(rv.el.parentNode.parentNode).toBe view.el
+      expect(spy.triggered).toBe false
+      view._onRemixerLinkChanged()
+      expect(spy.triggered).toBe true
 
 
-  describe 'ShellEditorView::renderUpdates', ->
-
-    it 'should have ShellOptionsView hidden with one non-empty shell', ->
-      view = new ShellEditorView viewOptions()
-      view.render()
-      expect(view.remixerViews.length).toBe 2
-      expect(view.model.shells().models[0].module).not.toBe EmptyShell
-      expect(view.model.shells().models[1].module).toBe EmptyShell
-      expect(view.shellOptionsView.$el.hasClass 'hidden').toBe true
-
-    it 'should hide the ShellOptionsView with < 2 non-empty shells', ->
-      view = new ShellEditorView viewOptions()
-      view.render()
-      expect(view.remixerViews.length).toBe 2
-      expect(view.shellOptionsView.$el.hasClass 'hidden').toBe true
-
-      _.each _.range(10), (i) =>
-        view.addShell new TextShell.Model
-        expect(view.remixerViews.length).toBe 3 + i
-        expect(view.shellOptionsView.$el.hasClass 'hidden').toBe false
-
-      _.each _.range(10), (i) =>
-        view.removeShell view.model.shells().models[1]
-
-      expect(view.remixerViews.length).toBe 2
-      expect(view.shellOptionsView.$el.hasClass 'hidden').toBe true
-
-    it 'should show the ShellOptionsView with > 1 non-empty shells', ->
-      view = new ShellEditorView viewOptions()
-      view.render()
-      expect(view.remixerViews.length).toBe 2
-      expect(view.shellOptionsView.$el.hasClass 'hidden').toBe true
-
-      _.each _.range(10), (i) =>
-        view.addShell new Shell.Model
-        expect(view.remixerViews.length).toBe 3 + i
-        expect(view.shellOptionsView.$el.hasClass 'hidden').toBe false
-
-    it 'should add an empty shell when going to 0 shells', ->
-      view = new ShellEditorView viewOptions()
-      firstShell = -> view.model.shells().models[0]
-
-      expect(view.remixerViews.length).toBe 2
-      view.removeShell firstShell()
-      expect(view.remixerViews.length).toBe 1
-
-      view.removeShell firstShell()
-      expect(view.remixerViews.length).toBe 1 # stay at 1
-      expect(firstShell() instanceof EmptyShell.Model).toBe true
-
-      view.removeShell firstShell()
-      expect(view.remixerViews.length).toBe 1 # stay at 1
-      expect(firstShell() instanceof EmptyShell.Model).toBe true
-
-    it 'should not prefix remixer headers when < 2 non-empty shells', ->
-      view = new ShellEditorView viewOptions()
-      view.render()
-      expect(view.remixerViews.length).toBe 2
-      _.each view.remixerViews, (rv) ->
-        unless view._shellIsStub rv.model
-          headerText = rv.$('.editor-section').text()
-          expect(headerText.match '^Item [0-9]+: ').toBeFalsy()
-
-      _.each _.range(10), (i) =>
-        view.addShell new TextShell.Model
-        expect(view.remixerViews.length).toBe 3 + i
-
-      _.each _.range(10), (i) =>
-        view.removeShell view.model.shells().models[1]
-
-      expect(view.remixerViews.length).toBe 2
-      _.each view.remixerViews, (rv) ->
-        unless view._shellIsStub rv.model
-          headerText = rv.$('.editor-section').text()
-          expect(headerText.match '^Item [0-9]+: ').toBeFalsy()
-
-    it 'should prefix remixer headers when > 1 non-empty shells', ->
-      view = new ShellEditorView viewOptions()
-      view.render()
-      expect(view.remixerViews.length).toBe 2
-      _.each view.remixerViews, (rv) ->
-        unless view._shellIsStub rv.model
-          headerText = rv.$('.editor-section').text()
-          expect(headerText.match '^Item [0-9]+: ').toBeFalsy()
-
-      _.each _.range(10), (i) =>
-        view.addShell new TextShell.Model
-        expect(view.remixerViews.length).toBe 3 + i
-        _.each view.remixerViews, (rv) ->
-          unless view._shellIsStub rv.model
-            headerText = rv.$('.editor-section').text()
-            expect(headerText.match '^Item [0-9]+: ').toBeTruthy()
-
-
-  describe 'ShellEditorView events', ->
-
-    describe 'on ShellOptions:SwapShell', ->
-
-      it 'should call swap the top level shell', ->
-        view = new ShellEditorView viewOptions()
-        view.render()
-        spyOn view, 'swapTopLevelShell'
-        view.shellOptionsView.trigger 'ShellOptions:SwapShell', GalleryShell.id
-        expect(view.swapTopLevelShell).toHaveBeenCalled()
-
-
-      it 'should swap the shell seamlessly', ->
-        view = new ShellEditorView viewOptions()
-        view.render()
-        expect(view.model.shellid()).toBe CollectionShell.id
-        models = _.clone view.model.shells().models
-
-        view.shellOptionsView.trigger 'ShellOptions:SwapShell', GalleryShell.id
-        expect(view.model.shellid()).toBe GalleryShell.id
-        expect(view.shellOptionsView.model).toBe view.model
-        expect(view.model.shells().models.length).toEqual models.length
-        expect(view.model.shells().models[0]).toEqual models[0]
-
-
-    describe 'on Remixer:Toolbar:Click:Duplicate', ->
-
-      it 'should call add shell', ->
-        view = new ShellEditorView viewOptions()
-        view.render()
-        remixer = view.remixerViews[0]
-
-        spy = spyOn(view, 'addShell').andCallThrough()
-        remixer.trigger 'Remixer:Toolbar:Click:Duplicate', remixer
-        expect(spy).toHaveBeenCalled()
-
-      it 'should add a clone of the remixerView\'s shell', ->
-        view = new ShellEditorView viewOptions()
-        view.render()
-        remixer = view.remixerViews[0]
-
-        spy = spyOn(view, 'addShell').andCallThrough()
-        remixer.trigger 'Remixer:Toolbar:Click:Duplicate', remixer
-
-        shell = spy.mostRecentCall.args[0]
-        expect(shell instanceof Shell.Model).toBe true
-        expect(shell.attributes).toEqual remixer.model.attributes
-
-    describe 'on Remixer:Toolbar:Click:Delete', ->
-
-      it 'should call remove shell', ->
-        view = new ShellEditorView viewOptions()
-        view.render()
-        remixer = view.remixerViews[0]
-
-        spy = spyOn(view, 'removeShell').andCallThrough()
-        remixer.trigger 'Remixer:Toolbar:Click:Delete', remixer
-        expect(spy).toHaveBeenCalled()
-
-      it 'should remove the remixerView\'s shell', ->
-        view = new ShellEditorView viewOptions()
-        view.render()
-        remixer = view.remixerViews[0]
-
-        spy = spyOn(view, 'removeShell').andCallThrough()
-        remixer.trigger 'Remixer:Toolbar:Click:Delete', remixer
-        expect(spy).toHaveBeenCalledWith remixer.model
+  describe 'ShellEditorView: Remixer events', ->
 
     describe 'on Remixer:SwapShell', ->
 
-      it 'should call swapSubShell', ->
+      it 'should call _onRemixerSwapShell', ->
+        spyOn ShellEditorView::, '_onRemixerSwapShell'
         oldShell = new acorn.shells.LinkShell.Model
         newShell = new acorn.shells.ImageLinkShell.Model
-        view = new ShellEditorView model: oldShell
+        view = new ShellEditorView viewOptions model: oldShell
+        spyOn view, '_onRemixerSwapShell'
         view.render()
-        remixer = view.remixerViews[0]
 
-        spy = spyOn(view, 'swapSubShell').andCallThrough()
+        changes = ShellEditorView::_onRemixerSwapShell.callCount
+        remixer = view.remixerViews[0]
         remixer.trigger 'Remixer:SwapShell', remixer, oldShell, newShell
-        expect(spy).toHaveBeenCalled()
-
-      it 'should be triggered with a new, different shell', ->
-        oldShell = new acorn.shells.LinkShell.Model
-        newShell = new acorn.shells.ImageLinkShell.Model
-        view = new ShellEditorView model: oldShell
-        view.render()
-        remixer = view.remixerViews[0]
-
-        spy = spyOn(view, 'swapSubShell').andCallThrough()
-        remixer.trigger 'Remixer:SwapShell', remixer, oldShell, newShell
-        expect(spy).toHaveBeenCalledWith oldShell, newShell
-
-      it 'should remove the old shell, and replace it with the new', ->
-        oldShell = new acorn.shells.LinkShell.Model
-        newShell = new acorn.shells.ImageLinkShell.Model
-        view = new ShellEditorView model: oldShell
-        view.render()
-        remixer = view.remixerViews[0]
-
-        expect(view.model.shells().models[0]).toBe oldShell
-        expect(view.remixerViews[0].model).toBe oldShell
-
-        remixer.swapShell newShell
-        expect(view.model.shells().models[0]).toBe newShell
-        expect(view.remixerViews[0].model).toBe newShell
-
-      it 'should not change the remixerView (it changed already)', ->
-        oldShell = new acorn.shells.LinkShell.Model
-        newShell = new acorn.shells.ImageLinkShell.Model
-        view = new ShellEditorView model: oldShell
-        view.render()
-        remixer = view.remixerViews[0]
-
-        remixer.swapShell newShell
-        expect(view.remixerViews[0]).toBe remixer
+        expect(ShellEditorView::_onRemixerSwapShell.callCount).toBe changes + 1
 
 
     describe 'on Remixer:LinkChanged', ->
 
-      it 'should trigger ShellEditor:ShellsUpdated', ->
-        oldShell = new acorn.shells.LinkShell.Model
-        newShell = new acorn.shells.ImageLinkShell.Model
-        view = new ShellEditorView model: oldShell
+      it 'should call _onRemixerLinkChanged', ->
+        spyOn ShellEditorView::, '_onRemixerLinkChanged'
+        view = new ShellEditorView viewOptions()
         view.render()
-        remixer = view.remixerViews[0]
 
-        spy = new test.EventSpy view, 'ShellEditor:ShellsUpdated'
-        remixer.trigger 'Remixer:LinkChanged', remixer, 'http://foo.com'
-        expect(spy.triggered).toBe true
-
-
-    describe 'ShellEditor:Thumbnail:Change', ->
-
-      it 'should be triggered initially', ->
-        hub = new athena.lib.View
-        shell = new acorn.shells.LinkShell.Model
-        view = new ShellEditorView model: shell, eventhub: hub
-        spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
-        view.render()
-        expect(spy.triggerCount).toBe 1
-
-      it 'should be triggered initially with proper thumbnail', ->
-        hub = new athena.lib.View
-        shell = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
-        view = new ShellEditorView model: shell, eventhub: hub
-        spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
-        view.render()
-        expect(spy.arguments[0][0]).toBe shell.thumbnail()
-        expect(spy.arguments[0][0]).toBe 'foo.png'
-
-      it 'should be triggered when thumbnail changes (swapping shells)', ->
-        hub = new athena.lib.View
-        oldShell = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
-        newShell = new acorn.shells.ImageLinkShell.Model thumbnail: 'bar.png'
-        view = new ShellEditorView model: oldShell, eventhub: hub
-        spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
-
-        view.render()
-        expect(spy.triggerCount).toBe 1
-        expect(spy.arguments[0][0]).toBe 'foo.png'
-        view.swapSubShell oldShell, newShell
-        expect(spy.triggerCount).toBe 2
-        expect(spy.arguments[1][0]).toBe 'bar.png'
-
-      it 'should NOT be triggered w/o thumbnail changes (swapping shells)', ->
-        hub = new athena.lib.View
-        oldShell = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
-        newShell = new acorn.shells.ImageLinkShell.Model thumbnail: 'foo.png'
-        view = new ShellEditorView model: oldShell, eventhub: hub
-        spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
-
-        view.render()
-        expect(spy.triggerCount).toBe 1
-        view.swapSubShell oldShell, newShell
-        expect(spy.triggerCount).toBe 1
-
-      it 'should be triggered on adding shell as first (w. change)', ->
-        hub = new athena.lib.View
-        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
-        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'bar.png'
-        view = new ShellEditorView model: shell1, eventhub: hub
-        spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
-
-        view.render()
-        expect(spy.triggerCount).toBe 1
-        expect(spy.arguments[0][0]).toBe 'foo.png'
-        view.addShell shell2, 0
-        expect(spy.triggerCount).toBe 2
-        expect(spy.arguments[1][0]).toBe 'bar.png'
-
-      it 'should NOT be triggered on adding shell as first (wo. change)', ->
-        hub = new athena.lib.View
-        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
-        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'foo.png'
-        view = new ShellEditorView model: shell1, eventhub: hub
-        spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
-
-        view.render()
-        expect(spy.triggerCount).toBe 1
-        view.addShell shell2, 0
-        expect(spy.triggerCount).toBe 1
-
-      it 'should NOT be triggered on adding shells after first w. change', ->
-        hub = new athena.lib.View
-        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
-        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'bar.png'
-        view = new ShellEditorView model: shell1, eventhub: hub
-        spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
-
-        view.render()
-        expect(spy.triggerCount).toBe 1
-        view.addShell shell2
-        expect(spy.triggerCount).toBe 1
-
-      it 'should NOT be triggered on adding shells after first wo. change', ->
-        hub = new athena.lib.View
-        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
-        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'foo.png'
-        view = new ShellEditorView model: shell1, eventhub: hub
-        spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
-
-        view.render()
-        expect(spy.triggerCount).toBe 1
-        view.addShell shell2
-        expect(spy.triggerCount).toBe 1
-
-      it 'should be triggered upon removing first shell w. change', ->
-        hub = new athena.lib.View
-        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
-        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'bar.png'
-        view = new ShellEditorView model: shell1, eventhub: hub
-        spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
-
-        view.render()
-        expect(spy.triggerCount).toBe 1
-        view.addShell shell2
-        expect(spy.triggerCount).toBe 1
-        expect(spy.arguments[0][0]).toBe 'foo.png'
-        view.removeShell shell1
-        expect(spy.triggerCount).toBe 2
-        expect(spy.arguments[1][0]).toBe 'bar.png'
-
-      it 'should NOT be triggered upon removing first shell wo. change', ->
-        hub = new athena.lib.View
-        shell1 = new acorn.shells.LinkShell.Model thumbnail: 'foo.png'
-        shell2 = new acorn.shells.ImageLinkShell.Model thumbnail: 'foo.png'
-        view = new ShellEditorView model: shell1, eventhub: hub
-        spy = new test.EventSpy hub, 'ShellEditor:Thumbnail:Change'
-
-        view.render()
-        expect(spy.triggerCount).toBe 1
-        view.addShell shell2
-        expect(spy.triggerCount).toBe 1
-        view.removeShell shell1
-        expect(spy.triggerCount).toBe 1
+        changes = ShellEditorView::_onRemixerLinkChanged.callCount
+        view.remixerViews[0].trigger 'Remixer:LinkChanged'
+        expect(ShellEditorView::_onRemixerLinkChanged.callCount).toBe changes + 1
 
 
   it 'should look good', ->

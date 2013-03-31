@@ -1,38 +1,13 @@
 goog.provide 'acorn.player.ShellEditorView'
 
-goog.require 'acorn.player.ShellOptionsView'
-goog.require 'acorn.player.RemixerView'
+goog.require 'acorn.shells.Shell'
 goog.require 'acorn.shells.EmptyShell'
+goog.require 'acorn.player.RemixerView'
 
-
-
-# acorn player ShellEditorView:
-#   ------------------------------------------
-#   | > |  Type of Media                 | v |
-#   ------------------------------------------
-#
-#   ------------------------------------------
-#   | > |  http://link.to.media          | v |
-#   ------------------------------------------
-#   |                                        |
-#   |                                        |
-#   |                                        |
-#   |                                        |
-#   |                                        |
-#   |                                        |
-#   |                                        |
-#   |                                        |
-#   ------------------------------------------
-
-
-# Keep remixerView set
-# use that to compute current shells
-# let all events that add or remove shells modify this set
-# figure out whether shell must change based on final state
 
 Shell = acorn.shells.Shell
 EmptyShell = acorn.shells.EmptyShell
-CollectionShell = acorn.shells.CollectionShell
+RemixerView = acorn.player.RemixerView
 
 # View to edit a shell. Renders shells' RemixViews.
 class acorn.player.ShellEditorView extends athena.lib.View
@@ -52,58 +27,56 @@ class acorn.player.ShellEditorView extends athena.lib.View
   initialize: =>
     super
 
+    @_initializeModel()
+    @_initializeRemixerViews()
+
+    @on 'ShellEditor:ShellsUpdated', @_renderUpdates
+
+
+  _initializeModel: =>
     # ensure we have a proper Shell
-    if @model and not @model instanceof Shell.Model
-      TypeError @model, 'Shell.Model'
-
-    # ensure we have an outermost CollectionShell
-    unless @model instanceof CollectionShell.Model
-      model = @model
-      @model = new CollectionShell.Model
-      @model.shells().push model if model
-
-    # add a default shell at the end, ready for a new link
-    unless @_shellIsStub @model.shells().last()
-      @model.shells().push new @defaultShell.Model
-
-    @initializeShellOptionsView()
-
-    @remixerViews = @model.shells().map @remixerForShell
-
-    @on 'ShellEditor:ShellsUpdated', @renderUpdates
+    unless @model instanceof Shell.Model
+      @model = new @defaultShell.Model
 
 
-  # initializes the ShellOptionsView
-  initializeShellOptionsView: =>
+  _initializeRemixerViews: =>
+    @remixerViews = [@_initializeRemixerForShell @model]
 
-    @shellOptionsView?.destroy()
-    @shellOptionsView = new acorn.player.ShellOptionsView
+
+  # initializes a RemixerView for given shell
+  _initializeRemixerForShell: (shell) =>
+    view = new RemixerView
       eventhub: @eventhub
-      model: @model
+      model: shell
 
-    @shellOptionsView.on 'ShellOptions:SwapShell', (shellid) =>
-      module = acorn.shellModuleWithId shellid
-      @swapTopLevelShell new module.Model
+    view.on 'Remixer:SwapShell', @_onRemixerSwapShell
+    view.on 'Remixer:LinkChanged', @_onRemixerLinkChanged
+
+    view
 
 
   render: =>
     super
+
     @$el.empty()
-
     @$el.html @template()
-    @renderOptionsView()
-    _.each @remixerViews, @renderRemixerView
-    @renderUpdates()
+
+    @_renderHeader()
+    @_renderRemixerViews()
+    @_renderFooter()
+
+    @_renderUpdates()
     @
 
 
-  renderOptionsView: =>
-    @$el.prepend @shellOptionsView.render().el
-    @renderSectionHeading @shellOptionsView, 'Collection'
-    @
+  _renderHeader: =>
 
 
-  renderRemixerView: (remixerView, index) =>
+  _renderRemixerViews: =>
+    _.each @remixerViews, @_renderRemixerView
+
+
+  _renderRemixerView: (remixerView, index) =>
     index ?= @model.shells().indexOf(remixerView.model)
 
     remixerView.render()
@@ -115,17 +88,32 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
     @
 
-  renderRemixerViewHeading: (remixerView, index) =>
-    index ?= @model.shells().indexOf(remixerView.model)
 
-    unless @model.shells().length < 3 or @_shellIsStub remixerView.model
-      prefix = "Item #{index + 1}"
+  _renderFooter: =>
 
-    @renderSectionHeading remixerView, (prefix ? '')
+
+  _renderUpdates: =>
+    if @rendering
+      # update remixerView headers and mark any stub remixers
+      _.each @remixerViews, (remixer) =>
+        @_renderRemixerViewHeading remixer
+        if @_shellIsStub remixer.model
+          remixer.$el.addClass 'stub-remixer'
+        else
+          remixer.$el.removeClass 'stub-remixer'
+
+    unless @_lastThumbnail is @model.thumbnail()
+      @_onThumbnailChange()
+
     @
 
 
-  renderSectionHeading: (view, prefix='') =>
+  _renderRemixerViewHeading: (remixerView, index) =>
+    @_renderSectionHeading remixerView
+    @
+
+
+  _renderSectionHeading: (view, prefix) =>
     view.$('.editor-section').remove()
 
     if @_shellIsStub view.model
@@ -138,149 +126,37 @@ class acorn.player.ShellEditorView extends athena.lib.View
     view.$el.prepend $('<h3>').addClass('editor-section').text(text)
 
 
-  renderUpdates: =>
-    # ensure there is a stub shell
-    unless @_shellIsStub @model.shells().last()
-      @addShell new @defaultShell.Model, @model.shells().length
-
-    if @rendering
-      # hide the options view if there is only one shell
-      if @_lastNonDefaultShellIndex() > 0
-        @$('.shell-options-view').removeClass 'hidden'
-      else
-        @$('.shell-options-view').addClass 'hidden'
-
-      # update remixerView headers and mark any stub remixers
-      _.each @remixerViews, (remixer) =>
-        @renderRemixerViewHeading remixer
-        if @_shellIsStub remixer.model
-          remixer.$el.addClass 'stub-remixer'
-        else
-          remixer.$el.removeClass 'stub-remixer'
-
-    # notify of any thumbnail changes
-    unless @lastThumbnail is @model.thumbnail()
-      @lastThumbnail = @model.thumbnail()
-      @trigger 'ShellEditor:Thumbnail:Change', @lastThumbnail
-      @eventhub.trigger 'ShellEditor:Thumbnail:Change', @lastThumbnail
-      @shellOptionsView.model.trigger 'change'
-
-    @
-
-
   # retrieves the finalized shell. @model should not be used directly.
   shell: =>
-    # retrieve shells from views, leaving out any trailing default shells
-    lastIndex = @_lastNonDefaultShellIndex()
-    shells = if lastIndex < 0 then [] else
-      for i in [0..@_lastNonDefaultShellIndex()]
-        @remixerViews[i].model
-
-    shell = @model.clone()
-    shell.shells().reset shells
-
-    # unwrap from collection if there is only one shell
-    if shell.shells().length is 1
-      shell = shell.shells().models[0]
-
-    shell
+    @model.clone()
 
 
+  # whether the model should be considered empty
   isEmpty: =>
-    shellData = @shell().attributes
-    isEmpty = shellData.shellid == 'acorn.CollectionShell' and
-        shellData.shells.length == 0
-
-
-  addShell: (shell, index) =>
-    index ?= @model.shells().length - 1 # -1 = before @defaultShell
-    @model.shells().add shell, at: index
-
-    remixerView = @remixerForShell shell
-    @remixerViews.splice(index, 0, remixerView)
-
-    if @rendering
-      @renderRemixerView remixerView, index
-      @trigger 'ShellEditor:ShellsUpdated'
-
-    @
-
-
-  removeShell: (shell) =>
-    index = @model.shells().indexOf shell
-    @model.shells().remove shell
-
-    [view] = @remixerViews.splice(index, 1)
-    view.destroy()
-    @trigger 'ShellEditor:ShellsUpdated'
-    @
+    @_shellIsStub @model
 
 
   # whether this is the stub shell (last shell and empty)
   _shellIsStub: (shell) =>
-    shell?.constructor is @defaultShell.Model &&
-    shell is @model.shells().last()
+    shell?.constructor is @defaultShell.Model
 
 
-  # the index of the last shell that is not a default shell
-  _lastNonDefaultShellIndex: =>
-    shells = @model.shells()
-    index = shells.length
-    while index--
-      unless shells.at(index)?.constructor is @defaultShell.Model
-        return index
-    -1
+  _onThumbnailChange: =>
+    # notify of any thumbnail changes
+    @_lastThumbnail = @model.thumbnail()
+    @trigger 'ShellEditor:Thumbnail:Change', @_lastThumbnail
+    @eventhub.trigger 'ShellEditor:Thumbnail:Change', @_lastThumbnail
 
 
-  # initializes a RemixerView for given shell
-  remixerForShell: (shell) =>
-    view = new acorn.player.RemixerView
-      eventhub: @eventhub
-      model: shell
+  _onRemixerSwapShell: (remixer, oldShell, newShell) =>
+    @model = newShell
 
-    view.on 'Remixer:Toolbar:Click:Duplicate', (remixer) =>
-      # duplicate shell
-      index = @model.shells().indexOf(remixer.model)
-      @addShell remixer.model.clone(), index + 1
-
-    view.on 'Remixer:Toolbar:Click:Delete', (remixer) =>
-      # delete remixer unless it is the stub
-      unless @_shellIsStub remixer.model
-        @removeShell remixer.model
-
-    view.on 'Remixer:SwapShell', (remixer, oldShell, newShell) =>
-      @swapSubShell oldShell, newShell
-
-    view.on 'Remixer:LinkChanged', (remixer, newlink) =>
-      @trigger 'ShellEditor:ShellsUpdated'
-
-    view
-
-
-  # swaps a subshell with given shell
-  swapSubShell: (oldShell, newShell) =>
-    index = @model.shells().indexOf(oldShell)
-    @model.shells().remove oldShell
-    @model.shells().add newShell, {at: index}
-
-    unless @remixerViews[index].model is newShell
-      @remixerViews[index].destroy()
-      @remixerViews[index] = @remixerForShell newShell
+    unless @remixerViews[0].model is @model
+      @remixerViews[0].destroy()
+      @remixerViews[0] = @_initializeRemixerForShell @model
 
     @trigger 'ShellEditor:ShellsUpdated'
-    @
 
 
-  # swaps the main shell with given shell
-  swapTopLevelShell: (shell) =>
-    unless shell instanceof CollectionShell.Model
-      TypeError shell, 'CollectionShell.Model'
-
-    shell.shells().add @model.shells().models
-    @model = shell
-
-    @initializeShellOptionsView()
-    if @rendering
-      @renderOptionsView()
-      @trigger 'ShellEditor:ShellsUpdated'
-    @
+  _onRemixerLinkChanged: (remixer, newlink) =>
+    @trigger 'ShellEditor:ShellsUpdated'

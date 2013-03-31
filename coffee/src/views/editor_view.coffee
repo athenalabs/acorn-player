@@ -1,5 +1,5 @@
 goog.provide 'acorn.player.EditorView'
-goog.require 'acorn.player.ShellEditorView'
+goog.require 'acorn.player.CollectionShellEditorView'
 
 
 
@@ -38,6 +38,10 @@ class acorn.player.EditorView extends athena.lib.View
   className: @classNameExtend 'editor-view'
 
 
+  defaults: => _.extend super,
+    ShellEditorView: acorn.player.CollectionShellEditorView
+
+
   events: => _.extend super,
     'click #editor-cancel-btn': => @eventhub.trigger 'Editor:Cancel', @
     'click #editor-save-btn': => @save()
@@ -49,7 +53,7 @@ class acorn.player.EditorView extends athena.lib.View
     unless @model instanceof acorn.Model
       TypeError @model, 'acorn.Model'
 
-    @shellEditorView = new acorn.player.ShellEditorView
+    @shellEditorView = new @options.ShellEditorView
       model: acorn.shellWithAcorn @model
       eventhub: @eventhub
 
