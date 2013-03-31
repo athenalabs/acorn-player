@@ -18,7 +18,14 @@ class acorn.player.Player
     @initialize()
 
 
+  defaults: => {}
+
+
   initialize: =>
+    @$el ?= $('<div>').addClass('acorn-player')
+    @el = @$el[0]
+
+    @options = _.defaults @options, @defaults()
 
     @model = @options.model ? @options.acornModel
     # TODO initialize from id or data
@@ -58,9 +65,7 @@ class acorn.player.Player
 
 
   render: =>
-    @$el ?= $('<div>').addClass('acorn-player')
     @$el.append @view.render().el
-    @el = @$el[0]
     @
 
 
