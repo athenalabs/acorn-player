@@ -46,11 +46,6 @@ class acorn.player.Player
       eventhub: @eventhub
       editable: @options.editable
 
-    if @acornModel.isNew()
-      @eventhub.trigger 'show:editor'
-    else
-      @eventhub.trigger 'show:splash'
-
 
   destroy: =>
     @view.destroy()
@@ -65,8 +60,16 @@ class acorn.player.Player
 
 
   render: =>
+    @showView()
     @$el.append @view.render().el
     @
+
+
+  showView: =>
+    if @acornModel.isNew()
+      @eventhub.trigger 'show:editor'
+    else
+      @eventhub.trigger 'show:splash'
 
 
   appendTo: (sel) =>
