@@ -106,11 +106,7 @@ class acorn.player.EditorView extends athena.lib.View
   canBeSaved: =>
     # TODO add more validation?
 
-    shellData = @shellEditorView.shell().attributes
-    isEmpty = shellData.shellid == 'acorn.CollectionShell' and
-        shellData.shells.length == 0
-
-    if @model.isNew() and isEmpty
+    if @model.isNew() and @shellEditorView.isEmpty()
       false
     else
       true

@@ -181,6 +181,12 @@ class acorn.player.ShellEditorView extends athena.lib.View
     shell
 
 
+  isEmpty: =>
+    shellData = @shell().attributes
+    isEmpty = shellData.shellid == 'acorn.CollectionShell' and
+        shellData.shells.length == 0
+
+
   addShell: (shell, index) =>
     index ?= @model.shells().length - 1 # -1 = before @defaultShell
     @model.shells().add shell, at: index
