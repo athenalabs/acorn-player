@@ -150,8 +150,13 @@ class acorn.player.ShellEditorView extends athena.lib.View
       else
         @$('.shell-options-view').addClass 'hidden'
 
-      # update remixView headers
-      _.each @remixerViews, @renderRemixerViewHeading
+      # update remixerView headers and mark any stub remixers
+      _.each @remixerViews, (remixer) =>
+        @renderRemixerViewHeading remixer
+        if @_shellIsStub remixer.model
+          remixer.$el.addClass 'stub-remixer'
+        else
+          remixer.$el.removeClass 'stub-remixer'
 
     # notify of any thumbnail changes
     unless @lastThumbnail is @model.thumbnail()
