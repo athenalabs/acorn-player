@@ -52,7 +52,7 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
 
     @eventhub.on 'show:editor', =>
       unless @editable() then return
-      @content @editorView()
+      @content @editorView arguments...
       @$el.attr 'showing', 'editor'
 
     @eventhub.on 'show:splash', =>
@@ -100,14 +100,18 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     @_splashView
 
 
-  editorView: =>
+  editorView: (opts = {}) =>
     unless @editable()
       return
 
-    @_editorView ?= new acorn.player.EditorView
+    editorOptions =
       eventhub: @eventhub
       model: @model.clone()
-    @_editorView
+
+    if opts.singleShellEditor
+      editorOptions.ShellEditorView = acorn.player.ShellEditorView
+
+    @_editorView ?= new acorn.player.EditorView editorOptions
 
 
   editable: (editable) =>

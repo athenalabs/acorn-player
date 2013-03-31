@@ -102,9 +102,11 @@ describe 'acorn.player.PlayerView', ->
 
       tests?()
 
+
   editorViewTests = ->
     name = 'editorView'
     local = "_#{name}"
+
     it "#{name} should not be constructed if playerView's `editable` property
         is not truthy", ->
       view = new PlayerView model: model
@@ -114,6 +116,20 @@ describe 'acorn.player.PlayerView', ->
       subview = view[name]()
       expect(subview).not.toBeDefined()
       expect(view[local]).not.toBeDefined()
+
+    it "#{name} should pass EditorView player.ShellEditorView if `show:editor`
+        passes the option `singleShellEditor: true`", ->
+      hub = new athena.lib.View
+      view = new PlayerView model: model, eventhub: hub, editable: true
+      view.render()
+      expect(view.content() instanceof acorn.player.EditorView).toBe false
+      expect(view.$el.attr 'showing').not.toBe 'editor'
+      hub.trigger 'show:editor', singleShellEditor: true
+      expect(view.content() instanceof acorn.player.EditorView).toBe true
+      expect(view.$el.attr 'showing').toBe 'editor'
+      expect(view.content().options.ShellEditorView)
+          .toBe acorn.player.ShellEditorView
+
 
   describePlayerSubiew 'editorView', acorn.player.EditorView, editorViewTests
   describePlayerSubiew 'splashView', acorn.player.SplashView
