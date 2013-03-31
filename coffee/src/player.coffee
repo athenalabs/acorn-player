@@ -18,7 +18,8 @@ class acorn.player.Player
     @initialize()
 
 
-  defaults: => {}
+  defaults: =>
+    show: 'splash'
 
 
   initialize: =>
@@ -65,9 +66,23 @@ class acorn.player.Player
     @
 
 
+  # trigger event to show correct view based on options and model
   showView: =>
-    if @acornModel.isNew()
-      @eventhub.trigger 'show:editor'
+    if @acornModel.isNew() or @options.show.slice(0,6) == 'editor'
+      # editor-single shows a simplified, single-shell editor
+      if @options.show.slice(7) == 'single'
+        options = singleShellEditor: true
+      @eventhub.trigger 'show:editor', options
+
+    else if @options.show.slice(0,7) == 'content'
+      # content-<n> shows content after showing splash page for n milliseconds
+      delay = parseInt @options.show.slice 8
+      if delay > 0
+        @eventhub.trigger 'show:splash'
+        setTimeout (=> @eventhub.trigger 'show:content'), delay
+      else
+        @eventhub.trigger 'show:content'
+
     else
       @eventhub.trigger 'show:splash'
 
