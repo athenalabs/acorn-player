@@ -48,6 +48,14 @@ class acorn.player.CollectionShellEditorView extends ShellEditorView
     view
 
 
+  _remixerToolbarButtons: =>
+    [
+      {id:'Clear', icon: 'icon-undo', tooltip: 'Clear'}
+      {id:'Duplicate', icon: 'icon-copy', tooltip: 'Duplicate'}
+      {id:'Delete', icon: 'icon-remove', tooltip: 'Delete'}
+    ]
+
+
   _initializeShellOptionsView: =>
 
     @shellOptionsView?.destroy()

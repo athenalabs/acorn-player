@@ -140,8 +140,10 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @dropdownView.setElement(@$('.dropdown-view')).render()
 
-    if @options.toolbarButtons.length > 0
+    buttonCount = @options.toolbarButtons.length
+    if buttonCount > 0
       @toolbarView.setElement(@$('.toolbar-view')).render()
+    @$('.remixer-header').attr 'data-button-count', buttonCount
 
     @renderInputField()
     @renderSummarySubview()

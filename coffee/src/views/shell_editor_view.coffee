@@ -48,11 +48,18 @@ class acorn.player.ShellEditorView extends athena.lib.View
     view = new RemixerView
       eventhub: @eventhub
       model: shell
+      toolbarButtons: @_remixerToolbarButtons()
 
     view.on 'Remixer:SwapShell', @_onRemixerSwapShell
     view.on 'Remixer:LinkChanged', @_onRemixerLinkChanged
 
     view
+
+
+  _remixerToolbarButtons: =>
+    [
+      {id:'Clear', icon: 'icon-undo', tooltip: 'Clear'}
+    ]
 
 
   render: =>

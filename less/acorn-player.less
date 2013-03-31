@@ -614,16 +614,34 @@ input {
     }
 
     #link {
-      min-width: 368px;
       float: left;
     }
 
     span#link {
       margin: 0px;
-      min-width: 356px;
       padding: 4px 12px;
       cursor: auto;
       text-align: left;
+    }
+
+    &[data-button-count='1'] {
+      #link {
+        min-width: 440px;
+      }
+
+      span#link {
+        min-width: 428px;
+      }
+    }
+
+    &[data-button-count='3'] {
+      #link {
+        min-width: 440px - (36 * 2);
+      }
+
+      span#link {
+        min-width: 428px - (36 * 2);
+      }
     }
 
     .dropdown-view > .dropdown-toggle {
