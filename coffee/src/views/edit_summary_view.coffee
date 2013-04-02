@@ -44,6 +44,7 @@ class acorn.player.EditSummaryView extends acorn.player.SummaryView
       eventhub: @eventhub
       content: @editImageView
       trigger: 'manual'
+      placementOffset: top: 70
 
     @listenTo @popoverView, 'PopoverView:PopoverDidShow', =>
       @editImageView.$('#link').select()
