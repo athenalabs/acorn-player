@@ -34,7 +34,7 @@ class acorn.player.RemixerView extends athena.lib.View
 
 
   events: => _.extend super,
-    'blur input#link': => @onLinkChange()
+    'blur input#link': @onBlurInput
     'keyup input#link': @onKeyupInput
 
 
@@ -138,6 +138,10 @@ class acorn.player.RemixerView extends athena.lib.View
     @$el.html @template()
     @alert() # hide
 
+    # keep a pointer to this remixer's link field container in order to
+    # disambiguate between that of nested remixers
+    @$linkContainer = @$el.children('.remixer-header').children '.input-append'
+
     @dropdownView.setElement(@$('.dropdown-view')).render()
 
     buttonCount = @options.toolbarButtons.length
@@ -154,18 +158,18 @@ class acorn.player.RemixerView extends athena.lib.View
 
   renderInputField: =>
     shell = @model.module
-    inputDiv = @$ '.remixer-header > .input-append'
-    @$('#link').remove()
+    @$linkContainer.children('#link').remove()
 
     if shell.RemixView.activeLinkInput
-      inputDiv.removeClass 'input-prepend'
-      inputDiv.prepend '<input id="link" type="text" placeholder="enter link"/>'
-      @$('input#link').val @model.link?()
+      @$linkContainer.removeClass 'input-prepend'
+      @$linkContainer.prepend '<input id="link" type="text" placeholder="enter link"/>'
+      @$linkContainer.children('input#link').val @model.link?()
 
     else
-      inputDiv.addClass 'input-prepend'
-      inputDiv.prepend '<span id="link" class="add-on uneditable-input"></span>'
-      @$('span#link').text "#{shell.title} - #{shell.description}"
+      @$linkContainer.addClass 'input-prepend'
+      @$linkContainer.prepend '<span id="link" class="add-on uneditable-input"></span>'
+      linkSpanText = "#{shell.title} - #{shell.description}"
+      @$linkContainer.children('span#link').text linkSpanText
 
 
   renderSummarySubview: =>
@@ -233,17 +237,29 @@ class acorn.player.RemixerView extends athena.lib.View
 
 
   onKeyupInput: (event) =>
+    # discriminate nested input fields
+    unless event.target == @$linkContainer.children('input#link')[0]
+      return
+
     switch event.keyCode
       when athena.lib.util.keys.ENTER
         @onLinkChange()
       when athena.lib.util.keys.ESCAPE
-        @$('input#link').val @model.link?() ? ''
+        @$linkContainer.children('input#link').val @model.link?() ? ''
         @onLinkChange()
+
+
+  onBlurInput: (event) =>
+    # discriminate nested input fields
+    unless event.target == @$linkContainer.children('input#link')[0]
+      return
+
+    @onLinkChange()
 
 
   onLinkChange: =>
     @alert() # hide
-    link = @$('input#link').val().trim()
+    link = @$linkContainer.children('input#link').val().trim()
     link = acorn.util.urlFix link
 
     # idempotent
@@ -253,7 +269,7 @@ class acorn.player.RemixerView extends athena.lib.View
     if link is ''
       # cancel link change if no empty links
       unless @options.allowEmptyLink
-        @$('input#link').val @model.link?()
+        @$linkContainer.children('input#link').val @model.link?()
         return
 
       @model.link link
@@ -275,7 +291,7 @@ class acorn.player.RemixerView extends athena.lib.View
         @renderRemixSubview()
 
     # set link to whatever our model is
-    @$('input#link').val @model.link?()
+    @$linkContainer.children('input#link').val @model.link?()
 
     # advertise link change
     @trigger 'Remixer:LinkChanged', @, @model.link?()
