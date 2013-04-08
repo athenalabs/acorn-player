@@ -34,7 +34,7 @@ class ImageLinkShell.Model extends LinkShell.Model
 class ImageLinkShell.MediaView extends LinkShell.MediaView
 
 
-  className: @classNameExtend 'video-link-shell'
+  className: @classNameExtend 'image-link-shell'
 
 
   render: =>
@@ -49,7 +49,7 @@ class ImageLinkShell.MediaView extends LinkShell.MediaView
 class ImageLinkShell.RemixView extends LinkShell.RemixView
 
 
-  className: @classNameExtend 'video-link-shell'
+  className: @classNameExtend 'image-link-shell'
 
 
   render: =>
