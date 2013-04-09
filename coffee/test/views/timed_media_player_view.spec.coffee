@@ -63,16 +63,31 @@ describe 'acorn.player.TimedMediaPlayerView', ->
     it 'should call onPlaybackTick every 100ms once started', ->
       view = new TimedMediaPlayerView options()
       view.render()
+      jasmine.Clock.useMock()
 
       spyOn view, 'onPlaybackTick'
-      check = (count) -> (-> view.onPlaybackTick.callCount is count)
       view.timer.startTick()
 
-      waitsFor check(1), 'called onPlaybackTick', 101
-      waitsFor check(2), 'called onPlaybackTick', 101
-      waitsFor check(3), 'called onPlaybackTick', 101
-      waitsFor check(4), 'called onPlaybackTick', 101
-      runs -> expect(view.onPlaybackTick.callCount).toBe 4
+      jasmine.Clock.tick(99)
+      expect(view.onPlaybackTick.callCount).toBe 0
+      jasmine.Clock.tick(2)
+      expect(view.onPlaybackTick.callCount).toBe 1
+      jasmine.Clock.tick(98)
+      expect(view.onPlaybackTick.callCount).toBe 1
+      jasmine.Clock.tick(2)
+      expect(view.onPlaybackTick.callCount).toBe 2
+      jasmine.Clock.tick(98)
+      expect(view.onPlaybackTick.callCount).toBe 2
+      jasmine.Clock.tick(2)
+      expect(view.onPlaybackTick.callCount).toBe 3
+      jasmine.Clock.tick(98)
+      expect(view.onPlaybackTick.callCount).toBe 3
+      jasmine.Clock.tick(2)
+      expect(view.onPlaybackTick.callCount).toBe 4
+      jasmine.Clock.tick(98)
+      expect(view.onPlaybackTick.callCount).toBe 4
+      jasmine.Clock.tick(2)
+      expect(view.onPlaybackTick.callCount).toBe 5
 
 
   describe 'TimedMediaPlayerView::loops', ->
