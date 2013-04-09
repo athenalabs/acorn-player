@@ -12,7 +12,7 @@ PDFLinkShell = acorn.shells.PDFLinkShell =
   id: 'acorn.PDFLinkShell'
   title: 'PDF'
   description: 'an embedded PDF document'
-  icon: 'icon-pdf'
+  icon: 'icon-file'
   validLinkPatterns: [ acorn.util.urlRegEx '.*\.pdf' ]
 
 
