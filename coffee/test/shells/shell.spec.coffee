@@ -41,10 +41,10 @@ describe 'acorn.shells.Shell', ->
 
 
       describeProperty = athena.lib.util.test.describeProperty
-      describeProperty Shell.Model, 'shellid', {}, setter: false
+      describeProperty Shell.Model, 'shellid', setter: false
       describeProperty Shell.Model, 'title'
       describeProperty Shell.Model, 'description'
-      describeProperty Shell.Model, 'sources', {}, default: []
+      describeProperty Shell.Model, 'sources', default: []
       describeProperty Shell.Model, 'thumbnail'
 
 
