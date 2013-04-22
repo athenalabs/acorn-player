@@ -632,6 +632,13 @@ input {
       span#link {
         min-width: 428px;
       }
+
+      .toolbar-view {
+        // enforce width for robustness (protect against changes in fontawesome)
+        button {
+          width: 37px;
+        }
+      }
     }
 
     &[data-button-count='3'] {
