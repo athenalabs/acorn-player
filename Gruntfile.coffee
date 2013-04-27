@@ -21,7 +21,7 @@ module.exports = (grunt) ->
 
     # javascript sources
     js_dir: 'build/js'
-    js_src: ['build/js/src/**/*.js', 'lib/range_slider.js']
+    js_src: 'build/js/src/**/*.js'
     js_specs: 'build/js/test/**/*.spec.js'
 
     # css sources
@@ -38,15 +38,14 @@ module.exports = (grunt) ->
     # libraries to load in the frontend
     frontend_libs: [
       'lib/closure/library/closure/goog/base.js'     # for dependencies
-      'node_modules/jquery-browser/lib/jquery.js'    # for dom manipulation
+      'lib/jquery/jquery.min.js'                     # for dom manipulation
       'node_modules/underscore/underscore.js'        # for utilities
       'node_modules/backbone/backbone.js'            # for mvc apps
-      'node_modules/grunt-jasmine-spec-server/lib/bootstrap/js/bootstrap.min.js'
+      'node_modules/marked/lib/marked.js'            # for docs
+      'lib/bootstrap/bootstrap.noicons.min.js'       # for widgets
       'lib/athena.lib.min.js'                        # for athena utils
       'lib/jquery/jquery.object-fit.js'              # for object-fit
       'lib/jquery/jquery.fullscreen.js'
-      'lib/jquery/jquery-ui.custom.min.js'           # for rangeslider widget
-      'lib/range_slider.js'                          # jquery-ui widget
     ]
 
 

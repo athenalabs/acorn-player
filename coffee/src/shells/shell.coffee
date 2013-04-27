@@ -1,6 +1,8 @@
 goog.provide 'acorn.shells.Shell'
 
+goog.require 'acorn.MediaInterface'
 goog.require 'acorn.shells.Registry'
+goog.require 'acorn.player.SummaryView'
 goog.require 'acorn.Model'
 goog.require 'acorn.util'
 goog.require 'acorn.errors'
@@ -42,18 +44,33 @@ class Shell.Model extends athena.lib.Model
 
   # property managers
   shellid: @property('shellid', setter: false)
-  title: @property('title', default: '')
-  description: @property('description', default: '')
+  title: @property 'title'
+  description: @property 'description'
+  thumbnail: @property 'thumbnail'
   sources: @property('sources', default: [])
-  timeTotal: @property('timeTotal', {default: Infinity, setter: false})
+  timeTotal: @property('timeTotal', default: Infinity)
 
-  thumbnail: (thumbnail) =>
-    if thumbnail?
-      @set 'thumbnail', thumbnail
-    @get('thumbnail') ? @defaultThumbnail()
 
-  defaultThumbnail: @property('defaultThumbnail',
-    default: acorn.config.img.acorn)
+  defaultAttributes: =>
+    title: ''
+    description: ''
+    thumbnail: acorn.config.img.acorn
+
+
+  _updateAttributesWithDefaults: =>
+    # retrieve previous and current default thumbnails
+    lastDefaults = @_lastDefaults ? {}
+    currentDefaults = @_lastDefaults = @defaultAttributes()
+
+    # update default values where appropriate
+    for attr, currentDefault of currentDefaults
+      modelVal = @[attr]()
+
+      # update a model attribute if its value is the old default, is undefined,
+      # or is empty
+      if modelVal == lastDefaults[attr] or not modelVal? or modelVal == ''
+        @[attr] currentDefault
+
 
   toString: =>
     "#{@shellid()} #{@title()}"
@@ -86,8 +103,16 @@ acorn.shellWithData = Shell.Model.withData
 
 class Shell.MediaView extends athena.lib.View
 
+  # mixin acorn.MediaInterface
+  _.extend @prototype, acorn.MediaInterface.prototype
+
 
   className: @classNameExtend 'shell-media-view'
+
+
+  defaults: => _.extend super,
+    # whether this MediaView is ready to play upon rendering
+    readyOnRender: true
 
 
   initialize: =>
@@ -95,35 +120,33 @@ class Shell.MediaView extends athena.lib.View
 
     unless @options.model
       acorn.errors.MissingParameterError 'Shell.MediaView', 'model'
+    @initializeMedia()
 
-    if @readyOnInitialize
-      @ready = true
+    @summaryView = new acorn.player.SummaryView
+      eventhub: @eventhub
+      model: @options.model
 
-    if @options.playOnReady
-      @listenTo @, 'MediaView:Ready', @play
+    @on 'ProgressBar:DidProgress', @_onProgressBarDidProgress
+
+
+  initializeMedia: =>
+    @initializeMediaEvents @options
+    @setMediaState 'init'
 
 
   controls: []
 
 
-  # -- media interface --
-  # To be overriden and implemented by inheriting classes
+  render: =>
+    super
 
-  # Transition between play and pause states.
-  play: =>
-  pause: =>
+    if @options.readyOnRender
+      @setMediaState 'ready'
 
+    # update progress bar after render finishes
+    setTimeout @_updateProgressBar, 0
 
-  # Returns true if the media view is in 'play' state, false otherwise
-  isPlaying: => false
-
-
-  # Seek to the provided playback offset.
-  seek: (offset) =>
-
-
-  # Returns the current seek offset.
-  seekOffset: => 0
+    @
 
 
   # Returns the view's total duration in seconds
@@ -131,57 +154,38 @@ class Shell.MediaView extends athena.lib.View
     @model.timeTotal()
 
 
-  # Sets the media view's volume.
-  volume: => 0
-  setVolume: (volume) =>
+  # Returns the current state that the progress bar should be in
+  progressBarState: =>
+    if _.isFinite(@duration())
+      showing: true
+      progress: @percentProgress()
+    else
+      showing: false
+      progress: 0
 
 
-  # Dimensions
-  # The functions below expect and return dimensions in the same
-  # format used to specify dimensions in CSS3. (e.g. 100%, 100px, etc.)
-  width: => '100%'
-  height: => '100%'
-  setWidth: (width) =>
-  setHeight: (height) =>
+  percentProgress: =>
+    util.toPercent @seekOffset(),
+      low: 0
+      high: @duration()
+      bound: true
 
 
-  # Object Fit
-  # * contain: if you have set an explicit height and width on a replaced
-  #            element, object-fit:contain will cause the content to be resized
-  #            so that it is fully displayed with its intrinsic aspec ratio
-  #            preserved, but still fits inside the dimensions set for the
-  #            element.
-  #
-  # * fill:    causes the element's content to expand to completely fill the
-  #            dimensions set for it, even if this does change its intrinsic
-  #            aspect ratio.
-  #
-  # * cover:   preserves the content's intrinsic aspect ratio but alters its
-  #            width and height to completely cover the element. The smaller
-  #            of the two is made to fit the elemnt exactly, and the larger of
-  #            the two overflows the element
-  #
-  # * none:    the content's intrinsic dimensions are used.
-  objectFit: => 'contain'
-  setObjectFit: (objectFit) =>
+  progressFromPercent: (percentProgress) =>
+    progress = util.fromPercent percentProgress,
+      low: 0
+      high: @duration()
+      bound: true
 
 
-  # Whether this mediaView is ready
-  ready: false
-
-  # Whether this mediaView is fully loaded after initialization
-  readyOnInitialize: true
+  _updateProgressBar: =>
+    state = @progressBarState()
+    @trigger 'Shell:UpdateProgressBar', state.showing, state.progress
 
 
-  render: =>
-    super
-    @$el.width @width()
-    @$el.height @height()
+  # override as desired
+  _onProgressBarDidProgress: (percentProgress) =>
 
-    # if ready when call stack clears, announce readiness
-    setTimeout (=> @trigger 'MediaView:Ready' if @ready), 0
-
-    @
 
 
 # Shell.RemixView -- uniform view to edit shell data.
@@ -199,6 +203,21 @@ class Shell.RemixView extends athena.lib.View
     unless @options.model
       acorn.errors.MissingParameterError 'Shell.RemixView', 'model'
 
+    # set default thumbnail if thumbnail is undefined
+    @model._updateAttributesWithDefaults()
+
+
+  # override with true to tell remixerView to enable the link input field
+  @activeLinkInput: false
+
+
+
+Shell.derives = (OtherShell) ->
+  athena.lib.util.derives @, OtherShell
+
+
+Shell.isOrDerives = (OtherShell) ->
+  athena.lib.util.isOrDerives @, OtherShell
 
 
 acorn.registerShellModule Shell

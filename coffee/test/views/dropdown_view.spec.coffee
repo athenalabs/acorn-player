@@ -26,10 +26,15 @@ describe 'acorn.player.DropdownView', ->
     view = new DropdownView(items: items, selected: 'c')
     expect(view.selected()).toBe 'c'
 
-  it 'should throw error if selecting a nonexistent item', ->
+  it 'should not throw error if selecting a nonexistent item', ->
     view = new DropdownView(items: 'abcdefg'.split '')
     expect(-> view.selected('c')).not.toThrow()
-    expect(-> view.selected('z')).toThrow()
+    expect(-> view.selected('z')).not.toThrow()
+
+  it 'should create item if selecting a nonexistent item', ->
+    view = new DropdownView(items: 'abcdefg'.split '')
+    expect(view.selected('z')).toEqual 'z'
+    expect(view.itemWithId('z')).toEqual {id:'z', text:'z'}
 
   it 'should change selected on setting selected.', ->
     view = new DropdownView(items: 'abcdefg'.split '')

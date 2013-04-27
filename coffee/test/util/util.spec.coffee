@@ -27,6 +27,213 @@ describe 'acorn.util.urlFix', ->
 
 
 
+describe 'acorn.util.elementInDom', ->
+  elementInDom = acorn.util.elementInDom
+
+  it 'should exist', ->
+    expect(elementInDom).toBeDefined()
+    expect(typeof elementInDom).toBe 'function'
+
+  it 'should return false when called with one element not in the DOM', ->
+    div = $ '<div>'
+    expect(elementInDom div).toBe false
+
+  it 'should return true when called with one element in the DOM', ->
+    div = $ '<div>'
+    $('body').append div
+    expect(elementInDom div).toBe true
+    div.remove()
+
+  it 'should return false when called with multiple elements not in the DOM', ->
+    container = $ '<div>'
+    for i in [0...5]
+      container.append $ '<div>'
+
+    divs = container.children()
+    expect(elementInDom divs).toBe false
+
+  it 'should return true when called with multiple elements all in the DOM', ->
+    container = $ '<div>'
+    for i in [0...5]
+      container.append $ '<div>'
+
+    divs = container.children()
+    $('body').append container
+    expect(elementInDom divs).toBe true
+    container.remove()
+
+
+
+describe 'acorn.util.toPercent', ->
+  toPercent = acorn.util.toPercent
+
+  it 'should exist', ->
+    expect(toPercent).toBeDefined()
+    expect(typeof toPercent).toBe('function')
+
+  it 'should error out if not passed a high value', ->
+    n = 30
+    options = {}
+    expect(-> toPercent n, options).toThrow()
+
+  it 'should not error out if passed a high value', ->
+    n = 30
+    options =
+      high: 60
+
+    expect(-> toPercent n, options).not.toThrow()
+
+  it 'should convert a value to a percent between high and low values', ->
+    n = 30
+    options =
+      high: 60
+      low: 15
+
+    expect(toPercent n, options).toBe 1 / 3 * 100
+
+  it 'should use 0 as the low value by default', ->
+    n = 30
+    options =
+      high: 60
+
+    expect(toPercent n, options).toBe 1 / 2 * 100
+
+  it 'should permit percents higher than 100% by default', ->
+    n = 30
+    options =
+      high: 15
+      low: 10
+
+    expect(toPercent n, options).toBe 4 * 100
+
+  it 'should permit percents lower than 0% by default', ->
+    n = 0
+    options =
+      high: 15
+      low: 10
+
+    expect(toPercent n, options).toBe -2 * 100
+
+  it 'should bound percents higher than 100% when passed bound: true', ->
+    n = 30
+    options =
+      high: 15
+      low: 10
+      bound: true
+
+    expect(toPercent n, options).toBe 1 * 100
+
+  it 'should bound percents lower than 0% when passed bound: true', ->
+    n = 0
+    options =
+      high: 15
+      low: 10
+      bound: true
+
+    expect(toPercent n, options).toBe 0 * 100
+
+  it 'should round return value after the decimal when passed decimalDigits', ->
+    n = 30
+    options = (n) ->
+      high: 60
+      low: 15
+      decimalDigits: n
+
+    expect(toPercent n, options(2)).toBe 33.33
+    expect(toPercent n, options(0)).toBe 33
+    expect(toPercent n, options(5)).toBe 33.33333
+
+
+
+
+describe 'acorn.util.fromPercent', ->
+  fromPercent = acorn.util.fromPercent
+
+  it 'should exist', ->
+    expect(fromPercent).toBeDefined()
+    expect(typeof fromPercent).toBe('function')
+
+  it 'should error out if not passed a high value', ->
+    n = 30
+    options = {}
+    expect(-> fromPercent n, options).toThrow()
+
+  it 'should not error out if passed a high value', ->
+    n = 30
+    options =
+      high: 60
+
+    expect(-> fromPercent n, options).not.toThrow()
+
+  it 'should convert a percent to a value between high and low values', ->
+    n = 1 / 3 * 100
+    options =
+      high: 60
+      low: 15
+
+    value = fromPercent n, options
+    expect(Number value.toFixed(8)).toBe 30
+
+  it 'should use 0 as the low value by default', ->
+    n = 1 / 2 * 100
+    options =
+      high: 60
+
+    value = fromPercent n, options
+    expect(Number value.toFixed(8)).toBe 30
+
+  it 'should permit percents higher than 100% by default', ->
+    n = 4 * 100
+    options =
+      high: 15
+      low: 10
+
+    value = fromPercent n, options
+    expect(Number value.toFixed(8)).toBe 30
+
+  it 'should permit percents lower than 0% by default', ->
+    n = -2 * 100
+    options =
+      high: 15
+      low: 10
+
+    value = fromPercent n, options
+    expect(Number value.toFixed(8)).toBe 0
+
+  it 'should bound percents higher than 100% when passed bound: true', ->
+    n = 4 * 100
+    options =
+      high: 15
+      low: 10
+      bound: true
+
+    value = fromPercent n, options
+    expect(Number value.toFixed(8)).toBe 15
+
+  it 'should bound percents lower than 0% when passed bound: true', ->
+    n = -2 * 100
+    options =
+      high: 15
+      low: 10
+      bound: true
+
+    value = fromPercent n, options
+    expect(Number value.toFixed(8)).toBe 10
+
+  it 'should round return value after the decimal when passed decimalDigits', ->
+    n = 1 / 7 * 100
+    options = (n) ->
+      high: 60
+      low: 15
+      decimalDigits: n
+
+    # 15 + 45 / 7 = 21.42857142857143
+    expect(fromPercent n, options 2).toBe 21.43
+    expect(fromPercent n, options 0).toBe 21
+    expect(fromPercent n, options 5).toBe 21.42857
+
+
+
 describe 'acorn.util.Time', ->
   Time = acorn.util.Time
   it 'should exist', ->

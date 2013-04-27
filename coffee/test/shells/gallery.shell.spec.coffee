@@ -43,39 +43,53 @@ describe 'acorn.shells.GalleryShell', ->
         tile.trigger 'GridTile:Click', tile
         expect(view.showView).toHaveBeenCalled()
 
-      it 'should call hideView on `controlsView.GridControl:Click`', ->
+      it 'should call showGrid on `controlsView.GridControl:Click`', ->
         view = new GalleryShell.MediaView model: model
         view.render()
-        spyOn view, 'hideView'
+        spyOn view, 'showGrid'
         view.controlsView.trigger 'GridControl:Click'
-        expect(view.hideView).toHaveBeenCalled()
+        expect(view.showGrid).toHaveBeenCalled()
 
-      it 'should hide controlsView on hideView', ->
+      it 'should hide controlsView on showGrid', ->
         view = new GalleryShell.MediaView model: model
         view.render()
         spy = spyOn view.controlsView.$el, 'hide'
-        view.hideView()
+        view.showGrid()
         expect(spy).toHaveBeenCalled()
 
-      it 'should show gridView on hideView', ->
+      it 'should show gridView on showGrid', ->
         view = new GalleryShell.MediaView model: model
         view.render()
         spy = spyOn view.gridView.$el, 'show'
-        view.hideView()
+        view.showGrid()
         expect(spy).toHaveBeenCalled()
 
-      it 'should show controlsView on showView', ->
+      it 'should call hideView on showGrid', ->
+        view = new GalleryShell.MediaView model: model
+        view.render()
+        spy = spyOn view, 'hideView'
+        view.showGrid()
+        expect(spy).toHaveBeenCalled()
+
+      it 'should call hideGrid on showView', ->
+        view = new GalleryShell.MediaView model: model
+        view.render()
+        spy = spyOn view, 'hideGrid'
+        view.showView()
+        expect(spy).toHaveBeenCalled()
+
+      it 'should show controlsView on hideGrid', ->
         view = new GalleryShell.MediaView model: model
         view.render()
         spy = spyOn view.controlsView.$el, 'show'
-        view.showView()
+        view.hideGrid()
         expect(spy).toHaveBeenCalled()
 
-      it 'should hide gridView on showView', ->
+      it 'should hide gridView on hideGrid', ->
         view = new GalleryShell.MediaView model: model
         view.render()
         spy = spyOn view.gridView.$el, 'hide'
-        view.showView()
+        view.hideGrid()
         expect(spy).toHaveBeenCalled()
 
 

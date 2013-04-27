@@ -4,22 +4,19 @@ if typeof acorn is 'undefined'
 goog.provide 'acorn.config'
 
 _.extend acorn.config,
-  domain: 'acorn.athena.ai'
   version: '0.0.0'
+  url:
+    base: 'https://acorn.athena.ai'
   api:
     version: '0.0.2'
 
 
-acorn.config.url = {}
+acorn.config.setUrlBase = (base) ->
+  acorn.config.url.base = base
+  acorn.config.url.img = "#{base}/img"
+  acorn.config.url.api = "#{base}/api/v#{acorn.config.api.version}"
 
-acorn.config.setDomain = (domain) ->
-  acorn.config.domain = domain.replace(/https?:\/\//, '')
-  acorn.config.url.base = "//#{acorn.config.domain}"
-  acorn.config.url.img = "#{acorn.config.url.base}/img"
-  acorn.config.url.api =
-      "#{acorn.config.url.base}/api/v#{acorn.config.api.version}"
-
-acorn.config.setDomain(acorn.config.domain)
+acorn.config.setUrlBase acorn.config.url.base
 
 
 acorn.config.img = {}
@@ -30,7 +27,6 @@ acorn.config.img.acornIcon = "#{acorn.config.url.img}/acorn.icon.png"
 acorn.config.css = [
   '/build/css/acorn-player.css',
   '/lib/fontawesome/css/font-awesome.css',
-  '/lib/jquery/jquery-ui.custom.min.css',
 ]
 
 

@@ -1,7 +1,5 @@
 goog.provide 'acorn.player.EditorView'
-
-goog.require 'acorn.player.AcornOptionsView'
-goog.require 'acorn.player.ShellEditorView'
+goog.require 'acorn.player.CollectionShellEditorView'
 
 
 
@@ -40,6 +38,10 @@ class acorn.player.EditorView extends athena.lib.View
   className: @classNameExtend 'editor-view'
 
 
+  defaults: => _.extend super,
+    ShellEditorView: acorn.player.CollectionShellEditorView
+
+
   events: => _.extend super,
     'click #editor-cancel-btn': => @eventhub.trigger 'Editor:Cancel', @
     'click #editor-save-btn': => @save()
@@ -51,11 +53,7 @@ class acorn.player.EditorView extends athena.lib.View
     unless @model instanceof acorn.Model
       TypeError @model, 'acorn.Model'
 
-    @acornOptionsView = new acorn.player.AcornOptionsView
-      model: @model
-      eventhub: @eventhub
-
-    @shellEditorView = new acorn.player.ShellEditorView
+    @shellEditorView = new @options.ShellEditorView
       model: acorn.shellWithAcorn @model
       eventhub: @eventhub
 
@@ -68,20 +66,28 @@ class acorn.player.EditorView extends athena.lib.View
       buttons: btns
       eventhub: @eventhub
 
+    @listenTo @shellEditorView, 'ShellEditor:ShellsUpdated', @_updateSaveButton
+
 
   render: =>
     super
     @$el.empty()
 
-    @$el.append @acornOptionsView.render().el
+    text = 'new media'
+    text = 'editing ' + @model.acornid() unless @model.isNew()
+    @$el.append $('<h2>').addClass('editor-section').text(text)
+
     @$el.append @shellEditorView.render().el
     @$el.append @toolbarView.render().el
+
+    @_updateSaveButton()
 
     @
 
 
   save: =>
-    # TODO add validation first
+    unless @canBeSaved()
+      return
 
     # update acornModel with edited shellModel data
     @model.shellData @shellEditorView.shell().attributes
@@ -99,3 +105,19 @@ class acorn.player.EditorView extends athena.lib.View
         @$('#editor-save-btn').removeAttr 'disabled'
 
     @
+
+
+  canBeSaved: =>
+    # TODO add more validation?
+
+    if @model.isNew() and @shellEditorView.isEmpty()
+      false
+    else
+      true
+
+
+  _updateSaveButton: =>
+    if @canBeSaved()
+      @$('#editor-save-btn').removeAttr 'disabled'
+    else
+      @$('#editor-save-btn').attr 'disabled', 'disabled'

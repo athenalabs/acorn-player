@@ -11,8 +11,8 @@ VideoLinkShell = acorn.shells.VideoLinkShell
 VimeoShell = acorn.shells.VimeoShell =
 
   id: 'acorn.VimeoShell'
-  title: 'Vimeo Link'
-  description: 'A shell for Vimeo videos.'
+  title: 'Vimeo'
+  description: 'a Vimeo video'
   icon: 'icon-play'
   validLinkPatterns: [
     acorn.util.urlRegEx('(www\.)?(player\.)?vimeo\.com\/(video\/)?([0-9]+).*')
@@ -22,31 +22,25 @@ VimeoShell = acorn.shells.VimeoShell =
 class VimeoShell.Model extends VideoLinkShell.Model
 
 
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      title: @_fetchedDefaults?.title or superDefaults.title
+      thumbnail: @_fetchedDefaults?.thumbnail or superDefaults.thumbnail
+
+
+  _defaultDescription: =>
+    if _.isFinite(@timeStart()) and _.isFinite @timeEnd()
+      start = acorn.util.Time.secondsToTimestring @timeStart()
+      end = acorn.util.Time.secondsToTimestring @timeEnd()
+      clipping = " from #{start} to #{end}"
+
+    "Vimeo video \"#{@_fetchedDefaults?.title ? @link()}\"#{clipping ? ''}."
+
+
   metaDataUrl: =>
-    "http://vimeo.com/api/v2/video/#{@vimeoId()}.json?callback=?"
-
-
-  description: =>
-    start = acorn.util.Time.secondsToTimestring @timeStart()
-    end = acorn.util.Time.secondsToTimestring @timeEnd()
-    "Vimeo video #{@title()} from #{start} to #{end}."
-
-
-  timeTotal: =>
-    currTotal = super
-    cache = @metaData()
-
-    if cache.synced()
-      timeTotal = cache.data()[0].duration
-      @set('timeTotal', timeTotal) unless currTotal == timeTotal
-      return timeTotal
-
-    currTotal ? Infinity
-
-
-  title: =>
-    cache = @metaData()
-    if cache.synced() then cache.data()[0].title else @get('link')
+    "https://vimeo.com/api/v2/video/#{@vimeoId()}.json?callback=?"
 
 
   # returns the vimeo video id of this link.
@@ -60,13 +54,19 @@ class VimeoShell.Model extends VideoLinkShell.Model
     pattern.exec(link)[5]
 
 
+  # id for the player element. id must be unique in the entire page to allow
+  # the YouTube API to differentiate between multiple players.
+  playerId: =>
+    "vimeo-player-#{@cid}"
+
+
   embedLink: =>
     # see http://developer.vimeo.com/player/embedding
-    "http://player.vimeo.com/video/#{@vimeoId()}?" +
+    "https://player.vimeo.com/video/#{@vimeoId()}?" +
       '&byline=0' +
       '&portrait=0' +
       '&api=1' +
-      '&player_id=vimeo-player' +
+      '&player_id=' + @playerId() +
       '&title=0' +
       '&byline=1' +
       '&portrait=0' +
@@ -87,6 +87,30 @@ class VimeoShell.RemixView extends VideoLinkShell.RemixView
   className: @classNameExtend 'vimeo-shell'
 
 
+  initialize: =>
+    super
+    @metaData().sync success: @onMetaDataSync
+
+
+  onMetaDataSync: (data) =>
+    @model._fetchedDefaults ?= {}
+    @model._fetchedDefaults.title = data[0].title
+    @model._fetchedDefaults.thumbnail = data[0].thumbnail_large
+    @model.timeTotal data[0].duration
+
+    @model._updateAttributesWithDefaults()
+    @_setTimeInputMax()
+
+
+  metaData: =>
+    if @model.metaDataUrl() and not @_metaData
+      @_metaData = new athena.lib.util.RemoteResource
+        url: @model.metaDataUrl()
+        dataType: 'json'
+
+    @_metaData
+
+
 
 class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
 
@@ -94,33 +118,40 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
   className: @classNameExtend 'vimeo-shell'
 
 
+  events: => _.extend super,
+    'click .click-capture': => @togglePlayPause()
+
+
   initialize: =>
     super
-    @_isPlaying = false
     @_timeTotal = undefined
-    @_seekOffset = 0
+    @_lastSeekOffset = 0
+
+    @on 'Media:Play', => @player?.api?('play')
+    @on 'Media:Pause', => @player?.api?('pause')
+    @on 'Media:End', => @player?.api?('pause')
+
+    @initializeVimeoAPI()
 
 
   render: =>
     super
     @$el.empty()
-    @$el.append acorn.util.iframe @model.embedLink(), 'vimeo-player'
-    @initializeVimeo()
+    @$el.append acorn.util.iframe @model.embedLink(), @playerId()
+    @$el.append $('<div>').addClass('click-capture')
+
+    # initialize in next call stack, after render.
+    # Vimeo requires the element to be in the DOM
+    setTimeout @initializeVimeoPlayer, 0
     @
 
 
+  playerId: =>
+    @model.playerId()
+
+
   # Control the player
-
-
-  play: =>
-    @player.api 'play'
-
-
-  pause: =>
-    @player.api 'pause'
-
-
-  seek: (seconds) =>
+  _seek: (seconds) =>
     # Vimeo adds the original seekTo value to the current one. `seekTo n`
     # initially sends a user to t = n, but forever after will send the user to
     # t = 2n - 2. `seekTo 6` initially sends a user to t = 6, but will later
@@ -132,65 +163,54 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
     # See https://github.com/vimeo/player-api/issues/27. In the case that
     # `seconds == 0`, we may need to handle things specially. Haven't yet QA'd
     # for bugs on this point, just ran across it once.
-    @player.api 'seekTo', 2
-    @player.api 'seekTo', seconds
+    @player.api?('seekTo', 2)
+    @player.api?('seekTo', seconds)
 
 
-  isPlaying: =>
-    @_isPlaying
-
-
-  seekOffset: =>
-    @_seekOffset
+  _seekOffset: =>
+    @_lastSeekOffset
 
 
   # Vimeo API - communication between the Vimeo js API and the shell.
   # see http://developer.vimeo.com/player/js-api
-  vimeoPlayerApiSrc: 'http://a.vimeocdn.com/js/froogaloop2.min.js'
+  vimeoPlayerApiSrc: 'https://secure-a.vimeocdn.com/js/froogaloop2.min.js'
 
 
   # initialize vimeo API. should happen only once per page load
-  initializeVimeo: =>
+  initializeVimeoAPI: =>
+    unless window.Froogaloop or VimeoShell._initializedVimeoAPI
+      VimeoShell._initializedVimeoAPI = true
+      $.getScript @vimeoPlayerApiSrc
 
-    # if Vimeo hasn't been initialized, initialize it.
+
+  initializeVimeoPlayer: =>
     unless window.Froogaloop
-      $.getScript @vimeoPlayerApiSrc, @onVimeoReady
+      @initializeVimeoAPI()
+      setTimeout @initializeVimeoPlayer, 100
       return
 
-    # must call onVimeoReady once the current render call stack finishes
-    # Vimeo API expects the id of a player currently on the page. Backbone may
-    # have not yet added the current DOM subtree to the page DOM.
-    setTimeout @onVimeoReady, 0
-
-
-  onVimeoReady: =>
     # initialize the player object with the iframe
-    @player = Froogaloop @$('#vimeo-player')[0]
+    @player = Froogaloop @$('#' + @playerId())[0]
     @player.addEvent 'ready', @onVimeoPlayerReady
-    # @play()
 
 
   onVimeoPlayerReady: =>
     # attach callbacks to the vimeo player.
+    @player.addEvent 'pause', => @pause()
 
-    @player.addEvent 'pause', =>
-      @_isPlaying = false
-      @trigger 'PlayerView:StateChange'
-
-    @player.addEvent 'play', =>
-      @_isPlaying = true
-      @trigger 'PlayerView:StateChange'
+    @player.addEvent 'play', => @play()
 
     @player.addEvent 'seek', (params) =>
-      @_seekOffset = parseFloat params.seconds
+      @_lastSeekOffset = parseFloat params.seconds
       @enforceVimeoPlaybackState()
 
     @player.addEvent 'playProgress', (params) =>
       @_timeTotal = parseFloat params.duration
-      @_seekOffset = parseFloat params.seconds
-      @_isPlaying = true
+      @_lastSeekOffset = parseFloat params.seconds
 
-    @trigger 'PlayerView:Ready'
+    @player.api?('play')
+    @player.api?('pause')
+    @setMediaState 'ready'
 
 
   # Vimeo's api claims to hold playing-state constant through seeks, but seems
@@ -201,11 +221,11 @@ class VimeoShell.PlayerView extends VideoLinkShell.PlayerView
     wasPlaying = @isPlaying()
 
     # force state to `PLAYING`
-    @play()
+    @player.api?('play')
 
     # pause if appropriate
     unless wasPlaying
-      @pause()
+      @player.api?('pause')
 
 
 

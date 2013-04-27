@@ -34,3 +34,9 @@ describe 'acorn.shells.LinkShell', ->
         expect(-> Model.withLink 'https:/athena.ai').toThrow()
         expect(-> Model.withLink 'file:///athena.ai').toThrow()
         expect(-> Model.withLink 'ftp://athena.ai').toThrow()
+
+
+    describe 'LinkShell.RemixView', ->
+
+      it 'should have an active link input', ->
+        expect(LinkShell.RemixView.activeLinkInput).toBe true

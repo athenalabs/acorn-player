@@ -6,7 +6,7 @@ goog.provide 'acorn.player.DropdownView'
 class acorn.player.DropdownView extends athena.lib.View
 
 
-  className: @classNameExtend 'dropdown-view span12'
+  className: @classNameExtend 'dropdown-view'
 
 
   template: _.template '''
@@ -89,7 +89,8 @@ class acorn.player.DropdownView extends athena.lib.View
 
 
   itemWithId: (id) =>
-    _.find(@items, (item) => item.id == id)
+    _.find(@items, (item) => item.id == id) or
+      {id: id, text: id}
 
 
   formatItem: (item) ->

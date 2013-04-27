@@ -13,7 +13,15 @@ describe 'acorn.shells.VimeoShell', ->
   RemixView = VimeoShell.RemixView
 
   vimeoId = '8201078'
-  modelOptions = -> link: "http://www.vimeo.com/#{vimeoId}"
+  videoLink = "http://www.vimeo.com/#{vimeoId}"
+
+  modelOptions = ->
+    link: videoLink
+    timeStart: 33
+    timeEnd: 145
+    timeTotal: 300
+    loops: 2
+
   viewOptions = ->
     model: new Model modelOptions()
     eventhub: _.extend {}, Backbone.Events
@@ -59,77 +67,61 @@ describe 'acorn.shells.VimeoShell', ->
 
       it 'should have a valid metaDataUrl', ->
         model = new Model modelOptions()
-        expect(model.metaDataUrl()).toBe "http://vimeo.com/api/v2/video/" +
+        expect(model.metaDataUrl()).toBe "https://vimeo.com/api/v2/video/" +
             "#{vimeoId}.json?callback=?"
 
-      it 'should fetch metadata', ->
-        model = new Model modelOptions()
-        retrieved = false
 
-        runs ->
-          model.metaData().sync success: => retrieved = true
+      describe 'Model::defaultAttributes', ->
 
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
+        it 'should default title to fetched vimeo video title or url', ->
+          model = new Model modelOptions()
 
-        runs ->
-          cache = model.metaData()
-          expect(cache.synced()).toBe true
-          expect(athena.lib.util.isStrictObject cache.data()[0]).toBe true
+          model._fetchedDefaults = title: undefined
+          model._updateAttributesWithDefaults()
+          expect(model.title()).toBe videoLink
 
-      it 'should have a title method that uses metaData or link as title', ->
-        model = new Model modelOptions()
+          model._fetchedDefaults = title: 'FakeVimeoTitle'
+          model._updateAttributesWithDefaults()
+          expect(model.title()).toBe 'FakeVimeoTitle'
 
-        expect(model.title()).toBe modelOptions().link
+        it 'should default thumbnail to fetched vimeo video thumbnail if it
+            exists', ->
+          model = new Model modelOptions()
 
-        retrieved = false
+          model._fetchedDefaults = thumbnail: 'thumbnails.com/fake.jpg'
+          model._updateAttributesWithDefaults()
+          expect(model.thumbnail()).toBe 'thumbnails.com/fake.jpg'
 
-        runs ->
-          model.metaData().sync success: => retrieved = true
 
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
+      describe 'Model::_defaultDescription', ->
 
-        runs ->
-          title = model.metaData().data()[0].title
-          expect(model.title()).toBe title
+        it 'should be a function', ->
+          expect(typeof Model::_defaultDescription).toBe 'function'
 
-      it 'should have a description method that describes the shell', ->
-        _modelOptions = _.extend modelOptions(),
-          timeStart: 33
-          timeEnd: 145
+        it 'should return a message about video title and clipping', ->
+          model = new Model modelOptions()
 
-        model = new Model _modelOptions
+          model._fetchedDefaults = title: undefined
+          expect(model._defaultDescription()).toBe "Vimeo video \"#{videoLink}\"" +
+              " from 00:33 to 02:25."
 
-        expect(model.description()).toBe "Vimeo video #{_modelOptions.link}" +
-            " from 00:33 to 02:25."
+          model._fetchedDefaults = title: 'FakeVimeoTitle'
+          expect(model._defaultDescription()).toBe "Vimeo video \"FakeVimeo" +
+              "Title\" from 00:33 to 02:25."
 
-        retrieved = false
+        it 'should return a message about video title only when lacking valid
+            start/end times', ->
+          options = modelOptions()
+          options.timeStart = NaN
+          model = new Model options
 
-        runs ->
-          model.metaData().sync success: => retrieved = true
+          model._fetchedDefaults = title: undefined
+          expect(model._defaultDescription()).toBe "Vimeo video " +
+              "\"#{videoLink}\"."
 
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
-
-        runs ->
-          title = model.metaData().data()[0].title
-          expect(model.description()).toBe "Vimeo video #{title} from 00:33" +
-              " to 02:25."
-
-      it 'should have a timeTotal method that returns metaData.duration or
-          Infinity', ->
-        model = new Model modelOptions()
-
-        expect(model.timeTotal()).toBe Infinity
-
-        retrieved = false
-
-        runs ->
-          model.metaData().sync success: => retrieved = true
-
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
-
-        runs ->
-          timeTotal = model.metaData().data()[0].duration
-          expect(model.timeTotal()).toBe timeTotal
+          model._fetchedDefaults = title: 'FakeVimeoTitle'
+          expect(model._defaultDescription()).toBe "Vimeo video \"FakeVimeo" +
+              "Title\"."
 
 
     describe 'VimeoShell.PlayerView', ->
@@ -159,35 +151,20 @@ describe 'acorn.shells.VimeoShell', ->
         setPlayerListener = false
         playerReady = false
         pvReady = false
-        pv.on 'PlayerView:Ready', -> pvReady = true
+        pv.on 'Media:DidReady', -> pvReady = true
+        spyOn(pv, 'onVimeoPlayerReady').andCallThrough()
 
         # must be appended to DOM in order to load properly
         runs -> $hiddenPlayer.append pv.render().el
 
         waitsFor (->
-          # if 'PlayerView:Ready' event fired before listener was set, settle
-          # for inability to test low-level readiness and return true
-          if pvReady and not setPlayerListener
-            return true
-
-          # if possible, add listener to froogaloop 'ready' event
-          if pv.player? and not setPlayerListener
-            setPlayerListener = true
-            pv.player.addEvent 'ready', ->
-              playerReady = true
-
-              # call through (froogaloop overwrites old listener to ready)
-              pv.onVimeoPlayerReady()
-
-          # ideally, directly test both froogaloop 'ready' and playerView
-          # 'PlayerView:Ready' events
-          playerReady and pvReady
+          pv.onVimeoPlayerReady.callCount > 0
         ), 'player ready', 10000
 
       it 'should load a vimeo player on render that loads video when played', ->
         loading = false
         # set 'loadProgress' listener and start playing on pv ready
-        pv.on 'PlayerView:Ready', ->
+        pv.on 'Media:DidReady', ->
           pv.player.addEvent 'loadProgress', (params) ->
             if parseFloat(params.percent) > 0
               loading = true
@@ -202,10 +179,10 @@ describe 'acorn.shells.VimeoShell', ->
 
       it 'should announce state changes', ->
         # start playing on pv ready
-        pv.on 'PlayerView:Ready', -> pv.player.api 'play'
+        pv.on 'Media:DidReady', -> pv.player.api 'play'
 
         stateChanged = false
-        pv.on 'PlayerView:StateChange', -> stateChanged = true
+        pv.on 'Media:DidPlay', -> stateChanged = true
         runs -> $hiddenPlayer.append pv.render().el
 
         waitsFor (-> stateChanged), 'state change event', 10000
@@ -222,7 +199,7 @@ describe 'acorn.shells.VimeoShell', ->
           paused = true
 
           # set listeners and start playing on pv ready
-          pv.on 'PlayerView:Ready', ->
+          pv.on 'Media:DidReady', ->
             pv.player.addEvent 'play', -> paused = false
             pv.player.addEvent 'pause', -> paused = true
 
@@ -234,7 +211,16 @@ describe 'acorn.shells.VimeoShell', ->
           # wait for playing
           waitsFor (-> not paused), 'video to play', 10000
 
-        it 'should play', ->
+        it 'should play (vimeo api)', ->
+          # pause video with vimeo API, don't expect PLAYING state
+          runs -> pv.player.api 'pause'
+          waitsFor (-> paused), 'video to pause with API', 10000
+
+          # play video, expect PLAYING state
+          runs -> pv.player.api 'play'
+          waitsFor (-> not paused), 'video to play after pausing', 10000
+
+        it 'should play (media api)', ->
           # pause video with vimeo API, don't expect PLAYING state
           runs -> pv.player.api 'pause'
           waitsFor (-> paused), 'video to pause with API', 10000
@@ -243,8 +229,16 @@ describe 'acorn.shells.VimeoShell', ->
           runs -> pv.play()
           waitsFor (-> not paused), 'video to play after pausing', 10000
 
-        it 'should pause', ->
+        it 'should pause (vimeo api)', ->
           expect(not paused).toBe true
+
+          # pause video, expect PAUSED state
+          runs -> pv.player.api 'pause'
+          waitsFor (-> paused), 'video to pause after playing', 10000
+
+        it 'should pause (media api)', ->
+          runs -> pv.play()
+          waitsFor (-> not paused), 'video should not be paused', 10000
 
           # pause video, expect PAUSED state
           runs -> pv.pause()
@@ -255,22 +249,22 @@ describe 'acorn.shells.VimeoShell', ->
           pv.player.addEvent 'seek', (params) ->
             seekOffset = parseInt params.seconds
 
-          runs -> pv.seek 30
+          runs -> pv._seek 30
           waitsFor (->
             seekOffset == 30
           ), 'video to seek to 30 while playing', 10000
 
-          runs -> pv.seek 40
+          runs -> pv._seek 40
           waitsFor (->
             seekOffset == 40
           ), 'video to seek to 40 while playing', 10000
 
-          runs -> pv.seek 10
+          runs -> pv._seek 10
           waitsFor (->
             seekOffset == 10
           ), 'video to seek to 10 while playing', 10000
 
-          runs -> pv.seek 20
+          runs -> pv._seek 20
           waitsFor (->
             seekOffset == 20
           ), 'video to seek to 20 while playing', 10000
@@ -279,32 +273,32 @@ describe 'acorn.shells.VimeoShell', ->
           runs -> pv.player.api 'pause'
           waitsFor (-> paused), 'video to pause with API', 10000
 
-          runs -> pv.seek 30
+          runs -> pv._seek 30
           waitsFor (->
             seekOffset == 30
           ), 'video to seek to 30 while paused', 10000
 
-          runs -> pv.seek 40
+          runs -> pv._seek 40
           waitsFor (->
             seekOffset == 40
           ), 'video to seek to 40 while paused', 10000
 
-          runs -> pv.seek 10
+          runs -> pv._seek 10
           waitsFor (->
             seekOffset == 10
           ), 'video to seek to 10 while paused', 10000
 
-          runs -> pv.seek 20
+          runs -> pv._seek 20
           waitsFor (->
             seekOffset == 20
           ), 'video to seek to 20 while paused', 10000
 
         it 'should report whether or not it is playing', ->
-          # remove listener to PlayerView:Ready and set up native vimeo shell
+          # remove listener to Media:DidReady and set up native vimeo shell
           # froogaloop event listeners again. this is necessary because the
           # addEvent function overwrites the old listener to an event - the
           # beforeEach block clobbered the shell's listener to the pause event
-          pv.off 'PlayerView:Ready'
+          pv.off 'Media:DidReady'
           pv.onVimeoPlayerReady()
 
           # pause video, expect PAUSED state
@@ -322,22 +316,22 @@ describe 'acorn.shells.VimeoShell', ->
         it 'should report seek offset', ->
           runs -> pv.player.api 'seekTo', 30
           waitsFor (->
-            pv.seekOffset() == 30
+            pv._seekOffset() == 30
           ), 'playerView to register seekOffset to 30 while playing', 10000
 
           runs -> pv.player.api 'seekTo', 40
           waitsFor (->
-            pv.seekOffset() == 40
+            pv._seekOffset() == 40
           ), 'playerView to register seekOffset to 40 while playing', 10000
 
           runs -> pv.player.api 'seekTo', 10
           waitsFor (->
-            pv.seekOffset() == 10
+            pv._seekOffset() == 10
           ), 'playerView to register seekOffset to 10 while playing', 10000
 
           runs -> pv.player.api 'seekTo', 20
           waitsFor (->
-            pv.seekOffset() == 20
+            pv._seekOffset() == 20
           ), 'playerView to register seekOffset to 20 while playing', 10000
 
           # achieve paused state
@@ -346,22 +340,22 @@ describe 'acorn.shells.VimeoShell', ->
 
           runs -> pv.player.api 'seekTo', 30
           waitsFor (->
-            pv.seekOffset() == 30
+            pv._seekOffset() == 30
           ), 'playerView to register seekOffset to 30 while paused', 10000
 
           runs -> pv.player.api 'seekTo', 40
           waitsFor (->
-            pv.seekOffset() == 40
+            pv._seekOffset() == 40
           ), 'playerView to register seekOffset to 40 while paused', 10000
 
           runs -> pv.player.api 'seekTo', 10
           waitsFor (->
-            pv.seekOffset() == 10
+            pv._seekOffset() == 10
           ), 'playerView to register seekOffset to 10 while paused', 10000
 
           runs -> pv.player.api 'seekTo', 20
           waitsFor (->
-            pv.seekOffset() == 20
+            pv._seekOffset() == 20
           ), 'playerView to register seekOffset to 20 while paused', 10000
 
 
@@ -369,7 +363,7 @@ describe 'acorn.shells.VimeoShell', ->
         $player = $hiddenPlayer.removeClass 'hidden'
 
         pvReady = false
-        pv.on 'PlayerView:Ready', -> pvReady = true
+        pv.on 'Media:DidReady', -> pvReady = true
 
         # load player view
         runs ->
@@ -382,3 +376,59 @@ describe 'acorn.shells.VimeoShell', ->
           # playerView remains in DOM
           pv = destroy: ->
           $hiddenPlayer = remove: ->
+
+
+    describe 'VimeoShell.RemixView', ->
+
+      describe 'metaData', ->
+
+        it 'should fetch properly', ->
+          view = new RemixView viewOptions()
+          metaData = view.metaData()
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs ->
+            expect(metaData.synced()).toBe true
+            expect(athena.lib.util.isStrictObject metaData.data()[0]).toBe true
+
+        it 'should update timeTotal', ->
+          view = new RemixView viewOptions()
+          model = view.model
+          metaData = view.metaData()
+
+          expect(model.timeTotal()).toBe 300
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs -> expect(model.timeTotal()).toBe metaData.data()[0].duration
+
+        it 'should update model._fetchedDefaults.title', ->
+          view = new RemixView viewOptions()
+          model = view.model
+          metaData = view.metaData()
+
+          expect(view._fetchedDefaults?.title).toBeUndefined()
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs -> expect(model.title()).toBe metaData.data()[0].title
+
+        it 'should update model._fetchedDefaults.thumbnail', ->
+          view = new RemixView viewOptions()
+          model = view.model
+          metaData = view.metaData()
+
+          expect(model._fetchedDefaults?.thumbnail).toBeUndefined()
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs ->
+            thumbnail = metaData.data()[0].thumbnail_large
+            expect(model._fetchedDefaults?.thumbnail).toBe thumbnail
+
+        it 'should call `_updateAttributesWithDefaults`', ->
+          view = new RemixView viewOptions()
+          model = view.model
+          spyOn model, '_updateAttributesWithDefaults'
+          expect(model._updateAttributesWithDefaults).not.toHaveBeenCalled()
+
+          metaData = view.metaData()
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs -> expect(model._updateAttributesWithDefaults).toHaveBeenCalled()

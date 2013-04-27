@@ -1,7 +1,6 @@
 goog.provide 'acorn.player.SummaryView'
 
 
-
 # uniform view to summarize an acorn or shell.
 #
 # +-----------+
@@ -17,25 +16,53 @@ goog.provide 'acorn.player.SummaryView'
 class acorn.player.SummaryView extends athena.lib.View
 
 
-  className: @classNameExtend 'acorn-shell-summary'
+  className: @classNameExtend 'summary-view row-fluid'
 
 
   template: _.template '''
-    <img id="thumbnail" />
-    <div class="thumbnailside">
-      <div id="title"></div>
-      <div id="description"></div>
-      <div id="buttons"></div>
+    <div class="thumbnail-view span2">
+      <img class="img-rounded" src="" />
+    </div>
+    <div class="span10">
+      <div class="title"></div>
+      <div class="description"></div>
+      <div class="buttons"></div>
     </div>
     '''
 
 
+  initialize: =>
+    super
+    @setModel @model # bind listener
+
+
+  setModel: (model) =>
+    @stopListening @model if @model
+    @model = model
+
+    @listenTo @model, 'change', @onModelChange
+    @onModelChange()
+
+
+  onModelChange: =>
+    if @rendering
+      @renderData()
+
+
   render: =>
+    super
     @$el.empty()
+    @$el.removeClass('editable')
     @$el.html @template()
+    @renderData()
+    @
 
-    @$('#title').text @shell.title()
-    @$('#description').text @shell.description()
-    @$('#thumbnail').attr 'src', @shell.thumbnailLink()
 
+  renderData: =>
+    icon = $('<i>').addClass @model.module.icon
+    icon.tooltip title: @model.module.description, placement: 'right'
+
+    @$('.title').text(@model.title()).append icon
+    @$('.description').text @model.description()
+    @$('.thumbnail-view img').attr 'src', @model.thumbnail()
     @

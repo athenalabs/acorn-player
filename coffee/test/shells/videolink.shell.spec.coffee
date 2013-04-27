@@ -13,6 +13,7 @@ describe 'acorn.shells.VideoLinkShell', ->
   MediaView = VideoLinkShell.MediaView
   RemixView = VideoLinkShell.RemixView
   PlayerView = VideoLinkShell.PlayerView
+  TimedMediaPlayerView = acorn.player.TimedMediaPlayerView
 
   it 'should be part of acorn.shells', ->
     expect(VideoLinkShell).toBeDefined()
@@ -20,8 +21,17 @@ describe 'acorn.shells.VideoLinkShell', ->
   acorn.util.test.describeShellModule VideoLinkShell, ->
 
     timestring = acorn.util.Time.secondsToTimestring
+    videoLink = 'http://video.com/video.mov'
+
+    modelOptions = ->
+      link: videoLink
+      timeStart: 33
+      timeEnd: 145
+      timeTotal: 300
+      loops: 2
+
     viewOptions = ->
-      model: new Model {timeTotal: 300}
+      model: new Model modelOptions()
       eventhub: _.extend {}, Backbone.Events
 
     validLinks = VideoLinkShell.validLinkPatterns
@@ -43,51 +53,78 @@ describe 'acorn.shells.VideoLinkShell', ->
 
     describe 'VideoLinkShell.Model', ->
 
-      link = 'http://video.com/video.mov'
-      options  =
-        link: link
-        timeStart: 33
-        timeEnd: 145
-        loops: 2
-
-      it 'should have a description method that describes the shell', ->
-        model = new Model options
-        expect(model.description()).toBe "Video #{link} from 00:33 to 02:25."
-
       it 'should have a duration method that returns a number', ->
-        model = new Model options
+        model = new Model modelOptions()
         expect(typeof model.duration()).toBe 'number'
 
-      it 'should have a timeTotal property (with setter:false)', ->
+      it 'should have a timeTotal property', ->
+        options = modelOptions()
+        delete options.timeTotal
         model = new Model options
         expect(model.timeTotal()).toBe Infinity
-        expect(model.timeTotal(1)).toBe Infinity
-        expect(model.timeTotal()).toBe Infinity
+        expect(model.timeTotal(1)).toBe 1
+        expect(model.timeTotal()).toBe 1
+
+      describe 'Model::defaultAttributes', ->
+
+        it 'should default title to link', ->
+          model = new Model modelOptions()
+          expect(model.defaultAttributes().title).toBe videoLink
+
+        it 'should default description to `_defaultDescription`', ->
+          model = new Model modelOptions()
+          spyOn(model, '_defaultDescription').andReturn 'fake description'
+
+          expect(model._defaultDescription).not.toHaveBeenCalled()
+          description = model.defaultAttributes().description
+          expect(model._defaultDescription).toHaveBeenCalled()
+          expect(description).toBe 'fake description'
+
+
+      describe 'Model::_defaultDescription', ->
+
+        it 'should be a function', ->
+          expect(typeof Model::_defaultDescription).toBe 'function'
+
+        it 'should return a message about video source and clipping', ->
+          model = new Model modelOptions()
+          expect(model._defaultDescription()).toBe "Video \"#{videoLink}\" " +
+              "from 00:33 to 02:25."
+
+        it 'should return a message about video source only when lacking valid
+            start/end times', ->
+          options = modelOptions()
+          options.timeStart = NaN
+          model = new Model options
+          expect(model._defaultDescription()).toBe "Video \"#{videoLink}\"."
 
 
     describe 'VideoLinkShell.MediaView', ->
-
-      it 'should create a Timer instance on initialize', ->
-        mv = new MediaView viewOptions()
-        expect(mv.timer instanceof acorn.util.Timer).toBe true
 
       it 'should create a playerView instance on initialize', ->
         mv = new MediaView viewOptions()
         expect(mv.playerView instanceof PlayerView).toBe true
 
-      it 'should forward `play` action to playerView', ->
+      it 'should forward `isInState` to playerView', ->
         mv = new MediaView viewOptions()
-        spyOn mv.playerView, 'play'
-        expect(mv.playerView.play).not.toHaveBeenCalled()
-        mv.play()
-        expect(mv.playerView.play).toHaveBeenCalled()
+        spyOn mv.playerView, 'isInState'
+        expect(mv.playerView.isInState).not.toHaveBeenCalled()
+        mv.isInState 'play'
+        expect(mv.playerView.isInState).toHaveBeenCalledWith 'play'
 
-      it 'should forward `pause` action to playerView', ->
+      it 'should forward `mediaState` to playerView', ->
         mv = new MediaView viewOptions()
-        spyOn mv.playerView, 'pause'
-        expect(mv.playerView.pause).not.toHaveBeenCalled()
-        mv.pause()
-        expect(mv.playerView.pause).toHaveBeenCalled()
+        spyOn(mv.playerView, 'mediaState').andReturn 'play'
+        expect(mv.playerView.mediaState).not.toHaveBeenCalled()
+        expect(mv.mediaState()).toBe 'play'
+        expect(mv.playerView.mediaState).toHaveBeenCalled()
+
+      it 'should forward `setMediaState` to playerView', ->
+        mv = new MediaView viewOptions()
+        spyOn mv.playerView, 'setMediaState'
+        expect(mv.playerView.setMediaState).not.toHaveBeenCalled()
+        mv.setMediaState 'play'
+        expect(mv.playerView.setMediaState).toHaveBeenCalledWith 'play'
 
       it 'should forward `seek` action to playerView', ->
         mv = new MediaView viewOptions()
@@ -96,19 +133,157 @@ describe 'acorn.shells.VideoLinkShell', ->
         mv.seek(33)
         expect(mv.playerView.seek).toHaveBeenCalledWith 33
 
-      it 'should forward `isPlaying` query to playerView', ->
-        mv = new MediaView viewOptions()
-        spyOn mv.playerView, 'isPlaying'
-        expect(mv.playerView.isPlaying).not.toHaveBeenCalled()
-        mv.isPlaying()
-        expect(mv.playerView.isPlaying).toHaveBeenCalled()
-
       it 'should forward `seekOffset` query to playerView', ->
         mv = new MediaView viewOptions()
         spyOn mv.playerView, 'seekOffset'
         expect(mv.playerView.seekOffset).not.toHaveBeenCalled()
         mv.seekOffset()
         expect(mv.playerView.seekOffset).toHaveBeenCalled()
+
+
+      describe 'MediaView::controlsView', ->
+
+        describe 'MediaView::playPauseToggleView', ->
+
+          it 'should get created', ->
+            view = new MediaView viewOptions()
+            Toggle = acorn.player.controls.PlayPauseControlToggleView
+            expect(view.playPauseToggleView instanceof Toggle).toBe true
+
+          it 'should get added to controlsView', ->
+            view = new MediaView viewOptions()
+            expect(_.contains view.controlsView.buttons,
+                view.playPauseToggleView).toBe true
+
+          it 'should get refreshed when media plays', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            toggle = view.playPauseToggleView
+            spyOn toggle, 'refreshToggle'
+
+            expect(toggle.refreshToggle).not.toHaveBeenCalled()
+            view.setMediaState 'play'
+            expect(toggle.refreshToggle).toHaveBeenCalled()
+
+          it 'should get refreshed when media pauses', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            toggle = view.playPauseToggleView
+            spyOn toggle, 'refreshToggle'
+
+            expect(toggle.refreshToggle).not.toHaveBeenCalled()
+            view.setMediaState 'pause'
+            expect(toggle.refreshToggle).toHaveBeenCalled()
+
+          it 'should get refreshed when media ends', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            toggle = view.playPauseToggleView
+            spyOn toggle, 'refreshToggle'
+
+            expect(toggle.refreshToggle).not.toHaveBeenCalled()
+            view.setMediaState 'end'
+            expect(toggle.refreshToggle).toHaveBeenCalled()
+
+          it 'should play mediaView when play button is clicked', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            view.play()
+            playControl = view.controlsView.$ '.control-view.play'
+            view.pause()
+
+            spyOn view, 'play'
+            playControl.click()
+            expect(view.play).toHaveBeenCalled()
+
+          it 'should pause mediaView when pause button is clicked', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            view.play()
+            pauseControl = view.controlsView.$ '.control-view.pause'
+
+            spyOn view, 'pause'
+            pauseControl.click()
+            expect(view.pause).toHaveBeenCalled()
+
+
+        describe 'MediaView::elapsedTimeView', ->
+
+          it 'should have an elapsed time control', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            view.play()
+            elapsedTimeControl = view.controlsView.$ '.elapsed-time-control-view'
+            expect(elapsedTimeControl.length).toBe 1
+
+          it 'should call seek when elapsed time control seeks', ->
+            spyOn MediaView::, 'seek'
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            view.play()
+            elapsedTimeControl = view.controlsView.$ '.elapsed-time-control-view'
+            seekField = elapsedTimeControl.find 'input'
+
+            expect(MediaView::seek).not.toHaveBeenCalled()
+
+            for offset in [0, 10, 20, 30, 40, 50]
+              seekField.val offset
+              seekField.blur()
+              expect(MediaView::seek).toHaveBeenCalled()
+              expect(MediaView::seek).toHaveBeenCalledWith offset
+
+
+      describe 'MediaView::_onProgressBarDidProgress', ->
+
+        it 'should make a call to progressFromPercent', ->
+          view = new MediaView viewOptions()
+          spyOn(view, 'duration').andReturn 80
+          spyOn(view, 'seekOffset').andReturn 10
+          spyOn(view, 'progressFromPercent').andReturn 10
+
+          expect(view.progressFromPercent).not.toHaveBeenCalled()
+          view._onProgressBarDidProgress 20
+          expect(view.progressFromPercent).toHaveBeenCalled()
+
+        it 'should make a call to progressFromPercent', ->
+          view = new MediaView viewOptions()
+          spyOn(view, 'duration').andReturn 80
+          spyOn(view, 'seekOffset').andReturn 10
+          spyOn view, 'seek'
+
+          view._onProgressBarDidProgress 0
+          expect(view.seek.mostRecentCall.args[0]).toBe 0
+
+          view._onProgressBarDidProgress 25
+          expect(view.seek.mostRecentCall.args[0]).toBe 20
+
+          view._onProgressBarDidProgress 50
+          expect(view.seek.mostRecentCall.args[0]).toBe 40
+
+          view._onProgressBarDidProgress 75
+          expect(view.seek.mostRecentCall.args[0]).toBe 60
+
+          view._onProgressBarDidProgress 100
+          expect(view.seek.mostRecentCall.args[0]).toBe 80
+
+
+      describe 'MediaView: events', ->
+
+        it 'should update progress bar on playerView Media:Progress event', ->
+          spyOn MediaView::, '_updateProgressBar'
+          view = new MediaView viewOptions()
+
+          expect(MediaView::_updateProgressBar).not.toHaveBeenCalled()
+          view.playerView.trigger 'Media:Progress'
+          expect(MediaView::_updateProgressBar).toHaveBeenCalled()
+
 
       # TODO: test onPlaybackTick. waiting on integration with video start,
       # pause, and seek calls
@@ -175,6 +350,30 @@ describe 'acorn.shells.VideoLinkShell', ->
             for property, time of t
               inputs[property].value time
               expect(rv.model.get property).toBe time
+
+        it 'should reset player elapsed loop count when start time changes', ->
+          rv = new RemixView viewOptions()
+          rv.render()
+          triv = rv._timeRangeInputView
+          rv._playerView.elapsedLoops 2
+
+          # confirm background expectations
+          expect(rv._playerView.elapsedLoops()).toBe 2
+
+          triv.values start: 20
+          expect(rv._playerView.elapsedLoops()).toBe 0
+
+        it 'should reset player elapsed loop count when end time changes', ->
+          rv = new RemixView viewOptions()
+          rv.render()
+          triv = rv._timeRangeInputView
+          rv._playerView.elapsedLoops 2
+
+          # confirm background expectations
+          expect(rv._playerView.elapsedLoops()).toBe 2
+
+          triv.values end: 20
+          expect(rv._playerView.elapsedLoops()).toBe 0
 
 
       describe 'looping: RemixView', ->
@@ -262,6 +461,146 @@ describe 'acorn.shells.VideoLinkShell', ->
           input.blur()
           expect(rv.model.get 'loops').toBe '9'
 
+        it 'should reset player elapsed loop count when loops value changes', ->
+          rv = new RemixView viewOptions()
+          rv.render()
+          lbv = rv._loopsButtonView
+          lbv.showView 0
+          rv._playerView.elapsedLoops 2
+
+          # confirm background expectations
+          expect(rv._playerView.elapsedLoops()).toBe 2
+          expect(rv.model.get 'loops').toBe 'one'
+
+          lbv.showView 2
+          expect(rv._playerView.elapsedLoops()).toBe 0
+
+
+      describe 'RemixView::_controlsView', ->
+
+        it 'should have a play button', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          playControl = view._controlsView.$ '.control-view.play'
+          expect(playControl.length).toBe 1
+
+        it 'should have a play button that is initially hidden', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          playControl = view._controlsView.$ '.control-view.play'
+          expect(playControl.length).toBe 1
+          expect(playControl.hasClass 'hidden').toBe true
+
+        it 'should have a pause button', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          pauseControl = view._controlsView.$ '.control-view.pause'
+          expect(pauseControl.length).toBe 1
+
+        it 'should have a pause button that is not initially hidden', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          pauseControl = view._controlsView.$ '.control-view.pause'
+          expect(pauseControl.length).toBe 1
+          expect(pauseControl.hasClass 'hidden').toBe false
+
+        it 'should show play button when paused', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          view._playerView.pause()
+          expect(view._playerView.isPaused()).toBe true
+
+          playControl = view._controlsView.$ '.control-view.play'
+          expect(playControl.hasClass 'hidden').toBe false
+
+        it 'should hide pause button when paused', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          view._playerView.pause()
+          expect(view._playerView.isPaused()).toBe true
+
+          pauseControl = view._controlsView.$ '.control-view.pause'
+          expect(pauseControl.hasClass 'hidden').toBe true
+
+        it 'should hide play button when playing', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          expect(view._playerView.isPlaying()).toBe true
+
+          playControl = view._controlsView.$ '.control-view.play'
+          expect(playControl.hasClass 'hidden').toBe true
+
+        it 'should show pause button when playing', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          expect(view._playerView.isPlaying()).toBe true
+
+          pauseControl = view._controlsView.$ '.control-view.pause'
+          expect(pauseControl.hasClass 'hidden').toBe false
+
+        it 'should play when play button is clicked', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          playControl = view._controlsView.$ '.control-view.play'
+          view._playerView.pause()
+
+          spyOn view._playerView, 'play'
+          playControl.click()
+          expect(view._playerView.play).toHaveBeenCalled()
+
+        it 'should pause when pause button is clicked', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          pauseControl = view._controlsView.$ '.control-view.pause'
+
+          spyOn view._playerView, 'pause'
+          pauseControl.click()
+          expect(view._playerView.pause).toHaveBeenCalled()
+
+        it 'should have an elapsed time control', ->
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          elapsedTimeControl = view._controlsView.$ '.elapsed-time-control-view'
+          expect(elapsedTimeControl.length).toBe 1
+
+        it 'should call seek when elapsed time control seeks', ->
+          spyOn PlayerView::, 'seek'
+          view = new RemixView viewOptions()
+          view._controlsView.render()
+          view.render()
+          view._playerView.play()
+          elapsedTimeControl = view._controlsView.$ '.elapsed-time-control-view'
+          seekField = elapsedTimeControl.find 'input'
+
+          expect(PlayerView::seek).not.toHaveBeenCalled()
+
+          for offset in [0, 10, 20, 30, 40, 50]
+            seekField.val offset
+            seekField.blur()
+            expect(PlayerView::seek).toHaveBeenCalled()
+            expect(PlayerView::seek).toHaveBeenCalledWith offset
+
 
       it 'should look good', ->
         # setup DOM
@@ -278,35 +617,6 @@ describe 'acorn.shells.VideoLinkShell', ->
     describe 'VideoLinkShell.PlayerView', ->
 
       describeView = athena.lib.util.test.describeView
-      describeView PlayerView, athena.lib.View, viewOptions(), ->
+      describeView PlayerView, TimedMediaPlayerView, viewOptions(), ->
 
-
-        describe 'PlayerView interface', ->
-
-          it 'should have a play method', ->
-            pv = new PlayerView viewOptions()
-            pv.render()
-            expect(typeof pv.play).toBe 'function'
-
-          it 'should have a pause method', ->
-            pv = new PlayerView viewOptions()
-            pv.render()
-            expect(typeof pv.pause).toBe 'function'
-
-          it 'should have a seek method', ->
-            pv = new PlayerView viewOptions()
-            pv.render()
-            expect(typeof pv.seek).toBe 'function'
-
-          it 'should have an isPlaying method that returns a boolean', ->
-            pv = new PlayerView viewOptions()
-            pv.render()
-            expect(typeof pv.isPlaying).toBe 'function'
-            expect(typeof pv.isPlaying()).toBe 'boolean'
-
-          it 'should have a seekOffset method that returns a number', ->
-            pv = new PlayerView viewOptions()
-            pv.render()
-            expect(typeof pv.seekOffset).toBe 'function'
-            expect(typeof pv.seekOffset()).toBe 'number'
-
+      acorn.util.test.describeMediaInterface PlayerView, viewOptions()
