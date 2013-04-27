@@ -27,7 +27,7 @@ module.exports = (grunt) ->
     # css sources
     css_dir: 'build/css'
     css_src: 'build/css/**/*.css'
-    css_dest: 'build/css/acorn-player.css'
+    css_dest: 'build/css/acorn.player.css'
 
     # minified target name
     minified: 'build/acorn.player.min.js'
