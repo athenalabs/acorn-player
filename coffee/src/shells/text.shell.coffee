@@ -10,8 +10,8 @@ Shell = acorn.shells.Shell
 TextShell = acorn.shells.TextShell =
 
   id: 'acorn.TextShell'
-  title: 'TextShell'
-  description: 'a shell to store text'
+  title: 'Text'
+  description: 'simple text'
   icon: 'icon-align-left'
 
 
@@ -33,7 +33,11 @@ class TextShell.MediaView extends Shell.MediaView
   render: =>
     super
     @$el.empty()
-    @$el.text @model.get 'text'
+
+    container = $ '<pre>'
+    container.text @model.get 'text'
+    @$el.append container
+
     @
 
 
@@ -45,8 +49,11 @@ class TextShell.RemixView extends Shell.RemixView
   className: @classNameExtend 'text-shell row-fluid'
 
 
+  placeholder: 'enter text here'
+
+
   template: _.template '''
-    <textarea class="span12"><%= text %></textarea>
+    <textarea placeholder="<%= placeholder %>"><%= text %></textarea>
     '''
 
 
@@ -56,8 +63,12 @@ class TextShell.RemixView extends Shell.RemixView
 
   render: =>
     super
+
     @$el.empty()
-    @$el.html @template text: @model.get 'text'
+    @$el.html @template
+      placeholder: @placeholder
+      text: @model.get 'text'
+
     @
 
 

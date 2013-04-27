@@ -30,11 +30,6 @@ describe 'acorn.shells.SlideshowShell', ->
 
       describe 'MediaView::isPlaying', ->
 
-        it 'should by default be true on render', ->
-          view = new MediaView viewOptions()
-          view.render()
-          expect(view.isPlaying()).toBe true
-
         it 'should be true following MediaView.play()', ->
           view = new MediaView viewOptions()
           view.render()
@@ -50,103 +45,73 @@ describe 'acorn.shells.SlideshowShell', ->
 
       describe 'MediaView::controlsView', ->
 
-        it 'should have a play button', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          playControl = view.controlsView.$ '.control-view.play'
-          expect(playControl.length).toBe 1
+        describe 'MediaView::playPauseToggleView', ->
 
-        it 'should have a play button that is initially hidden', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          playControl = view.controlsView.$ '.control-view.play'
-          expect(playControl.length).toBe 1
-          expect(playControl.hasClass 'hidden').toBe true
+          it 'should get created', ->
+            view = new MediaView viewOptions()
+            Toggle = acorn.player.controls.PlayPauseControlToggleView
+            expect(view.playPauseToggleView instanceof Toggle).toBe true
 
-        it 'should have a pause button', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          pauseControl = view.controlsView.$ '.control-view.pause'
-          expect(pauseControl.length).toBe 1
+          it 'should get added to controlsView', ->
+            view = new MediaView viewOptions()
+            expect(_.contains view.controlsView.buttons,
+                view.playPauseToggleView).toBe true
 
-        it 'should have a pause button that is not initially hidden', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          pauseControl = view.controlsView.$ '.control-view.pause'
-          expect(pauseControl.length).toBe 1
-          expect(pauseControl.hasClass 'hidden').toBe false
+          it 'should get refreshed when media plays', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            toggle = view.playPauseToggleView
+            spyOn toggle, 'refreshToggle'
 
-        it 'should show play button when paused', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.pause()
-          expect(view.isPlaying()).toBe false
+            expect(toggle.refreshToggle).not.toHaveBeenCalled()
+            view.setMediaState 'play'
+            expect(toggle.refreshToggle).toHaveBeenCalled()
 
-          playControl = view.controlsView.$ '.control-view.play'
-          expect(playControl.hasClass 'hidden').toBe false
+          it 'should get refreshed when media pauses', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            toggle = view.playPauseToggleView
+            spyOn toggle, 'refreshToggle'
 
-        it 'should hide pause button when paused', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.pause()
-          expect(view.isPlaying()).toBe false
+            expect(toggle.refreshToggle).not.toHaveBeenCalled()
+            view.setMediaState 'pause'
+            expect(toggle.refreshToggle).toHaveBeenCalled()
 
-          pauseControl = view.controlsView.$ '.control-view.pause'
-          expect(pauseControl.hasClass 'hidden').toBe true
+          it 'should get refreshed when media ends', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            toggle = view.playPauseToggleView
+            spyOn toggle, 'refreshToggle'
 
-        it 'should hide play button when playing', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.play()
-          expect(view.isPlaying()).toBe true
+            expect(toggle.refreshToggle).not.toHaveBeenCalled()
+            view.setMediaState 'end'
+            expect(toggle.refreshToggle).toHaveBeenCalled()
 
-          playControl = view.controlsView.$ '.control-view.play'
-          expect(playControl.hasClass 'hidden').toBe true
+          it 'should play mediaView when play button is clicked', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            view.play()
+            playControl = view.controlsView.$ '.control-view.play'
+            view.pause()
 
-        it 'should show pause button when playing', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          view.play()
-          expect(view.isPlaying()).toBe true
+            spyOn view, 'play'
+            playControl.click()
+            expect(view.play).toHaveBeenCalled()
 
-          pauseControl = view.controlsView.$ '.control-view.pause'
-          expect(pauseControl.hasClass 'hidden').toBe false
+          it 'should pause mediaView when pause button is clicked', ->
+            view = new MediaView viewOptions()
+            view.controlsView.render()
+            view.render()
+            view.play()
+            pauseControl = view.controlsView.$ '.control-view.pause'
 
-        it 'should play when play button is clicked', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          playControl = view.controlsView.$ '.control-view.play'
-
-          view.pause()
-          expect(view.isPlaying()).toBe false
-          expect(playControl.hasClass 'hidden').toBe false
-
-          playControl.click()
-          expect(view.isPlaying()).toBe true
-          expect(playControl.hasClass 'hidden').toBe true
-
-        it 'should pause when pause button is clicked', ->
-          view = new MediaView viewOptions()
-          view.controlsView.render()
-          view.render()
-          pauseControl = view.controlsView.$ '.control-view.pause'
-
-          view.play()
-          expect(view.isPlaying()).toBe true
-          expect(pauseControl.hasClass 'hidden').toBe false
-
-          pauseControl.click()
-          expect(view.isPlaying()).toBe false
-          expect(pauseControl.hasClass 'hidden').toBe true
+            spyOn view, 'pause'
+            pauseControl.click()
+            expect(view.pause).toHaveBeenCalled()
 
 
       describe 'MediaView playback', ->
@@ -164,14 +129,16 @@ describe 'acorn.shells.SlideshowShell', ->
           view = new MediaView _viewOptions
           view.controlsView.render()
           view.render()
+          view.play()
 
-          expect(view.currentIndex).toBe 0
+          spyOn view, 'showNext'
+          expect(view.showNext.callCount).toBe 0
 
           jasmine.Clock.tick(4999)
-          expect(view.currentIndex).toBe 0
+          expect(view.showNext.callCount).toBe 0
 
           jasmine.Clock.tick(2)
-          expect(view.currentIndex).toBe 1
+          expect(view.showNext.callCount).toBe 1
 
 
       # TODO - properly determine when youtube has loaded in order to test this
@@ -216,13 +183,14 @@ describe 'acorn.shells.SlideshowShell', ->
           waitsFor (-> ready), 'video player to be ready', 10000
 
           runs ->
-            expect(view.currentIndex).toBe 0
+            spyOn view, 'showNext'
+            expect(view.showNext.callCount).toBe 0
 
             jasmine.Clock.tick(9910999)
-            expect(view.currentIndex).toBe 0
+            expect(view.showNext.callCount).toBe 0
 
             jasmine.Clock.tick(2)
-            expect(view.currentIndex).toBe 1
+            expect(view.showNext.callCount).toBe 1
 
         it 'should cycle to next shell after delay when shell duration is less
             than delay', ->
@@ -247,14 +215,16 @@ describe 'acorn.shells.SlideshowShell', ->
           view = new MediaView _viewOptions
           view.controlsView.render()
           view.render()
+          view.play()
 
-          expect(view.currentIndex).toBe 0
+          spyOn view, 'showNext'
+          expect(view.showNext.callCount).toBe 0
 
           jasmine.Clock.tick(4999)
-          expect(view.currentIndex).toBe 0
+          expect(view.showNext.callCount).toBe 0
 
           jasmine.Clock.tick(2)
-          expect(view.currentIndex).toBe 1
+          expect(view.showNext.callCount).toBe 1
 
 
     describe 'SlideshowShell.RemixView', ->

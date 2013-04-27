@@ -38,7 +38,7 @@ class acorn.player.SplashView extends athena.lib.View
     @$el.html @template
       type: module.icon
       logo: "#{acorn.config.url.img}/acorn.png"
-      image: @model.get 'thumbnail'
+      image: @model.thumbnail()
 
     @$('#image').objectFit 'contain'
 

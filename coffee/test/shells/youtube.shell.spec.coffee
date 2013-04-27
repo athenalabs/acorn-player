@@ -13,7 +13,15 @@ describe 'acorn.shells.YouTubeShell', ->
   RemixView = YouTubeShell.RemixView
 
   youtubeId = 'WgBeu3FVi60'
-  modelOptions = -> link: "http://www.youtube.com/watch?v=#{youtubeId}"
+  videoLink = "http://www.youtube.com/watch?v=#{youtubeId}"
+
+  modelOptions = ->
+    link: videoLink
+    timeStart: 33
+    timeEnd: 145
+    timeTotal: 300
+    loops: 2
+
   viewOptions = ->
     model: new Model modelOptions()
     eventhub: _.extend {}, Backbone.Events
@@ -67,77 +75,59 @@ describe 'acorn.shells.YouTubeShell', ->
 
       it 'should have a valid metaDataUrl', ->
         model = new Model modelOptions()
-        expect(model.metaDataUrl()).toBe "http://gdata.youtube.com/feeds/" +
+        expect(model.metaDataUrl()).toBe "https://gdata.youtube.com/feeds/" +
             "api/videos/#{youtubeId}?v=2&alt=jsonc"
 
-      it 'should fetch metadata', ->
-        model = new Model modelOptions()
-        retrieved = false
 
-        runs ->
-          model.metaData().sync success: => retrieved = true
+      describe 'Model::defaultAttributes', ->
 
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
+        it 'should default title to fetched youtube video title or url', ->
+          model = new Model modelOptions()
 
-        runs ->
-          cache = model.metaData()
-          expect(cache.synced()).toBe true
-          expect(athena.lib.util.isStrictObject cache.data().data).toBe true
+          model._fetchedDefaults = title: undefined
+          model._updateAttributesWithDefaults()
+          expect(model.title()).toBe videoLink
 
-      it 'should have a title method that uses metaData or link as title', ->
-        model = new Model modelOptions()
+          model._fetchedDefaults = title: 'FakeYouTubeTitle'
+          model._updateAttributesWithDefaults()
+          expect(model.title()).toBe 'FakeYouTubeTitle'
 
-        expect(model.title()).toBe modelOptions().link
+        it 'should default thumbnail to youtube thumbnail link given id', ->
+          model = new Model modelOptions()
+          ytThumbnailLink = "https://img.youtube.com/vi/#{youtubeId}/0.jpg"
+          expect(model.defaultAttributes().thumbnail).toBe ytThumbnailLink
 
-        retrieved = false
 
-        runs ->
-          model.metaData().sync success: => retrieved = true
+      describe 'Model::_defaultDescription', ->
 
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
+        it 'should be a function', ->
+          expect(typeof Model::_defaultDescription).toBe 'function'
 
-        runs ->
-          title = model.metaData().data().data.title
-          expect(model.title()).toBe title
+        it 'should return a message about video title and clipping', ->
+          model = new Model modelOptions()
 
-      it 'should have a description method that describes the shell', ->
-        _modelOptions = _.extend modelOptions(),
-          timeStart: 33
-          timeEnd: 145
+          model._fetchedDefaults = title: undefined
+          expect(model._defaultDescription()).toBe "YouTube video " +
+              "\"#{videoLink}\" from 00:33 to 02:25."
 
-        model = new Model _modelOptions
+          model._fetchedDefaults = title: 'FakeYouTubeTitle'
+          expect(model._defaultDescription()).toBe "YouTube video " +
+              "\"FakeYouTubeTitle\" from 00:33 to 02:25."
 
-        expect(model.description()).toBe "YouTube video #{_modelOptions.link}" +
-            " from 00:33 to 02:25."
+        it 'should return a message about video title only when lacking valid
+            start/end times', ->
+          options = modelOptions()
+          options.timeStart = NaN
+          model = new Model options
 
-        retrieved = false
+          model._fetchedDefaults = title: undefined
+          expect(model._defaultDescription()).toBe "YouTube video " +
+              "\"#{videoLink}\"."
 
-        runs ->
-          model.metaData().sync success: => retrieved = true
+          model._fetchedDefaults = title: 'FakeYouTubeTitle'
+          expect(model._defaultDescription()).toBe "YouTube video " +
+              "\"FakeYouTubeTitle\"."
 
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
-
-        runs ->
-          title = model.metaData().data().data.title
-          expect(model.description()).toBe "YouTube video #{title} from 00:33" +
-              " to 02:25."
-
-      it 'should have a timeTotal method that returns metaData.duration or
-          Infinity', ->
-        model = new Model modelOptions()
-
-        expect(model.timeTotal()).toBe Infinity
-
-        retrieved = false
-
-        runs ->
-          model.metaData().sync success: => retrieved = true
-
-        waitsFor (-> retrieved), 'retrieving metaData', 10000
-
-        runs ->
-          timeTotal = model.metaData().data().data.duration
-          expect(model.timeTotal()).toBe timeTotal
 
 
     describe 'YouTubeShell.PlayerView', ->
@@ -177,24 +167,64 @@ describe 'acorn.shells.YouTubeShell', ->
         # ytPlayer.getPlayerState returns a non-negative integer value if video is
         # ended (0), playing (1), paused (2), buffering (3), or cued (5); any of
         # these corresponds to the player being ready with a cued/loaded video
-        waitsFor (-> pv.player?.getPlayerState?() >= 0), 'cued video', 10000
+        waitsFor (-> pv.player?.getPlayerState?()?), 'cued video', 10000
+        runs ->
+          pv.destroy()
+          $hiddenPlayer.remove()
+
 
       it 'should announce state changes', ->
         pv = new PlayerView viewOptions()
 
         stateChanged = false
-        pv.on 'PlayerView:StateChange', -> stateChanged = true
+        pv.on 'Media:DidPlay', -> stateChanged = true
 
         # load player and cue video
         acorn.util.appendCss()
         $hiddenPlayer = $('<div>').addClass('acorn-player hidden').width(600)
             .height(400).appendTo('body')
+
         runs -> $hiddenPlayer.append pv.render().el
-        waitsFor (-> pv.player?.getPlayerState?() >= 0), 'cued video', 10000
+        waitsFor (-> pv.player?.getPlayerState?()?), 'cued video', 10000
 
-        runs -> pv.player.playVideo()
-
+        runs -> pv.play()
         waitsFor (-> stateChanged), 'state change event', 10000
+        runs ->
+          pv.destroy()
+          $hiddenPlayer.remove()
+
+
+      describe 'PlayerView::_playbackIsAfterEnd', ->
+
+        it 'should be a function', ->
+          pv = new PlayerView viewOptions()
+          expect(typeof pv._playbackIsAfterEnd).toBe 'function'
+
+        it 'should return true when super returns true', ->
+          _.each [23, 23.5, 24, 500], (offset, times) ->
+            options = viewOptions()
+            options.model.set 'timeEnd', 23
+            pv = new PlayerView options
+            expect(pv._playbackIsAfterEnd(offset)).toBe true
+
+        it 'should by default return false when super returns false', ->
+          _.each [0, 9, 9.9, 22, 22.9], (offset, times) ->
+            options = viewOptions()
+            options.model.set 'timeEnd', 23
+            pv = new PlayerView options
+            expect(pv._playbackIsAfterEnd(offset)).toBe false
+
+        it 'should return true if player is in ended state', ->
+          _.each [0, 9, 9.9, 22, 22.9], (offset, times) ->
+            options = viewOptions()
+            options.model.set 'timeEnd', 23
+            pv = new PlayerView options
+
+            # confirm background expectations
+            expect(pv._playbackIsAfterEnd(offset)).toBe false
+
+            pv._playerInEndedState = true
+            expect(pv._playbackIsAfterEnd(offset)).toBe true
 
 
       describe 'video player view api', ->
@@ -209,10 +239,10 @@ describe 'acorn.shells.YouTubeShell', ->
           $hiddenPlayer = $('<div>').addClass('acorn-player hidden').width(600)
               .height(400).appendTo('body')
           runs -> $hiddenPlayer.append pv.render().el
-          waitsFor (-> pv.player?.getPlayerState?() >= 0), 'cued video', 10000
+          waitsFor (-> pv.player?.getPlayerState?()?), 'cued video', 10000
 
           # play video, wait for playing state
-          runs -> pv.player.playVideo()
+          runs -> pv.play()
           waitsFor (->
             pv.player.getPlayerState() == YT.PlayerState.PLAYING
           ), 'video to play', 10000
@@ -221,9 +251,22 @@ describe 'acorn.shells.YouTubeShell', ->
           pv.destroy()
           $hiddenPlayer.remove()
 
-        it 'should play', ->
+        it 'should play (yt api)', ->
           # pause video with youtube API, don't expect PLAYING state
           runs -> pv.player.pauseVideo()
+          waitsFor (->
+            pv.player.getPlayerState() != YT.PlayerState.PLAYING
+          ), 'video to pause with API', 10000
+
+          # play video, expect PLAYING state
+          runs -> pv.player.playVideo()
+          waitsFor (->
+            pv.player.getPlayerState() == YT.PlayerState.PLAYING
+          ), 'video to play after pausing', 10000
+
+        it 'should play (media api)', ->
+          # pause video with youtube API, don't expect PLAYING state
+          runs -> pv.pause()
           waitsFor (->
             pv.player.getPlayerState() != YT.PlayerState.PLAYING
           ), 'video to pause with API', 10000
@@ -234,30 +277,41 @@ describe 'acorn.shells.YouTubeShell', ->
             pv.player.getPlayerState() == YT.PlayerState.PLAYING
           ), 'video to play after pausing', 10000
 
-        it 'should pause', ->
+        it 'should pause (yt api)', ->
           # pause video, expect PAUSED state
+          runs -> pv.player.pauseVideo()
+          waitsFor (->
+            pv.player.getPlayerState() == YT.PlayerState.PAUSED
+          ), 'video to pause after playing', 10000
+
+        it 'should pause (media api)', ->
+          # pause video, expect PAUSED state
+          runs -> pv.play()
+          waitsFor (-> pv.isPlaying()), 'video should be playing', 10000
+
           runs -> pv.pause()
           waitsFor (->
             pv.player.getPlayerState() == YT.PlayerState.PAUSED
           ), 'video to pause after playing', 10000
 
+
         it 'should seek, both when playing and when paused', ->
-          runs -> pv.seek 30
+          runs -> pv._seek 30
           waitsFor (->
             pv.player.getCurrentTime() == 30
           ), 'video to seek to 30 while playing', 10000
 
-          runs -> pv.seek 40
+          runs -> pv._seek 40
           waitsFor (->
             pv.player.getCurrentTime() == 40
           ), 'video to seek to 40 while playing', 10000
 
-          runs -> pv.seek 10
+          runs -> pv._seek 10
           waitsFor (->
             pv.player.getCurrentTime() == 10
           ), 'video to seek to 10 while playing', 10000
 
-          runs -> pv.seek 20
+          runs -> pv._seek 20
           waitsFor (->
             pv.player.getCurrentTime() == 20
           ), 'video to seek to 20 while playing', 10000
@@ -268,56 +322,64 @@ describe 'acorn.shells.YouTubeShell', ->
             pv.player.getPlayerState() == YT.PlayerState.PAUSED
           ), 'video to pause with API', 10000
 
-          runs -> pv.seek 30
+          runs -> pv._seek 30
           waitsFor (->
             pv.player.getCurrentTime() == 30
           ), 'video to seek to 30 while paused', 10000
 
-          runs -> pv.seek 40
+          runs -> pv._seek 40
           waitsFor (->
             pv.player.getCurrentTime() == 40
           ), 'video to seek to 40 while paused', 10000
 
-          runs -> pv.seek 10
+          runs -> pv._seek 10
           waitsFor (->
             pv.player.getCurrentTime() == 10
           ), 'video to seek to 10 while paused', 10000
 
-          runs -> pv.seek 20
+          runs -> pv._seek 20
           waitsFor (->
             pv.player.getCurrentTime() == 20
           ), 'video to seek to 20 while paused', 10000
 
+        it 'should call `_monitorSeeking` on `_seek`', ->
+          spyOn pv, '_monitorSeeking'
+          expect(pv._monitorSeeking).not.toHaveBeenCalled()
+          pv._seek 30
+          expect(pv._monitorSeeking).toHaveBeenCalled()
+          expect(pv._monitorSeeking).toHaveBeenCalledWith 30
+
         it 'should report whether or not it is playing', ->
-          # expect PLAYING state
           runs -> expect(pv.isPlaying()).toBe true
 
           # pause video, expect PAUSED state
-          runs -> pv.player.pauseVideo()
+          runs -> pv.pause()
           waitsFor (->
             not pv.isPlaying()
           ), 'playerView to register paused state', 10000
 
         it 'should report seek offset', ->
+          opts = bypassMonitor: true
+
           runs -> pv.player.seekTo 30
           waitsFor (->
-            pv.seekOffset() == 30
-          ), 'playerView to register seekOffset to 30 while playing', 10000
+            pv._seekOffset(opts) == 30
+          ), 'playerView to register _seekOffset to 30 while playing', 10000
 
           runs -> pv.player.seekTo 40
           waitsFor (->
-            pv.seekOffset() == 40
-          ), 'playerView to register seekOffset to 40 while playing', 10000
+            pv._seekOffset(opts) == 40
+          ), 'playerView to register _seekOffset to 40 while playing', 10000
 
           runs -> pv.player.seekTo 10
           waitsFor (->
-            pv.seekOffset() == 10
-          ), 'playerView to register seekOffset to 10 while playing', 10000
+            pv._seekOffset(opts) == 10
+          ), 'playerView to register _seekOffset to 10 while playing', 10000
 
           runs -> pv.player.seekTo 20
           waitsFor (->
-            pv.seekOffset() == 20
-          ), 'playerView to register seekOffset to 20 while playing', 10000
+            pv._seekOffset(opts) == 20
+          ), 'playerView to register _seekOffset to 20 while playing', 10000
 
           # achieve paused state
           runs -> pv.player.pauseVideo()
@@ -327,23 +389,107 @@ describe 'acorn.shells.YouTubeShell', ->
 
           runs -> pv.player.seekTo 30
           waitsFor (->
-            pv.seekOffset() == 30
-          ), 'playerView to register seekOffset to 30 while paused', 10000
+            pv._seekOffset(opts) == 30
+          ), 'playerView to register _seekOffset to 30 while paused', 10000
 
           runs -> pv.player.seekTo 40
           waitsFor (->
-            pv.seekOffset() == 40
-          ), 'playerView to register seekOffset to 40 while paused', 10000
+            pv._seekOffset(opts) == 40
+          ), 'playerView to register _seekOffset to 40 while paused', 10000
 
           runs -> pv.player.seekTo 10
           waitsFor (->
-            pv.seekOffset() == 10
-          ), 'playerView to register seekOffset to 10 while paused', 10000
+            pv._seekOffset(opts) == 10
+          ), 'playerView to register _seekOffset to 10 while paused', 10000
 
           runs -> pv.player.seekTo 20
           waitsFor (->
-            pv.seekOffset() == 20
-          ), 'playerView to register seekOffset to 20 while paused', 10000
+            pv._seekOffset(opts) == 20
+          ), 'playerView to register _seekOffset to 20 while paused', 10000
+
+        it 'should report seek offset from seeking monitor if it is set', ->
+          expect(pv._seekOffset()).not.toBe 'fakeOffset'
+          pv._seekingMonitor?.destroy()
+          pv._seekingMonitor = newOffset: 'fakeOffset', destroy: ->
+          expect(pv._seekOffset()).toBe 'fakeOffset'
+
+
+        describe 'PlayerView::_monitorSeeking', ->
+
+          # destroy any existing _seekingMonitor
+          beforeEach ->
+            pv._seekingMonitor?.destroy()
+
+          it 'should be a function', ->
+            expect(typeof PlayerView::_monitorSeeking).toBe 'function'
+
+          it 'should create a seeking monitor', ->
+            expect(pv._seekingMonitor).not.toBeDefined()
+            pv._monitorSeeking()
+            expect(pv._seekingMonitor).toBeDefined()
+
+          it 'should create a seeking monitor with the new offset', ->
+            expect(pv._seekingMonitor).not.toBeDefined()
+            pv._monitorSeeking 15
+            expect(pv._seekingMonitor).toBeDefined()
+            expect(pv._seekingMonitor.newOffset).toBe 15
+
+          it 'should create a seeking monitor with a destroy method', ->
+            expect(pv._seekingMonitor).not.toBeDefined()
+            pv._monitorSeeking 15
+            expect(pv._seekingMonitor).toBeDefined()
+            expect(typeof pv._seekingMonitor.destroy).toBe 'function'
+
+          it 'should create a seeking monitor with a destroy method that
+              will destroy it', ->
+            expect(pv._seekingMonitor).not.toBeDefined()
+            pv._monitorSeeking 15
+            expect(pv._seekingMonitor).toBeDefined()
+            pv._seekingMonitor.destroy()
+            expect(pv._seekingMonitor).not.toBeDefined()
+
+          it 'should create a seeking monitor that self-destructs when the seek
+              has completed', ->
+            spyOn(pv, '_seekOffset').andReturn 0
+            jasmine.Clock.useMock()
+            expect(pv._seekingMonitor).not.toBeDefined()
+
+            pv._monitorSeeking 15
+            expect(pv._seekingMonitor).toBeDefined()
+
+            jasmine.Clock.tick 200
+            expect(pv._seekingMonitor).toBeDefined()
+
+            pv._seekOffset.andReturn 15.1
+            jasmine.Clock.tick 200
+            expect(pv._seekingMonitor).not.toBeDefined()
+
+          it 'should create a seeking monitor that self-destructs after 5
+              seconds', ->
+            spyOn(pv, 'seekOffset').andReturn 0
+            jasmine.Clock.useMock()
+            expect(pv._seekingMonitor).not.toBeDefined()
+
+            pv._monitorSeeking 15
+            expect(pv._seekingMonitor).toBeDefined()
+
+            jasmine.Clock.tick 4999
+            expect(pv._seekingMonitor).toBeDefined()
+
+            jasmine.Clock.tick 2
+            expect(pv._seekingMonitor).not.toBeDefined()
+
+          it 'should create a seeking monitor that is destroyed by
+              playerView.destroy', ->
+            expect(pv._seekingMonitor).not.toBeDefined()
+            pv._monitorSeeking 15
+            expect(pv._seekingMonitor).toBeDefined()
+
+            spy = spyOn(pv._seekingMonitor, 'destroy').andCallThrough()
+
+            expect(spy).not.toHaveBeenCalled()
+            pv.destroy()
+            expect(spy).toHaveBeenCalled()
 
 
       it 'should look good', ->
@@ -358,4 +504,49 @@ describe 'acorn.shells.YouTubeShell', ->
         runs ->
           $player.append pv.render().el
           pv.$el.find('iframe').width(600).height(371)
-        waitsFor (-> pv.player?.getPlayerState?() >= 0), 'cued video', 10000
+        waitsFor (-> pv.player?.getPlayerState?()?), 'cued video', 10000
+
+
+    describe 'YouTubeShell.RemixView', ->
+
+      describe 'metaData', ->
+
+        it 'should fetch properly', ->
+          view = new RemixView viewOptions()
+          metaData = view.metaData()
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs ->
+            expect(metaData.synced()).toBe true
+            expect(_.isObject metaData.data().data).toBe true
+
+        it 'should update timeTotal', ->
+          view = new RemixView viewOptions()
+          model = view.model
+          metaData = view.metaData()
+
+          expect(model.timeTotal()).toBe 300
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs -> expect(model.timeTotal()).toBe metaData.data().data.duration
+
+        it 'should update model._fetchedDefaults.title', ->
+          view = new RemixView viewOptions()
+          model = view.model
+          metaData = view.metaData()
+
+          expect(model._fetchedDefaults?.title).toBeUndefined()
+
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs -> expect(model._fetchedDefaults?.title)
+              .toBe metaData.data().data.title
+
+        it 'should call `_updateAttributesWithDefaults`', ->
+          view = new RemixView viewOptions()
+          model = view.model
+          spyOn model, '_updateAttributesWithDefaults'
+          expect(model._updateAttributesWithDefaults).not.toHaveBeenCalled()
+
+          metaData = view.metaData()
+          waitsFor (-> metaData.synced()), 'retrieving metaData', 10000
+          runs -> expect(model._updateAttributesWithDefaults).toHaveBeenCalled()

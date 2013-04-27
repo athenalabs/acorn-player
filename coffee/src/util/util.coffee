@@ -137,6 +137,84 @@ util.appendCss = (srcs) ->
       $('body').append css
 
 
+# check if element is in the DOM
+# inspired by StackOverflow: http://stackoverflow.com/questions/5629684/
+util.elementInDom = (element) ->
+  if element instanceof $
+    return _.all element, util.elementInDom
+
+  while element = element?.parentNode
+    if element == document
+      return true
+
+  return false
+
+
+# helper for util.toPercent and util.fromPercent
+util._scrubPercentParams = (params) ->
+  # params can be an object or the high value
+  unless _.isObject params
+    params = high: params
+
+  # extract params, assign defaults
+  params.low ?= 0
+  params.high ?= MissingParameterError 'percent conversion utility', 'high'
+  params.bound ?= false
+
+  params
+
+
+# convert a value to a percentage with reference to high and low values
+util.toPercent = (value, params) ->
+  # scrub params
+  params = util._scrubPercentParams params
+
+  # calculate percent
+  percent = (value - params.low) / (params.high - params.low) * 100
+
+  # bind if desired
+  if params.bound
+    percent = util.bound percent
+
+  # limit digits after decimal if desired
+  if params.decimalDigits?
+    percent = Number percent.toFixed params.decimalDigits
+
+  percent
+
+
+# convert a percentage to a value with reference to high and low values
+util.fromPercent = (percent, params) ->
+  # scrub params
+  params = util._scrubPercentParams params
+
+  # bind if desired
+  if params.bound
+    percent = util.bound percent
+
+  # calculate value
+  value = percent / 100 * (params.high - params.low) + params.low
+
+  # limit digits after decimal if desired
+  if params.decimalDigits?
+    value = Number value.toFixed params.decimalDigits
+
+  value
+
+
+# bound n between high and low values; by default, bounds percentages (0 to 100)
+util.bound = (n, opts = {}) ->
+  low = opts.low ? 0
+  high = opts.high ? 100
+
+  unless opts.enforceNumber == false
+    n = Number n
+
+  if n < low then low
+  else if n > high then high
+  else n
+
+
 # Originally from StackOverflow
 # http://stackoverflow.com/questions/736513
 util.parseUrl = (url) ->
@@ -172,6 +250,47 @@ util.parseUrl = (url) ->
       result[key + '_'] = val.toLowerCase()
 
   result
+
+
+
+# track mouse location at all times
+util.mouseLocationTracker = (->
+  id = 0
+  subscribed = []
+  tracker =
+    x: undefined
+    y: undefined
+    active: false
+
+  onMousemove = (e) ->
+    tracker.x = e.pageX
+    tracker.y = e.pageY
+
+  startTracking = ->
+    tracker.active = true
+    $(document).on 'mousemove.mouseLocationTracker', onMousemove
+
+  stopTracking = ->
+    tracker.active = false
+    tracker.x = undefined
+    tracker.y = undefined
+    $(document).off 'mousemove.mouseLocationTracker', onMousemove
+
+  # subscribe to tracker to ensure it activates
+  tracker.subscribe = () ->
+    unless tracker.active
+      startTracking()
+    subscribed.push id
+    id++
+
+  # unsubscribe id when done for efficiency
+  tracker.unsubscribe = (id) ->
+    subscribed = _.without subscribed, id
+    if subscribed.length == 0
+      stopTracking()
+
+  tracker
+)()
 
 
 

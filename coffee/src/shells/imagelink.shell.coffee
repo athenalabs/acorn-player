@@ -11,8 +11,8 @@ LinkShell = acorn.shells.LinkShell
 ImageLinkShell = acorn.shells.ImageLinkShell =
 
   id: 'acorn.ImageLinkShell'
-  title: 'ImageLinkShell'
-  description: 'Shell to contain web based images.'
+  title: 'Image'
+  description: 'an embedded image'
   icon: 'icon-picture'
   validLinkPatterns: [ acorn.util.urlRegEx '.*\.(jpg|jpeg|gif|png|svg)' ]
 
@@ -23,11 +23,18 @@ ImageLinkShell = acorn.shells.ImageLinkShell =
 class ImageLinkShell.Model extends LinkShell.Model
 
 
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      thumbnail: @link()
+
+
 
 class ImageLinkShell.MediaView extends LinkShell.MediaView
 
 
-  className: @classNameExtend 'video-link-shell'
+  className: @classNameExtend 'image-link-shell'
 
 
   render: =>
@@ -42,7 +49,7 @@ class ImageLinkShell.MediaView extends LinkShell.MediaView
 class ImageLinkShell.RemixView extends LinkShell.RemixView
 
 
-  className: @classNameExtend 'video-link-shell'
+  className: @classNameExtend 'image-link-shell'
 
 
   render: =>

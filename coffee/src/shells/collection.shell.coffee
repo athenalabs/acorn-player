@@ -46,8 +46,8 @@ Shell = acorn.shells.Shell
 CollectionShell = acorn.shells.CollectionShell =
 
   id: 'acorn.CollectionShell'
-  title: 'CollectionShell'
-  description: 'Collection shell'
+  title: 'Collection'
+  description: 'a collection of media'
   icon: 'icon-sitemap'
 
 
@@ -55,15 +55,19 @@ CollectionShell = acorn.shells.CollectionShell =
 class CollectionShell.Model extends Shell.Model
 
 
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      title: "#{@module.title} with #{@shells().length} items"
+      thumbnail: @shells().first()?.thumbnail() or superDefaults.thumbnail
+
+
   initialize: =>
     super
 
     unless @get 'shells'
       @set 'shells', []
-
-
-  defaultThumbnail: =>
-    @shells().first()?.thumbnail() or super
 
 
   # lazily construct shells collection
@@ -154,7 +158,32 @@ class CollectionShell.MediaView extends Shell.MediaView
 
 
   defaults: => _.extend super,
-    playOnReady: false
+    playOnReady: true
+    readyOnRender: false
+
+    # whether the collection shell is ready when the first shell is
+    readyOnFirstShellReady: true
+
+    # whether or not to show first subshell on render
+    showFirstSubshellOnRender: true
+
+    # whether or not to show subshell controls
+    showSubshellControls: true
+
+    # whether or not to show subshell summary view
+    showSubshellSummary: true
+
+    # whether or not to advance to the next shell once one ends
+    autoAdvanceOnEnd: true
+
+    # whether play continues between subshell transitions
+    playSubshellOnProgression: true
+
+    # whether to restart a subshell when transitioning to it
+    restartSubshellOnProgression: false
+
+    # whether next/prev cycle
+    shellsCycle: false
 
 
   initialize: =>
@@ -167,25 +196,72 @@ class CollectionShell.MediaView extends Shell.MediaView
     # TODO @model.shells().each (shell) => shell.metaData().sync()
 
     # keep all subviews in memory - perhaps in the future only keep p<c>n.
-    @shellViews = @model.shells().map (shellModel) =>
-      view = new shellModel.module.MediaView
-        # TODO: should be passing `eventhub: @` and selectively forwarding
-        # events to @eventhub
-        eventhub: @eventhub
-        model: shellModel
-        playOnReady: @options.playOnReady
+    @shellViews = @model.shells().map @initializeSubshellMediaView
 
-      view
-
-    @eventhub.on 'playback:ended', @_onShellPlaybackEnded
+    @initializeSubshellEvents()
 
     # initialize the currently selected view
     @currentIndex = 0
 
-    @_initializeControlsView()
+    @initializeControlsView()
 
 
-  _initializeControlsView: =>
+  initializeSubshellMediaView: (shellModel) =>
+    view = new shellModel.module.MediaView
+      # TODO: should be passing `eventhub: @` and selectively forwarding
+      # events to @eventhub
+      eventhub: @eventhub
+      model: shellModel
+
+    view.on 'all', =>
+      arguments[0] = 'Subshell:' + arguments[0]
+      @trigger.apply(@, arguments)
+
+    view
+
+
+  initializeSubshellEvents: =>
+
+    @on 'Subshell:Media:Progress', (view, elapsed, total) =>
+      # add the duration so far
+      viewsBefore = _.map _.range(@currentIndex), @shellView
+      elapsed += @duration viewsBefore
+      @trigger 'Media:Progress', @, elapsed, @duration()
+
+    @on 'Subshell:Media:DidEnd', =>
+      # if last shell, we end!
+      if (@currentIndex + 1) is @shellViews.length
+        @setMediaState 'end'
+
+      else if @options.autoAdvanceOnEnd
+        @showNext()
+
+    @on 'Subshell:Media:DidReady', (view) =>
+      # process iff this is the view currently showing
+      if view isnt @shellView()
+        return
+
+      # if we're still initializing, we're good to go when first shell is ready
+      if @isIniting() and @options.readyOnFirstShellReady
+        @setMediaState 'ready'
+
+      # if this just loaded, we're playing, and we want it to keep playing
+      if @isPlaying() and @options.playSubshellOnProgression
+        view.play()
+
+    @on 'Subshell:Media:DidPlay', =>
+      unless @_switchingShell or @isPlaying()
+        @play()
+
+    @on 'Subshell:Media:DidPause', =>
+      unless @_switchingShell or @isPaused()
+        @pause()
+
+    @on 'Subshell:Shell:UpdateProgressBar', =>
+      @_updateProgressBar()
+
+
+  initializeControlsView: =>
     # construct a ControlToolbar for the acorn controls
     @controlsView = new ControlToolbarView
       extraClasses: ['shell-controls']
@@ -207,53 +283,152 @@ class CollectionShell.MediaView extends Shell.MediaView
   render: =>
     super
     @$el.empty()
-    @showView @currentIndex
+    if @options.showFirstSubshellOnRender
+      @showView @currentIndex
     @
 
 
-  hideView: =>
-    view = @shellViews[@currentIndex]
+  onMediaDidPlay: =>
+    @shellView()?.play()
+
+
+  onMediaDidPause: =>
+    @shellView()?.pause()
+
+
+  duration: (shellViews) =>
+    shellViews ?= @shellViews
+    sum = (total, view) => total + view.duration()
+    _.reduce shellViews, sum, 0
+
+
+  progressBarState: =>
+    @shellView().progressBarState()
+
+
+  _onProgressBarDidProgress: (percentProgress) =>
+    @shellView().trigger 'ProgressBar:DidProgress', arguments...
+
+
+  updateControls: =>
+    unless @options.shellsCycle
+      @controlsView.$('.previous.control-view').removeAttr 'disabled'
+      @controlsView.$('.next.control-view').removeAttr 'disabled'
+
+      if @currentIndex == 0
+        @controlsView.$('.previous.control-view').attr 'disabled', 'disabled'
+      if @currentIndex == @shellViews.length - 1
+        @controlsView.$('.next.control-view').attr 'disabled', 'disabled'
+
+
+  shellView: (index) =>
+    index ?= @currentIndex
+    @shellViews[index]
+
+
+  switchShell: (index, offset) =>
+    unless 0 <= index < @shellViews.length
+      return
+
+    @_switchingShell = true
+    @hideView()
+    @currentIndex = index
+    view = @showView @currentIndex, offset
+    @_updateProgressBar()
+
+    if @isPlaying() and not view.isPlaying() and view.canPlay()
+      view.play()
+
+    delete @_switchingShell
+
+
+  hideView: (index) =>
+    view = @shellView index
+    unless view
+      return
+
     #view?.remove()
 
     # TODO: events are being bound with listenTo, and do not get rebound on
     # rerenders following a remove() call. This is a quick fix until they get
     # refactored.
-    if view?
-      view.$el.addClass 'hidden'
-      view.pause()
+    view.$el.addClass 'hidden'
+    view.pause()
+
+    # remove view.controlView
+    if @options.showSubshellControls
+      controlsIndex = _.indexOf @controlsView.buttons, view.controlsView
+      if controlsIndex >= 0
+        @controlsView.buttons.splice controlsIndex, 1
+        @controlsView.softRender()
+
+    # remove view.summaryView
+    if @options.showSubshellSummary
+      view.summaryView.$el.addClass 'hidden'
 
     view
 
 
-  showView: (index) =>
-    unless 0 <= index < @shellViews.length
+  showView: (index, offset) =>
+    view = @shellView index
+    unless view
       return
-
-    @hideView()
-    @currentIndex = index
-    view = @shellViews[index]
 
     # TODO: temporary fix - partner of above
     view.$el.removeClass 'hidden'
+    unless view.el.parentNode is @el
+      @$el.append view.render().el
 
-    @$el.append view.render().el
-    # TODO update controls
+    if offset?
+      view.seek offset
+
+    if @options.showSubshellSummary
+      view.summaryView.$el.removeClass 'hidden'
+      @summaryView.$el.append view.summaryView.render().el
+
+    if @options.showSubshellControls
+      # add view.controlsView
+      @controlsView.buttons.push view.controlsView
+      @controlsView.render()
+
+    @updateControls()
 
     view
 
 
-  showPrevious: => @showView @currentIndex - 1
-  showNext: => @showView @currentIndex + 1
+  showPrevious: =>
+    unless @options.playSubshellOnProgression
+      @pause()
+
+    offset = if @options.restartSubshellOnProgression then 0 else undefined
+    @switchShell @correctedIndex(@currentIndex - 1), offset
 
 
-  _onShellPlaybackEnded: =>
+  showNext: =>
+    unless @options.playSubshellOnProgression
+      @pause()
 
+    offset = if @options.restartSubshellOnProgression then 0 else undefined
+    @switchShell @correctedIndex(@currentIndex + 1), offset
+
+
+  correctedIndex: (index) =>
+    if @options.shellsCycle
+      index = (index + @shellViews.length) % @shellViews.length
+    else
+      index
 
 
 # uniform view to edit shell data.
 class CollectionShell.RemixView extends Shell.RemixView
 
   className: @classNameExtend 'collection-shell'
+
+
+  initialize: =>
+    super
+
+    @listenTo @model, 'change:shells', @model._updateAttributesWithDefaults
 
 
 

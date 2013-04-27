@@ -1,7 +1,10 @@
 goog.provide 'acorn.player.controls.ControlToolbarView'
+goog.provide 'acorn.player.controls.ControlToggleView'
+goog.provide 'acorn.player.controls.PlayPauseControlToggleView'
 goog.provide 'acorn.player.controls.ControlView'
 goog.provide 'acorn.player.controls.IconControlView'
 goog.provide 'acorn.player.controls.ImageControlView'
+goog.provide 'acorn.player.controls.ElapsedTimeControlView'
 
 goog.require 'acorn.config'
 
@@ -18,6 +21,7 @@ class ControlToolbarView extends athena.lib.ToolbarView
     super
     @initializeButtons()
 
+
   initializeButtons: =>
 
     # construct any ControlViews referenced by id
@@ -31,7 +35,92 @@ class ControlToolbarView extends athena.lib.ToolbarView
 
     # forward all events from buttons
     _.each @buttons, (btn) =>
-      btn.on 'all', (eventName) => @trigger eventName
+      btn.on 'all', => @trigger arguments...
+
+
+
+# view that toggles control buttons
+class ControlToggleView extends ControlToolbarView
+
+
+  className: @classNameExtend 'control-toggle-view'
+
+
+  initialize: =>
+    super
+    @model ?= new Backbone.Model
+    @listenTo @model, 'change', => @refreshToggle()
+
+
+  initializeButtons: =>
+    # construct fresh object mapping button name to button
+    buttons = @buttons
+    @buttons = {}
+
+    _.each buttons, (btn, key) =>
+      # accept object or array
+      unless _.isString key
+        key = btn
+
+      unless _.isString key
+        TypeError 'buttons', 'array of strings or object'
+
+      @buttons[key] = btn
+
+    # construct any ControlViews referenced by id
+    for key, btn of @buttons
+      @buttons[key] = if _.isString btn then ControlView.withId btn else btn
+
+    # ensure all toolbar buttons are Controls or ControlToolbars
+    _.each @buttons, (btn) =>
+      unless btn instanceof ControlToolbarView or btn instanceof ControlView
+        TypeError 'button', "ControlToolbarView or ControlView"
+
+    # forward all events from buttons
+    _.each @buttons, (btn) =>
+      btn.on 'all', => @trigger arguments...
+
+
+  render: =>
+    super
+    @refreshToggle()
+    @
+
+
+  activeControl: =>
+    activeControl = @model.get 'activeControl'
+    @buttons[activeControl] ? _.values(@buttons)[0]
+
+
+  refreshToggle: =>
+    for key, controlView of @buttons
+      controlView.$el.addClass 'hidden'
+
+    @activeControl().$el.removeClass 'hidden'
+
+
+
+# view that toggles control buttons
+class PlayPauseControlToggleView extends ControlToggleView
+
+
+  className: @classNameExtend 'play-pause-control-toggle-view'
+
+
+  initializeButtons: =>
+    @buttons =
+      Play: ControlView.withId 'Play'
+      Pause: ControlView.withId 'Pause'
+
+    # forward all events from buttons
+    _.each @buttons, (btn) =>
+      btn.on 'all', => @trigger arguments...
+
+
+  activeControl: =>
+    playing = @model.isPlaying?() ? @model.get 'playing'
+    activeControl = if playing then 'Pause' else 'Play'
+    @buttons[activeControl]
 
 
 
@@ -49,14 +138,66 @@ class ControlView extends athena.lib.View
 
   events: => _.extend super,
     'click': => @trigger "#{@controlName()}:Click", @
+    'mouseenter': @_onMouseenter
+    'mouseleave': @_onMouseleave
 
 
   render: =>
     super
     tooltip = @tooltip()
     if tooltip
+      tooltip.trigger = 'manual'
       @$el.tooltip(tooltip)
+      @hasTooltip = true
+      @showingTooltip = false
     @
+
+
+  showTooltip: =>
+    unless @hasTooltip
+      return
+
+    # show tooltip unless already showing (re-showing causes flicker)
+    unless @showingTooltip
+      @showingTooltip = true
+      @$el.tooltip 'show'
+
+
+  hideTooltip: =>
+    unless @hasTooltip
+      return
+
+    # hide tooltip
+    @showingTooltip = false
+    @$el.tooltip 'hide'
+
+
+  _onMouseenter: =>
+    @_clearTimeouts()
+
+    # calculate appropriate delay
+    delay = @tooltip()?.delay?.show or @tooltip()?.delay
+    unless delay > 0
+      delay = 0
+
+    @_showTooltip = setTimeout @showTooltip, delay
+
+
+  _onMouseleave: =>
+    @_clearTimeouts()
+
+    # calculate appropriate delay
+    delay = @tooltip()?.delay?.hide or @tooltip()?.delay
+    unless delay > 0
+      delay = 0
+
+    @_hideTooltip = setTimeout @hideTooltip, delay
+
+
+  # clear any lingering timeouts that haven't arrived yet
+  _clearTimeouts: =>
+    clearTimeout @_showTooltip
+    clearTimeout @_hideTooltip
 
 
   @withId: (id) =>
@@ -205,7 +346,96 @@ class AcornControlView extends ImageControlView
 
 
 
+class ElapsedTimeControlView extends ControlView
+
+  controlName: => 'ElapsedTimeControl'
+
+  tooltip: => title: 'Elapsed Time', delay: show: 1500
+  className: @classNameExtend 'elapsed-time-control-view'
+
+
+  events: => _.extend super,
+    'click .elapsed-value': @showSeekField
+    'blur input.seek-field': @_onBlurSeekField
+    'keyup input.seek-field': @_onKeyupSeekField
+
+
+  template: _.template '''
+    <div>
+      <span class="elapsed">
+        <span class="elapsed-value"></span>
+        <input placeholder="seek" class="seek-field">
+      </span> /
+      <span class="total"></span>
+    </div>
+    '''
+
+
+  initialize: =>
+    super
+    @model ?= new Backbone.Model
+    @listenTo @model, 'change', => @refreshValues()
+
+
+  formatTime: (time) =>
+    if time is Infinity
+      return '∞'
+
+    if time < 0
+      time = 0
+
+    s = acorn.util.Time.secondsToTimestring time
+    s = s.split('.')[0] # remove subsecon fraction
+    s
+
+
+  render: =>
+    super
+    @$el.empty()
+    @$el.html @template()
+    @refreshValues()
+    @
+
+
+  refreshValues: =>
+    @$('.elapsed-value').text @formatTime @model.get 'elapsed'
+    @$('.total').text @formatTime @model.get 'total'
+
+
+  showSeekField: =>
+    @$el.addClass 'active'
+    @$('input').focus()
+
+
+  hideSeekField: =>
+    @$el.removeClass 'active'
+    @$('input').val ''
+
+
+  _seek: =>
+    timestring = @$('input').val()
+
+    if parseFloat(timestring) >= 0
+      seconds = acorn.util.Time.timestringToSeconds timestring
+      @trigger 'ElapsedTimeControl:Seek', seconds
+
+    @hideSeekField()
+
+
+  _onBlurSeekField: (e) =>
+    @_seek()
+
+
+  _onKeyupSeekField: (e) =>
+    switch e.keyCode
+      when athena.lib.util.keys.ENTER then @_seek()
+      when athena.lib.util.keys.ESCAPE then @hideSeekField()
+
+
+
 acorn.player.controls.ControlToolbarView = ControlToolbarView
+acorn.player.controls.ControlToggleView = ControlToggleView
+acorn.player.controls.PlayPauseControlToggleView = PlayPauseControlToggleView
 acorn.player.controls.ControlView = ControlView
 
 acorn.player.controls.IconControlView = IconControlView
@@ -221,3 +451,5 @@ acorn.player.controls.PauseControlView = PauseControlView
 
 acorn.player.controls.ImageControlView = ImageControlView
 acorn.player.controls.AcornControlView = AcornControlView
+
+acorn.player.controls.ElapsedTimeControlView = ElapsedTimeControlView

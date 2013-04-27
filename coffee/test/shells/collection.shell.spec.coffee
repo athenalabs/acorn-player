@@ -10,13 +10,71 @@ describe 'acorn.shells.CollectionShell', ->
   Shell = acorn.shells.Shell
   CollectionShell = acorn.shells.CollectionShell
 
+  Model = CollectionShell.Model
+  MediaView = CollectionShell.MediaView
+  RemixView = CollectionShell.RemixView
+
+  modelOptions = ->
+    shellid: CollectionShell.id
+    shells: [
+      {shellid: Shell.id}
+      {shellid: Shell.id}
+    ]
+
+  viewOptions = (opts = {}) ->
+    _.defaults opts,
+      model: new Model modelOptions()
+      eventhub: _.extend {}, Backbone.Events
+
   it 'should be part of acorn.shells', ->
     expect(CollectionShell).toBeDefined()
 
-  acorn.util.test.describeShellModule CollectionShell
+  acorn.util.test.describeShellModule CollectionShell, modelOptions(), ->
+
+    test.describeDefaults CollectionShell.MediaView, {
+      playOnReady: true
+      readyOnRender: false
+      readyOnFirstShellReady: true
+      showFirstSubshellOnRender: true
+      showSubshellControls: true
+      showSubshellSummary: true
+      autoAdvanceOnEnd: true
+      playSubshellOnProgression: true
+      restartSubshellOnProgression: false
+      shellsCycle: false
+    }, viewOptions()
+
 
   describe 'CollectionShell.Model', ->
-    Model = CollectionShell.Model
+
+    describe 'Model::defaultAttributes', ->
+
+      it 'should default title to a message about its collection', ->
+        model = new Model modelOptions()
+        expect(model.defaultAttributes().title).toBe "Collection with 2 items"
+
+        fakeShells = new Backbone.Collection()
+        for i in [0..2]
+          fakeShell = new Backbone.Model()
+          fakeShell.thumbnail = -> 'thumbnails.com/fake.jpg'
+          fakeShells.add fakeShell
+
+        spyOn(model, 'shells').andReturn fakeShells
+        expect(model.defaultAttributes().title).toBe "Collection with 3 items"
+
+      it 'should default thumbnail to the thumbnail of its first subshell', ->
+        model = new Model modelOptions()
+
+        fakeShells = new Backbone.Collection()
+        for i in [0..2]
+          fakeShell = new Backbone.Model()
+          fakeShell.thumbnail = -> 'thumbnails.com/fake.jpg'
+          fakeShells.add fakeShell
+
+        spyOn(model, 'shells').andReturn fakeShells
+        model._updateAttributesWithDefaults()
+        expect(model.thumbnail()).toBe 'thumbnails.com/fake.jpg'
+
 
     describe 'Model::shells', ->
       it 'should be a Backbone.Collection', ->
@@ -155,3 +213,323 @@ describe 'acorn.shells.CollectionShell', ->
         c.reset [new Model, new Model, new Model]
         expect(spy1.triggered).toBe true
         expect(spy2.triggered).toBe true
+
+
+  describe 'CollectionShell.MediaView', ->
+
+    describe 'MediaView::switchShell', ->
+
+      it 'should be a function', ->
+        expect(typeof MediaView::switchShell).toBe 'function'
+
+      it 'should call `hideView`', ->
+        view = new MediaView viewOptions()
+        spyOn view, 'hideView'
+
+        expect(view.hideView).not.toHaveBeenCalled()
+        view.switchShell 0
+        expect(view.hideView).toHaveBeenCalled()
+
+      it 'should set currentIndex to index', ->
+        view = new MediaView viewOptions()
+        view.currentIndex = 5
+
+        expect(view.currentIndex).toBe 5
+        view.switchShell 0
+        expect(view.currentIndex).toBe 0
+
+      it 'should call `showView`', ->
+        view = new MediaView viewOptions()
+        spyOn view, 'showView'
+
+        expect(view.showView).not.toHaveBeenCalled()
+        view.switchShell 0
+        expect(view.showView).toHaveBeenCalled()
+
+      it 'should call `showView` with index and offset', ->
+        view = new MediaView viewOptions()
+        spyOn view, 'showView'
+
+        expect(view.showView).not.toHaveBeenCalled()
+        view.switchShell 0, 10
+        expect(view.showView).toHaveBeenCalled()
+        expect(view.showView.mostRecentCall.args[0]).toBe 0
+        expect(view.showView.mostRecentCall.args[1]).toBe 10
+
+      it 'should call `_updateProgressBar`', ->
+        view = new MediaView viewOptions()
+        spyOn view, '_updateProgressBar'
+
+        expect(view._updateProgressBar).not.toHaveBeenCalled()
+        view.switchShell 0
+        expect(view._updateProgressBar).toHaveBeenCalled()
+
+
+    describe 'MediaView::showView', ->
+
+      it 'should be a function', ->
+        expect(typeof MediaView::showView).toBe 'function'
+
+      it 'should access shellView at given index', ->
+        view = new MediaView viewOptions()
+        spyOn(view, 'shellView').andCallThrough()
+
+        expect(view.shellView).not.toHaveBeenCalled()
+        view.showView 0
+        expect(view.shellView).toHaveBeenCalled()
+        expect(view.shellView).toHaveBeenCalledWith 0
+
+      it 'should return shellView at given index', ->
+        view = new MediaView viewOptions()
+        spyOn(view, 'shellView').andCallThrough()
+
+        expect(view.shellView).not.toHaveBeenCalled()
+        shellView = view.showView 0
+        expect(view.shellView).toHaveBeenCalled()
+        expect(view.shellView).toHaveBeenCalledWith 0
+        expect(shellView).toBe view.shellView 0
+
+      it 'should append shellView at given index to $el', ->
+        view = new MediaView viewOptions()
+        view.render()
+        shellView = view.shellView 0
+        shellView.$el.remove()
+
+        expect(shellView.el.parentNode).not.toBe view.el
+        view.showView 0
+        expect(shellView.el.parentNode).toBe view.el
+
+      it 'should show the shellView at given index', ->
+        view = new MediaView viewOptions()
+        view.render()
+        shellView = view.shellView 0
+        shellView.$el.addClass 'hidden'
+
+        expect(shellView.$el.hasClass 'hidden').toBe true
+        view.showView 0
+        expect(shellView.$el.hasClass 'hidden').toBe false
+
+      it 'should call `shellView.seek offset` if passed an offset', ->
+        view = new MediaView viewOptions()
+        shellView = view.showView 0
+        spyOn shellView, 'seek'
+
+        expect(shellView.seek).not.toHaveBeenCalled()
+        view.showView 0, 'fakeOffset'
+        expect(shellView.seek).toHaveBeenCalled()
+        expect(shellView.seek).toHaveBeenCalledWith 'fakeOffset'
+
+
+    describe 'MediaView::hideView', ->
+
+      it 'should be a function', ->
+        expect(typeof MediaView::hideView).toBe 'function'
+
+      it 'should access shellView at given index', ->
+        view = new MediaView viewOptions()
+        spyOn(view, 'shellView').andCallThrough()
+
+        expect(view.shellView).not.toHaveBeenCalled()
+        view.hideView 0
+        expect(view.shellView).toHaveBeenCalled()
+        expect(view.shellView).toHaveBeenCalledWith 0
+
+      it 'should return shellView at given index', ->
+        view = new MediaView viewOptions()
+        spyOn(view, 'shellView').andCallThrough()
+
+        expect(view.shellView).not.toHaveBeenCalled()
+        shellView = view.hideView 0
+        expect(view.shellView).toHaveBeenCalled()
+        expect(view.shellView).toHaveBeenCalledWith 0
+        expect(shellView).toBe view.shellView 0
+
+      it 'should hide the shellView at given index', ->
+        view = new MediaView viewOptions()
+        view.render()
+        shellView = view.shellView 0
+        shellView.$el.removeClass 'hidden'
+
+        expect(shellView.$el.hasClass 'hidden').toBe false
+        view.hideView 0
+        expect(shellView.$el.hasClass 'hidden').toBe true
+
+      it 'should pause the shellView at given index', ->
+        view = new MediaView viewOptions()
+        view.render()
+        shellView = view.shellView 0
+        spyOn shellView, 'pause'
+
+        expect(shellView.pause).not.toHaveBeenCalled()
+        view.hideView 0
+        expect(shellView.pause).toHaveBeenCalled()
+
+
+    describe 'MediaView::showPrevious', ->
+
+      it 'should be a function', ->
+        expect(typeof MediaView::showPrevious).toBe 'function'
+
+      it 'should pause playback if playSubshellOnProgression is false', ->
+        view = new MediaView viewOptions playSubshellOnProgression: false
+        spyOn view, 'pause'
+
+        expect(view.pause).not.toHaveBeenCalled()
+        view.showPrevious()
+        expect(view.pause).toHaveBeenCalled()
+
+      it 'should not pause playback if playSubshellOnProgression is true', ->
+        view = new MediaView viewOptions playSubshellOnProgression: true
+        spyOn view, 'pause'
+
+        expect(view.pause).not.toHaveBeenCalled()
+        view.showPrevious()
+        expect(view.pause).not.toHaveBeenCalled()
+
+      it 'should get index of previous shell', ->
+        view = new MediaView viewOptions playSubshellOnProgression: true
+        spyOn(view, 'correctedIndex').andReturn 0
+        view.currentIndex = 8
+
+        expect(view.correctedIndex).not.toHaveBeenCalled()
+        view.showPrevious()
+        expect(view.correctedIndex).toHaveBeenCalled()
+        expect(view.correctedIndex).toHaveBeenCalledWith 7
+
+      it 'should call switchShell with index of previous shell', ->
+        view = new MediaView viewOptions playSubshellOnProgression: true
+        spyOn(view, 'correctedIndex').andReturn 'fakeIndex'
+        spyOn view, 'switchShell'
+
+        expect(view.switchShell).not.toHaveBeenCalled()
+        view.showPrevious()
+        expect(view.switchShell).toHaveBeenCalled()
+        expect(view.switchShell.mostRecentCall.args[0]).toBe 'fakeIndex'
+
+      it 'should call switchShell with an offset of 0 if
+          restartSubshellOnProgression is true', ->
+        view = new MediaView viewOptions restartSubshellOnProgression: true
+        spyOn view, 'switchShell'
+
+        expect(view.switchShell).not.toHaveBeenCalled()
+        view.showPrevious()
+        expect(view.switchShell).toHaveBeenCalled()
+        expect(view.switchShell.mostRecentCall.args[1]).toBe 0
+
+
+    describe 'MediaView::showNext', ->
+
+      it 'should be a function', ->
+        expect(typeof MediaView::showNext).toBe 'function'
+
+      it 'should pause playback if playSubshellOnProgression is false', ->
+        view = new MediaView viewOptions playSubshellOnProgression: false
+        spyOn view, 'pause'
+
+        expect(view.pause).not.toHaveBeenCalled()
+        view.showNext()
+        expect(view.pause).toHaveBeenCalled()
+
+      it 'should not pause playback if playSubshellOnProgression is true', ->
+        view = new MediaView viewOptions playSubshellOnProgression: true
+        spyOn view, 'pause'
+
+        expect(view.pause).not.toHaveBeenCalled()
+        view.showNext()
+        expect(view.pause).not.toHaveBeenCalled()
+
+      it 'should get index of next shell', ->
+        view = new MediaView viewOptions playSubshellOnProgression: true
+        spyOn(view, 'correctedIndex').andReturn 0
+        view.currentIndex = 8
+
+        expect(view.correctedIndex).not.toHaveBeenCalled()
+        view.showNext()
+        expect(view.correctedIndex).toHaveBeenCalled()
+        expect(view.correctedIndex).toHaveBeenCalledWith 9
+
+      it 'should call switchShell with index of next shell', ->
+        view = new MediaView viewOptions playSubshellOnProgression: true
+        spyOn(view, 'correctedIndex').andReturn 'fakeIndex'
+        spyOn view, 'switchShell'
+
+        expect(view.switchShell).not.toHaveBeenCalled()
+        view.showNext()
+        expect(view.switchShell).toHaveBeenCalled()
+        expect(view.switchShell.mostRecentCall.args[0]).toBe 'fakeIndex'
+
+      it 'should call switchShell with an offset of 0 if
+          restartSubshellOnProgression is true', ->
+        view = new MediaView viewOptions restartSubshellOnProgression: true
+        spyOn view, 'switchShell'
+
+        expect(view.switchShell).not.toHaveBeenCalled()
+        view.showPrevious()
+        expect(view.switchShell).toHaveBeenCalled()
+        expect(view.switchShell.mostRecentCall.args[1]).toBe 0
+
+
+    describe 'MediaView::correctedIndex', ->
+
+      it 'should cycle index if options.shellsCycle', ->
+        view = new MediaView viewOptions shellsCycle: true
+        _.each [-1, 0, 1, 2, 3, 6, 10], (index) ->
+          expect(view.correctedIndex index).toBe ((index + 2) % 2)
+
+      it 'should not cycle index unless options.shellsCycle', ->
+        view = new MediaView viewOptions shellsCycle: false
+        _.each [-1, 0, 1, 2, 3, 6, 10], (index) ->
+          expect(view.correctedIndex index).toBe index
+
+
+    describe 'MediaView::progressBarState', ->
+
+      it 'should return progressBarState of active subshell', ->
+        view = new MediaView viewOptions()
+        subshellState = jasmine.createSpy()
+        spyOn(view, 'shellView').andReturn
+          progressBarState: subshellState
+
+        expect(subshellState).not.toHaveBeenCalled()
+        view.progressBarState()
+        expect(subshellState).toHaveBeenCalled()
+
+
+    describe 'MediaView::_progressBarDidProgress', ->
+
+      it 'should forward "ProgressBar:DidProgress" event to active subshell', ->
+        view = new MediaView viewOptions()
+        subshellTrigger = jasmine.createSpy()
+        spyOn(view, 'shellView').andReturn
+          trigger: subshellTrigger
+
+        expect(subshellTrigger).not.toHaveBeenCalled()
+        view._onProgressBarDidProgress 'fakeArg1', 'fakeArg2'
+        expect(subshellTrigger).toHaveBeenCalled()
+        args = subshellTrigger.mostRecentCall.args
+        expect(args[0]).toBe 'ProgressBar:DidProgress'
+        expect(args[1]).toBe 'fakeArg1'
+        expect(args[2]).toBe 'fakeArg2'
+
+
+    describe 'MediaView: events', ->
+
+      it 'should call `_updateProgressBar` on "Subshell:Shell:UpdateProgress' +
+          'Bar"', ->
+        spyOn MediaView::, '_updateProgressBar'
+        view = new MediaView viewOptions()
+
+        expect(MediaView::_updateProgressBar).not.toHaveBeenCalled()
+        view.trigger 'Subshell:Shell:UpdateProgressBar'
+        expect(MediaView::_updateProgressBar).toHaveBeenCalled()
+
+
+  describe 'CollectionShell.RemixView', ->
+
+    it 'should call _updateAttributesWithDefaults when shells change', ->
+      spyOn Model::, '_updateAttributesWithDefaults'
+      view = new RemixView viewOptions()
+
+      expect(Model::_updateAttributesWithDefaults.callCount).toBe 1
+      view.model.trigger 'change:shells'
+      expect(Model::_updateAttributesWithDefaults.callCount).toBe 2

@@ -11,8 +11,8 @@ VideoLinkShell = acorn.shells.VideoLinkShell
 YouTubeShell = acorn.shells.YouTubeShell =
 
   id: 'acorn.YouTubeShell'
-  title: 'YouTubeShell'
-  description: 'A shell for YouTube videos.'
+  title: 'YouTube'
+  description: 'a YouTube video'
   icon: 'icon-play'
   validLinkPatterns: [
     acorn.util.urlRegEx('(www\.)?youtube\.com\/v\/([A-Za-z0-9\-_]+).*')
@@ -28,31 +28,25 @@ YouTubeShell = acorn.shells.YouTubeShell =
 class YouTubeShell.Model extends VideoLinkShell.Model
 
 
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      title: @_fetchedDefaults?.title or superDefaults.title
+      thumbnail: "https://img.youtube.com/vi/#{@youtubeId()}/0.jpg"
+
+
+  _defaultDescription: =>
+    if _.isFinite(@timeStart()) and _.isFinite @timeEnd()
+      start = acorn.util.Time.secondsToTimestring @timeStart()
+      end = acorn.util.Time.secondsToTimestring @timeEnd()
+      clipping = " from #{start} to #{end}"
+
+    "YouTube video \"#{@_fetchedDefaults?.title ? @link()}\"#{clipping ? ''}."
+
+
   metaDataUrl: =>
-    "http://gdata.youtube.com/feeds/api/videos/#{@youtubeId()}?v=2&alt=jsonc"
-
-
-  description: =>
-    start = acorn.util.Time.secondsToTimestring @timeStart()
-    end = acorn.util.Time.secondsToTimestring @timeEnd()
-    "YouTube video #{@title()} from #{start} to #{end}."
-
-
-  timeTotal: =>
-    currTotal = super
-    cache = @metaData()
-
-    if cache.synced()
-      timeTotal = cache.data().data.duration
-      @set('timeTotal', timeTotal) unless currTotal == timeTotal
-      timeTotal
-    else
-      @get('timeTotal') ? Infinity
-
-
-  title: =>
-    cache = @metaData()
-    if cache.synced() then cache.data().data.title else @get('link')
+    "https://gdata.youtube.com/feeds/api/videos/#{@youtubeId()}?v=2&alt=jsonc"
 
 
   # returns the youtube video id of this link.
@@ -66,13 +60,9 @@ class YouTubeShell.Model extends VideoLinkShell.Model
     pattern.exec(link)[3]
 
 
-  defaultThumbnail: =>
-    "//img.youtube.com/vi/#{@youtubeId()}/0.jpg"
-
-
   embedLink: (options) =>
     # see https://developers.google.com/youtube/player_parameters for options
-    "http://www.youtube.com/embed/#{@youtubeId()}?" +
+    "https://www.youtube.com/embed/#{@youtubeId()}?" +
          '&fs=1' +
        # '&modestbranding=1' +
          '&iv_load_policy=3' +
@@ -97,12 +87,33 @@ class YouTubeShell.MediaView extends VideoLinkShell.MediaView
   className: @classNameExtend 'youtube-shell'
 
 
-
 class YouTubeShell.RemixView extends VideoLinkShell.RemixView
 
 
   className: @classNameExtend 'youtube-shell'
 
+
+  initialize: =>
+    super
+    @metaData().sync success: @onMetaDataSync
+
+
+  onMetaDataSync: (data) =>
+    @model._fetchedDefaults ?= {}
+    @model._fetchedDefaults = title: data.data.title
+    @model.timeTotal data.data.duration
+
+    @model._updateAttributesWithDefaults()
+    @_setTimeInputMax()
+
+
+  metaData: =>
+    if @model.metaDataUrl() and not @_metaData
+      @_metaData = new athena.lib.util.RemoteResource
+        url: @model.metaDataUrl()
+        dataType: 'json'
+
+    @_metaData
 
 
 class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
@@ -111,12 +122,33 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
   className: @classNameExtend 'youtube-shell'
 
 
+  events: => _.extend super,
+    'click .click-capture': => @togglePlayPause()
+
+
+  initialize: =>
+    super
+    @on 'Media:Play', => @player?.playVideo?()
+    @on 'Media:Pause', => @player?.pauseVideo?()
+    @on 'Media:End', => @player?.pauseVideo?()
+    @initializeYouTubeAPI()
+
+
+  destroy: =>
+    @_seekingMonitor?.destroy()
+    super
+
+
   render: =>
     super
     @$el.empty()
     options = noControls: @options.noControls
     @$el.append acorn.util.iframe @model.embedLink(options), @playerId()
-    @initializeYouTubeAPI()
+    @$el.append $('<div>').addClass('click-capture')
+
+    # initialize in next call stack, after render.
+    # YouTube requires the element to be in the DOM
+    setTimeout(@initializeYouTubePlayer, 0)
     @
 
 
@@ -126,18 +158,51 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
     "youtube-player-#{@cid}"
 
 
-  # Control the player
+  _seekOffset: (options = {}) =>
+    # return target new offset if currently seeking
+    if @_seekingMonitor and not options.bypassMonitor
+      @_seekingMonitor.newOffset
+    else
+      @player?.getCurrentTime?() ? 0
 
 
-  play: =>
-    @player?.playVideo()
+  # bridge seekOffsets during asynchronous youtube player seeking
+  _monitorSeeking: (seconds) =>
+    # config values
+    validMargin = 0.3
+    interval = 100
+    timeout = 5000
+
+    # function to destroy an existing seek monitor
+    destroySeekingMonitor = =>
+      if @_seekingMonitor
+        clearInterval @_seekingMonitor.interval
+        clearTimeout @_seekingMonitor.timeout
+        delete @_seekingMonitor
+
+    # function to check if a seek has completed
+    checkSeekCompletion = =>
+      target = @_seekingMonitor.newOffset
+      offset = @_seekOffset bypassMonitor: true
+
+      offsetChanged = offset != @_seekingMonitor.oldOffset
+      validOffset = target <= offset < target + validMargin
+      if offsetChanged and validOffset
+        destroySeekingMonitor()
+
+    # create new monitor
+    destroySeekingMonitor()
+    @_seekingMonitor =
+      oldOffset: @_seekOffset()
+      newOffset: seconds
+      interval: setInterval checkSeekCompletion, interval
+      timeout: setTimeout destroySeekingMonitor, timeout
+      destroy: destroySeekingMonitor
 
 
-  pause: =>
-    @player?.pauseVideo()
+  _seek: (seconds) =>
+    @_monitorSeeking seconds
 
-
-  seek: (seconds) =>
     # Unless playing, seek first to the wrong place. YouTube's player has a bug
     # such that, when not playing, it occasionally seeks incorrectly (this seems
     # to happen after 2 correct seeks)
@@ -146,47 +211,68 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
         seconds + 1
       else
         if seconds - 1 >= 0 then 0 else seconds
-      @player?.seekTo(wrongPlace, true)
+      @player?.seekTo?(wrongPlace, true)
 
-    @player?.seekTo(seconds, true)
-
-
-  isPlaying: =>
-    if @player? and YT?
-      @player.getPlayerState() == YT.PlayerState.PLAYING
+    @player?.seekTo?(seconds, true)
 
 
-  seekOffset: =>
-    @player?.getCurrentTime() ? 0
+  duration: =>
+    @model.duration() ? (@player?.getDuration?() or 0)
 
+
+  _playbackIsAfterEnd: (current) =>
+    if super
+      true
+    else
+      @_playerInEndedState ? false
+
+
+  isInState: (state) =>
+    isInState = super
+    unless window.YT and @player?.getPlayerState
+      return isInState
+
+    ytState = @player.getPlayerState()
+
+    # ensure that YT State matches our expectations.
+    switch state
+      when 'play'
+        ytIsInState = ytState == YT.PlayerState.PLAYING or
+                      ytState == YT.PlayerState.BUFFERING
+      when 'pause'
+        ytIsInState = ytState == YT.PlayerState.PAUSED
+      when 'end'
+        ytIsInState = ytState == YT.PlayerState.ENDED
+      else
+        ytIsInState = undefined
+
+    if ytIsInState isnt isInState
+      console.log 'Error: YT player must agree with internal state'
+      console.log "internal: #{@mediaState()} youtube: #{ytState}"
+
+    isInState
 
 
   # YouTube API - communication between the YouTube iframe API and the shell.
   # see https://developers.google.com/youtube/iframe_api_reference
-  youTubePlayerApiSrc: 'http://www.youtube.com/iframe_api'
+  youTubePlayerApiSrc: '//www.youtube.com/iframe_api'
 
 
   # initialize youtube API. should happen only once per page load
   initializeYouTubeAPI: =>
 
-    # if Vimeo hasn't been initialized, initialize it.
-    unless window.onYouTubeIframeAPIReady
-      $.getScript @youTubePlayerApiSrc, @onYouTubeAPIReady
-      return
-
-    # must call onYouTubeAPIReady once the current render call stack finishes
-    # YouTube API expects the id of a player currently on the page. Backbone may
-    # have not yet added the current DOM subtree to the page DOM.
-    setTimeout @onYouTubeAPIReady, 0
+    # if YouTube hasn't been initialized, initialize it.
+    unless window.YT or YouTubeShell._initializedYouTubeAPI
+      YouTubeShell._initializedYouTubeAPI = true
+      $.getScript @youTubePlayerApiSrc
 
 
-  onYouTubeAPIReady: =>
-    # replace the callback with a no-op
-    window.onYouTubeIframeAPIReady = ->
+  initializeYouTubePlayer: =>
 
     # wait until the YT.Player class is there
-    unless YT.Player
-      setTimeout @onYouTubeAPIReady, 100
+    unless window.YT and YT.Player
+      @initializeYouTubeAPI()
+      setTimeout @initializeYouTubePlayer, 100
       return
 
     # create the player object
@@ -196,18 +282,17 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
         # this *should* initialize the playback at the correct point but
         # doesn't. Need a more robust solution (tick)
         start = parseInt(@model.timeStart() ? 0, 10)
+        @player.loadVideoById(@model.youtubeId(), start)
+        @player.playVideo()
+        @player.pauseVideo()
 
-        if @options.autoplay
-          @player.loadVideoById(@model.youtubeId(), start)
-        else
-          @player.cueVideoById(@model.youtubeId(), start)
-
-        @trigger 'PlayerView:Ready'
+        # playing still needs buffering sometimes. hack: play then pause
+        @setMediaState 'ready'
 
 
       onStateChange: (event) =>
-        @trigger 'PlayerView:StateChange', @, @player.getPlayerState()
-
+        # track youtube ended state
+        @_playerInEndedState = event.data == 0
 
 
 # Register the shell with the acorn object.

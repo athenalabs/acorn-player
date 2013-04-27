@@ -52,6 +52,16 @@ describe 'acorn.shells.Registry', ->
       expect(Registry.moduleWithId, 'ApertureScience.GladOS').toThrow()
 
 
+  describe 'Registry.collectionModules', ->
+
+    it 'should return all modules that derive from CollectionShell', ->
+      modules = Registry.modules
+      collections = Registry.collectionModules()
+      for Shell in modules
+        derives = Shell.isOrDerives CollectionShell
+        expect(_.contains collections, Shell).toBe derives
+
+
   describe 'Registry.registerModule', ->
 
     # -- helpers --

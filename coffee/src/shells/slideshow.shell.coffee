@@ -10,8 +10,8 @@ CollectionShell = acorn.shells.CollectionShell
 SlideshowShell = acorn.shells.SlideshowShell =
 
   id: 'acorn.SlideshowShell'
-  title: 'SlideshowShell'
-  description: 'Slideshow shell'
+  title: 'Slideshow'
+  description: 'media displayed in a slideshow'
   icon: 'icon-play-circle'
 
 
@@ -31,56 +31,64 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
 
   defaults: => _.extend super,
     playOnReady: true
+    autoAdvanceOnEnd: false
 
 
-  _initializeControlsView: =>
+  initializeSubshellEvents: =>
+    super
+
+    @on 'Subshell:Media:DidEnd', =>
+      if @isPlaying() and not @_counter?
+        @showNext()
+
+
+  initializeControlsView: =>
+    @initializePlayPauseToggleView()
+
     # construct a ControlToolbar for the acorn controls
     @controlsView = new ControlToolbarView
       extraClasses: ['shell-controls']
-      buttons: ['Previous', 'Play', 'Pause', 'Next']
+      buttons: ['Previous', @playPauseToggleView, 'Next']
       eventhub: @eventhub
 
     @controlsView.on 'PreviousControl:Click', @showPrevious
     @controlsView.on 'NextControl:Click', @showNext
-    @controlsView.on 'PlayControl:Click', @play
-    @controlsView.on 'PauseControl:Click', @pause
+    @controlsView.on 'PlayControl:Click', => @play()
+    @controlsView.on 'PauseControl:Click', => @pause()
+
+
+  initializePlayPauseToggleView: =>
+    model = new Backbone.Model
+    model.isPlaying = => @isPlaying()
+
+    @playPauseToggleView = new acorn.player.controls.PlayPauseControlToggleView
+      eventhub: @eventhub
+      model: model
 
 
   remove: =>
     @controlsView.off 'PreviousControl:Click', @showPrevious
     @controlsView.off 'NextControl:Click', @showNext
-    @controlsView.off 'PlayControl:Click', @play
-    @controlsView.off 'PauseControl:Click', @pause
+    @controlsView.off 'PlayControl:Click'
+    @controlsView.off 'PauseControl:Click'
 
     @_clearCountdown()
-
     super
 
 
-  render: =>
-    super
-
-    @play()
-
-    @
-
-
-  play: =>
-    @controlsView.$('.control-view.play').addClass 'hidden'
-    @controlsView.$('.control-view.pause').removeClass 'hidden'
-    @_isPlaying = true
+  onMediaDidPlay: =>
+    @playPauseToggleView.refreshToggle()
     @_countdown()
 
 
-  pause: =>
-    @controlsView.$('.control-view.play').removeClass 'hidden'
-    @controlsView.$('.control-view.pause').addClass 'hidden'
-    @_isPlaying = false
+  onMediaDidPause: =>
+    @playPauseToggleView.refreshToggle()
     @_clearCountdown()
 
 
-  isPlaying: =>
-    @_isPlaying
+  onMediaDidEnd: =>
+    @playPauseToggleView.refreshToggle()
+    @_clearCountdown()
 
 
   showNext: =>
@@ -115,13 +123,6 @@ class SlideshowShell.MediaView extends CollectionShell.MediaView
         @showNext()
 
 
-  _onShellPlaybackEnded: =>
-    # show next if counter has already concluded
-    if @isPlaying()
-      unless @_counter?
-        @showNext()
-
-
 
 class SlideshowShell.RemixView extends CollectionShell.RemixView
 
@@ -139,7 +140,7 @@ class SlideshowShell.RemixView extends CollectionShell.RemixView
       max: Infinity
       padTime: false
       extraClasses: ['slide-delay']
-    @timeInputView.on 'change:time', @_onTimeInputChanged
+    @timeInputView.on 'TimeInputView:TimeDidChange', @_onTimeInputChanged
 
 
   render: =>

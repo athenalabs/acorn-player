@@ -60,6 +60,10 @@ class acorn.shells.Registry
     @modules[shellModule.id] = shellModule
 
 
+  @collectionModules: =>
+    _.filter @modules, (module) =>
+      athena.lib.util.isOrDerives module.Model, CollectionShell.Model
+
 
 acorn.registerShellModule = acorn.shells.Registry.registerModule
 acorn.shellModuleWithId = acorn.shells.Registry.moduleWithId

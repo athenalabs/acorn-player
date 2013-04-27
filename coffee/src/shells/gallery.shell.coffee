@@ -10,8 +10,8 @@ CollectionShell = acorn.shells.CollectionShell
 GalleryShell = acorn.shells.GalleryShell =
 
   id: 'acorn.GalleryShell'
-  title: 'GalleryShell'
-  description: 'Gallery shell'
+  title: 'Gallery'
+  description: 'media displayed in a gallery'
   icon: 'icon-th'
 
 
@@ -31,6 +31,17 @@ class GalleryShell.MediaView extends CollectionShell.MediaView
       {link: '', thumbnail: model.thumbnail()}
 
 
+  defaults: => _.extend super,
+    playOnReady: false
+    readyOnRender: true
+    showFirstSubshellOnRender: false
+    showSubshellControls: true
+    showSubshellSummary: true
+    autoAdvanceOnEnd: false
+    playSubshellOnProgression: true
+    shellsCycle: true
+
+
   initialize: =>
     super
 
@@ -40,43 +51,44 @@ class GalleryShell.MediaView extends CollectionShell.MediaView
       tileOptions: @tileOptions
 
     @listenTo @gridView, 'GridTile:Click', (tile) =>
-      @showView @model.shells().indexOf tile.model
+      @switchShell @model.shells().indexOf tile.model
+      return false
 
 
-  _initializeControlsView: =>
+  initializeControlsView: =>
     # construct a ControlToolbar for the acorn controls
     @controlsView = new ControlToolbarView
       extraClasses: ['shell-controls']
       buttons: ['Previous', 'Grid', 'Next']
       eventhub: @eventhub
 
-    @controlsView.on 'PreviousControl:Click', => @showPrevious()
-    @controlsView.on 'GridControl:Click', => @hideView()
-    @controlsView.on 'NextControl:Click', => @showNext()
-
-
-  remove: =>
-    @controlsView.off 'GridControl:Click', @onTogglePlaylist
-    super
+    @listenTo @controlsView, 'PreviousControl:Click', => @showPrevious()
+    @listenTo @controlsView, 'GridControl:Click', => @showGrid()
+    @listenTo @controlsView, 'NextControl:Click', => @showNext()
 
 
   render: =>
     super
     @$el.append @gridView.render().el
-    @hideView()
     @
 
 
-  hideView: =>
-    super
+  showGrid: =>
+    @hideView()
     @gridView.$el.show()
     @controlsView.$el.hide()
+    @
+
+
+  hideGrid: =>
+    @gridView.$el.hide()
+    @controlsView.$el.show()
+    @
 
 
   showView: =>
+    @hideGrid()
     super
-    @gridView.$el.hide()
-    @controlsView.$el.show()
 
 
 

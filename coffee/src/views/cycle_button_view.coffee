@@ -107,10 +107,10 @@ class acorn.player.CycleButtonView extends athena.lib.View
 
   _change: (changed) =>
     switch changed
-      when 'view' then @trigger 'change:view', @currentState()
-      when 'input' then @trigger 'change:input-value', @currentState()
+      when 'view' then @trigger 'CycleButtonView:ViewDidChange', @currentState()
+      when 'input' then @trigger 'CycleButtonView:InputValueDidChange', @currentState()
 
-    @trigger 'change:value', @currentState()
+    @trigger 'CycleButtonView:ValueDidChange', @currentState()
 
 
   _onClickButton: =>

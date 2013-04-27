@@ -8,6 +8,12 @@ goog.require 'acorn.player.SourcesView'
 goog.require 'acorn.player.TimeInputView'
 goog.require 'acorn.player.TimeRangeInputView'
 goog.require 'acorn.player.CycleButtonView'
+goog.require 'acorn.player.MouseTrackingView'
+goog.require 'acorn.player.SlidingObjectView'
+goog.require 'acorn.player.SlidingBarView'
+goog.require 'acorn.player.ValueSliderView'
+goog.require 'acorn.player.RangeSliderView'
+goog.require 'acorn.player.ProgressRangeSliderView'
 
 
 
@@ -16,6 +22,19 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
 
 
   className: @classNameExtend 'player-view row-fluid'
+
+
+  events: => _.extend super,
+    'keydown': (event) =>
+      # skip if focused on input elems
+      if /(input|textarea|select)/i.test event.target.tagName
+        return event
+
+      name = _.invert(athena.lib.util.keys)[event.keyCode]
+      @eventhub.trigger "Keypress:#{name}"
+      if name is 'SPACEBAR'
+        event.preventDefault()
+      return event
 
 
   initialize: =>
@@ -33,16 +52,16 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
 
     @eventhub.on 'show:editor', =>
       unless @editable() then return
-      @content @editorView()
-      @$el.attr 'showing', 'editor'
+      @content @editorView arguments...
+      @$el.attr 'data-showing', 'editor'
 
     @eventhub.on 'show:splash', =>
       @content @splashView()
-      @$el.attr 'showing', 'splash'
+      @$el.attr 'data-showing', 'splash'
 
     @eventhub.on 'show:content', =>
       @content @contentView()
-      @$el.attr 'showing', 'content'
+      @$el.attr 'data-showing', 'content'
 
     @eventhub.on 'Editor:Saved', @onSave
     @eventhub.on 'Editor:Cancel', =>
@@ -50,7 +69,7 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
         return
       @_editorView?.destroy()
       @_editorView = undefined
-      @content @contentView()
+      @eventhub.trigger 'show:content'
 
     @eventhub.on 'EditControl:Click', =>
       if @editable()
@@ -59,6 +78,12 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     @eventhub.on 'AcornControl:Click', => @openAcornWebsite()
     @eventhub.on 'SourcesControl:Click', => @eventhub.trigger 'show:sources'
     @eventhub.on 'FullscreenControl:Click', => @enterFullscreen()
+
+
+  render: =>
+    super
+    @$el.attr 'tabindex', '-1'
+    @
 
 
   contentView: =>
@@ -75,14 +100,18 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     @_splashView
 
 
-  editorView: =>
+  editorView: (opts = {}) =>
     unless @editable()
       return
 
-    @_editorView ?= new acorn.player.EditorView
+    editorOptions =
       eventhub: @eventhub
       model: @model.clone()
-    @_editorView
+
+    if opts.singleShellEditor
+      editorOptions.ShellEditorView = acorn.player.ShellEditorView
+
+    @_editorView ?= new acorn.player.EditorView editorOptions
 
 
   editable: (editable) =>

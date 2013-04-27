@@ -23,6 +23,16 @@ describe 'acorn.Model', ->
     expect(m.pageUrl()).toBe "#{acorn.config.url.base}/#{m.acornid()}"
     expect(m.embedUrl()).toBe "#{acorn.config.url.base}/embed/#{m.acornid()}"
 
+  it 'should have a pageUrl method that optionally appends query params', ->
+    m = new Model {acornid:'hi'}
+    pageUrl = m.pageUrl()
+    expect(m.pageUrl(play: 500, v: 4)).toBe "#{pageUrl}?play=500&v=4"
+
+  it 'should have an embedUrl method that optionally appends query params', ->
+    m = new Model {acornid:'hi'}
+    embedUrl = m.embedUrl()
+    expect(m.embedUrl(play: 500, v: 4)).toBe "#{embedUrl}?play=500&v=4"
+
   it 'should be clonable (with deep-copies)', ->
     deep = {'a': 5}
     m = new Model {acornid:'deep', a: b: c: deep}
@@ -41,12 +51,12 @@ describe 'acorn.Model', ->
     expect(JSON.stringify m.attributes).toEqual s
 
   describeProperty = athena.lib.util.test.describeProperty
-  describeProperty Model, 'title', {}, default: 'New Acorn'
-  describeProperty Model, 'owner', {},
-  describeProperty Model, 'thumbnail', {}, default: acorn.config.img.acorn
+  describeProperty Model, 'owner'
+  describeProperty Model, 'parent'
+  describeProperty Model, 'created', setter: false
+  describeProperty Model, 'updated', setter: false
 
-
-  describeProperty Model, 'acornid', {}, {}, ->
+  describeProperty Model, 'acornid', ->
     it 'acornid should match the id athena.lib.Model property', ->
       model = new Model()
       _.each ['wont', 'you', 'tell', 'me', 'your', 'name'], (id) ->
@@ -60,30 +70,6 @@ describe 'acorn.Model', ->
         expect(model.acornid()).toBe id
         expect(model.id).toBe id
         expect(model.id).toBe model.acornid()
-
-
-  describe 'Model::defaultThumbnail', ->
-
-    it 'should be a function', ->
-      expect(typeof Model::defaultThumbnail).toBe 'function'
-
-    it 'should return shell.thumbnail, if any', ->
-      attrs =
-        shell:
-          thumbnail: 'foo'
-          defaultThumbnail: 'bar'
-
-      expect(new Model(attrs).defaultThumbnail()).toBe 'foo'
-
-    it 'should return shell.defaultThumbnail, if no thumbnail', ->
-      attrs =
-        shell:
-          defaultThumbnail: 'bar'
-
-      expect(new Model(attrs).defaultThumbnail()).toBe 'bar'
-
-    it 'should return acorn.config.img.acorn otherwise', ->
-      expect(new Model().defaultThumbnail()).toBe acorn.config.img.acorn
 
 
   describe 'acorn.Model.shellData property', ->
@@ -102,6 +88,44 @@ describe 'acorn.Model', ->
         expect(model.shellData()).not.toBe sd
         expect(model.shellData(sd)).toBe sd
         expect(model.shellData()).toBe sd
+
+
+
+  describeShellProperty = (Model, property, shellProperty, defaultVal, tests) ->
+
+    if _.isFunction(defaultVal)
+      defaultVal = defaultVal()
+
+    describe "Model::#{property} property bound to shell.#{shellProperty}", ->
+
+      it 'should be a function', ->
+        expect(typeof Model::[property]).toBe 'function'
+
+      it "should return default value without shell data", ->
+        model = new Model()
+        expect(model[property]()).toBe defaultVal
+
+      it "should return shell.#{shellProperty}", ->
+        model = new Model()
+        expect(model[property]()).toBe defaultVal
+        model.get('shell')[shellProperty] = 'foo'
+        expect(model.get('shell')[shellProperty]).toBe 'foo'
+        expect(model[property]()).toBe 'foo'
+
+      it "should set shell.#{shellProperty}", ->
+        model = new Model()
+        expect(model.get('shell')?[shellProperty]).not.toBe 'foo'
+        model[property]('foo')
+        expect(model[property]()).toBe 'foo'
+        expect(model.get('shell')[shellProperty]).toBe 'foo'
+
+      tests?()
+
+  img = acorn.config.img.acorn
+  describeShellProperty Model, 'title', 'title', 'New Acorn'
+  describeShellProperty Model, 'description', 'description', ''
+  describeShellProperty Model, 'thumbnail', 'thumbnail', img, ->
+
 
 
   describe 'acorn.Model.withData', ->
@@ -141,9 +165,9 @@ describe 'acorn.Model', ->
     #TODO expand this into comprehensive tests.
     #TODO find a way to mock the server in the future.
 
-    acorn.config.setDomain 'staging.acorn.athena.ai'
+    acorn.config.setUrlBase 'https://acorn.athena.ai'
     # Uncomment this to run locally:
-    # acorn.config.setDomain 'localhost.athena.ai:8000'
+    # acorn.config.setUrlBase 'http://localhost.athena.ai:7777'
 
     acornid = undefined
     nyfskeqlyx = 'https://www.youtube.com/watch?v=yYAw79386WI'
@@ -178,15 +202,15 @@ describe 'acorn.Model', ->
       m1 = new Model acornid: acornid
       m2 = new Model acornid: acornid
       spy = new EventSpy m1, 'sync'
-      date = new Date().toString()
+      testval = 'test'
 
       runs -> m1.fetch()
 
       waitsFor (-> spy.triggered), 'fetch should complete',
         acorn.config.test.timeout
       runs ->
-        expect(m1.get 'updated').not.toEqual date
-        m1.set({updated: date})
+        expect(m1.get 'test').not.toEqual testval
+        m1.set({test: testval})
         m1.synced = false
         m1.save {},
           success: => m1.synced = true
@@ -197,9 +221,9 @@ describe 'acorn.Model', ->
       waitsFor (=> m1.synced), 'sync should complete',
         acorn.config.test.timeout
       runs ->
-        expect(m1.get 'updated').toEqual date
-        expect(m2.get 'updated').not.toEqual date
-        expect(m2.get 'updated').not.toEqual m1.get 'updated'
+        expect(m1.get 'test').toEqual testval
+        expect(m2.get 'test').not.toEqual testval
+        expect(m2.get 'test').not.toEqual m1.get 'test'
 
         spy = new EventSpy m2, 'change'
         m2.fetch()
@@ -208,9 +232,9 @@ describe 'acorn.Model', ->
         acorn.config.test.timeout
 
       runs ->
-        expect(m1.get 'updated').toEqual date
-        expect(m2.get 'updated').toEqual date
-        expect(m2.get 'updated').toEqual m1.get 'updated'
+        expect(m1.get 'test').toEqual testval
+        expect(m2.get 'test').toEqual testval
+        expect(m2.get 'test').toEqual m1.get 'test'
 
 
     it 'should be able to delete', ->

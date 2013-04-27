@@ -19,8 +19,8 @@ LinkShell = acorn.shells.LinkShell =
   # shell modules based on LinkShell
 
   id: 'acorn.LinkShell'
-  title: 'LinkShell'
-  description: 'Base shell to contain any web based URL.'
+  title: 'Link'
+  description: 'an embedded website'
   icon: 'icon-link'
 
 
@@ -148,6 +148,9 @@ class LinkShell.RemixView extends Shell.RemixView
     iframe.attr 'scrolling', 'no'
     @$el.append iframe
     @
+
+
+  @activeLinkInput: true
 
 
 

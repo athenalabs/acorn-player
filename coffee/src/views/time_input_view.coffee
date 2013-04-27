@@ -99,7 +99,7 @@ class acorn.player.TimeInputView extends athena.lib.View
 
   _change: =>
     @_setInput()
-    @trigger 'change:time', @_time
+    @trigger 'TimeInputView:TimeDidChange', @_time
 
 
   _setInput: (silent) =>
@@ -147,5 +147,5 @@ class acorn.player.TimeInputView extends athena.lib.View
   _onKeyup: (e) =>
     switch e.keyCode
       when athena.lib.util.keys.ENTER then @_onInputChanged()
-      when athena.lib.util.keys.ESC then @input.blur()
+      when athena.lib.util.keys.ESCAPE then @input.blur()
 

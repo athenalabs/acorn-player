@@ -11,8 +11,8 @@ LinkShell = acorn.shells.LinkShell
 AcornLinkShell = acorn.shells.AcornLinkShell =
 
   id: 'acorn.AcornLinkShell'
-  title: 'AcornLinkShell'
-  description: 'A shell for acorn links.'
+  title: 'Acorn'
+  description: 'an acorn within an acorn'
   icon: 'icon-play'
   validLinkPatterns: [
     acorn.util.urlRegEx('acorn\.athena\.ai\/([A-Za-z]{10})/?')
@@ -20,6 +20,14 @@ AcornLinkShell = acorn.shells.AcornLinkShell =
 
 
 class AcornLinkShell.Model extends LinkShell.Model
+
+
+  defaultAttributes: =>
+    superDefaults = super
+
+    _.extend superDefaults,
+      title: @acornModel.title() ? superDefaults.title
+      description: @acornModel.description() ? superDefaults.description
 
 
   initialize: =>
@@ -46,19 +54,20 @@ class AcornLinkShell.Model extends LinkShell.Model
     pattern.exec(link)[2]
 
 
-  description: =>
-    @acornModel.title() ? ''
-
-
   # duration of one video loop given current splicing
   duration: =>
     @shellModel?.duration() ? Infinity
+
 
 
 class AcornLinkShell.MediaView extends LinkShell.MediaView
 
 
   className: @classNameExtend 'acorn-link-shell'
+
+
+  defaults: => _.extend super,
+    readyOnRender: false
 
 
   initialize: =>
@@ -72,19 +81,28 @@ class AcornLinkShell.MediaView extends LinkShell.MediaView
     @model.onceLoaded @initializeMediaView
     @
 
+
+  # override Shell.MediaView.initializeMedia
+  initializeMedia: =>
+
+
   initializeMediaView: =>
     @mediaView = new @model.shellModel.module.MediaView
       model: @model.shellModel
       eventhub: @eventhub
 
     # fwd all events.
-    @on 'all', _.bind(@mediaView.trigger, @)
+    @listenTo @mediaView, 'all', _.bind(@trigger, @)
+    @initializeMediaEvents @options
+
 
     if @mediaView.controlsView
       @controlsView.buttons = [@mediaView.controlsView]
     else
       @controlsView.buttons = @mediaView.controls
     @controlsView.initializeButtons()
+
+    @setMediaState 'init'
 
 
   render: =>
@@ -100,32 +118,23 @@ class AcornLinkShell.MediaView extends LinkShell.MediaView
     @
 
 
-  # actions
-
-  play: =>
-    @mediaView.play()
+  # forward state transitions
+  isInState: (state) => @mediaView?.isInState(state) or state is 'init'
 
 
-  pause: =>
-    @mediaView.pause()
+  mediaState: => @mediaView?.mediaState() or 'init'
+  setMediaState: (state) => @mediaView?.setMediaState state
 
 
   seek: (seconds) =>
+    super
     @mediaView.seek seconds
 
 
-  # state getters
-
-  isPlaying: =>
-    @mediaView.isPlaying() ? false
+  seekOffset: => @mediaView.seekOffset() ? 0
 
 
-  seekOffset: =>
-    @mediaView.seekOffset() ? 0
-
-
-  duration: =>
-    @mediaView.duration()
+  duration: => @mediaView.duration()
 
 
 
@@ -138,6 +147,7 @@ class AcornLinkShell.RemixView extends LinkShell.RemixView
   initialize: =>
     super
     @player = new acorn.player.Player model: @model.acornModel
+    @model.onceLoaded @model._updateAttributesWithDefaults
 
 
   render: =>

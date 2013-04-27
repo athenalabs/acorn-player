@@ -102,9 +102,11 @@ describe 'acorn.player.PlayerView', ->
 
       tests?()
 
+
   editorViewTests = ->
     name = 'editorView'
     local = "_#{name}"
+
     it "#{name} should not be constructed if playerView's `editable` property
         is not truthy", ->
       view = new PlayerView model: model
@@ -114,6 +116,20 @@ describe 'acorn.player.PlayerView', ->
       subview = view[name]()
       expect(subview).not.toBeDefined()
       expect(view[local]).not.toBeDefined()
+
+    it "#{name} should pass EditorView player.ShellEditorView if `show:editor`
+        passes the option `singleShellEditor: true`", ->
+      hub = new athena.lib.View
+      view = new PlayerView model: model, eventhub: hub, editable: true
+      view.render()
+      expect(view.content() instanceof acorn.player.EditorView).toBe false
+      expect(view.$el.attr 'data-showing').not.toBe 'editor'
+      hub.trigger 'show:editor', singleShellEditor: true
+      expect(view.content() instanceof acorn.player.EditorView).toBe true
+      expect(view.$el.attr 'data-showing').toBe 'editor'
+      expect(view.content().options.ShellEditorView)
+          .toBe acorn.player.ShellEditorView
+
 
   describePlayerSubiew 'editorView', acorn.player.EditorView, editorViewTests
   describePlayerSubiew 'splashView', acorn.player.SplashView
@@ -127,30 +143,30 @@ describe 'acorn.player.PlayerView', ->
       view = new PlayerView model: model, eventhub: hub, editable: true
       view.render()
       expect(view.content() instanceof acorn.player.EditorView).toBe false
-      expect(view.$el.attr 'showing').not.toBe 'editor'
+      expect(view.$el.attr 'data-showing').not.toBe 'editor'
       hub.trigger 'show:editor'
       expect(view.content() instanceof acorn.player.EditorView).toBe true
-      expect(view.$el.attr 'showing').toBe 'editor'
+      expect(view.$el.attr 'data-showing').toBe 'editor'
 
     it 'should not show EditorView on eventhub `show:editor` if uneditable', ->
       hub = new athena.lib.View
       view = new PlayerView model: model, eventhub: hub
       view.render()
       expect(view.content() instanceof acorn.player.EditorView).toBe false
-      expect(view.$el.attr 'showing').not.toBe 'editor'
+      expect(view.$el.attr 'data-showing').not.toBe 'editor'
       hub.trigger 'show:editor'
       expect(view.content() instanceof acorn.player.EditorView).toBe false
-      expect(view.$el.attr 'showing').not.toBe 'editor'
+      expect(view.$el.attr 'data-showing').not.toBe 'editor'
 
     it 'should show ContentView on eventhub `show:content`', ->
       hub = new athena.lib.View
       view = new PlayerView model: model, eventhub: hub
       view.render()
       expect(view.content() instanceof acorn.player.ContentView).toBe false
-      expect(view.$el.attr 'showing').not.toBe 'content'
+      expect(view.$el.attr 'data-showing').not.toBe 'content'
       hub.trigger 'show:content'
       expect(view.content() instanceof acorn.player.ContentView).toBe true
-      expect(view.$el.attr 'showing').toBe 'content'
+      expect(view.$el.attr 'data-showing').toBe 'content'
 
     it 'should show SplashView on eventhub `show:splash`', ->
       hub = new athena.lib.View
@@ -158,10 +174,20 @@ describe 'acorn.player.PlayerView', ->
       view.render()
       hub.trigger 'show:content'
       expect(view.content() instanceof acorn.player.SplashView).toBe false
-      expect(view.$el.attr 'showing').not.toBe 'splash'
+      expect(view.$el.attr 'data-showing').not.toBe 'splash'
       hub.trigger 'show:splash'
       expect(view.content() instanceof acorn.player.SplashView).toBe true
-      expect(view.$el.attr 'showing').toBe 'splash'
+      expect(view.$el.attr 'data-showing').toBe 'splash'
+
+    it 'should send keyups to eventhub', ->
+      hub = new athena.lib.View
+      view = new PlayerView model: model, eventhub: hub
+      view.render()
+      _.each athena.lib.util.keys, (key, name) =>
+        spy = new EventSpy hub, "Keypress:#{name}"
+        event = $.Event 'keydown', {which: key, keyCode: key}
+        view.$el.trigger event
+        expect(spy.triggered).toBe true
 
 
   describe 'editor events (when editable)', ->
