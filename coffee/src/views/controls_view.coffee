@@ -342,7 +342,7 @@ class AcornControlView extends ImageControlView
   className: @classNameExtend 'acorn'
   tooltip: => title: 'Website', delay: show: 1500
   defaults: => _.extend super,
-    image: acorn.config.img.acornIcon
+    image: acorn.config.img.acorn
 
 
 
