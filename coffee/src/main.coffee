@@ -22,6 +22,7 @@ goog.require 'acorn.shells.CollectionShell'
 goog.require 'acorn.shells.SlideshowShell'
 goog.require 'acorn.shells.GalleryShell'
 goog.require 'acorn.shells.SplicedShell'
+goog.require 'acorn.shells.RandomShell'
 
 goog.require 'acorn.player.MediaPlayerView'
 goog.require 'acorn.player.TimedMediaPlayerView'
