@@ -308,6 +308,7 @@ input {
   .thumbnail-view {
     height: 84px;
     width: 84px;
+    position: relative;
     cursor: pointer;
 
     // mimic bootstrap input glow around thumbnail
@@ -317,8 +318,27 @@ input {
       -moz-transition: border linear .2s, box-shadow linear .2s;
       -o-transition: border linear .2s, box-shadow linear .2s;
       transition: border linear .2s, box-shadow linear .2s;
+    }
 
-      &:hover {
+    p.banner {
+      opacity: 0;
+      position: absolute;
+      top: 5px;
+      right: 3px;
+      padding: 3px;
+      line-height: 12px;
+      border-radius: 3px;
+      color: #FFF;
+      background-color: rgba(82, 168, 236, 0.9);
+      border: 1px solid rgba(82, 168, 236, 0.9);
+      -webkit-transition: opacity linear .2s;
+      -moz-transition: opacity linear .2s;
+      -o-transition: opacity linear .2s;
+      transition: opacity linear .2s;
+    }
+
+    &:hover {
+      img.img-rounded {
         border-color: rgba(82, 168, 236, 0.8);
         -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px
             rgba(82, 168, 236, .6);
@@ -326,6 +346,10 @@ input {
             rgba(82, 168, 236, .6);
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px
             rgba(82, 168, 236, .6);
+      }
+
+      p.banner {
+        opacity: 1;
       }
     }
   }
