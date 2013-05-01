@@ -309,6 +309,15 @@ class PauseControlView extends IconControlView
 
 
 
+class RandomControlView extends IconControlView
+  controlName: => 'RandomControl'
+  className: @classNameExtend 'random'
+  tooltip: => title: 'Random', delay: show: 1500
+  defaults: => _.extend super,
+    icon: 'magic'
+
+
+
 class ImageControlView extends ControlView
 
 
@@ -448,6 +457,7 @@ acorn.player.controls.PreviousControlView = PreviousControlView
 acorn.player.controls.GridControlView = GridControlView
 acorn.player.controls.PlayControlView = PlayControlView
 acorn.player.controls.PauseControlView = PauseControlView
+acorn.player.controls.RandomControlView = RandomControlView
 
 acorn.player.controls.ImageControlView = ImageControlView
 acorn.player.controls.AcornControlView = AcornControlView
