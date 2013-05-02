@@ -13,6 +13,7 @@ class acorn.player.EditSummaryView extends acorn.player.SummaryView
   template: _.template '''
     <div class="thumbnail-view span3">
       <img class="img-rounded" src="" />
+      <p class="banner">edit</p>
     </div>
     <div class="span9">
       <input type="text" placeholder="title" class="title">
