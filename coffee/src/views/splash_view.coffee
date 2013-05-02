@@ -27,6 +27,8 @@ class acorn.player.SplashView extends athena.lib.View
     unless @model instanceof acorn.Model
       TypeError @model, 'acorn.Model'
 
+    @listenTo @model, 'change', => @softRender()
+
 
   render: =>
     super
