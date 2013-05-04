@@ -30,5 +30,7 @@ goog.require 'acorn.player.SummaryView'
 goog.require 'acorn.player.ShellSelectorView'
 goog.require 'acorn.player.EditImageView'
 goog.require 'acorn.player.EditSummaryView'
+goog.require 'acorn.player.ShellEditorView'
+goog.require 'acorn.player.CollectionShellEditorView'
 
 (exports ? @).acorn = acorn
