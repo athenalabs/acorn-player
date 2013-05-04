@@ -25,7 +25,7 @@ class acorn.player.RemixerView extends athena.lib.View
       <div class="input-append">
         <div class="btn-group dropdown-view"></div>
       </div>
-      <div class="btn-group toolbar-view"></div>
+      <div class="toolbar"></div>
     </div>
     <div class="alert"></div>
     <div class="remixer-summary"></div>
@@ -65,17 +65,8 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @_initializeDropdownView()
 
-    @toolbarView = new athena.lib.ToolbarView
-      eventhub: @eventhub
-      buttons: @options.toolbarButtons
-
-    @toolbarView.on 'all', =>
-      unless /Toolbar:Click:/.test arguments[0]
-        return
-      @trigger 'Remixer:' + arguments[0], @
-
-    @toolbarView.on 'Toolbar:Click:Clear', =>
-      @swapShell new EmptyShell.Model
+    # set toolbar buttons, thereby initializing toolbar view
+    @setToolbarButtons()
 
     if @options.showSummary
       @summarySubview = new acorn.player.EditSummaryView
@@ -122,6 +113,23 @@ class acorn.player.RemixerView extends athena.lib.View
           link: @model.link()
 
 
+  _initializeToolbarView: =>
+    @toolbarView?.destroy()
+
+    @toolbarView = new athena.lib.ToolbarView
+      eventhub: @eventhub
+      buttons: @toolbarButtons
+      extraClasses: ['btn-group']
+
+    @toolbarView.on 'all', =>
+      unless /Toolbar:Click:/.test arguments[0]
+        return
+      @trigger 'Remixer:' + arguments[0], @
+
+    @toolbarView.on 'Toolbar:Click:Clear', =>
+      @swapShell new EmptyShell.Model
+
+
   _initializeRemixSubview: =>
     @remixSubview = new @model.module.RemixView
       eventhub: @eventhub
@@ -144,16 +152,19 @@ class acorn.player.RemixerView extends athena.lib.View
 
     @dropdownView.setElement(@$('.dropdown-view')).render()
 
-    buttonCount = @options.toolbarButtons.length
-    if buttonCount > 0
-      @toolbarView.setElement(@$('.toolbar-view')).render()
-    @$('.remixer-header').attr 'data-button-count', buttonCount
-
+    @renderToolbarView()
     @renderInputField()
     @renderSummarySubview()
     @renderRemixSubview()
 
     @
+
+
+  renderToolbarView: =>
+    buttonCount = @toolbarButtons.length
+    if buttonCount > 0
+      @$('.toolbar').append @toolbarView.render().el
+    @$('.remixer-header').attr 'data-button-count', buttonCount
 
 
   renderInputField: =>
@@ -218,6 +229,14 @@ class acorn.player.RemixerView extends athena.lib.View
   shellIsValid: (shell) =>
     _.any @options.validShells, (ValidShell) =>
       shell instanceof ValidShell.Model
+
+
+  setToolbarButtons: (buttons) =>
+    @toolbarButtons = buttons ? @options.toolbarButtons
+    @_initializeToolbarView()
+
+    if @rendering
+      @renderToolbarView()
 
 
   alert: (text, className='error') =>

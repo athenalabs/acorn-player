@@ -16,6 +16,7 @@ describe 'acorn.player.RemixerView', ->
   LinkShell = acorn.shells.LinkShell
   ImageLinkShell = acorn.shells.ImageLinkShell
   TextShell = acorn.shells.TextShell
+  ToolbarView = athena.lib.ToolbarView
 
   # construction options
   model = new Shell.Model
@@ -28,8 +29,10 @@ describe 'acorn.player.RemixerView', ->
   it 'should be part of acorn.player', ->
     expect(RemixerView).toBeDefined()
 
+
   describeView = athena.lib.util.test.describeView
   describeView RemixerView, athena.lib.View, viewOptions()
+
 
   describeSubview = athena.lib.util.test.describeSubview
   describeSubview
@@ -39,12 +42,22 @@ describe 'acorn.player.RemixerView', ->
     viewOptions: viewOptions()
     checkDOM: (cEl, pEl) -> cEl.parentNode.parentNode.parentNode is pEl
 
-  describeSubview
+
+  describeSubview {
     View: RemixerView
-    Subview: athena.lib.ToolbarView
+    Subview: ToolbarView
     subviewAttr: 'toolbarView'
     viewOptions: viewOptions()
-    checkDOM: (cEl, pEl) -> cEl.parentNode.parentNode is pEl
+    checkDOM: (cEl, pEl) -> cEl.parentNode.parentNode.parentNode is pEl
+  }, ->
+
+    it 'should be initialized with remixerView.toolbarButtons', ->
+      spyOn ToolbarView::, 'initialize'
+      expect(ToolbarView::initialize).not.toHaveBeenCalled()
+
+      view = new RemixerView viewOptions toolbarButtons: 'fakeButtons'
+      expect(view.options.toolbarButtons).toBe 'fakeButtons'
+
 
   describeSubview {
     View: RemixerView
@@ -96,6 +109,57 @@ describe 'acorn.player.RemixerView', ->
 
       expect(view.$('#link').length).toBe 1
       expect(view.$('input#link').length).toBe 1
+
+
+  describe 'RemixerView::setToolbarButtons', ->
+
+    it 'should set toolbarButtons to @options.toolbarButtons by default', ->
+      view = new RemixerView viewOptions()
+      view.toolbarButtons = 'fakeButtons'
+      view.options.toolbarButtons = 'realButtons'
+
+      # stub toolbarView reinitialization
+      spyOn view, '_initializeToolbarView'
+
+      expect(view.toolbarButtons).not.toBe 'realButtons'
+      view.setToolbarButtons()
+      expect(view.toolbarButtons).toBe 'realButtons'
+
+    it 'should set toolbarButtons to passed in param if available', ->
+      view = new RemixerView viewOptions()
+      view.toolbarButtons = 'fakeButtons'
+
+      # stub toolbarView reinitialization
+      spyOn view, '_initializeToolbarView'
+
+      expect(view.toolbarButtons).not.toBe 'realButtons'
+      view.setToolbarButtons 'realButtons'
+      expect(view.toolbarButtons).toBe 'realButtons'
+
+    it 'should reinitialize toolbarView', ->
+      view = new RemixerView viewOptions()
+      spyOn view, '_initializeToolbarView'
+
+      expect(view._initializeToolbarView).not.toHaveBeenCalled()
+      view.setToolbarButtons()
+      expect(view._initializeToolbarView).toHaveBeenCalled()
+
+    it 'should rerender toolbarView if rendering', ->
+      view = new RemixerView viewOptions()
+      view.render()
+      spyOn view, 'renderToolbarView'
+
+      expect(view.renderToolbarView).not.toHaveBeenCalled()
+      view.setToolbarButtons()
+      expect(view.renderToolbarView).toHaveBeenCalled()
+
+    it 'should not rerender toolbarView if not rendering', ->
+      view = new RemixerView viewOptions()
+      spyOn view, 'renderToolbarView'
+
+      expect(view.renderToolbarView).not.toHaveBeenCalled()
+      view.setToolbarButtons()
+      expect(view.renderToolbarView).not.toHaveBeenCalled()
 
 
   describe 'events', ->
