@@ -53,6 +53,10 @@ util.isPath = (path) ->
   /^[A-Za-z\/.-_]+$/.test path
 
 
+util.isAcornid = (str) ->
+  _.isString(str) and /^(new|[a-z]{10})$/i.test str
+
+
 # helpers to construct acorn urls TODO: delete these?
 util.url = ->
   path = _.toArray(arguments).join '/'

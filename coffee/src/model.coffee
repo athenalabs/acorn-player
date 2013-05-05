@@ -85,8 +85,10 @@ class acorn.Model extends athena.lib.Model
       data =
         acornid: 'new'
         shell: acorn.shellWithLink(data).toJSON()
-    else if _.isString data
+    else if util.isAcornid data
       data = acornid: data.trim().split('/').pop()
+    else if !util.isAcornid(data.acornid)
+      throw new Error('Invalid acorn data: ' + data)
     new @ data
 
 
