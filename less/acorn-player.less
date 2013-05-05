@@ -180,6 +180,14 @@ input {
     margin-top: 30px;
     margin-bottom: 30px;
   }
+
+  &.minimized {
+    .shell-options-view,
+    .remixer-view:not(:first-child),
+    .remixer-view > *:not(.remixer-header) {
+      .hidden;
+    }
+  }
 }
 
 .content-view {

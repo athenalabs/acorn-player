@@ -220,6 +220,75 @@ describe 'acorn.player.ShellEditorView', ->
       expect(view.$('h3').text()).toBe 'shell title'
 
 
+  describe 'ShellEditorView::_setRemixerToolbarButtons', ->
+
+    it 'should forward buttons to each remixerView', ->
+      view = new ShellEditorView viewOptions()
+      view.remixerViews = for i in [0..3]
+        rv = new Backbone.View
+        rv.setToolbarButtons = jasmine.createSpy()
+        rv
+
+      view._setRemixerToolbarButtons 'fakeButtons'
+      for rv in view.remixerViews
+        expect(rv.setToolbarButtons).toHaveBeenCalled()
+        expect(rv.setToolbarButtons).toHaveBeenCalledWith 'fakeButtons'
+
+
+  describe 'ShellEditorView::minimize', ->
+
+    it 'should add a "minimized" class to the view element', ->
+      view = new ShellEditorView viewOptions()
+      view.$el.removeClass 'minimized'
+      expect(view.$el.hasClass 'minimized').toBe false
+      view.minimize()
+      expect(view.$el.hasClass 'minimized').toBe true
+
+    it 'should set minimized to true', ->
+      view = new ShellEditorView viewOptions()
+      view.minimized = false
+      expect(view.minimized).toBe false
+      view.minimize()
+      expect(view.minimized).toBe true
+
+    it 'should set remixer toolbars to the minimized button set', ->
+      view = new ShellEditorView viewOptions()
+      spyOn(view, '_minimizedRemixerToolbarButtons').andReturn 'miniButtons'
+      spyOn view, '_setRemixerToolbarButtons'
+
+      expect(view._setRemixerToolbarButtons).not.toHaveBeenCalled()
+      view.minimize()
+      expect(view._setRemixerToolbarButtons).toHaveBeenCalled()
+      expect(view._setRemixerToolbarButtons).toHaveBeenCalledWith 'miniButtons'
+
+
+  describe 'ShellEditorView::expand', ->
+
+    it 'should remove a "minimized" class from the view element', ->
+      view = new ShellEditorView viewOptions()
+      view.$el.addClass 'minimized'
+      expect(view.$el.hasClass 'minimized').toBe true
+      view.expand()
+      expect(view.$el.hasClass 'minimized').toBe false
+
+    it 'should set minimized to false', ->
+      view = new ShellEditorView viewOptions()
+      view.minimized = true
+      expect(view.minimized).toBe true
+      view.expand()
+      expect(view.minimized).toBe false
+
+    it 'should set remixer toolbars to the regular button set', ->
+      view = new ShellEditorView viewOptions()
+      spyOn(view, '_remixerToolbarButtons').andReturn 'regButtons'
+      spyOn view, '_setRemixerToolbarButtons'
+
+      expect(view._setRemixerToolbarButtons).not.toHaveBeenCalled()
+      view.expand()
+      expect(view._setRemixerToolbarButtons).toHaveBeenCalled()
+      expect(view._setRemixerToolbarButtons).toHaveBeenCalledWith 'regButtons'
+
+
   describe 'ShellEditorView::shell', ->
 
     it 'should return a clone of the model', ->
@@ -390,6 +459,18 @@ describe 'acorn.player.ShellEditorView', ->
         changes = ShellEditorView::_onRemixerLinkChanged.callCount
         view.remixerViews[0].trigger 'Remixer:LinkChanged'
         expect(ShellEditorView::_onRemixerLinkChanged.callCount).toBe changes + 1
+
+
+    describe 'on Remixer:Toolbar:Click:Expand', ->
+
+      it 'should call expand', ->
+        spyOn ShellEditorView::, 'expand'
+        view = new ShellEditorView viewOptions()
+        spyOn view, 'expand'
+
+        expect(ShellEditorView::expand).not.toHaveBeenCalled()
+        view.remixerViews[0].trigger 'Remixer:Toolbar:Click:Expand'
+        expect(ShellEditorView::expand).toHaveBeenCalled()
 
 
   it 'should look good', ->

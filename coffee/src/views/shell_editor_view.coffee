@@ -16,6 +16,10 @@ class acorn.player.ShellEditorView extends athena.lib.View
   className: @classNameExtend 'shell-editor-view'
 
 
+  defaults: => _.extend super,
+    minimize: false
+
+
   template: _.template '''
     <div class="remix-views"></div>
     '''
@@ -29,6 +33,9 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
     @_initializeModel()
     @_initializeRemixerViews()
+
+    if @options.minimize
+      @minimize()
 
     @on 'ShellEditor:ShellsUpdated', @_renderUpdates
 
@@ -52,6 +59,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
     view.on 'Remixer:SwapShell', @_onRemixerSwapShell
     view.on 'Remixer:LinkChanged', @_onRemixerLinkChanged
+    view.on 'Remixer:Toolbar:Click:Expand', @expand
 
     view
 
@@ -59,6 +67,12 @@ class acorn.player.ShellEditorView extends athena.lib.View
   _remixerToolbarButtons: =>
     [
       {id:'Clear', icon: 'icon-undo', tooltip: 'Clear'}
+    ]
+
+
+  _minimizedRemixerToolbarButtons: =>
+    [
+      {id:'Expand', icon: 'icon-caret-down', tooltip: 'Expand'}
     ]
 
 
@@ -131,6 +145,26 @@ class acorn.player.ShellEditorView extends athena.lib.View
     if prefix
       text = prefix + ': ' + text
     view.$el.prepend $('<h3>').addClass('editor-section').text(text)
+
+
+  _setRemixerToolbarButtons: (buttons) =>
+    unless buttons?
+      return
+
+    for remixer in @remixerViews
+      remixer.setToolbarButtons buttons
+
+
+  minimize: =>
+    @$el.addClass 'minimized'
+    @minimized = true
+    @_setRemixerToolbarButtons @_minimizedRemixerToolbarButtons()
+
+
+  expand: =>
+    @$el.removeClass 'minimized'
+    @minimized = false
+    @_setRemixerToolbarButtons @_remixerToolbarButtons()
 
 
   # retrieves the finalized shell. @model should not be used directly.
