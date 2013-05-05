@@ -81,6 +81,10 @@ class acorn.Model extends athena.lib.Model
   @withData: (data) =>
     if not data?
       data = acornid: 'new'
+    else if acorn.util.isUrl data
+      data =
+        acornid: 'new'
+        shell: acorn.shellWithLink(data).toJSON()
     else if _.isString data
       data = acornid: data.trim().split('/').pop()
     new @ data
