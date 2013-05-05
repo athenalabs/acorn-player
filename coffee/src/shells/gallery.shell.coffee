@@ -70,6 +70,7 @@ class GalleryShell.MediaView extends CollectionShell.MediaView
   render: =>
     super
     @$el.append @gridView.render().el
+    @showGrid()
     @
 
 
