@@ -84,37 +84,62 @@ To use ``acorn-player``, you need to
 * tell the `acorn-player` to play the `acorn` (via acornid or data).
 
 
-### Code example
-
-An `acorn` is just an object with some meta-data that tells the
-`acorn-player` what media to show, and how to do it. Acorns are either:
+### Code examples
 
 
-    # load acorn stored in the acorn service
-    var acornModel = acorn('nyfskeqlyx');
-    acornModel.fetch({
-      success: function() {
-        // acornModel finished loading.
-      }
-    });
+#### construct new acorn with any link
 
-    # load acorn via data
-    var acornModel = acorn.withData({
-      "acornid": "local",
-      "shell": {
-        "shell": "acorn.YouTubeShell",
-        "link": "http://www.youtube.com/watch?v=CbIZU8cQWXc",
-      },
-    });
+```javascript
+var acornModel = acorn('http://www.youtube.com/watch?v=CbIZU8cQWXc');
+```
 
-    # construct player with given acorn
-    var acornPlayer = new acorn.player.Player({
-      model: acornModel,
-    });
+#### construct new acorn via data
 
-    # renders and appends
-    acornPlayer.appendTo('body');
+```javascript
+var acornModel = acorn({
+  "acornid": "new",
+  "shell": {
+    "shell": "acorn.YouTubeShell",
+    "link": "http://www.youtube.com/watch?v=CbIZU8cQWXc",
+  },
+});
+```
 
+#### save acorn to the acorn service
+
+```javascript
+var acornModel = acorn('http://www.youtube.com/watch?v=CbIZU8cQWXc');
+acornModel.save();
+```
+
+#### load acorn stored in the acorn service
+
+```javascript
+var acornModel = acorn('nyfskeqlyx');
+acornModel.fetch({
+  success: function() {
+    // acornModel finished loading.
+  }
+});
+```
+
+#### construct + play player
+
+```javascript
+# with given acorn model
+var player = new acorn.player.Player({ model: acornModel });
+
+# with given acorn model
+player = new acorn.player.Player({ data: 'nyfskeqlyx' });
+player.model.fetch();
+
+# with given acorn model
+link = 'http://www.youtube.com/watch?v=CbIZU8cQWXc';
+player = new acorn.player.Player({ data: link });
+
+# append player to selector
+player.appendTo('body');
+```
 
 
 ## Shells
