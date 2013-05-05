@@ -52,6 +52,7 @@ class GalleryShell.MediaView extends CollectionShell.MediaView
 
     @listenTo @gridView, 'GridTile:Click', (tile) =>
       @switchShell @model.shells().indexOf tile.model
+      @play()
       return false
 
 
