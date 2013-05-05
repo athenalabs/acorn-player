@@ -29,7 +29,8 @@ class acorn.player.Player
     @options = _.defaults @options, @defaults()
 
     @model = @options.model ? @options.acornModel
-    # TODO initialize from id or data
+    if !@model and @options.data
+      @model ?= acorn @options.data
 
     unless @model instanceof acorn.Model
       TypeError @model, 'acorn.Model'
