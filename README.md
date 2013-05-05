@@ -87,35 +87,26 @@ To use ``acorn-player``, you need to
 ### Code examples
 
 
-#### construct new acorn with any link
+#### constructing, loading, and saving acorn models
 
 ```javascript
+// construct new acorn with any link
 var acornModel = acorn('http://www.youtube.com/watch?v=CbIZU8cQWXc');
-```
 
-#### construct new acorn via data
-
-```javascript
-var acornModel = acorn({
+// construct new acorn via data (equivalent to above)
+acornModel = acorn({
   "acornid": "new",
   "shell": {
     "shell": "acorn.YouTubeShell",
     "link": "http://www.youtube.com/watch?v=CbIZU8cQWXc",
   },
 });
-```
 
-#### save acorn to the acorn service
-
-```javascript
-var acornModel = acorn('http://www.youtube.com/watch?v=CbIZU8cQWXc');
+// save acorn to the acorn service
 acornModel.save();
-```
 
-#### load acorn stored in the acorn service
-
-```javascript
-var acornModel = acorn('nyfskeqlyx');
+// load acorn stored in the acorn service
+acornModel = acorn('nyfskeqlyx');
 acornModel.fetch({
   success: function() {
     // acornModel finished loading.
