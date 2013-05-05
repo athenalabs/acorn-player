@@ -461,18 +461,6 @@ describe 'acorn.player.ShellEditorView', ->
         expect(ShellEditorView::_onRemixerLinkChanged.callCount).toBe changes + 1
 
 
-    describe 'on Remixer:Toolbar:Click:Expand', ->
-
-      it 'should call expand', ->
-        spyOn ShellEditorView::, 'expand'
-        view = new ShellEditorView viewOptions()
-        spyOn view, 'expand'
-
-        expect(ShellEditorView::expand).not.toHaveBeenCalled()
-        view.remixerViews[0].trigger 'Remixer:Toolbar:Click:Expand'
-        expect(ShellEditorView::expand).toHaveBeenCalled()
-
-
   it 'should look good', ->
     # setup DOM
     acorn.util.appendCss()

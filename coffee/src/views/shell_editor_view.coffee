@@ -59,7 +59,6 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
     view.on 'Remixer:SwapShell', @_onRemixerSwapShell
     view.on 'Remixer:LinkChanged', @_onRemixerLinkChanged
-    view.on 'Remixer:Toolbar:Click:Expand', @expand
 
     view
 
@@ -71,9 +70,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
 
   _minimizedRemixerToolbarButtons: =>
-    [
-      {id:'Expand', icon: 'icon-caret-down', tooltip: 'Expand'}
-    ]
+    []
 
 
   render: =>
