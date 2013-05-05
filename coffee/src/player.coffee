@@ -69,7 +69,7 @@ class acorn.player.Player
 
   # trigger event to show correct view based on options and model
   showView: =>
-    if @acornModel.isNew() or @options.show.slice(0,6) == 'editor'
+    if @options.show.slice(0,6) == 'editor'
       # editor-single shows a simplified, single-shell editor
       if @options.show.slice(7) == 'single'
         options = singleShellEditor: true
