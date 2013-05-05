@@ -126,18 +126,18 @@ acornModel.fetch({
 #### construct + play player
 
 ```javascript
-# with given acorn model
+// with given acorn model
 var player = new acorn.player.Player({ model: acornModel });
 
-# with given acorn model
+// with given acorn model
 player = new acorn.player.Player({ data: 'nyfskeqlyx' });
 player.model.fetch();
 
-# with given acorn model
+// with given acorn model
 link = 'http://www.youtube.com/watch?v=CbIZU8cQWXc';
 player = new acorn.player.Player({ data: link });
 
-# append player to selector
+// append player to selector
 player.appendTo('body');
 ```
 
