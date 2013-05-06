@@ -165,10 +165,10 @@ input {
   > * {
     margin-top: 50px;
     margin-bottom: 50px;
-  }
 
-  > :first-child {
-    margin-top: 0px;
+    &:first-child {
+      margin-top: 0px;
+    }
   }
 
   > .toolbar-view {
@@ -179,6 +179,21 @@ input {
     > * {
       margin-left: 10px;
       min-width: 120px;
+    }
+  }
+
+  &.minimized {
+    > * {
+      margin-top: 25px;
+      margin-bottom: 25px;
+
+      &:first-child {
+        margin-top: 0px;
+      }
+    }
+
+    > .toolbar-view {
+      .hidden;
     }
   }
 }

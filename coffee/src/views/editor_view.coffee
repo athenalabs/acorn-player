@@ -40,6 +40,7 @@ class acorn.player.EditorView extends athena.lib.View
 
   defaults: => _.extend super,
     ShellEditorView: acorn.player.CollectionShellEditorView
+    minimize: false
 
 
   events: => _.extend super,
@@ -56,6 +57,10 @@ class acorn.player.EditorView extends athena.lib.View
     @shellEditorView = new @options.ShellEditorView
       model: acorn.shellWithAcorn @model
       eventhub: @eventhub
+      minimize: @options.minimize
+
+    if @options.minimize
+      @minimize()
 
     btns = []
     unless @model.isNew()
@@ -105,6 +110,20 @@ class acorn.player.EditorView extends athena.lib.View
         @$('#editor-save-btn').removeAttr 'disabled'
 
     @
+
+
+  minimize: =>
+    unless @minimized
+      @$el.addClass 'minimized'
+      @minimized = true
+      @shellEditorView.minimize()
+
+
+  expand: =>
+    if @minimized
+      @$el.removeClass 'minimized'
+      @minimized = false
+      @shellEditorView.expand()
 
 
   canBeSaved: =>
