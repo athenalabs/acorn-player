@@ -72,6 +72,8 @@ class acorn.player.EditorView extends athena.lib.View
       eventhub: @eventhub
 
     @listenTo @shellEditorView, 'ShellEditor:ShellsUpdated', @_updateSaveButton
+    @listenTo @shellEditorView, 'ShellEditor:Minimize', @minimize
+    @listenTo @shellEditorView, 'ShellEditor:Expand', @expand
 
 
   render: =>
@@ -117,6 +119,7 @@ class acorn.player.EditorView extends athena.lib.View
       @$el.addClass 'minimized'
       @minimized = true
       @shellEditorView.minimize()
+      @trigger 'Editor:Minimize'
 
 
   expand: =>
@@ -124,6 +127,7 @@ class acorn.player.EditorView extends athena.lib.View
       @$el.removeClass 'minimized'
       @minimized = false
       @shellEditorView.expand()
+      @trigger 'Editor:Expand'
 
 
   canBeSaved: =>
