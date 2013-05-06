@@ -682,24 +682,38 @@ input {
       text-align: left;
     }
 
-    &[data-button-count='0'] {
-      #link {
-        min-width: 490px;
-      }
+    .buttonCountStyling (@count) {
+      &[data-button-count="@{count}"] {
+        #link {
+          min-width: 490px;
+        }
 
-      span#link {
-        min-width: 478px;
+        span#link {
+          min-width: 478px;
+        }
       }
     }
 
-    &[data-button-count='1'] {
+    // mixin for setting link field size
+    .buttonCountStyling (@count) {
+      @bool: ceil(@count / (@count + 1)); // if @count != 0, add room for margin
+      @btnMargin: @bool * 14; // margin between buttons and link field
+      @btnWidth: 36; // incremental button width
+
       #link {
-        min-width: 440px;
+        min-width: 490px - (@btnWidth * @count) - @btnMargin;
       }
 
       span#link {
-        min-width: 428px;
+        min-width: 478px - (@btnWidth * @count) - @btnMargin;
       }
+    }
+
+    &[data-button-count="0"] {
+      .buttonCountStyling(0);
+    }
+    &[data-button-count="1"] {
+      .buttonCountStyling(1);
 
       .toolbar-view {
         // enforce width for robustness (protect against changes in fontawesome)
@@ -708,15 +722,11 @@ input {
         }
       }
     }
-
-    &[data-button-count='3'] {
-      #link {
-        min-width: 440px - (36 * 2);
-      }
-
-      span#link {
-        min-width: 428px - (36 * 2);
-      }
+    &[data-button-count="2"] {
+      .buttonCountStyling(2);
+    }
+    &[data-button-count="3"] {
+      .buttonCountStyling(3);
     }
 
     .dropdown-view > .dropdown-toggle {
