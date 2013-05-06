@@ -153,15 +153,17 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
 
   minimize: =>
-    @$el.addClass 'minimized'
-    @minimized = true
-    @_setRemixerToolbarButtons @_minimizedRemixerToolbarButtons()
+    unless @minimized
+      @$el.addClass 'minimized'
+      @minimized = true
+      @_setRemixerToolbarButtons @_minimizedRemixerToolbarButtons()
 
 
   expand: =>
-    @$el.removeClass 'minimized'
-    @minimized = false
-    @_setRemixerToolbarButtons @_remixerToolbarButtons()
+    if @minimized
+      @$el.removeClass 'minimized'
+      @minimized = false
+      @_setRemixerToolbarButtons @_remixerToolbarButtons()
 
 
   # retrieves the finalized shell. @model should not be used directly.
