@@ -111,6 +111,9 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     if opts.singleShellEditor
       editorOptions.ShellEditorView = acorn.player.ShellEditorView
 
+    if opts.minimize
+      editorOptions.minimize = true
+
     @_editorView ?= new acorn.player.EditorView editorOptions
 
 
