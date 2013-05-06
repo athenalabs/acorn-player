@@ -18,6 +18,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
   defaults: => _.extend super,
     minimize: false
+    expandOnUpdate: true
 
 
   template: _.template '''
@@ -37,7 +38,7 @@ class acorn.player.ShellEditorView extends athena.lib.View
     if @options.minimize
       @minimize()
 
-    @on 'ShellEditor:ShellsUpdated', @_renderUpdates
+    @on 'ShellEditor:ShellsUpdated', @_onShellsUpdated
 
 
   _initializeModel: =>
@@ -200,3 +201,10 @@ class acorn.player.ShellEditorView extends athena.lib.View
 
   _onRemixerLinkChanged: (remixer, newlink) =>
     @trigger 'ShellEditor:ShellsUpdated'
+
+
+  _onShellsUpdated: =>
+    @_renderUpdates()
+
+    if @options.expandOnUpdate
+      @expand()
