@@ -10,7 +10,7 @@ describe 'acorn.player.PlayerView', ->
 
   # model for PlayerView contruction
   model = acorn.Model.withData
-    acornid: 'thebestacornever'
+    acornid: 'agoodacorn'
     thumbnail: acorn.config.img.acorn
     title: 'The Best Title Ever'
     type: 'image'
