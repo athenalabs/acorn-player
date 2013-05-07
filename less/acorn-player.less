@@ -163,9 +163,6 @@ input {
   }
 
   > * {
-    margin-top: 50px;
-    margin-bottom: 50px;
-
     &:first-child {
       margin-top: 0px;
     }
@@ -174,7 +171,6 @@ input {
   > .toolbar-view {
     text-align: right;
     width: 100%;
-    margin-top: 40px;
 
     > * {
       margin-left: 10px;
@@ -183,13 +179,9 @@ input {
   }
 
   &.minimized {
-    > * {
-      margin-top: 25px;
-      margin-bottom: 25px;
-
-      &:first-child {
-        margin-top: 0px;
-      }
+    .remixer-view {
+      height: 30px;
+      margin-bottom: 5px;
     }
 
     > .toolbar-view {
@@ -201,7 +193,6 @@ input {
 .shell-editor-view {
   > * {
     margin-top: 30px;
-    margin-bottom: 30px;
   }
 
   &.minimized {
