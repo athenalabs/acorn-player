@@ -264,22 +264,26 @@ describe 'acorn.player.ShellEditorView', ->
 
   describe 'ShellEditorView::expand', ->
 
-    it 'should remove a "minimized" class from the view element', ->
+    it 'should remove a "minimized" class from the view element when minimized',
+        ->
       view = new ShellEditorView viewOptions()
       view.$el.addClass 'minimized'
+      view.minimized = true
       expect(view.$el.hasClass 'minimized').toBe true
       view.expand()
       expect(view.$el.hasClass 'minimized').toBe false
 
-    it 'should set minimized to false', ->
+      it 'should set minimized to false when minimized', ->
       view = new ShellEditorView viewOptions()
       view.minimized = true
       expect(view.minimized).toBe true
       view.expand()
       expect(view.minimized).toBe false
 
-    it 'should set remixer toolbars to the regular button set', ->
+    it 'should set remixer toolbars to the regular button set when minimized',
+        ->
       view = new ShellEditorView viewOptions()
+      view.minimized = true
       spyOn(view, '_remixerToolbarButtons').andReturn 'regButtons'
       spyOn view, '_setRemixerToolbarButtons'
 
