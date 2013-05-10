@@ -172,13 +172,16 @@ class acorn.player.RemixerView extends athena.lib.View
     @$linkContainer.children('#link').remove()
 
     if shell.RemixView.activeLinkInput
+      placeholder = 'enter link to media (e.g. a youtube video, image, or pdf)'
       @$linkContainer.removeClass 'input-prepend'
-      @$linkContainer.prepend '<input id="link" type="text" placeholder="enter link"/>'
+      @$linkContainer.prepend "<input id='link' type='text'
+          placeholder='#{placeholder}'/>"
       @$linkContainer.children('input#link').val @model.link?()
 
     else
       @$linkContainer.addClass 'input-prepend'
-      @$linkContainer.prepend '<span id="link" class="add-on uneditable-input"></span>'
+      @$linkContainer.prepend '<span id="link" class="add-on uneditable-input">
+          </span>'
       linkSpanText = "#{shell.title} - #{shell.description}"
       @$linkContainer.children('span#link').text linkSpanText
 
