@@ -102,12 +102,12 @@ describe 'acorn.shells.VimeoShell', ->
           model = new Model modelOptions()
 
           model._fetchedDefaults = title: undefined
-          expect(model._defaultDescription()).toBe "Vimeo video \"#{videoLink}\"" +
-              " from 00:33 to 02:25."
+          expect(model._defaultDescription()).toBe "Remix of Vimeo video " +
+              "\"#{videoLink}\" from 00:33 to 02:25."
 
           model._fetchedDefaults = title: 'FakeVimeoTitle'
-          expect(model._defaultDescription()).toBe "Vimeo video \"FakeVimeo" +
-              "Title\" from 00:33 to 02:25."
+          expect(model._defaultDescription()).toBe "Remix of Vimeo video " +
+              "\"FakeVimeoTitle\" from 00:33 to 02:25."
 
         it 'should return a message about video title only when lacking valid
             start/end times', ->
@@ -116,12 +116,12 @@ describe 'acorn.shells.VimeoShell', ->
           model = new Model options
 
           model._fetchedDefaults = title: undefined
-          expect(model._defaultDescription()).toBe "Vimeo video " +
+          expect(model._defaultDescription()).toBe "Remix of Vimeo video " +
               "\"#{videoLink}\"."
 
           model._fetchedDefaults = title: 'FakeVimeoTitle'
-          expect(model._defaultDescription()).toBe "Vimeo video \"FakeVimeo" +
-              "Title\"."
+          expect(model._defaultDescription()).toBe "Remix of Vimeo video " +
+              "\"FakeVimeoTitle\"."
 
 
     describe 'VimeoShell.PlayerView', ->
