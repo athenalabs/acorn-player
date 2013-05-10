@@ -43,7 +43,7 @@ class VideoLinkShell.Model extends LinkShell.Model
       end = acorn.util.Time.secondsToTimestring @timeEnd()
       clipping = " from #{start} to #{end}"
 
-    "Video \"#{@link()}\"#{clipping ? ''}."
+    "Remix of video \"#{@link()}\"#{clipping ? ''}."
 
 
   # duration of one video loop given current splicing

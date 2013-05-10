@@ -88,15 +88,16 @@ describe 'acorn.shells.VideoLinkShell', ->
 
         it 'should return a message about video source and clipping', ->
           model = new Model modelOptions()
-          expect(model._defaultDescription()).toBe "Video \"#{videoLink}\" " +
-              "from 00:33 to 02:25."
+          expect(model._defaultDescription()).toBe "Remix of video " +
+              "\"#{videoLink}\" from 00:33 to 02:25."
 
         it 'should return a message about video source only when lacking valid
             start/end times', ->
           options = modelOptions()
           options.timeStart = NaN
           model = new Model options
-          expect(model._defaultDescription()).toBe "Video \"#{videoLink}\"."
+          expect(model._defaultDescription()).toBe "Remix of video " +
+              "\"#{videoLink}\"."
 
 
     describe 'VideoLinkShell.MediaView', ->

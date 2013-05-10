@@ -107,11 +107,11 @@ describe 'acorn.shells.YouTubeShell', ->
           model = new Model modelOptions()
 
           model._fetchedDefaults = title: undefined
-          expect(model._defaultDescription()).toBe "YouTube video " +
+          expect(model._defaultDescription()).toBe "Remix of YouTube video " +
               "\"#{videoLink}\" from 00:33 to 02:25."
 
           model._fetchedDefaults = title: 'FakeYouTubeTitle'
-          expect(model._defaultDescription()).toBe "YouTube video " +
+          expect(model._defaultDescription()).toBe "Remix of YouTube video " +
               "\"FakeYouTubeTitle\" from 00:33 to 02:25."
 
         it 'should return a message about video title only when lacking valid
@@ -121,11 +121,11 @@ describe 'acorn.shells.YouTubeShell', ->
           model = new Model options
 
           model._fetchedDefaults = title: undefined
-          expect(model._defaultDescription()).toBe "YouTube video " +
+          expect(model._defaultDescription()).toBe "Remix of YouTube video " +
               "\"#{videoLink}\"."
 
           model._fetchedDefaults = title: 'FakeYouTubeTitle'
-          expect(model._defaultDescription()).toBe "YouTube video " +
+          expect(model._defaultDescription()).toBe "Remix of YouTube video " +
               "\"FakeYouTubeTitle\"."
 
 

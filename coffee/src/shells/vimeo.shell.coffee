@@ -36,7 +36,8 @@ class VimeoShell.Model extends VideoLinkShell.Model
       end = acorn.util.Time.secondsToTimestring @timeEnd()
       clipping = " from #{start} to #{end}"
 
-    "Vimeo video \"#{@_fetchedDefaults?.title ? @link()}\"#{clipping ? ''}."
+    "Remix of Vimeo video \"#{@_fetchedDefaults?.title ?
+        @link()}\"#{clipping ? ''}."
 
 
   metaDataUrl: =>
