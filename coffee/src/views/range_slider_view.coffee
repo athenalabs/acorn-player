@@ -39,17 +39,18 @@ class acorn.player.RangeSliderView extends acorn.player.MouseTrackingView
 
     # initialize handles
     values = @_handleOrderedValues()
-    @_handles = []
-    for i in [0..1]
-      do (i) =>
-        # construct ith handle with ith value
-        options = location: values[i], extraClasses: 'slider-handle-view'
-        handle = new acorn.player.SlidingObjectView options
-        @_handles[i] = handle
+    @_handles = _.map [0..1], (i) =>
+      # construct ith handle with ith value
+      handle = new acorn.player.SlidingObjectView
+        location: values[i]
+        extraClasses: ['slider-handle-view']
 
-        # pass handle index to listener
-        onDidChange = => @_onHandleDidChangeLocation i, arguments...
-        @listenTo handle, 'SlidingObjectView:DidChangeLocation', onDidChange
+      # pass handle index to listener
+      @listenTo handle, 'SlidingObjectView:DidChangeLocation', =>
+         @_onHandleDidChangeLocation i, arguments...
+
+      handle
+
 
     # initialize range bar
     values = @_magnitudeOrderedValues()
@@ -74,7 +75,6 @@ class acorn.player.RangeSliderView extends acorn.player.MouseTrackingView
       .append(@_rangeBar.render().el)
       .append(@_handles[0].render().el)
       .append(@_handles[1].render().el)
-
     @
 
 
