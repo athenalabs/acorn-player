@@ -77,6 +77,14 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
       min: @_min
       max: @_max
 
+    # initialize total time input view
+    @totalInputView = new acorn.player.TimeInputView
+      name: 'clip length'
+      label: 'top'
+      value: @_end - @_start
+      min: @_min
+      max: @_max
+
     # initialize end time input view
     @endInputView = new acorn.player.TimeInputView
       name: 'clip end'
@@ -93,12 +101,14 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
         @_onRangeSliderProgressDidChange
 
     @startInputView.on 'TimeInputView:TimeDidChange', @_onStartInputChanged
+    @totalInputView.on 'TimeInputView:TimeDidChange', @_onTotalInputChanged
     @endInputView.on 'TimeInputView:TimeDidChange', @_onEndInputChanged
 
 
   destroy: =>
     @rangeInputView.destroy()
     @startInputView.destroy()
+    @totalInputView.destroy()
     @endInputView.destroy()
     super
 
@@ -111,9 +121,8 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
     @$('.time-range-slider').append @rangeSliderView.render().el
     @$('.start-time-view').append @startInputView.render().el
+    @$('.total-time-view').append @totalInputView.render().el
     @$('.end-time-view').append @endInputView.render().el
-
-    @_setTotalTime()
 
     @
 
@@ -242,14 +251,15 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
   # end times as appropriate
   _change: (changed) =>
     @_setSlider changed
-    @_setTotalTime()
 
     if changed.start
       @_setStartInput()
+      @_setTotalInput()
       @trigger 'TimeRangeInputView:DidChangeStart', @_start
 
     if changed.end
       @_setEndInput()
+      @_setTotalInput()
       @trigger 'TimeRangeInputView:DidChangeEnd', @_end
 
     if changed.start or changed.end
@@ -262,8 +272,12 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
   _setStartInput: =>
     @startInputView.value @_start
     percent = Math.max(@_percentValues().start - 12, 0)
-    percent = Math.min(percent, 60)
+    percent = Math.min(percent, 64)
     @$('.form-inline').css 'left', percent + '%'
+
+
+  _setTotalInput: =>
+    @totalInputView.value @_end - @_start
 
 
   _setEndInput: =>
@@ -287,17 +301,6 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     # always update progress since the percent is a function of start and end
     @rangeSliderView.progress?(@_percentProgress())
 
-
-  _setTotalTime: =>
-    timestring = acorn.util.Time.secondsToTimestring
-
-    time = @_end - @_start
-    time = if _.isNaN time then '--' else timestring time
-
-    timeView = @$('.total-time-view')
-    timeView.html @_totalTimeTemplate()
-    timeView.find('.total-time').text time
-    timeView.find('.max-time').text acorn.util.Time.secondsToTimestring @_max
 
 
   _bound: (val) =>
@@ -328,6 +331,20 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     # if start has crossed above end, bump end higher
     if @_end < start
       values.end = @_bound start + @_bounceOffset
+
+    @values values
+
+
+  _onTotalInputChanged: (total) =>
+    return if total == (@_end - @_start)
+
+    values =
+      start: @_start
+      end: @_start + total
+
+    if values.end > @_max
+      values.start = @_bound values.start - (values.end - @_max)
+      values.end = @_bound values.end
 
     @values values
 
