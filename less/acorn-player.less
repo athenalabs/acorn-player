@@ -830,16 +830,7 @@ input {
   .time-controls {
     position: relative;
     height: 50px;
-
-    .time-range-input-view .form-inline {
-      margin-left: auto;
-      margin-right: auto;
-      width: 220px;
-
-      .total-time-view {
-        .hidden;
-      }
-    }
+    .gradient(#ffffff, #e6e6e6, #ffffff);
 
     .shell-controls {
       position: absolute;
@@ -961,42 +952,51 @@ input {
 }
 
 .time-range-input-view {
-  margin-top: -10px;
   width: 538px;
-  .gradient(#ffffff, #e6e6e6, #ffffff);
   .transition(0.35s, ease);
 
   .form-inline {
-    margin: 0px 5px 5px 5px;
-    padding: 7px 0px 5px;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 27px;
+    min-width: 218px;
+    vertical-align: bottom;
+    text-align: center;
+    clear: both;
 
-    .time-inputs {
+    .start-time-view, .end-time-view, .total-time-view {
       display: inline-block;
+    }
 
-      .time-input-view {
-        display: inline-block;
+    .start-time-view {
+      float: left;
+    }
 
-        .control-group.time {
-          .transition(0.5s, ease);
-          margin: 0px;
-        }
+    .end-time-view {
+      float: right;
+    }
+
+    .time-input-view {
+      .control-group.time {
+        .transition(0.5s, ease);
+        margin: 0px;
       }
+    }
 
-      input.time {
-        width: 50px;
-        margin-right: 5px;
-        text-align: center;
-      }
+    input.time {
+      width: 50px;
+      text-align: center;
     }
 
     .total-time-view {
       // this css is care of bootstrap
+      margin: 0 auto;
       border-radius: 4px;
       vertical-align: top;
       display: inline-block;
-      width: auto;
+      width: 74px;
       height: 20px;
-      min-width: 16px;
       padding: 4px 5px;
       font-size: 14px;
       font-weight: normal;
