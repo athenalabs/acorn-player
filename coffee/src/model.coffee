@@ -81,6 +81,8 @@ class acorn.Model extends athena.lib.Model
   @withData: (data) =>
     if not data?
       data = acornid: 'new'
+    else if acorn.util.isAcornUrl data
+      data = acornid: acorn.util.acornidInUrl data
     else if acorn.util.isUrl data
       data =
         acornid: 'new'

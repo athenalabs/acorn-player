@@ -131,9 +131,9 @@ describe 'acorn.Model', ->
   describe 'acorn.Model.withData', ->
 
     it 'should work with an object', ->
-      model = Model.withData {acornid:'hi'}
+      model = Model.withData {acornid:'hihellothi'}
       expect(model instanceof Model).toBe true
-      expect(model.acornid()).toBe 'hi'
+      expect(model.acornid()).toBe 'hihellothi'
 
     it 'should work with nothing (new)', ->
       model = Model.withData()
@@ -141,14 +141,19 @@ describe 'acorn.Model', ->
       expect(model.acornid()).toBe 'new'
 
     it 'should work with a string (acornid)', ->
-      model = Model.withData 'hi'
+      model = Model.withData 'hihellothi'
       expect(model instanceof Model).toBe true
-      expect(model.acornid()).toBe 'hi'
+      expect(model.acornid()).toBe 'hihellothi'
 
-    it 'should work with a string (url)', ->
-      model = Model.withData 'http://acorn.athena.ai/hi'
+    it 'should work with an acorn url string', ->
+      model = Model.withData 'http://acorn.athena.ai/hihellothi'
       expect(model instanceof Model).toBe true
-      expect(model.acornid()).toBe 'hi'
+      expect(model.acornid()).toBe 'hihellothi'
+
+    it 'should work with other urls', ->
+      model = Model.withData 'http://foobar.com/fdsafdsa'
+      expect(model instanceof Model).toBe true
+      expect(model.acornid()).toBe 'new'
 
 
   describe 'acorn.Model.withShellData', ->
