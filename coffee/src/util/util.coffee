@@ -44,6 +44,28 @@ util.urlRegEx = (url) ->
     ///
 
 
+util.acornUrlRegEx = ///
+  ^
+  ((https?:)?//)?                   # protocol
+  (staging[.-])?acorn.athena.ai     # acorn domain
+  /(new|[a-z]{10})                  # acornid
+  (/[a-z-]*)?                       # optional title
+  $
+  ///
+
+
+util.isAcornUrl = (url) ->
+  url = String(url)
+  acorn.util.acornUrlRegEx.test url
+
+
+util.acornidInUrl = (url) ->
+  if util.isAcornUrl(url)
+    acorn.util.acornUrlRegEx.exec(url)?[4]
+  else
+    null
+
+
 util.isUrl = (url) ->
   url = String(url)
   @urlRegEx().test url

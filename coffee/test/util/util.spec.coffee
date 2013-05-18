@@ -26,6 +26,104 @@ describe 'acorn.util.urlFix', ->
       expect(acorn.util.urlFix given).toEqual given
 
 
+describe 'acorn.util.isAcornUrl', ->
+  expectTrue = (url) ->
+    expect(acorn.util.isAcornUrl(url)).toBe true
+
+  expectFalse = (url) ->
+    expect(acorn.util.isAcornUrl(url)).toBe false
+
+  it 'should accept acorn urls', ->
+    expectTrue 'http://acorn.athena.ai/hcqscjozxr'
+
+  describe 'protocol checks', ->
+    it 'should accept http', ->
+      expectTrue 'http://acorn.athena.ai/hcqscjozxr'
+
+    it 'should accept https', ->
+      expectTrue 'https://acorn.athena.ai/hcqscjozxr'
+
+    it 'should accept default protocol', ->
+      expectTrue '//acorn.athena.ai/hcqscjozxr'
+
+    it 'should NOT accept FTP', ->
+      expectFalse 'ftp://acorn.athena.ai/hcqscjozxr'
+
+    it 'should NOT accept other protocols', ->
+      expectFalse 'irc://acorn.athena.ai/hcqscjozxr'
+      expectFalse 'acorn://acorn.athena.ai/hcqscjozxr'
+      expectFalse 'nntp://acorn.athena.ai/hcqscjozxr'
+      expectFalse 'file:///acorn.athena.ai/hcqscjozxr'
+      expectFalse 'data://acorn.athena.ai/hcqscjozxr'
+
+    it 'should NOT accept malformed protocol', ->
+      expectFalse '://acorn.athena.ai/hcqscjozxr'
+      expectFalse 'http:/acorn.athena.ai/hcqscjozxr'
+      expectFalse 'https:/acorn.athena.ai/hcqscjozxr'
+      expectFalse 'http//acorn.athena.ai/hcqscjozxr'
+      expectFalse 'https//acorn.athena.ai/hcqscjozxr'
+
+
+  describe 'domain checks', ->
+    it 'should accept acorn.athena.ai', ->
+      expectTrue 'http://acorn.athena.ai/hcqscjozxr'
+
+    it 'should accept staging-acorn.athena.ai', ->
+      expectTrue 'http://staging-acorn.athena.ai/hcqscjozxr'
+      expectTrue 'http://staging.acorn.athena.ai/hcqscjozxr'
+
+    it 'should NOT accept other domains', ->
+      expectFalse 'http://athena.ai/hcqscjozxr'
+      expectFalse 'http://acorns.athena.ai/hcqscjozxr'
+      expectFalse 'http://google.com/hcqscjozxr'
+
+
+  describe 'acornid checks', ->
+    it 'should accept valid acorn ids', ->
+      expectTrue 'http://acorn.athena.ai/hcqscjozxr'
+      expectTrue 'http://acorn.athena.ai/abcdefghij'
+      expectTrue 'http://acorn.athena.ai/aaaaaaaaaa'
+
+    it 'should accept new', ->
+      expectTrue 'http://acorn.athena.ai/new'
+
+    it 'should NOT accept invalid acorn ids', ->
+      expectFalse 'http://acorn.athena.ai/hcqscjozxrfdsa'
+      expectFalse 'http://acorn.athena.ai/a'
+      expectFalse 'http://acorn.athena.ai/'
+      expectFalse 'http://acorn.athena.ai/aaaaaaaaa1'
+
+
+  describe 'title checks', ->
+    it 'should accept no title', ->
+      expectTrue 'http://acorn.athena.ai/hcqscjozxr'
+      expectTrue 'http://acorn.athena.ai/hcqscjozxr/'
+
+    it 'should accept title', ->
+      expectTrue 'http://acorn.athena.ai/hcqscjozxr/i-will-never-give-up'
+
+    it 'should NOT accept invalid title', ->
+      expectFalse 'http://acorn.athena.ai/hcqscjozxr/i- will-never-give-up'
+      expectFalse 'http://acorn.athena.ai/hcqscjozxr/fjdopsa.'
+
+
+
+describe 'acorn.util.acornidInUrl', ->
+
+  expectId = (url, acornid) ->
+    expect(acorn.util.acornidInUrl(url)).toEqual acornid
+
+  it 'should return acornids in acorn urls', ->
+      expectId 'http://acorn.athena.ai/hcqscjozxr', 'hcqscjozxr'
+      expectId 'http://acorn.athena.ai/hcqscjozxr/', 'hcqscjozxr'
+      expectId 'http://acorn.athena.ai/hcqscjozxr/never-give-up', 'hcqscjozxr'
+
+  it 'should return null otherwise', ->
+      expectId 'http://athena.ai/hcqscjozxr', null
+      expectId 'http://acorn.athena.ai/', null
+      expectId 'http://google.com', null
+
+
 
 describe 'acorn.util.elementInDom', ->
   elementInDom = acorn.util.elementInDom
