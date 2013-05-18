@@ -29,8 +29,8 @@ describe 'acorn.player.TimeRangeInputView', ->
       widgets =
         rangeSliderView: triv.rangeSliderView
         startInputView: triv.startInputView
+        totalInputView: triv.totalInputView
         endInputView: triv.endInputView
-        totalTime: triv.$ '.total-time'
 
       [triv, widgets]
 
@@ -71,7 +71,7 @@ describe 'acorn.player.TimeRangeInputView', ->
             acorn.player.ProgressRangeSliderView).toBe true
 
 
-    it 'should contain a range slider view, a total-time field, and start and
+    it 'should contain a range slider view, and start, total,
         end time input views', ->
       [triv, widgets] = setupTRIV()
       TimeInputView = acorn.player.TimeInputView
@@ -79,8 +79,8 @@ describe 'acorn.player.TimeRangeInputView', ->
       expect(triv).toBeDefined()
       expect(widgets.rangeSliderView instanceof RangeSliderView).toBe true
       expect(widgets.startInputView instanceof TimeInputView).toBe true
+      expect(widgets.totalInputView instanceof TimeInputView).toBe true
       expect(widgets.endInputView instanceof TimeInputView).toBe true
-      expect(widgets.totalTime.length).toBe 1
 
 
     describe 'TimeRangeInputView::values', ->
@@ -355,16 +355,16 @@ describe 'acorn.player.TimeRangeInputView', ->
         start: 0
         end: 50
 
-      expect(widgets.totalTime.text()).toBe timestring 50
+      expect(widgets.totalInputView.value()).toBe 50
 
       triv.values {start: 10, end: 40}
-      expect(widgets.totalTime.text()).toBe timestring 30
+      expect(widgets.totalInputView.value()).toBe 30
 
       widgets.endInputView.value 30
-      expect(widgets.totalTime.text()).toBe timestring 20
+      expect(widgets.totalInputView.value()).toBe 20
 
       triv.values {start: 20}
-      expect(widgets.totalTime.text()).toBe timestring 10
+      expect(widgets.totalInputView.value()).toBe 10
 
 
     describe 'TimeRangeInputView: events', ->

@@ -207,8 +207,15 @@ describe 'acorn.player.TimeInputView', ->
       expect(tiv.controlGroup.hasClass 'info').toBe false
 
     it 'should have a configuable name', ->
-      [tiv, input] = setupTIV name: 'reacTIV'
-      expect(tiv.$('.add-on').text()).toBe 'reacTIV'
+      [tiv, input] = setupTIV name: 'reacTIV', label: 'side'
+      expect(tiv.$('.time-input-label').text()).toBe 'reacTIV'
+
+      [tiv, input] = setupTIV name: 'reacTIV', label: 'top'
+      expect(tiv.$('.time-input-label').text()).toBe 'reacTIV'
+
+      [tiv, input] = setupTIV name: 'reacTIV', label: undefined
+      expect(tiv.$('.time-input-label').text()).toBe ''
+
 
     it 'should look good', ->
       # setup DOM

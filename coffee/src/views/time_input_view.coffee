@@ -23,7 +23,7 @@ class acorn.player.TimeInputView extends athena.lib.View
 
       <% if (label == 'side') { %>
       <div class="input-prepend">
-        <span class="add-on"><%= name %></span>
+        <span class="add-on time-input-label"><%= name %></span>
       <% } else { %>
         <div class="input">
       <% } %>
