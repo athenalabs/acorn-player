@@ -10,7 +10,7 @@ class acorn.player.TimeInputView extends athena.lib.View
 
   defaults: => _.extend super,
     padTime: true
-
+    label: null      # side | top | null
 
   events: => _.extend super,
     'change input': @_onInputChanged
@@ -20,8 +20,14 @@ class acorn.player.TimeInputView extends athena.lib.View
 
   template: _.template '''
     <div class="control-group time-field time">
+
+      <% if (label == 'side') { %>
       <div class="input-prepend">
         <span class="add-on"><%= name %></span>
+      <% } else { %>
+        <div class="input">
+      <% } %>
+
         <input size="16" type="text" class="time-field time">
       </div>
     </div>
@@ -42,15 +48,19 @@ class acorn.player.TimeInputView extends athena.lib.View
     super
     @$el.empty()
 
-    name = @options.name ? 'time:'
-    @$el.append @template name: name
+    @$el.append @template
+      name: @options.name
+      label: @options.label
 
     @input = @$ 'input.time-field'
     @controlGroup = @$ '.control-group.time-field'
 
     # set starting time value
     @_setInput true
+    if @options.label == 'top'
+      @$el.prepend "<span class='time-input-label'>#{@options.name}</span>"
 
+    @$el.addClass "label-#{@options.label}"
     @
 
 
