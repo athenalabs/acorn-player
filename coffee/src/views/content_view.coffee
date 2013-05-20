@@ -64,8 +64,9 @@ class acorn.player.ContentView extends athena.lib.View
       eventhub: @eventhub
       playOnReady: true
 
-    # construct a progressBarView
-    @progressBarView = new acorn.player.ValueSliderView
+    # grab custom progressBarView, or construct one
+    @progressBarView = @shellView.progressBarView
+    @progressBarView ?= new acorn.player.ValueSliderView
       handle: false
       extraClasses: ['progress-bar-view']
       eventhub: @eventhub
