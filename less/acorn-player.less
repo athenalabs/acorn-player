@@ -952,6 +952,7 @@ input {
 }
 
 .time-range-input-view {
+  .position-absolutely();
   width: 538px;
   .transition(0.35s, ease);
 
@@ -959,7 +960,8 @@ input {
     position: absolute;
     left: 0px;
     right: 0px;
-    bottom: 27px;
+    bottom: 5px;
+    margin: 0px;
     min-width: 196px;
     vertical-align: bottom;
     text-align: center;
@@ -1016,6 +1018,55 @@ input {
     }
   }
 
+}
+
+.clip-view {
+  .position-absolutely();
+  background: rgba(0, 0, 255, 0.5);
+  height: 8px;
+
+  &:hover {
+    background: rgba(0, 0, 255, 0.7);
+  }
+}
+
+
+.clip-select-view {
+  .position-absolutely();
+  height: 10px;
+
+  .clip-highlight-view {
+    .position-absolutely();
+    background: rgba(0, 0, 50, 0.3);
+
+    &:hover {
+      background: rgba(0, 0, 50, 0.5);
+    }
+  }
+
+  .time-range-input-view {
+    .position-absolutely();
+  }
+
+  &.clip-select-active {
+    .clip-highlight-view {
+      display: none;
+    }
+
+    .time-range-input-view {
+      display: block;
+    }
+  }
+
+  &:not(.clip-select-active) {
+    .clip-highlight-view {
+      display: block;
+    }
+
+    .time-range-input-view {
+      display: none;
+    }
+  }
 }
 
 
