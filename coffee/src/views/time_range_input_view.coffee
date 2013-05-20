@@ -148,7 +148,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
       # keep progress bounded by start and end
       progress = util.bound @progress(), {low: @_start, high: @_end}
-      unless progress = @progress()
+      unless progress == @progress()
         @_progress = progress
         changed.progress = true
 
