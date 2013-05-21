@@ -111,6 +111,7 @@ class HighlightsShell.MediaView extends Shell.MediaView
 
       clipView.on 'Clip:Click', (clipView) =>
         @seek clipView.model.timeStart
+        @play()
 
       clipView
 
@@ -221,10 +222,6 @@ class HighlightsShell.RemixView extends Shell.RemixView
     @subMediaView.on 'Media:StateChange', =>
       @playPauseToggleView.refreshToggle()
 
-    @subMediaView.on 'Media:Progress', =>
-      @onMediaProgress()
-
-
 
   initializeControls: =>
     @controlsView = new ControlToolbarView
@@ -232,23 +229,9 @@ class HighlightsShell.RemixView extends Shell.RemixView
       buttons: [@playPauseToggleView, @elapsedTimeView]
       eventhub: @eventhub
 
-    # @clipSelectView = new acorn.player.ClipSelectView
-    #   eventhub: @eventhub
-    #   start: @model.timeStart()
-    #   end: @model.timeEnd()
-    #   min: 0
-    #   max: @model.timeTotal()
-
-    @timeRangeInputView = @clipSelectView.inputView
-
-
     @controlsView.on 'PlayControl:Click', => @subMediaView.play()
     @controlsView.on 'PauseControl:Click', => @subMediaView.pause()
     @controlsView.on 'ElapsedTimeControl:Seek', @subMediaView.seek
-
-    @timeRangeInputView.on 'TimeRangeInputView:DidChangeTimes', @_onChangeTimes
-    @timeRangeInputView.on 'TimeRangeInputView:DidChangeProgress',
-        @_onChangeProgress
 
 
   initializePlayPauseToggleView: =>
@@ -278,12 +261,33 @@ class HighlightsShell.RemixView extends Shell.RemixView
   initializeHighlightsSlider: =>
 
     @highlightViews = _.map @model.highlights(), (highlight) =>
-      new acorn.player.ClipSelectView
+      clipView = new acorn.player.ClipSelectView
         eventhub: @eventhub
         start: highlight.timeStart
         end: highlight.timeEnd
         min: 0
         max: @model.duration()
+
+      # change highlight times.
+      clipView.inputView.on 'TimeRangeInputView:DidChangeTimes', =>
+        highlight.timeStart = changed.start if _.isNumber changed?.start
+        highlight.timeEnd = changed.end if _.isNumber changed?.end
+        @_onChangeTimes arguments
+
+      # change playback progress.
+      clipView.inputView.on 'TimeRangeInputView:DidChangeProgress',
+        (view, elapsed, total) =>
+          # keep progress bar in sync
+          @_progress = clipView.start + elapsed
+          clipView.inputView.progress @_progress
+
+      # inactivate all other highlights when one comes active
+      clipView.on 'ClickSelect:Active', =>
+        _.each @highlightViews, (highlightView) =>
+          unless highlightView is clipView
+            highlightView.toggleActive false
+
+      clipView
 
     @progressBarView = new acorn.player.HighlightsSliderView
       extraClasses: ['progress-bar-view']
@@ -291,6 +295,7 @@ class HighlightsShell.RemixView extends Shell.RemixView
       value: 0
       highlights: @highlightViews
 
+    @progressBarView.on 'ValueSliderView:ValueDidChange', @_onChangeProgress
 
   render: =>
     super
@@ -312,12 +317,6 @@ class HighlightsShell.RemixView extends Shell.RemixView
     @timeRangeInputView.setMax @model.timeTotal()
 
 
-  _onMediaProgress: (view, elapsed, total) =>
-    # keep progress bar in sync
-    @_progress = @model.timeStart() + elapsed
-    @timeRangeInputView.progress @_progress
-
-
   _onChangeTimes: (changed) =>
     changes = {}
     changes.timeStart = changed.start if _.isNumber changed?.start
@@ -329,8 +328,6 @@ class HighlightsShell.RemixView extends Shell.RemixView
       seekOffset = 0
     else if changes.timeEnd? and changes.timeEnd isnt @model.timeEnd()
       seekOffset = Infinity # will be bounded to duration after changes
-
-    @model.set changes
 
     # unless user paused the video, make sure it is playing
     unless @subMediaView.isInState 'pause'
@@ -351,15 +348,6 @@ class HighlightsShell.RemixView extends Shell.RemixView
       @_progress = progress
       @subMediaView.seek progress
 
-
-  _onChangeLoops: (changed) =>
-    loops = if changed.name == 'n' then changed.value else changed.name
-    @model.loops(loops)
-
-    # restart player loops
-    @subMediaView.elapsedLoops 0
-    if @subMediaView.isPlaying()
-      @subMediaView.seek 0
 
 
 # Register the shell with the acorn object.
