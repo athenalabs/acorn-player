@@ -118,6 +118,7 @@ class HighlightsShell.MediaView extends Shell.MediaView
     @progressBarView = new acorn.player.HighlightsSliderView
       extraClasses: ['progress-bar-view']
       eventhub: @eventhub
+      handle: false
       value: 0
       highlights: @highlightViews
 
