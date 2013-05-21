@@ -21,6 +21,7 @@ acorn.config.setUrlBase acorn.config.url.base
 
 acorn.config.img = {}
 acorn.config.img.acorn = "#{acorn.config.url.img}/acorn.png"
+acorn.config.img.acorn_inverse = "#{acorn.config.url.img}/acorn-inverse.png"
 
 
 acorn.config.css = [
