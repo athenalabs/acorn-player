@@ -282,7 +282,7 @@ class HighlightsShell.RemixView extends Shell.RemixView
           clipView.inputView.progress @_progress
 
       # inactivate all other highlights when one comes active
-      clipView.on 'ClickSelect:Active', =>
+      clipView.on 'ClipSelect:Active', (clipView) =>
         _.each @highlightViews, (highlightView) =>
           unless highlightView is clipView
             highlightView.toggleActive false
