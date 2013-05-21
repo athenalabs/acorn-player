@@ -407,22 +407,22 @@ class ElapsedTimeControlView extends ControlView
 
 
   refreshValues: =>
-    @$('.elapsed-value').text @formatTime @model.get 'elapsed'
-    @$('.total').text @formatTime @model.get 'total'
+    @$('.elapsed-value').first().text @formatTime @model.get 'elapsed'
+    @$('.total').first().text @formatTime @model.get 'total'
 
 
   showSeekField: =>
     @$el.addClass 'active'
-    @$('input').focus()
+    @$('input').first().focus()
 
 
   hideSeekField: =>
     @$el.removeClass 'active'
-    @$('input').val ''
+    @$('input').first().val ''
 
 
   _seek: =>
-    timestring = @$('input').val()
+    timestring = @$('input').first().val()
 
     if parseFloat(timestring) >= 0
       seconds = acorn.util.Time.timestringToSeconds timestring

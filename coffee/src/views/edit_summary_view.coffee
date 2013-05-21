@@ -73,15 +73,15 @@ class acorn.player.EditSummaryView extends acorn.player.SummaryView
 
   render: =>
     super
-    @popoverView.options.popover = @$('.thumbnail-view')
+    @popoverView.options.popover = @$('.thumbnail-view').first()
     @popoverView.render()
     @
 
 
   renderData: =>
-    @$('.title').val @model.title()
-    @$('.description').val @model.description()
-    @$('.thumbnail-view img').attr 'src', @model.thumbnail()
+    @$('.title').first().val @model.title()
+    @$('.description').first().val @model.description()
+    @$('.thumbnail-view img').first().attr 'src', @model.thumbnail()
     @_markupDefaults()
     @
 
@@ -94,7 +94,7 @@ class acorn.player.EditSummaryView extends acorn.player.SummaryView
 
 
   value: (field) =>
-    @$(".#{field}")?.val()?.trim()
+    @$(".#{field}").first()?.val()?.trim()
 
 
   _markupDefaults: =>

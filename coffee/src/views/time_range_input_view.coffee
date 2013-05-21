@@ -119,10 +119,10 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @$el.empty()
     @$el.append @template()
 
-    @$('.time-range-slider').append @rangeSliderView.render().el
-    @$('.start-time-view').append @startInputView.render().el
-    @$('.total-time-view').append @totalInputView.render().el
-    @$('.end-time-view').append @endInputView.render().el
+    @$('.time-range-slider').first().append @rangeSliderView.render().el
+    @$('.start-time-view').first().append @startInputView.render().el
+    @$('.total-time-view').first().append @totalInputView.render().el
+    @$('.end-time-view').first().append @endInputView.render().el
 
     @
 
@@ -273,7 +273,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @startInputView.value @_start
     percent = Math.max(@_percentValues().start - 12, 0)
     percent = Math.min(percent, 64)
-    @$('.form-inline').css 'left', percent + '%'
+    @$('.form-inline').first().css 'left', percent + '%'
 
 
   _setTotalInput: =>
@@ -283,7 +283,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
   _setEndInput: =>
     @endInputView.value @_end
     percent = Math.max((100 - @_percentValues().end) - 12, 0)
-    @$('.form-inline').css 'right', percent + '%'
+    @$('.form-inline').first().css 'right', percent + '%'
 
 
   _setSlider: (changed) =>

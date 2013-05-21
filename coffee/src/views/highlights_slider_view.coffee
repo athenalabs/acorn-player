@@ -28,12 +28,12 @@ class acorn.player.HighlightsSliderView extends acorn.player.ValueSliderView
     @$el.empty()
     @$el.append @template targetClassName: @_targetClassName()
 
-    @$('.slider-elements')
+    @$('.slider-elements').first()
       .append(@_valueBar.render().el)
       .append(@_handle.render().el)
 
     _.each @highlights, (highlight) =>
-      @$('.slider-elements').append highlight.render().el
+      @$('.slider-elements').first().append highlight.render().el
 
     @_repositionHighlights()
     @
@@ -88,5 +88,5 @@ class acorn.player.HighlightsSliderView extends acorn.player.ValueSliderView
     # adjust entire slider bar height
     height = (rows.length * 9 - 1)
     @$el.css 'height', height
-    @$('.sliding-bar').css 'height', height
-    @$('.slider-handle-view .sliding-object').css 'height', height + 6
+    @$('.sliding-bar').first().css 'height', height
+    @$('.slider-handle-view .sliding-object').first().css 'height', height + 6

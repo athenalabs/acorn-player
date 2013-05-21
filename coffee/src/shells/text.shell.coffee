@@ -58,7 +58,7 @@ class TextShell.RemixView extends Shell.RemixView
 
 
   events: => _.extend super,
-    'keyup textarea': => @model.text @$('textarea').val()
+    'keyup textarea': => @model.text @$('textarea').first().val()
 
 
   render: =>
