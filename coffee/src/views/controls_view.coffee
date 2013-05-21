@@ -355,6 +355,31 @@ class AcornControlView extends ImageControlView
 
 
 
+class TextControlView extends ControlView
+
+  controlName: => 'TextControlView'
+  tooltip: => title: @model.get('tooltip'), delay: show: 300
+  className: @classNameExtend 'text-control-view'
+
+
+  template: _.template '''
+    <span><%= text %></span>
+    '''
+
+
+  initialize: =>
+    super
+    @listenTo @model, 'change', @softRender
+
+
+  render: =>
+    super
+    @$el.empty()
+    @$el.append @template @model.attributes
+    @
+
+
+
 class ElapsedTimeControlView extends ControlView
 
   controlName: => 'ElapsedTimeControl'
@@ -463,3 +488,4 @@ acorn.player.controls.ImageControlView = ImageControlView
 acorn.player.controls.AcornControlView = AcornControlView
 
 acorn.player.controls.ElapsedTimeControlView = ElapsedTimeControlView
+acorn.player.controls.TextControlView = TextControlView
