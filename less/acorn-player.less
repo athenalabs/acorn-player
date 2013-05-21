@@ -6,7 +6,7 @@
 @main-control-height: 40px;
 @main-control-font-size: 20px;
 @main-control-icon-size: 20px;
-@main-control-padding: 9px 16px;
+@main-control-padding: 9px 10px;
 @main-control-background: rgba(30, 30, 30, 0.7);
 
 @sliding-object-width: 15px;
@@ -507,7 +507,7 @@ input {
   > .control-view {
     display: inline-block;
     position: relative;
-    width: (@main-control-height * 1.2);
+    width: (@main-control-height * 0.9);
     height: @main-control-height;
     padding: 0px;
     margin: 0px;
@@ -569,8 +569,19 @@ input {
   .hidden;
 }
 
+
+.control-toolbar-view .text-control-view,
 .control-toolbar-view .elapsed-time-control-view {
   font-size: 12px;
+  line-height: 12px;
+  width: 45px;
+  text-align: center;
+  > * {
+    padding: 12px 0px;
+  }
+}
+
+.control-toolbar-view .elapsed-time-control-view {
   width: 120px;
   height: 100%;
   overflow: hidden;
@@ -597,7 +608,6 @@ input {
     }
   }
 }
-
 
 .thumbnail-view {
   display: inline-block;
@@ -1023,11 +1033,11 @@ input {
 
 .clip-view {
   .position-absolutely();
-  background: rgba(130, 0, 172, 1);
+  background: rgba(130, 0, 172, 0.7);
   height: 8px;
 
   &:hover {
-    background: rgba(222, 119, 255, 1);
+    background: rgba(222, 119, 255, 0.7);
   }
 }
 
