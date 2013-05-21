@@ -329,7 +329,7 @@ class ImageControlView extends ControlView
 
   initialize: =>
     super
-    @url = @options.url ? acorn.config.img.acorn
+    @url = @options.url ? acorn.config.img.acorn_inverse
 
 
   render: =>
@@ -351,7 +351,7 @@ class AcornControlView extends ImageControlView
   className: @classNameExtend 'acorn'
   tooltip: => title: 'Website', delay: show: 500
   defaults: => _.extend super,
-    image: acorn.config.img.acorn
+    image: acorn.config.img.acorn_inverse
 
 
 

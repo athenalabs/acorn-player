@@ -47,8 +47,7 @@ class acorn.player.ContentView extends athena.lib.View
 
   events: => _.extend super,
     'mousemove': @onMouseMoved
-    'mouseenter .summary-view': @onMouseenterSummaryView
-    'mouseleave .summary-view': @onMouseleaveSummaryView
+    'mouseleave': @onMouseStoppedMoving
 
 
   initialize: =>
@@ -87,9 +86,11 @@ class acorn.player.ContentView extends athena.lib.View
 
     # grab shellView summaryView
     @summaryView = @shellView.summaryView
+    @summaryView.$el.addClass 'autohides'
 
     # construct main ControlToolbar
     @controlsView = new ControlToolbarView
+      extraClasses: ['autohides']
       buttons: [@acornControlsView, @shellControlsView]
       eventhub: @eventhub
 
@@ -111,8 +112,8 @@ class acorn.player.ContentView extends athena.lib.View
     @$el.empty()
 
     @$el.append @summaryView.render().el
-    @$el.append @progressBarView.render().el
     @$el.append @controlsView.render().el
+    @controlsView.$el.prepend @progressBarView.render().el
 
     # Add shellView last so that it can interact with other views.
     # ShellView must follow progressBarView in order to be sized correctly.
@@ -133,20 +134,6 @@ class acorn.player.ContentView extends athena.lib.View
       @progressBarView.value percentProgress
     else
       @progressBarView.$el.addClass 'hidden'
-
-
-  onMouseenterSummaryView: =>
-    clearTimeout @_summaryHoverTimeout
-    @summaryView.$el.addClass 'opaque opaque-lock'
-
-    # lock opaque for 2 seconds
-    @_summaryHoverTimeout = setTimeout (=>
-      @summaryView.$el.removeClass 'opaque-lock'
-    ), 1500
-
-
-  onMouseleaveSummaryView: =>
-    @summaryView.$el.removeClass 'opaque'
 
 
   onMouseMoved: (event) =>

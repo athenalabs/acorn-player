@@ -3,15 +3,36 @@
 /* variables */
 // all heights and widths include border, padding, etc.
 
-@main-control-height: 29px;
-@main-control-font-size: 22px;
-@main-control-icon-size: 17px;
-@main-control-padding: 4px 9px;
+@main-control-height: 50px;
+@main-control-font-size: 20px;
+@main-control-icon-size: 20px;
+@main-control-padding: 9px 16px;
+@main-control-background: rgba(30, 30, 30, 0.7);
 
 @sliding-object-width: 15px;
 @sliding-object-height: 15px;
 @slider-height: 8px;
 @slider-handle-radius: 7px;
+@slider-background: rgba(0, 0, 0, 0.8);
+@slider-foreground: white;
+
+.controls-gradient() {
+  .gradient(#ffffff, #e6e6e6, #ffffff);
+}
+
+.controls() {
+  margin: 0 auto;
+  background: @main-control-background;
+  font-family: "Helvetica Neue", Helvetica;
+  .transition(0.35s, ease);
+  font-size: @main-control-font-size;
+  line-height: @main-control-font-size;
+  color: rgba(255, 255, 255, 1.0);
+
+  &[disabled="disabled"] {
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
 
 /* less functions */
 
@@ -147,13 +168,6 @@ input {
 }
 
 
-.toolbar-view.btn-group {
-  > button:not(:first-child) {
-    border-left-width: 0;
-  }
-}
-
-
 .editor-view {
   padding: 20px;
   width: 540px;
@@ -212,11 +226,11 @@ input {
   width: 100%;
 
   > .progress-bar-view.hidden~.shell-media-view {
-    .position-absolutely(0px, 0px, @main-control-height);
+    .position-absolutely();
   }
 
   > .shell-media-view {
-    .position-absolutely(0px, 0px, @main-control-height + @slider-height);
+    .position-absolutely();
     z-index: 0;
 
     // nested media-views should expand to full height
@@ -250,7 +264,6 @@ input {
   > .progress-bar-view {
     position: absolute;
     z-index: 1;
-    bottom: @main-control-height;
   }
 
   > .control-toolbar-view {
@@ -259,34 +272,23 @@ input {
     top: auto;
 
     display: block;
-    border-top: 1px solid #cccccc;
     padding: 0px;
-    height: @main-control-height - 1; // subtract one for border-top
-
-    .gradient(#ffffff, #e6e6e6, #ffffff);
-    .transition(0.35s, ease);
+    height: @main-control-height;
+    .controls();
   }
 
   > .summary-view {
+    .controls();
     .position-absolutely(0px, 0px, auto);
     z-index: 1;
     width: auto;
     height: auto;
     padding: 10px 30px;
-    background: rgba(85, 85, 85, 0.7);
-    font-family: "Helvetica Neue", Helvetica;
-    color: white;
     .transition(0.5s, ease);
 
-    /*top: -100%;*/
     .transparent;
 
-    &.opaque, // enforce precedence of opaque class when added to element
-    &.opaque-lock {
-      .opaque;
-    }
-
-    > .summary-view {
+    .summary-view {
       margin-top: 20px;
       margin-left: 30px;
     }
@@ -299,7 +301,26 @@ input {
       line-height: 0.8;
     }
   }
+
+  > .autohides {
+    .transparent;
+    .transition(0.2s, ease);
+
+    &:hover, &.opaque, &.opaque-lock {
+      .opaque;
+      .transition(0.5s, ease);
+    }
+  }
+
+  &.mouse-moving {
+    > .autohides {
+      .opaque;
+      .transition(0.5s, ease);
+    }
+  }
 }
+
+
 
 .summary-view {
   height: 44px;
@@ -477,33 +498,15 @@ input {
 
   &.left {
     float: left;
-
-    &,
-    .control-toolbar-view {
-      > .control-view {
-        border-left: 0px;
-        border-right: 1px solid rgba(204, 204, 204, 0.5);
-      }
-    }
   }
 
   &.right {
     float: right;
-
-    &,
-    .control-toolbar-view {
-      > .control-view {
-        border-right: 0px;
-        border-left: 1px solid rgba(204, 204, 204, 0.5);
-      }
-    }
   }
 
   > .control-view {
     display: inline-block;
     position: relative;
-    font-size: @main-control-font-size;
-    line-height: @main-control-font-size;
     width: (@main-control-height * 1.2);
     height: @main-control-height;
     padding: 0px;
@@ -516,7 +519,6 @@ input {
     }
 
     > img {
-      margin-top: 2px;
       width: @main-control-icon-size;
       height: @main-control-icon-size;
     }
@@ -527,10 +529,14 @@ input {
     }
 
     &:hover:not([disabled="disabled"]) {
-      background: rgba(204, 204, 204, 0.2);
-
       > * {
         .opacity(1.0);
+      }
+    }
+
+    &:active:not([disabled="disabled"]) {
+      > * {
+        .opacity(0.7);
       }
     }
 
@@ -554,20 +560,6 @@ input {
         &:hover {
           background: rgba(64, 64, 64, 0.2);
         }
-      }
-    }
-
-    &:active:not([disabled="disabled"]) {
-      background: rgba(204, 204, 204, 0.1);
-
-      > * {
-        .opacity(0.7);
-        /*
-        margin-left: -1px;
-        font-size: @main-control-font-size + 2;
-        width: @main-control-icon-size + 1;
-        height: @main-control-icon-size + 1;
-        */
       }
     }
   }
@@ -832,11 +824,11 @@ input {
   .time-controls {
     position: relative;
     height: 50px;
-    .gradient(#ffffff, #e6e6e6, #ffffff);
+    .controls-gradient();
 
     .shell-controls {
       position: absolute;
-      top: 15px;
+      top: 10px;
 
       .elapsed-time-control-view {
         text-align: left;
@@ -909,7 +901,7 @@ input {
 
     &.sliding-bar {
       width: auto;
-      background-color: rgba(33, 33, 33, 0.65);
+      background-color: @slider-foreground;
     }
   }
 }
@@ -923,7 +915,12 @@ input {
   .range-slider {
     height: 100%;
     width: 100%;
-    background-color: #DDDDDD;
+    background-color: @slider-background;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1.0;
+    }
 
     .sliding-bar {
       height: @slider-height;
@@ -949,7 +946,7 @@ input {
 .progress-range-slider-view {
   .value-slider-view.progress-bar-view {
     .value-slider {
-      background-color: #AAAAAA;
+      background: @slider-background;
     }
   }
 }
@@ -963,9 +960,9 @@ input {
     position: absolute;
     left: 0px;
     right: 0px;
-    bottom: 5px;
+    bottom: 50px;
     margin: 0px;
-    min-width: 196px;
+    min-width: 198px;
     vertical-align: bottom;
     text-align: center;
     clear: both;
@@ -988,6 +985,7 @@ input {
     }
 
     .time-input-view {
+      color: #000;
       .control-group.time {
         .transition(0.5s, ease);
         margin: 0px;
