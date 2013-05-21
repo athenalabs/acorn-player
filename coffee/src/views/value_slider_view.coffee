@@ -68,7 +68,7 @@ class acorn.player.ValueSliderView extends acorn.player.MouseTrackingView
     @$el.empty()
     @$el.append @template targetClassName: @_targetClassName()
 
-    @$('.slider-elements')
+    @$('.slider-elements').first()
       .append(@_valueBar.render().el)
       .append(@_handle.render().el)
 

@@ -294,11 +294,11 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @$el.empty()
 
     @$el.append @template()
-    @$('.video-player').append @_playerView.render().el
-    @$('.time-controls').append @_timeRangeInputView.render().el
-    @$('.time-controls').append @_loopsButtonView.render().el
-    @$('.time-controls').append @_controlsView.render().el
-
+    @$('.video-player').first().append @_playerView.render().el
+    @$('.time-controls').first().append @_clipSelectView.render().el
+    @$('.time-controls').first().append @_loopsButtonView.render().el
+    @$('.time-controls').first().append @_controlsView.render().el
+    @$el.append $('<a>H</a>').click => @_clipSelectView.toggleActive()
     @
 
 

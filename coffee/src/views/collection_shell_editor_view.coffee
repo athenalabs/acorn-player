@@ -84,9 +84,9 @@ class acorn.player.CollectionShellEditorView extends ShellEditorView
     if @rendering
       # hide the options view if there is only one shell
       if @_lastNonDefaultShellIndex() > 0
-        @$('.shell-options-view').removeClass 'hidden'
+        @$('.shell-options-view').first().removeClass 'hidden'
       else
-        @$('.shell-options-view').addClass 'hidden'
+        @$('.shell-options-view').first().addClass 'hidden'
 
     @
 

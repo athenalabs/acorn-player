@@ -71,7 +71,7 @@ class acorn.player.RangeSliderView extends acorn.player.MouseTrackingView
     @$el.empty()
     @$el.append @template targetClassName: @_targetClassName()
 
-    @$('.slider-elements')
+    @$('.slider-elements').first()
       .append(@_rangeBar.render().el)
       .append(@_handles[0].render().el)
       .append(@_handles[1].render().el)

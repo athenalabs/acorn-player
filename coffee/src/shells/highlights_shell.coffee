@@ -302,9 +302,9 @@ class HighlightsShell.RemixView extends Shell.RemixView
     @$el.empty()
 
     @$el.append @template()
-    @$('.media-view').append @subMediaView.render().el
-    @$('.time-controls').append @progressBarView.render().el
-    @$('.time-controls').append @controlsView.render().el
+    @$('.media-view').first().append @subMediaView.render().el
+    @$('.time-controls').first().append @progressBarView.render().el
+    @$('.time-controls').first().append @controlsView.render().el
     @
 
 

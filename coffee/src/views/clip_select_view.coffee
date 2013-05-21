@@ -58,7 +58,7 @@ class acorn.player.ClipSelectView extends athena.lib.View
     @$el.append @inputView.render().el
     @toggleActive false
 
-    @$('.clip-highlight-view').tooltip
+    @$('.clip-highlight-view').first().tooltip
       trigger: 'hover'
       title: 'Edit Clip'
 
@@ -74,7 +74,7 @@ class acorn.player.ClipSelectView extends athena.lib.View
     @_adjustSize active
     if active
       @$el.addClass @_activeClass
-      @$('.clip-highlight-view').tooltip 'hide'
+      @$('.clip-highlight-view').first().tooltip 'hide'
       @trigger 'ClipSelect:Active', @
     else
       @$el.removeClass @_activeClass
