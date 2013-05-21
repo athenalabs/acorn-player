@@ -10,7 +10,10 @@ class acorn.player.ClipSelectView extends athena.lib.View
 
 
   events: => _.extend super,
-    'click .clip-highlight-view': => @toggleActive true
+    'click .clip-highlight-view': =>
+      @toggleActive true
+      event.preventDefault()
+      false
 
 
   defaults: => _.extend super,
@@ -68,20 +71,25 @@ class acorn.player.ClipSelectView extends athena.lib.View
   # when active, time input show, highlighted section hides
   toggleActive: (active) =>
     active ?= !@$el.hasClass @_activeClass
-    @_adjustHighlightSize()
+    @_adjustSize active
     if active
       @$el.addClass @_activeClass
       @$('.clip-highlight-view').tooltip 'hide'
+      @trigger 'ClipSelect:Active', @
     else
       @$el.removeClass @_activeClass
+      @trigger 'ClipSelect:Inactive', @
 
 
   # use the clip sizes to adjust the highlighted section size
-  _adjustHighlightSize: =>
-    percents = @inputView._percentValues()
-    $highlight = @$('.clip-highlight-view')
-    $highlight.css 'left', percents.start + '%'
-    $highlight.css 'right', (100 - percents.end) + '%'
+  _adjustSize: (active) =>
+    if active
+      @$el.css 'left', 0
+      @$el.css 'right', 0
+    else
+      percents = @inputView._percentValues()
+      @$el.css 'left', percents.start + '%'
+      @$el.css 'right', (100 - percents.end) + '%'
     @
 
 
