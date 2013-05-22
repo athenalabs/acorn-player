@@ -215,6 +215,13 @@ class HighlightsShell.RemixView extends Shell.RemixView
   events: => _.extend super,
     'click button.add-highlight': => @_addHighlight()
     'blur input.note': => @_saveHighlightNote()
+    'keyup input.note': (event) =>
+      switch event.keyCode
+        when athena.lib.util.keys.ENTER
+          @_saveHighlightNote()
+          @_inactivateHighlights()
+        when athena.lib.util.keys.ESCAPE
+          @_inactivateHighlights()
     'click .note.btn.btn-success': =>
       @_saveHighlightNote()
       @_inactivateHighlights()
@@ -347,6 +354,10 @@ class HighlightsShell.RemixView extends Shell.RemixView
       .append(@controlsView.render().el)
 
     @controlsView.$el.append @controlsTemplate()
+    @$('.note-input button').first().tooltip
+      trigger: 'hover'
+      title: 'Enter Clip Note'
+
     @_inactivateHighlights()
     @
 
@@ -404,6 +415,7 @@ class HighlightsShell.RemixView extends Shell.RemixView
   _inactivateHighlights: =>
     _.each @highlightViews, (highlightView) =>
       highlightView.toggleActive false
+    @$('input.note').first().blur()
 
 
   _addHighlight: =>
