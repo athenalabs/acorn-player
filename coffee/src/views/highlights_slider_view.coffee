@@ -1,6 +1,7 @@
 goog.provide 'acorn.player.HighlightsSliderView'
 
 goog.require 'acorn.player.ValueSliderView'
+goog.require 'acorn.player.ClipGroupView'
 
 
 class acorn.player.HighlightsSliderView extends acorn.player.ValueSliderView
@@ -21,6 +22,10 @@ class acorn.player.HighlightsSliderView extends acorn.player.ValueSliderView
 
     @highlights = @options.highlights
 
+    @clipGroupView = new acorn.player.ClipGroupView
+      eventhub: @eventhub
+      clips: @highlights
+
 
   render: =>
     super
@@ -31,11 +36,13 @@ class acorn.player.HighlightsSliderView extends acorn.player.ValueSliderView
     @$('.slider-elements').first()
       .append(@_valueBar.render().el)
       .append(@_handle.render().el)
+      .append(@clipGroupView.render().el)
 
-    _.each @highlights, (highlight) =>
-      @$('.slider-elements').first().append highlight.render().el
+    height = @clipGroupView.$el.css 'height'
+    @$el.css 'height', height
+    @$('.sliding-bar').first().css 'height', height
+    @$('.slider-handle-view .sliding-object').first().css 'height', height + 6
 
-    @_repositionHighlights()
     @
 
 
@@ -50,43 +57,3 @@ class acorn.player.HighlightsSliderView extends acorn.player.ValueSliderView
         @trigger 'ValueSliderView:ValueDidChange', @_value
 
     @_value
-
-
-  _sortHighlights: =>
-    @highlights = _.sortBy @highlights, (highlight) =>
-      highlight.values().start
-
-
-  # returns the index of the best row for a given highlight.
-  _rowForHighlight: (rows, highlight) =>
-    start = highlight.values().start
-    row = _.find rows, (row) =>
-      _.last(row).values().end <= start
-    row && _.indexOf rows, row
-
-
-  _repositionHighlights: =>
-    @_sortHighlights()
-
-    rows = []
-
-    # place each highlight in a row.
-    _.each @highlights, (highlight) =>
-      row = @_rowForHighlight rows, highlight
-
-      # no suitable row? add one.
-      unless row >= 0
-        row = rows.length
-        rows.push []
-
-      # add the highlight to the row
-      rows[row].push highlight
-
-      # adjust the highlight offset from top
-      highlight.$el.css 'top', row * 9
-
-    # adjust entire slider bar height
-    height = (rows.length * 9 - 1)
-    @$el.css 'height', height
-    @$('.sliding-bar').first().css 'height', height
-    @$('.slider-handle-view .sliding-object').first().css 'height', height + 6
