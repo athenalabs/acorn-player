@@ -46,8 +46,6 @@ class acorn.player.ClipSelectView extends athena.lib.View
     @listenTo @inputView, 'all', => @trigger arguments
 
 
-  # @listenTo @inputView, 'TimeRangeInputView:DidChangeTimes', @_adjustHighlight
-
   destroy: =>
     @inputView.destroy()
     super

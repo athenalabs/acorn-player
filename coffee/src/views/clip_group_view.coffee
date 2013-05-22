@@ -26,8 +26,8 @@ class acorn.player.ClipGroupView extends athena.lib.View
 
 
   _sortClips: =>
-    @clips = _.sortBy @clips, (clip) =>
-      clip.values().start
+    @clips.sort (clipA, clipB) =>
+      clipA.values().start - clipB.values().start
 
 
   # returns the index of the best row for a given clip.
