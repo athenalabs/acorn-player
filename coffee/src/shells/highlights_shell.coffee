@@ -205,9 +205,11 @@ class HighlightsShell.RemixView extends Shell.RemixView
         <i class="icon-plus"></i> Highlight</button>
     </div>
 
-    <div class="note-input input-append">
+    <div class="note-input input-append input-prepend">
+      <button class="note note-delete btn btn-small">
+        <i class="icon-trash"></i></button>
       <input type="text" class="note input" placeholder="clip note" />
-      <button class="note btn btn-small btn-success">
+      <button class="note note-save btn btn-small btn-success">
         <i class="icon-ok"></i></button>
     </div>
     '''
@@ -222,8 +224,11 @@ class HighlightsShell.RemixView extends Shell.RemixView
           @_inactivateHighlights()
         when athena.lib.util.keys.ESCAPE
           @_inactivateHighlights()
-    'click .note.btn.btn-success': =>
+    'click .note-save.btn': =>
       @_saveHighlightNote()
+      @_inactivateHighlights()
+    'click .note-delete.btn': =>
+      @_deleteHighlight()
       @_inactivateHighlights()
 
 
@@ -331,13 +336,13 @@ class HighlightsShell.RemixView extends Shell.RemixView
           highlightView.toggleActive false
 
       # adjust clip note inputs
-      @$('.note-input button').first().removeAttr('disabled')
+      @$('.note-input button').removeAttr('disabled')
       @$('.note-input input').first().removeAttr('disabled')
         .val(highlight.title).focus()
 
     clipView.on 'ClipSelect:Inactive', =>
       # adjust clip note inputs
-      @$('.note-input button').first().attr('disabled', 'disabled')
+      @$('.note-input button').attr('disabled', 'disabled')
       @$('.note-input input').first().attr('disabled', 'disabled').val('')
 
     clipView
@@ -354,9 +359,13 @@ class HighlightsShell.RemixView extends Shell.RemixView
       .append(@controlsView.render().el)
 
     @controlsView.$el.append @controlsTemplate()
-    @$('.note-input button').first().tooltip
+    @$('.note-save').first().tooltip
       trigger: 'hover'
-      title: 'Enter Clip Note'
+      title: 'Enter Highlight Note'
+
+    @$('.note-delete').first().tooltip
+      trigger: 'hover'
+      title: 'Delete Highlight'
 
     @_inactivateHighlights()
     @
@@ -412,6 +421,22 @@ class HighlightsShell.RemixView extends Shell.RemixView
     @_activeHighlight()?.clip.title = @$('.note-input input').first().val()
 
 
+  _deleteHighlight: =>
+    highlightView = @_activeHighlight()
+    unless highlightView
+      return
+
+    @_inactivateHighlights()
+
+    # remove from model
+    highlights = @model.highlights()
+    highlights.splice(highlights.indexOf(highlightView.clip), 1)
+
+    # remove from views
+    @highlightViews.splice(@highlightViews.indexOf(highlightView), 1)
+
+    @clipGroupView.softRender()
+
   _inactivateHighlights: =>
     _.each @highlightViews, (highlightView) =>
       highlightView.toggleActive false
@@ -425,9 +450,11 @@ class HighlightsShell.RemixView extends Shell.RemixView
       title: ''
 
     @model.highlights().push highlight
-    @highlightViews.push @initializeHighlightView highlight
+    view = @initializeHighlightView highlight
+    @highlightViews.push view
     @_inactivateHighlights()
     @clipGroupView.softRender()
+    view.toggleActive true
 
 
 # Register the shell with the acorn object.
