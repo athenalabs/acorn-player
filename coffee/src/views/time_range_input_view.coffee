@@ -317,10 +317,12 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
   _onRangeSliderLowValueDidChange: (percentValue) =>
     @_percentValues start: percentValue
+    @startInputView.$('input').first().focus()
 
 
   _onRangeSliderHighValueDidChange: (percentValue) =>
     @_percentValues end: percentValue
+    @endInputView.$('input').first().focus()
 
 
   _onRangeSliderProgressDidChange: (percentValue) =>
