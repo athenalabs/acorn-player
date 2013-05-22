@@ -310,7 +310,7 @@ class HighlightsShell.RemixView extends Shell.RemixView
       max: @model.duration()
 
     # change highlight times.
-    clipView.inputView.on 'TimeRangeInputView:DidChangeTimes', =>
+    clipView.inputView.on 'TimeRangeInputView:DidChangeTimes', (changed) =>
       highlight.timeStart = changed.start if _.isNumber changed?.start
       highlight.timeEnd = changed.end if _.isNumber changed?.end
 
