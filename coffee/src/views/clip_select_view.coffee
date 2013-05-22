@@ -31,6 +31,8 @@ class acorn.player.ClipSelectView extends athena.lib.View
   initialize: =>
     super
 
+    @clip = @options.clip
+
     @inputView = new acorn.player.TimeRangeInputView
       eventhub: @eventhub
       min: @options.min
@@ -68,9 +70,13 @@ class acorn.player.ClipSelectView extends athena.lib.View
   _activeClass: 'clip-select-active'
 
 
+  isActive: =>
+    @$el.hasClass @_activeClass
+
+
   # when active, time input show, highlighted section hides
   toggleActive: (active) =>
-    active ?= !@$el.hasClass @_activeClass
+    active ?= !@isActive()
     @_adjustSize active
     if active
       @$el.addClass @_activeClass

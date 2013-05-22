@@ -834,15 +834,37 @@ input {
 .highlights-shell.shell-remix-view {
   .time-controls {
     position: relative;
-    min-height: 50px;
     .controls-gradient();
 
     .shell-controls {
       height: 40px;
+      width: 100%;
+
+      .icon-control-view {
+        font-size: 20px;
+      }
 
       .elapsed-time-control-view {
         text-align: left;
       }
+    }
+
+    .note-input {
+      float: right;
+      padding: 6px 5px;
+
+      input {
+        font-size: 13px;
+        line-height: 13px;
+        height: 16px;
+        width: 150px;
+      }
+    }
+
+    .highlight-button {
+      float: right;
+      padding: 6px 5px;
+      display: inline-block;
     }
 
     .loops-button {
