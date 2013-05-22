@@ -84,6 +84,7 @@ class acorn.player.ClipSelectView extends athena.lib.View
   # use the clip sizes to adjust the highlighted section size
   _adjustSize: (active) =>
     if active
+      @inputView.reposition()
       @$el.css 'left', 0
       @$el.css 'right', 0
     else

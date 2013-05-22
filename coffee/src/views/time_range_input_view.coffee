@@ -123,7 +123,13 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @$('.start-time-view').first().append @startInputView.render().el
     @$('.total-time-view').first().append @totalInputView.render().el
     @$('.end-time-view').first().append @endInputView.render().el
+    @reposition()
+    @
 
+
+  reposition: =>
+    @_setStartInput()
+    @_setEndInput()
     @
 
 

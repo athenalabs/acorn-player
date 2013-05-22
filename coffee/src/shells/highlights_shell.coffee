@@ -273,13 +273,15 @@ class HighlightsShell.RemixView extends Shell.RemixView
       clipView.inputView.on 'TimeRangeInputView:DidChangeTimes', =>
         highlight.timeStart = changed.start if _.isNumber changed?.start
         highlight.timeEnd = changed.end if _.isNumber changed?.end
-        @_onChangeTimes arguments
 
       # change playback progress.
       clipView.inputView.on 'TimeRangeInputView:DidChangeProgress',
+        @_onChangeProgress
+
+      clipView.listenTo @subMediaView, 'Media:Progress',
         (view, elapsed, total) =>
           # keep progress bar in sync
-          @_progress = clipView.start + elapsed
+          @_progress = highlight.timeStart + elapsed
           clipView.inputView.progress @_progress
 
       # inactivate all other highlights when one comes active
@@ -290,13 +292,10 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
       clipView
 
-    @progressBarView = new acorn.player.HighlightsSliderView
-      extraClasses: ['progress-bar-view']
+    @clipGroupView = new acorn.player.ClipGroupView
       eventhub: @eventhub
-      value: 0
-      highlights: @highlightViews
+      clips: @highlightViews
 
-    @progressBarView.on 'ValueSliderView:ValueDidChange', @_onChangeProgress
 
   render: =>
     super
@@ -304,8 +303,9 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
     @$el.append @template()
     @$('.media-view').first().append @subMediaView.render().el
-    @$('.time-controls').first().append @progressBarView.render().el
-    @$('.time-controls').first().append @controlsView.render().el
+    @$('.time-controls').first()
+      .append(@clipGroupView.render().el)
+      .append(@controlsView.render().el)
     @
 
 

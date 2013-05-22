@@ -14,6 +14,7 @@
 @slider-height: 8px;
 @slider-handle-radius: 7px;
 @slider-background: rgba(0, 0, 0, 0.8);
+@slider-background2: rgba(150, 150, 150, 0.8);
 @slider-foreground: white;
 
 .controls-gradient() {
@@ -833,12 +834,11 @@ input {
 .highlights-shell.shell-remix-view {
   .time-controls {
     position: relative;
-    height: 50px;
+    min-height: 50px;
     .controls-gradient();
 
     .shell-controls {
-      position: absolute;
-      top: 10px;
+      height: 40px;
 
       .elapsed-time-control-view {
         text-align: left;
@@ -867,7 +867,8 @@ input {
     height: 404px;
     width: 538px;
 
-    .video-player-view {
+    .video-player-view,
+    .shell-media-view {
       height: 100%;
       width: 100%;
       position: relative;
@@ -956,7 +957,7 @@ input {
 .progress-range-slider-view {
   .value-slider-view.progress-bar-view {
     .value-slider {
-      background: @slider-background;
+      background: @slider-background2;
     }
   }
 }
@@ -970,7 +971,7 @@ input {
     position: absolute;
     left: 0px;
     right: 0px;
-    bottom: 50px;
+    bottom: 10px;
     margin: 0px;
     min-width: 198px;
     vertical-align: bottom;
@@ -1007,6 +1008,10 @@ input {
       text-align: center;
     }
   }
+
+  .range-slider {
+    background-color: rgba(0, 0, 0, 0);
+  }
 }
 
 .time-input-view {
@@ -1031,13 +1036,19 @@ input {
 
 }
 
-.clip-view {
+.clip-group-view {
+  background: @slider-background;
+}
+
+.clip-view,
+.clip-highlight-view {
   .position-absolutely();
-  background: rgba(130, 0, 172, 0.7);
+/*  background: rgba(130, 0, 172, 0.7);*/
+  background: rgba(255, 255, 0, 0.7);
   height: 8px;
 
   &:hover {
-    background: rgba(222, 119, 255, 0.7);
+    background: rgba(255, 179, 119, 0.7);
   }
 }
 
@@ -1048,11 +1059,6 @@ input {
 
   .clip-highlight-view {
     .position-absolutely();
-    background: rgba(0, 0, 50, 0.3);
-
-    &:hover {
-      background: rgba(0, 0, 50, 0.5);
-    }
   }
 
   .time-range-input-view {
