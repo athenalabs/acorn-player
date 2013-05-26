@@ -361,6 +361,10 @@ class HighlightsShell.RemixView extends Shell.RemixView
     clipView.inputView.on 'TimeRangeInputView:DidChangeProgress',
       @_onChangeProgress
 
+    # seek on changing times
+    clipView.inputView.on 'TimeRangeInputView:DidChangeTimes', @_onChangeTimes
+
+
     clipView.listenTo @subMediaView, 'Media:Progress',
       (view, elapsed, total) =>
         # keep progress bar in sync
@@ -419,16 +423,10 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
 
   _onChangeTimes: (changed) =>
-    changes = {}
-    changes.timeStart = changed.start if _.isNumber changed?.start
-    changes.timeEnd = changed.end if _.isNumber changed?.end
-
-
-    # calculate seekOffset before changes take place.
-    if changes.timeStart? and changes.timeStart isnt @model.timeStart()
-      seekOffset = 0
-    else if changes.timeEnd? and changes.timeEnd isnt @model.timeEnd()
-      seekOffset = Infinity # will be bounded to duration after changes
+    if _.isNumber changed?.start
+      seekOffset = changed.start
+    else if _.isNumber changed?.end
+      seekOffset = changed.end
 
     # unless user paused the video, make sure it is playing
     unless @subMediaView.isInState 'pause'
@@ -438,9 +436,6 @@ class HighlightsShell.RemixView extends Shell.RemixView
       # bound between 0 <= seekOffset <= @duration() -2
       seekOffset = Math.max(0, Math.min(seekOffset, @model.duration() - 2))
       @subMediaView.seek seekOffset
-      @subMediaView.elapsedLoops 0
-
-    @eventhub.trigger 'change:shell', @model, @
 
 
   _onChangeProgress: (progress) =>
