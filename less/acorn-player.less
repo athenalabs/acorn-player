@@ -304,7 +304,6 @@ input {
   }
 
   > .autohides {
-    .transparent;
     .transition(0.2s, ease);
 
     &:hover, &.opaque, &.opaque-lock {
@@ -313,14 +312,19 @@ input {
     }
   }
 
-  &.mouse-moving {
-    > .autohides {
-      .opaque;
-      .transition(0.5s, ease);
-    }
+  &.playing > .autohides {
+    .transparent;
+  }
+
+  &:not(.playing) > .autohides {
+    .opaque;
+  }
+
+  &.mouse-moving > .autohides {
+    .opaque;
+    .transition(0.5s, ease);
   }
 }
-
 
 
 .summary-view {

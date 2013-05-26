@@ -105,6 +105,7 @@ class acorn.player.ContentView extends athena.lib.View
     @shellView.on 'Shell:UpdateProgressBar', @_onUpdateProgressBar
     @eventhub.on 'Keypress:SPACEBAR', => @shellView.togglePlayPause()
     @eventhub.on 'show:editor', => @shellView.pause()
+    @shellView.on 'Media:StateChange', @onMediaStateChange
 
 
   render: =>
@@ -148,3 +149,10 @@ class acorn.player.ContentView extends athena.lib.View
 
   onMouseStoppedMoving: =>
     @$el.removeClass 'mouse-moving'
+
+
+  onMediaStateChange: =>
+    if @shellView.isPlaying()
+      @$el.addClass 'playing'
+    else
+      @$el.removeClass 'playing'
