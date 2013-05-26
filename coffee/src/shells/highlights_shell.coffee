@@ -176,6 +176,16 @@ class HighlightsShell.MediaView extends Shell.MediaView
     unless progress.toFixed(5) == @seekOffset().toFixed(5)
       @seek progress
 
+    # if progressed to a highlight, show it.
+    _.each @highlightViews, (highlightView) =>
+      values = highlightView.values()
+      if values.start <= progress <= values.end
+        highlightView.setActive true
+      else
+        highlightView.setActive false
+
+
+
 
   # forward state transitions
   isInState: (state) => @subMediaView.isInState(state)
@@ -203,7 +213,6 @@ class HighlightsShell.MediaView extends Shell.MediaView
     _.each @highlightViews, (highlightView) =>
       offset = highlightView.$el.offset().left
       width = highlightView.$el.width()
-      console.log "#{offset} <= #{event.clientX} <= #{offset + width}"
       if offset <= event.clientX <= (offset + width)
         highlightView.showNote()
       else

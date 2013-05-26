@@ -31,6 +31,12 @@ class acorn.player.ClipView extends athena.lib.View
     @
 
 
+  # use different class since both can happen independently.
+  popupNote: =>
+    @$el.addClass('popup-note')
+    _.delay (=> @$el.removeClass('popup-note')), 3000
+
+
   showNote: =>
     @$el.addClass('show-note')
 
@@ -42,6 +48,20 @@ class acorn.player.ClipView extends athena.lib.View
   values: =>
     start: @model.timeStart
     end: @model.timeEnd
+
+
+  isActive: =>
+    @$el.hasClass 'active'
+
+
+  setActive: (active) =>
+    active ?= !@isActive()
+    if active
+      unless @isActive()
+        @popupNote()
+      @$el.addClass 'active'
+    else
+      @$el.removeClass 'active'
 
 
   reposition: =>
