@@ -1092,18 +1092,6 @@ input {
 
 }
 
-.clip-group-view {
-
-  .tooltip {
-    font-size: 16px;
-
-    .tooltip-inner {
-      border: 1px solid #ffff00;
-    }
-  }
-
-}
-
 .clip-view,
 .clip-highlight-view {
   position: absolute;
@@ -1116,6 +1104,24 @@ input {
   }
 }
 
+.clip-view {
+  .clip-note {
+    position: absolute;
+    left: 0px;
+    bottom: 7px;
+    border: 1px solid #ffff00;
+    background-color: rgb(0, 0, 0);
+    font-size: 12px;
+    .transition(0.2s, ease);
+    .transparent();
+  }
+
+  &.show-note .clip-note,
+  &:hover .clip-note,
+  .clip-note:hover {
+    .opaque();
+  }
+}
 
 .clip-select-view {
   position: absolute;
@@ -1135,7 +1141,7 @@ input {
 
   &.clip-select-active .time-range-input-view,
   &:not(.clip-select-active) .clip-highlight-view {
-      display: block;
+    display: block;
   }
 
 }

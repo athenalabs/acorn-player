@@ -7,6 +7,10 @@ class acorn.player.ClipView extends athena.lib.View
   className: @classNameExtend 'clip-view'
 
 
+  template: _.template '''
+    <div class="clip-note tooltip-inner"><%= title %></div>
+    '''
+
   events: => _.extend super,
     'click': (event) =>
       @trigger 'Clip:Click', @
@@ -22,12 +26,17 @@ class acorn.player.ClipView extends athena.lib.View
   render: =>
     super
     @$el.empty()
-    @$el.tooltip
-      trigger: 'hover'
-      title: @model.title
-
+    @$el.html @template @model
     @reposition()
     @
+
+
+  showNote: =>
+    @$el.addClass('show-note')
+
+
+  hideNote: =>
+    @$el.removeClass('show-note')
 
 
   values: =>

@@ -57,6 +57,11 @@ class HighlightsShell.MediaView extends Shell.MediaView
     readyOnRender: false
 
 
+  events: => _.extend super,
+    'mousemove': @onMouseMove
+    'mouseleave': @onMouseLeave
+
+
   initialize: =>
     super
 
@@ -192,6 +197,22 @@ class HighlightsShell.MediaView extends Shell.MediaView
   # duration of video given current splicing and looping - get from model
   duration: =>
     @subMediaView?.duration() or @model.duration() or 0
+
+
+  onMouseMove: (event) =>
+    _.each @highlightViews, (highlightView) =>
+      offset = highlightView.$el.offset().left
+      width = highlightView.$el.width()
+      console.log "#{offset} <= #{event.clientX} <= #{offset + width}"
+      if offset <= event.clientX <= (offset + width)
+        highlightView.showNote()
+      else
+        highlightView.hideNote()
+
+
+  onMouseLeave: (event) =>
+    _.each @highlightViews, (highlightView) =>
+      highlightView.hideNote()
 
 
 
