@@ -324,7 +324,32 @@ input {
     .opaque;
     .transition(0.5s, ease);
   }
+
+
+  // Highlights
+
+  .highlights-shell .clip-group-view {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 3px;
+
+    .clip-view {
+      height: 2px;
+    }
+  }
+
+  &:not(.playing), &.mouse-moving {
+    .highlights-shell .clip-group-view {
+      bottom: 52px;
+    }
+  }
+
+
+
 }
+
+
 
 
 .summary-view {
@@ -865,6 +890,11 @@ input {
       }
     }
 
+    .clip-group-view {
+      position: relative;
+      background: @slider-background;
+    }
+
     .highlight-button {
       float: right;
       padding: 6px 5px;
@@ -1063,8 +1093,6 @@ input {
 }
 
 .clip-group-view {
-  background: @slider-background;
-
 
   .tooltip {
     font-size: 16px;
@@ -1078,7 +1106,7 @@ input {
 
 .clip-view,
 .clip-highlight-view {
-  .position-absolutely();
+  position: absolute;
 /*  background: rgba(130, 0, 172, 0.7);*/
   background: rgba(255, 255, 0, 0.7);
   height: 8px;
@@ -1090,36 +1118,26 @@ input {
 
 
 .clip-select-view {
-  .position-absolutely();
+  position: absolute;
+  left: 0px;
+  right: 0px;
   height: 10px;
 
-  .clip-highlight-view {
-    .position-absolutely();
-  }
-
+  .clip-highlight-view,
   .time-range-input-view {
     .position-absolutely();
   }
 
-  &.clip-select-active {
-    .clip-highlight-view {
-      display: none;
-    }
-
-    .time-range-input-view {
-      display: block;
-    }
+  &.clip-select-active .clip-highlight-view,
+  &:not(.clip-select-active) .time-range-input-view {
+    display: none;
   }
 
-  &:not(.clip-select-active) {
-    .clip-highlight-view {
+  &.clip-select-active .time-range-input-view,
+  &:not(.clip-select-active) .clip-highlight-view {
       display: block;
-    }
-
-    .time-range-input-view {
-      display: none;
-    }
   }
+
 }
 
 

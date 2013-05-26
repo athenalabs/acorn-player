@@ -63,6 +63,7 @@ class HighlightsShell.MediaView extends Shell.MediaView
     @initializePlayPauseToggleView()
     @initializeElapsedTimeView()
     @initializeProgressBarView()
+    @initializeHighlightsViews()
 
     @controlsView = new ControlToolbarView
       extraClasses: ['shell-controls']
@@ -100,7 +101,7 @@ class HighlightsShell.MediaView extends Shell.MediaView
       tvModel.set 'total', total
 
 
-  initializeProgressBarView: =>
+  initializeHighlightsViews: =>
 
     @highlightViews = _.map @model.highlights(), (highlight) =>
       clipView = new acorn.player.ClipView
@@ -115,12 +116,18 @@ class HighlightsShell.MediaView extends Shell.MediaView
 
       clipView
 
-    @progressBarView = new acorn.player.HighlightsSliderView
+    @highlightsGroupView = new acorn.player.ClipGroupView
+      clips: @highlightViews
+      eventhub: @eventhub
+
+
+  initializeProgressBarView: =>
+
+    @progressBarView = new acorn.player.ValueSliderView
       extraClasses: ['progress-bar-view']
       eventhub: @eventhub
       handle: false
       value: 0
-      highlights: @highlightViews
 
 
   remove: =>
@@ -152,6 +159,7 @@ class HighlightsShell.MediaView extends Shell.MediaView
     super
     @$el.empty()
     @$el.append @subMediaView.render().el
+    @$el.append @highlightsGroupView.render().el
     @playPauseToggleView.refreshToggle()
     @
 

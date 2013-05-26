@@ -21,7 +21,7 @@ class acorn.player.ClipGroupView extends athena.lib.View
     _.each @clips, (clip) =>
       @$el.append clip.render().el
 
-    @_repositionClips()
+    _.defer @_repositionClips
     @
 
 
@@ -61,6 +61,7 @@ class acorn.player.ClipGroupView extends athena.lib.View
   _repositionClips: =>
     @_sortClips()
 
+    clipHeight = (Number(@clips[0]?.$el.height()) || 7) + 2
     rows = @_rowsForClips @clips
 
     # place each clip in a row.
@@ -68,9 +69,9 @@ class acorn.player.ClipGroupView extends athena.lib.View
 
       # adjust the clip offset from top
       _.each rows[row], (clip) =>
-        clip.$el.css 'top', row * 9
+        clip.$el.css 'bottom', row * clipHeight
 
 
     # adjust entire slider bar height
-    height = (rows.length * 9 - 1)
+    height = (rows.length * clipHeight - 1)
     @$el.css 'height', height
