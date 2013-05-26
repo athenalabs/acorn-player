@@ -113,8 +113,8 @@ class acorn.player.ContentView extends athena.lib.View
     @$el.empty()
 
     @$el.append @summaryView.render().el
+    @$el.append @progressBarView.render().el
     @$el.append @controlsView.render().el
-    @controlsView.$el.prepend @progressBarView.render().el
 
     # Add shellView last so that it can interact with other views.
     # ShellView must follow progressBarView in order to be sized correctly.

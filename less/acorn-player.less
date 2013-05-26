@@ -7,7 +7,7 @@
 @main-control-font-size: 20px;
 @main-control-icon-size: 20px;
 @main-control-padding: 9px 10px;
-@main-control-background: rgba(30, 30, 30, 0.7);
+@main-control-background: rgba(30, 30, 30, 0.85);
 
 @sliding-object-width: 15px;
 @sliding-object-height: 15px;
@@ -263,8 +263,10 @@ input {
   }
 
   > .progress-bar-view {
+    .transition(0.2s, ease);
     position: absolute;
     z-index: 1;
+    bottom: 30px;
   }
 
   > .control-toolbar-view {
@@ -325,17 +327,39 @@ input {
     .transition(0.5s, ease);
   }
 
+  // Progress bar
+
+  &.playing {
+    .progress-bar-view {
+      bottom: 0px;
+      height: 4px;
+    }
+  }
+
+  &:not(.playing), &.mouse-moving {
+    .progress-bar-view {
+      bottom: 40px;
+      height: 8px;
+    }
+  }
+
 
   // Highlights
 
   .highlights-shell .clip-group-view {
+    .transition(0.2s, ease);
     position: absolute;
     left: 0px;
     right: 0px;
-    bottom: 3px;
 
     .clip-view {
       height: 2px;
+    }
+  }
+
+  &.playing {
+    .highlights-shell .clip-group-view {
+      bottom: 5px;
     }
   }
 
@@ -344,8 +368,6 @@ input {
       bottom: 52px;
     }
   }
-
-
 
 }
 
@@ -1122,6 +1144,10 @@ input {
   &:hover .clip-note,
   .clip-note:hover {
     .opaque();
+  }
+
+  .clip-note:hover {
+    border: 1px solid rgba(255, 179, 119, 0.7);
   }
 }
 
