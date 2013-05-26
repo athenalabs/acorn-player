@@ -189,7 +189,9 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
   template: _.template '''
     <div class='video-player'></div>
-    <div class='time-controls'></div>
+    <div class='time-controls'>
+      <div class="time-input"></div>
+    </div>
     '''
 
 
@@ -295,10 +297,9 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
     @$el.append @template()
     @$('.video-player').first().append @_playerView.render().el
-    @$('.time-controls').first().append @_timeRangeInputView.render().el
+    @$('.time-input').first().append @_timeRangeInputView.render().el
     @$('.time-controls').first().append @_loopsButtonView.render().el
     @$('.time-controls').first().append @_controlsView.render().el
-    @$el.append $('<a>H</a>').click => @_clipSelectView.toggleActive()
     @
 
 
