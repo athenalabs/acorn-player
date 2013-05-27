@@ -251,8 +251,8 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
       model: tvModel
 
     tvModel.listenTo @_playerView, 'Media:Progress', (view, elapsed, total) =>
-      tvModel.set 'elapsed', elapsed
-      tvModel.set 'total', total
+      tvModel.set 'elapsed', elapsed + @model.timeStart()
+      tvModel.set 'total', (@model.timeTotal())
 
 
   _initializeLoopsButton: =>
