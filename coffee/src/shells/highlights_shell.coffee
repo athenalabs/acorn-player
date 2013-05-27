@@ -13,8 +13,8 @@ HighlightsShell = acorn.shells.HighlightsShell =
 
   id: 'acorn.HighlightsShell'
   title: 'Highlights'
-  description: 'selected parts from media'
-  icon: 'icon-cut'
+  description: 'Media with highlights and notes.'
+  icon: 'icon-pencil'
 
 
 
