@@ -17,6 +17,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     max: Infinity
     start: undefined # defaults to min
     end: undefined # defaults to max
+    progress: undefined # defaults to start
     bounceOffset: 10
     SliderView: acorn.player.ProgressRangeSliderView
 
