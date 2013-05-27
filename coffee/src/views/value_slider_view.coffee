@@ -76,14 +76,15 @@ class acorn.player.ValueSliderView extends acorn.player.MouseTrackingView
 
 
   # get or set value
-  value: (value) =>
+  value: (value, options={}) =>
     if value?
       util.bound value
       unless _.isNaN(value) or value == @_value
         @_value = value
         @_valueBar.values low: 0, high: @_value
         @_handle.location @_value
-        @trigger 'ValueSliderView:ValueDidChange', @_value
+        unless options.silent
+          @trigger 'ValueSliderView:ValueDidChange', @_value
 
     @_value
 

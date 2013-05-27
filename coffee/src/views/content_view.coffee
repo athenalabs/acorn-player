@@ -132,7 +132,7 @@ class acorn.player.ContentView extends athena.lib.View
   _onUpdateProgressBar: (visible, percentProgress) =>
     if visible
       @progressBarView.$el.removeClass 'hidden'
-      @progressBarView.value percentProgress
+      @progressBarView.value percentProgress, {silent: true}
     else
       @progressBarView.$el.addClass 'hidden'
 

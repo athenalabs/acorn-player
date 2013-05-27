@@ -23,12 +23,9 @@ class acorn.player.ProgressRangeSliderView extends acorn.player.RangeSliderView
   initialize: =>
     super
 
-    # initialize progress value
-    @_progress = @options.progress
-
     # initialize progress bar
     options =
-      value: @_progress
+      value: @options.progress
       draggable: true
       handle: false
       extraClasses: 'progress-bar-view'
@@ -47,13 +44,12 @@ class acorn.player.ProgressRangeSliderView extends acorn.player.RangeSliderView
 
 
   # get or set low-to-high ordered values (public)
-  progress: (progress) =>
+  progress: (progress, options={}) =>
     if progress?
       util.bound progress
-      unless _.isNaN(progress) or progress == @_progress
-        @_progress = progress
-        @_progressBar.value @_progress
-        @trigger 'ProgressRangeSliderView:ProgressDidChange', @_progress
+      unless _.isNaN(progress)
+        @_progressBar.value progress, options
+        unless options.silent
+          @trigger 'ProgressRangeSliderView:ProgressDidChange', progress
 
-    @_progress
-
+    @_progressBar.value()

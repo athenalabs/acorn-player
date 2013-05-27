@@ -306,8 +306,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @rangeSliderView.values percentValues
 
     # always update progress since the percent is a function of start and end
-    @rangeSliderView.progress?(@_percentProgress())
-
+    @rangeSliderView.progress?(@_percentProgress(), {silent: true})
 
 
   _bound: (val) =>

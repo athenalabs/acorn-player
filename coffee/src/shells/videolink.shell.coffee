@@ -152,11 +152,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
 
   _onProgressBarDidProgress: (percentProgress) =>
-    progress = @progressFromPercent percentProgress
-
-    # if slider progress differs from player progress, seek to new position
-    unless progress.toFixed(5) == @seekOffset().toFixed(5)
-      @seek progress
+    @seek @progressFromPercent percentProgress
 
 
   # forward state transitions
