@@ -14,6 +14,10 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
     @on 'Media:DidPause', => @timer.stopTick()
     @on 'Media:DidEnd', => @timer.stopTick()
 
+    # reset loops on changing them
+    @listenTo @model, 'change:loops', =>
+      @elapsedLoops 0
+
 
   render: =>
     super
