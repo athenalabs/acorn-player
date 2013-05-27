@@ -314,8 +314,8 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
   _onMediaProgress: (view, elapsed, total) =>
     # keep progress bar in sync
-    @_progress = @model.timeStart() + elapsed
-    @_timeRangeInputView.progress @_progress
+    @_progress = elapsed
+    @_timeRangeInputView.progress @_progress + @model.timeStart()
 
 
   _onChangeTimes: (changed) =>
@@ -347,6 +347,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
   _onChangeProgress: (progress) =>
     # if slider progress differs from player progress, seek to new position
+    progress = progress - @model.timeStart()
     unless progress.toFixed(5) == @_progress?.toFixed(5)
       @_progress = progress
       @_playerView.seek progress
