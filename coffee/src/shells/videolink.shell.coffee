@@ -194,12 +194,20 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
   initialize: =>
     super
 
+    @initializeRemixMediaView()
+    @initializeLoopsButton()
+    @initializeTimeRangeView()
+
+
+  initializeRemixMediaView: =>
     @remixMediaView = new acorn.player.TimedMediaRemixView
       eventhub: @eventhub
       model: @model
 
-    @initializeLoopsButton()
-    @initializeTimeRangeView()
+    mediaView = @remixMediaView.mediaView
+    @listenTo mediaView, 'Media:Progress', (view, elapsed, total) =>
+      elapsed += @model.timeStart()
+      @timeRangeView.progress elapsed, {silent: true}
 
 
   initializeTimeRangeView: =>

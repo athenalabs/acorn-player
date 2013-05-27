@@ -179,7 +179,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
       # change if appropriate
       if changed.progress
-        @_change changed
+        @_change changed, options
 
     @_progress
 
@@ -256,24 +256,28 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
   # focal point for all changes. direct and announce changes to start and/or
   # end times as appropriate
-  _change: (changed) =>
+  _change: (changed, options={}) =>
     @_setSlider changed
 
     if changed.start
       @_setStartInput()
       @_setTotalInput()
-      @trigger 'TimeRangeInputView:DidChangeStart', @_start
+      unless options.silent
+        @trigger 'TimeRangeInputView:DidChangeStart', @_start
 
     if changed.end
       @_setEndInput()
       @_setTotalInput()
-      @trigger 'TimeRangeInputView:DidChangeEnd', @_end
+      unless options.silent
+        @trigger 'TimeRangeInputView:DidChangeEnd', @_end
 
     if changed.start or changed.end
-      @trigger 'TimeRangeInputView:DidChangeTimes', {start: @_start, end: @_end}
+      unless options.silent
+        @trigger 'TimeRangeInputView:DidChangeTimes', {start: @_start, end: @_end}
 
     if changed.progress
-      @trigger 'TimeRangeInputView:DidChangeProgress', @_progress
+      unless options.silent
+        @trigger 'TimeRangeInputView:DidChangeProgress', @_progress
 
 
   _setStartInput: =>
