@@ -22,6 +22,8 @@ class acorn.player.ValueSliderView extends acorn.player.MouseTrackingView
     value: 100
     handle: true
     draggable: true
+    min: 0
+    max: 100
 
 
   template: _.template '''
@@ -39,8 +41,8 @@ class acorn.player.ValueSliderView extends acorn.player.MouseTrackingView
 
     # initialize value bar
     options =
-      low: 0
-      high: @_value
+      low: @options.min
+      high: @options.max
       draggable: false # make all value adjustments in-house
       extraClasses: 'value-bar-view'
     @_valueBar = new acorn.player.SlidingBarView options
