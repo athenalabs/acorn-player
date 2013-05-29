@@ -201,12 +201,17 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
 
   initializeRemixMediaView: =>
+    @mediaView = new @model.module.MediaView
+      model: @model
+      eventhub: @eventhub
+      playOnReady: false
+
     @remixMediaView = new acorn.player.TimedMediaRemixView
       eventhub: @eventhub
+      mediaView: @mediaView
       model: @model
 
-    mediaView = @remixMediaView.mediaView
-    @listenTo mediaView, 'Media:Progress', (view, elapsed, total) =>
+    @listenTo @mediaView, 'Media:Progress', (view, elapsed, total) =>
       elapsed += @model.timeStart()
       @timeRangeView.progress elapsed, {silent: true}
 
@@ -288,18 +293,19 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     if changes.timeStart? and changes.timeStart isnt @model.timeStart()
       seekOffset = 0
     else if changes.timeEnd? and changes.timeEnd isnt @model.timeEnd()
-      seekOffset = Infinity # will be bounded to duration after changes
+      seekOffset = Infinity
 
     @model.set changes
 
     # unless user paused the video, make sure it is playing
-    unless @remixMediaView.mediaView.isInState 'pause'
-      @remixMediaView.mediaView.play()
+    unless @mediaView.isInState 'pause'
+      @mediaView.play()
 
     if seekOffset?
-      # bound between 0 <= seekOffset <= @duration() -2
-      seekOffset = Math.max(0, Math.min(seekOffset, @model.duration() - 2))
-      @remixMediaView.mediaView.seek seekOffset
+      seekOffset = Math.min(seekOffset, @model.timeEnd() - 2)
+      seekOffset = Math.max(@model.timeStart(), seekOffset)
+      console.log 'seekOffset: ' + seekOffset
+      @mediaView.seek seekOffset
 
     @eventhub.trigger 'change:shell', @model, @
 
@@ -307,7 +313,7 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
   onChangeProgress: (progress) =>
     # if slider progress differs from player progress, seek to new position
     progress = progress - @model.timeStart()
-    @remixMediaView.mediaView.seek progress
+    @mediaView.seek progress
 
 
   onChangeLoops: (changed) =>
@@ -315,8 +321,8 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @model.loops(loops)
 
     # restart player loops
-    if @remixMediaView.mediaView.isPlaying()
-      @remixMediaView.mediaView.seek 0
+    if @mediaView.isPlaying()
+      @mediaView.seek 0
 
 
 
