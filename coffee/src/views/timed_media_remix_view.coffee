@@ -25,7 +25,9 @@ class acorn.player.TimedMediaRemixView extends athena.lib.View
 
 
   initializeMediaView: =>
-    @mediaView = new @model.module.MediaView
+
+    @mediaView = @options.mediaView
+    @mediaView ?= new @model.module.MediaView
       model: @model
       eventhub: @eventhub
       playOnReady: @options.playOnReady
@@ -88,7 +90,7 @@ class acorn.player.TimedMediaRemixView extends athena.lib.View
 
     tvModel.listenTo @mediaView, 'Media:Progress', (view, elapsed, total) =>
       tvModel.set 'elapsed', elapsed + (@model.timeStart?() || 0)
-      tvModel.set 'total', @model.timeTotal?() || total
+      tvModel.set 'total', @model.timeTotal?() || @duration() || total
 
 
   render: =>
@@ -109,12 +111,5 @@ class acorn.player.TimedMediaRemixView extends athena.lib.View
     @mediaView?.duration() or @model.duration() or 0
 
 
-  onProgressBarChange: (percentProgress) =>
-
-    progress = util.fromPercent percentProgress,
-      low: 0
-      high: @mediaView.duration()
-      bound: true
-
-    if progress?
-      @mediaView.seek progress
+  onProgressBarChange: (progress) =>
+    @mediaView.seek progress

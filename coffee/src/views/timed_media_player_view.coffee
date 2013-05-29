@@ -68,8 +68,8 @@ class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView
       return
 
     now = @_seekOffset() ? 0
-    start = @model.timeStart() ? 0
-    end = @model.timeEnd() ? @model.timeTotal()
+    start = @model.timeStart?() ? 0
+    # end = @model.timeEnd?() || @model.timeTotal?() || Infinity
 
     # advertise progress
     @trigger 'Media:Progress', @, @seekOffset(), @duration()

@@ -24,6 +24,7 @@ VideoLinkShell = acorn.shells.VideoLinkShell =
 class VideoLinkShell.Model extends LinkShell.Model
 
 
+  timeTotal: @property 'timeTotal'
   timeStart: @property 'timeStart'
   timeEnd: @property 'timeEnd'
   loops: @property 'loops'
