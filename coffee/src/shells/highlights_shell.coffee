@@ -124,6 +124,19 @@ class HighlightsShell.MediaView extends Shell.MediaView
       clips: @highlightViews
       eventhub: @eventhub
 
+    @on 'Shell:UpdateProgressBar', (visible, percentProgress) =>
+      progress = @progressFromPercent percentProgress
+
+      # if progressed to a highlight, show it.
+      _.each @highlightViews, (highlightView) =>
+        values = highlightView.values()
+        if values.start <= progress <= values.end
+          highlightView.setActive true
+        else
+          highlightView.setActive false
+
+
+
 
   remove: =>
     @controlsView.off 'PlayControl:Click'
@@ -160,18 +173,7 @@ class HighlightsShell.MediaView extends Shell.MediaView
 
 
   _onProgressBarDidProgress: (percentProgress) =>
-    progress = @progressFromPercent percentProgress
-    @seek progress
-
-    # if progressed to a highlight, show it.
-    _.each @highlightViews, (highlightView) =>
-      values = highlightView.values()
-      if values.start <= progress <= values.end
-        highlightView.setActive true
-      else
-        highlightView.setActive false
-
-
+    @seek @progressFromPercent percentProgress
 
 
   # forward state transitions
