@@ -44,8 +44,8 @@ class acorn.player.TimedMediaRemixView extends athena.lib.View
 
     @listenTo @mediaView, 'Media:Progress', (view, elapsed, total) =>
       # keep progress bar in sync
-      @progressBarView.value elapsed, {silent: true}
-
+      percent = (elapsed / total * 100)
+      @progressBarView.value percent, {silent: true}
 
   initializeProgressBar: =>
     @progressBarView = new acorn.player.ValueSliderView
@@ -53,7 +53,6 @@ class acorn.player.TimedMediaRemixView extends athena.lib.View
       extraClasses: ['progress-bar-view']
       eventhub: @eventhub
       value: 0
-      max: @mediaView.duration()
 
     @progressBarView.on 'ValueSliderView:ValueDidChange', @onProgressBarChange
 
@@ -111,5 +110,6 @@ class acorn.player.TimedMediaRemixView extends athena.lib.View
     @mediaView?.duration() or @model.duration() or 0
 
 
-  onProgressBarChange: (progress) =>
+  onProgressBarChange: (progressPercent) =>
+    progress = (progressPercent * @mediaView.duration() / 100)
     @mediaView.seek progress
