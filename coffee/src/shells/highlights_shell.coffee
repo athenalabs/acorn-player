@@ -67,7 +67,6 @@ class HighlightsShell.MediaView extends Shell.MediaView
 
     @initializePlayPauseToggleView()
     @initializeElapsedTimeView()
-    @initializeProgressBarView()
     @initializeHighlightsViews()
 
     @controlsView = new ControlToolbarView
@@ -78,7 +77,6 @@ class HighlightsShell.MediaView extends Shell.MediaView
     @controlsView.on 'PlayControl:Click', => @play()
     @controlsView.on 'PauseControl:Click', => @pause()
     @controlsView.on 'ElapsedTimeControl:Seek', @seek
-    # @subMediaView.on 'Media:Progress', @_updateProgressBar
 
 
   initializePlayPauseToggleView: =>
@@ -108,7 +106,8 @@ class HighlightsShell.MediaView extends Shell.MediaView
 
   initializeHighlightsViews: =>
 
-    @highlightViews = _.map @model.highlights(), (highlight) =>
+    @highlightViews = @options.highlightViews
+    @highlightViews ?= _.map @model.highlights(), (highlight) =>
       clipView = new acorn.player.ClipView
         eventhub: @eventhub
         model: highlight
@@ -124,15 +123,6 @@ class HighlightsShell.MediaView extends Shell.MediaView
     @highlightsGroupView = new acorn.player.ClipGroupView
       clips: @highlightViews
       eventhub: @eventhub
-
-
-  initializeProgressBarView: =>
-
-    @progressBarView = new acorn.player.ValueSliderView
-      extraClasses: ['progress-bar-view']
-      eventhub: @eventhub
-      handle: false
-      value: 0
 
 
   remove: =>
@@ -171,10 +161,7 @@ class HighlightsShell.MediaView extends Shell.MediaView
 
   _onProgressBarDidProgress: (percentProgress) =>
     progress = @progressFromPercent percentProgress
-
-    # if slider progress differs from subshell progress, seek to new position
-    unless progress.toFixed(5) == @seekOffset().toFixed(5)
-      @seek progress
+    @seek progress
 
     # if progressed to a highlight, show it.
     _.each @highlightViews, (highlightView) =>
@@ -231,43 +218,22 @@ class HighlightsShell.RemixView extends Shell.RemixView
   className: @classNameExtend 'highlights-shell'
 
 
-  template: _.template '''
-    <div class='media-view'></div>
-    <div class='time-controls'></div>
-    '''
-
-
   controlsTemplate: _.template '''
     <div class="highlight-button">
       <button class="btn btn-small add-highlight">
         <i class="icon-plus"></i> Highlight</button>
     </div>
-
-    <div class="note-input input-append input-prepend">
-      <button class="note note-delete btn btn-small">
-        <i class="icon-trash"></i></button>
-      <input type="text" class="note input" placeholder="clip note" />
-      <button class="note note-save btn btn-small btn-success">
-        <i class="icon-ok"></i></button>
-    </div>
     '''
 
   events: => _.extend super,
-    'click button.add-highlight': => @_addHighlight()
-    'blur input.note': => @_saveHighlightNote()
-    'keyup input.note': (event) =>
+    'click': => @inactivateHighlights()
+    'click button.add-highlight': => @onAddHighlight()
+    'keyup textarea.clip-note': (event) =>
       switch event.keyCode
         when athena.lib.util.keys.ENTER
-          @_saveHighlightNote()
-          @_inactivateHighlights()
+          @onSaveHighlight @activeHighlight()
         when athena.lib.util.keys.ESCAPE
-          @_inactivateHighlights()
-    'click .note-save.btn': =>
-      @_saveHighlightNote()
-      @_inactivateHighlights()
-    'click .note-delete.btn': =>
-      @_deleteHighlight()
-      @_inactivateHighlights()
+          @onCancelEditHighlight @activeHighlight()
 
 
   initialize: =>
@@ -276,116 +242,58 @@ class HighlightsShell.RemixView extends Shell.RemixView
     # if no highlights, use default empty array
     @model.highlights @model.highlights()
 
-    @initializeSubMediaView()
-    @initializePlayPauseToggleView()
-    @initializeElapsedTimeView()
-    @initializeControls()
-    @initializeHighlightsSlider()
+    @initializeHighlightViews()
+    @initializeRemixMediaView()
+    @initializeTimeRangeView()
 
-  initializeSubMediaView: =>
-    @subMediaView = new (@model.shellModel()).module.MediaView
-      model: @model.shellModel()
+
+  initializeRemixMediaView: =>
+    @mediaView = new @model.module.MediaView
       eventhub: @eventhub
-      playOnReady: @options.playOnReady
+      model: @model
+      playOnReady: false
+      highlightViews: @highlightViews
 
-    @listenTo @subMediaView, 'all', =>
-      # replace @subMediaView with @
-      args = _.map arguments, (arg) =>
-        if arg is @subMediaView then @ else arg
-
-      @trigger.apply @, args
-
-    @subMediaView.on 'Media:StateChange', =>
-      @playPauseToggleView.refreshToggle()
-
-
-  initializeControls: =>
-    @controlsView = new ControlToolbarView
-      extraClasses: ['shell-controls']
-      buttons: [@playPauseToggleView, @elapsedTimeView]
+    @remixMediaView = new acorn.player.TimedMediaRemixView
       eventhub: @eventhub
+      model: @model
+      mediaView: @mediaView
 
-    @controlsView.on 'PlayControl:Click', => @subMediaView.play()
-    @controlsView.on 'PauseControl:Click', => @subMediaView.pause()
-    @controlsView.on 'ElapsedTimeControl:Seek', @subMediaView.seek
+    @listenTo @mediaView, 'Media:Progress', (view, elapsed, total) =>
+      @timeRangeView?.progress elapsed, {silent: true}
 
 
-  initializePlayPauseToggleView: =>
-    model = new Backbone.Model
-    model.isPlaying = => @subMediaView.isPlaying()
+  initializeTimeRangeView: =>
 
-    @playPauseToggleView = new acorn.player.controls.PlayPauseControlToggleView
+    @timeRangeView = new acorn.player.TimeRangeInputView
       eventhub: @eventhub
-      model: model
+      min: 0
+      max: @duration()
+
+    @timeRangeView.on 'TimeRangeInputView:DidChangeTimes',
+      @onChangeRangeTimes
+
+    @timeRangeView.on 'TimeRangeInputView:DidChangeProgress', (progress) =>
+      @mediaView.seek progress
 
 
-  initializeElapsedTimeView: =>
-
-    tvModel = new Backbone.Model
-      elapsed: 0
-      total: @duration() or 0
-
-    @elapsedTimeView = new acorn.player.controls.ElapsedTimeControlView
-      eventhub: @eventhub
-      model: tvModel
-
-    tvModel.listenTo @subMediaView, 'Media:Progress', (view, elapsed, total) =>
-      tvModel.set 'elapsed', elapsed
-      tvModel.set 'total', total
-
-
-  initializeHighlightsSlider: =>
+  initializeHighlightViews: =>
 
     @highlightViews = _.map @model.highlights(), @initializeHighlightView
 
-    @clipGroupView = new acorn.player.ClipGroupView
-      eventhub: @eventhub
-      clips: @highlightViews
-
 
   initializeHighlightView: (highlight) =>
-    clipView = new acorn.player.ClipSelectView
+    clipView = new acorn.player.EditableClipView
       eventhub: @eventhub
-      clip: highlight
-      start: highlight.timeStart
-      end: highlight.timeEnd
+      model: highlight
       min: 0
       max: @model.duration()
 
-    # change highlight times.
-    clipView.inputView.on 'TimeRangeInputView:DidChangeTimes', (changed) =>
-      highlight.timeStart = changed.start if _.isNumber changed?.start
-      highlight.timeEnd = changed.end if _.isNumber changed?.end
-
-    # change playback progress.
-    clipView.inputView.on 'TimeRangeInputView:DidChangeProgress',
-      @_onChangeProgress
-
-    # seek on changing times
-    clipView.inputView.on 'TimeRangeInputView:DidChangeTimes', @_onChangeTimes
-
-
-    clipView.listenTo @subMediaView, 'Media:Progress',
-      (view, elapsed, total) =>
-        # keep progress bar in sync
-        @_progress = highlight.timeStart + elapsed
-        clipView.inputView.progress @_progress
-
-    clipView.on 'ClipSelect:Active', (clipView) =>
-      # inactivate all other highlights when one comes active
-      _.each @highlightViews, (highlightView) =>
-        unless highlightView is clipView
-          highlightView.toggleActive false
-
-      # adjust clip note inputs
-      @$('.note-input button').removeAttr('disabled')
-      @$('.note-input input').first().removeAttr('disabled')
-        .val(highlight.title).focus()
-
-    clipView.on 'ClipSelect:Inactive', =>
-      # adjust clip note inputs
-      @$('.note-input button').attr('disabled', 'disabled')
-      @$('.note-input input').first().attr('disabled', 'disabled').val('')
+    clipView.on 'Clip:Toolbar:Click:Clip', => @onClipHighlight clipView
+    clipView.on 'Clip:Toolbar:Click:Clip-Save', => @onClipHighlightDone clipView
+    clipView.on 'Clip:Toolbar:Click:Edit', => @onEditHighlight clipView
+    clipView.on 'Clip:Toolbar:Click:Edit-Save', => @onSaveHighlight clipView
+    clipView.on 'Clip:Toolbar:Click:Delete', => @onDeleteHighlight clipView
 
     clipView
 
@@ -394,72 +302,75 @@ class HighlightsShell.RemixView extends Shell.RemixView
     super
     @$el.empty()
 
-    @$el.append @template()
-    @$('.media-view').first().append @subMediaView.render().el
-    @$('.time-controls').first()
-      .append(@clipGroupView.render().el)
-      .append(@controlsView.render().el)
+    @$el.append @remixMediaView.render().el
 
-    @controlsView.$el.append @controlsTemplate()
-    @$('.note-save').first().tooltip
-      trigger: 'hover'
-      title: 'Enter Highlight Note'
+    @remixMediaView.controlsView.$el.append @controlsTemplate()
 
-    @$('.note-delete').first().tooltip
-      trigger: 'hover'
-      title: 'Delete Highlight'
+    @$('.time-controls').prepend @timeRangeView.render().el
+    @timeRangeView.$el.hide()
 
-    @_inactivateHighlights()
+    # @inactivateHighlights()
     @
 
 
   # duration of video given current splicing and looping - get from model
   duration: =>
-    @subMediaView?.duration() or @model.duration() or 0
+    @remixMediaView?.mediaView?.duration() or @model.duration() or 0
 
 
   _setTimeInputMax: =>
-    @timeRangeInputView.setMax @model.timeTotal()
+    @timeRangeView.setMax @duration()
 
 
-  _onChangeTimes: (changed) =>
-    if _.isNumber changed?.start
-      seekOffset = changed.start
-    else if _.isNumber changed?.end
-      seekOffset = changed.end
-
-    # unless user paused the video, make sure it is playing
-    unless @subMediaView.isInState 'pause'
-      @subMediaView.play()
-
-    if seekOffset?
-      # bound between 0 <= seekOffset <= @duration() -2
-      seekOffset = Math.max(0, Math.min(seekOffset, @model.duration() - 2))
-      @subMediaView.seek seekOffset
+  onEditHighlight: (highlightView) =>
+    @inactivateHighlights [highlightView]
+    highlightView.setActive true
+    highlightView.$('textarea').focus()
 
 
-  _onChangeProgress: (progress) =>
-    # if slider progress differs from player progress, seek to new position
-    unless progress.toFixed(5) == @_progress?.toFixed(5)
-      @_progress = progress
-      @subMediaView.seek progress
+  onClipHighlight: (highlightView) =>
+    if @_clippingHighlight
+      @onClipHighlightDone()
+
+    @_clippingHighlight = highlightView
+    @inactivateHighlights [@_clippingHighlight]
+    @_clippingHighlight.clipping true
+
+    @timeRangeView.values @activeHighlight().values()
+    @timeRangeView.$el.show()
+    # @remixMediaView.progressBarView.$el.hide()
+    @mediaView.$('.clip-group-view').addClass('clipping')
 
 
-  _activeHighlight: =>
-    _.find @highlightViews, (highlightView) =>
-      highlightView.isActive()
+  onClipHighlightDone: =>
+    @timeRangeView.$el.hide()
+    # @remixMediaView.progressBarView.$el.show()
+    @mediaView.highlightsGroupView.softRender()
+    @mediaView.$('.clip-group-view').removeClass('clipping')
+
+    @_clippingHighlight.clipping false
+    @_clippingHighlight = undefined
 
 
-  _saveHighlightNote: =>
-    @_activeHighlight()?.clip.title = @$('.note-input input').first().val()
+  onSaveHighlight: (highlightView) =>
+    @inactivateHighlights() # saves
+    highlightView.render()
+    highlightView.setActive false
 
 
-  _deleteHighlight: =>
-    highlightView = @_activeHighlight()
+  onCancelEditHighlight: (highlightView) =>
+    highlightView?.render() # clears edits
+    @inactivateHighlights()
+
+
+  onDeleteHighlight: (highlightView) =>
     unless highlightView
       return
 
-    @_inactivateHighlights()
+    if highlightView is @_clippingHighlight
+      @onClipHighlightDone()
+
+    @inactivateHighlights()
 
     # remove from model
     highlights = @model.highlights()
@@ -468,15 +379,12 @@ class HighlightsShell.RemixView extends Shell.RemixView
     # remove from views
     @highlightViews.splice(@highlightViews.indexOf(highlightView), 1)
 
-    @clipGroupView.softRender()
-
-  _inactivateHighlights: =>
-    _.each @highlightViews, (highlightView) =>
-      highlightView.toggleActive false
-    @$('input.note').first().blur()
+    @mediaView.highlightsGroupView.softRender()
 
 
-  _addHighlight: =>
+  onAddHighlight: =>
+    @onClipHighlightDone()
+
     highlight =
       timeStart: 0
       timeEnd: @duration()
@@ -484,10 +392,43 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
     @model.highlights().push highlight
     view = @initializeHighlightView highlight
+    @inactivateHighlights()
     @highlightViews.push view
-    @_inactivateHighlights()
-    @clipGroupView.softRender()
-    view.toggleActive true
+    @mediaView.highlightsGroupView.softRender()
+    view.setActive true
+
+
+  activeHighlight: =>
+    _.find @highlightViews, (highlightView) =>
+      highlightView.isActive()
+
+  inactivateHighlights: (except=[]) =>
+    except.push @_clippingHighlight
+
+    _.each @highlightViews, (highlightView) =>
+      unless highlightView in except
+        highlightView.save()
+        highlightView.setActive false
+
+
+  onChangeRangeTimes: (changed) =>
+    # calculate seekOffset before changes take place.
+    values = @_clippingHighlight.values()
+    seekOffset = 0 if changed.start != values.start
+    seekOffset = Infinity if changed.end != values.end
+
+    @activeHighlight().values changed
+
+    # unless user paused the video, make sure it is playing
+    unless @mediaView.isInState 'pause'
+      @mediaView.play()
+
+    if seekOffset?
+      values = @_clippingHighlight.values()
+      seekOffset = Math.min(seekOffset, values.end - 2)
+      seekOffset = Math.max(values.start, seekOffset)
+      @mediaView.seek seekOffset
+
 
 
 # Register the shell with the acorn object.
