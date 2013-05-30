@@ -24,20 +24,21 @@ class acorn.player.ClipView extends athena.lib.View
 
     # toolbar buttons
     toolbarButtons: [
-      {id:'Link', icon: 'icon-link', tooltip: 'Link to this Highlight'}
+      {
+        id:'Link',
+        icon: 'icon-link',
+        tooltip: 'Link to this Highlight'
+        className: 'btn-small btn-inverse'
+      }
     ]
 
 
   initialize: =>
     super
 
-    buttons = _.map @options.toolbarButtons, (btn) =>
-      btn.className = (btn.className || '') + ' btn-small'
-      btn
-
     @toolbarView = new athena.lib.ToolbarView
       eventhub: @eventhub
-      buttons: buttons
+      buttons: @options.toolbarButtons
       extraClasses: ['btn-group']
 
     @toolbarView.on 'all', =>
@@ -64,6 +65,7 @@ class acorn.player.ClipView extends athena.lib.View
 
   showNote: =>
     @$el.addClass('show-note')
+    @reposition()
 
 
   hideNote: =>
@@ -106,3 +108,7 @@ class acorn.player.ClipView extends athena.lib.View
 
     @$el.css 'left', startPercent + '%'
     @$el.css 'right', (100 - endPercent) + '%'
+
+    # reposition toolbar
+    height = Math.max(@$('.clip-note').height() + 15)
+    @toolbarView.$el.css 'bottom', height + 14

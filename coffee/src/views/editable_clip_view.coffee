@@ -24,11 +24,36 @@ class acorn.player.EditableClipView extends acorn.player.ClipView
   defaults: => _.extend super,
     # toolbar buttons
     toolbarButtons: [
-      {id:'Clip', icon: 'icon-cut', tooltip: 'Clip Time'}
-      {id:'Clip-Save', icon: 'icon-ok', tooltip: 'Save New Time', className: 'btn-success'}
-      {id:'Edit', icon: 'icon-edit', tooltip: 'Edit Note'}
-      {id:'Edit-Save', icon: 'icon-ok', tooltip: 'Save Note', className: 'btn-success'}
-      {id:'Delete', icon: 'icon-trash', tooltip: 'Delete Highlight'}
+      {
+        id:'Clip',
+        icon: 'icon-cut',
+        tooltip: 'Clip Time'
+        className: 'btn-small btn-inverse'
+      },
+      {
+        id:'Clip-Save',
+        icon: 'icon-ok',
+        tooltip: 'Save New Time',
+        className: 'btn-small btn-success'
+      },
+      {
+        id:'Edit',
+        icon: 'icon-edit',
+        tooltip: 'Edit Note'
+        className: 'btn-small btn-inverse'
+      },
+      {
+        id:'Edit-Save',
+        icon: 'icon-ok',
+        tooltip: 'Save Note',
+        className: 'btn-small btn-success'
+      }
+      {
+        id:'Delete',
+        icon: 'icon-trash',
+        tooltip: 'Delete Highlight'
+        className: 'btn-small btn-inverse'
+      }
     ]
 
   render: =>
