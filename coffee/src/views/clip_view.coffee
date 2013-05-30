@@ -61,6 +61,7 @@ class acorn.player.ClipView extends athena.lib.View
   popupNote: =>
     @$el.addClass('popup-note')
     _.delay (=> @$el.removeClass('popup-note')), 3000
+    @reposition()
 
 
   showNote: =>

@@ -1175,7 +1175,7 @@ input {
     z-index: 1;
   }
 
-  &.active .clip-note,
+  &.editing .clip-note,
   &.popup-note .clip-note,
   &.show-note .clip-note,
   &:hover .clip-note {
@@ -1190,8 +1190,16 @@ input {
 
   &.active .clip-note,
   .clip-note:hover {
-    .opaque();
     border: 1px solid rgba(255, 179, 119, 0.7);
+  }
+
+  .clip-note:focus,
+  .clip-note:hover {
+    .opaque();
+
+    + .toolbar-view {
+      .opaque(1.0);
+    }
   }
 }
 

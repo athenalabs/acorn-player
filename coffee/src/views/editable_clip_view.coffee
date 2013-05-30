@@ -69,10 +69,11 @@ class acorn.player.EditableClipView extends acorn.player.ClipView
 
 
   clipping: (isClipping) =>
-    @setActive isClipping
     if isClipping
+      @$el.addClass 'editing'
       @toolbarView.$('#Clip').hide()
       @toolbarView.$('#Clip-Save').show()
     else
+      @$el.removeClass 'editing'
       @toolbarView.$('#Clip').show()
       @toolbarView.$('#Clip-Save').hide()

@@ -338,7 +338,7 @@ class HighlightsShell.RemixView extends Shell.RemixView
     @inactivateHighlights [@_clippingHighlight]
     @_clippingHighlight.clipping true
 
-    @timeRangeView.values @activeHighlight().values()
+    @timeRangeView.values @_clippingHighlight.values()
     @timeRangeView.$el.show()
     # @remixMediaView.progressBarView.$el.hide()
     @mediaView.$('.clip-group-view').addClass('clipping')
@@ -419,7 +419,7 @@ class HighlightsShell.RemixView extends Shell.RemixView
     seekOffset = 0 if changed.start != values.start
     seekOffset = Infinity if changed.end != values.end
 
-    @activeHighlight().values changed
+    @_clippingHighlight.values changed
 
     # unless user paused the video, make sure it is playing
     unless @mediaView.isInState 'pause'
