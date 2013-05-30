@@ -22,11 +22,36 @@ class acorn.player.ClipView extends athena.lib.View
     min: 0
     max: Infinity
 
+    # toolbar buttons
+    toolbarButtons: [
+      {id:'Link', icon: 'icon-link', tooltip: 'Link to this Highlight'}
+    ]
+
+
+  initialize: =>
+    super
+
+    buttons = _.map @options.toolbarButtons, (btn) =>
+      btn.className = (btn.className || '') + ' btn-small'
+      btn
+
+    @toolbarView = new athena.lib.ToolbarView
+      eventhub: @eventhub
+      buttons: buttons
+      extraClasses: ['btn-group']
+
+    @toolbarView.on 'all', =>
+      unless /Toolbar:Click:/.test arguments[0]
+        return
+      @trigger 'Clip:' + arguments[0], @
+
+
 
   render: =>
     super
     @$el.empty()
     @$el.html @template @model
+    @$el.append @toolbarView.render().el
     @reposition()
     @
 
@@ -45,7 +70,10 @@ class acorn.player.ClipView extends athena.lib.View
     @$el.removeClass('show-note')
 
 
-  values: =>
+  values: (newValues) =>
+    @model.timeStart = newValues.start if newValues?.start?
+    @model.timeEnd = newValues.end if newValues?.end?
+
     start: @model.timeStart
     end: @model.timeEnd
 
@@ -66,6 +94,7 @@ class acorn.player.ClipView extends athena.lib.View
 
   reposition: =>
 
+    # reposition horizontally
     params = (decimalDigits) =>
       low: @options.min
       high: @options.max
