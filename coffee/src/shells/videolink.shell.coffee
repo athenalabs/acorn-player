@@ -227,7 +227,6 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
     @timeRangeView.on 'TimeRangeInputView:DidChangeTimes', @onChangeTimes
     @timeRangeView.on 'TimeRangeInputView:DidChangeProgress', @onChangeProgress
-    @loopsButtonView.on 'CycleButtonView:ValueDidChange', @onChangeLoops
 
 
   initializeLoopsButton: =>
@@ -264,6 +263,8 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
       data: loopsButtonData
       initialView: initialView
       extraClasses: ['loops-button']
+
+    @loopsButtonView.on 'CycleButtonView:ValueDidChange', @onChangeLoops
 
 
   render: =>
