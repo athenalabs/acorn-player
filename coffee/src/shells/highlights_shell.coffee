@@ -118,6 +118,10 @@ class HighlightsShell.MediaView extends Shell.MediaView
         @seek clipView.model.timeStart
         @play()
 
+      # clipView.on 'Clip:Toolbar:Click:Link', =>
+      #   # copy to clipboard.
+      #   url =
+
       clipView
 
     @highlightsGroupView = new acorn.player.ClipGroupView

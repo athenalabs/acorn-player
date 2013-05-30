@@ -24,12 +24,12 @@ class acorn.player.ClipView extends athena.lib.View
 
     # toolbar buttons
     toolbarButtons: [
-      {
-        id:'Link',
-        icon: 'icon-link',
-        tooltip: 'Link to this Highlight'
-        className: 'btn-small btn-inverse'
-      }
+      # {
+      #   id:'Link',
+      #   icon: 'icon-link',
+      #   tooltip: 'Copy link to this Highlight'
+      #   className: 'btn-small btn-inverse'
+      # }
     ]
 
 
