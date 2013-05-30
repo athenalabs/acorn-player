@@ -305,7 +305,6 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     if seekOffset?
       seekOffset = Math.min(seekOffset, @model.timeEnd() - 2)
       seekOffset = Math.max(@model.timeStart(), seekOffset)
-      console.log 'seekOffset: ' + seekOffset
       @mediaView.seek seekOffset
 
     @eventhub.trigger 'change:shell', @model, @
