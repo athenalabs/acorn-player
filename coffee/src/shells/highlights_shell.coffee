@@ -56,6 +56,9 @@ class HighlightsShell.MediaView extends Shell.MediaView
     # subshell will announce when ready, forward event
     readyOnRender: false
 
+    # option whether to show highlights or not. can be turned off externally.
+    popupHighlights: true
+
 
   events: => _.extend super,
     'mousemove': @onMouseMove
@@ -135,7 +138,8 @@ class HighlightsShell.MediaView extends Shell.MediaView
       _.each @highlightViews, (highlightView) =>
         values = highlightView.values()
         if values.start <= progress <= values.end
-          highlightView.setActive true
+          if @options.popupHighlights
+            highlightView.setActive true
         else
           highlightView.setActive false
 
@@ -207,7 +211,8 @@ class HighlightsShell.MediaView extends Shell.MediaView
       offset = highlightView.$el.offset().left
       width = highlightView.$el.width()
       if offset <= event.clientX <= (offset + width)
-        highlightView.showNote()
+        if @options.popupHighlights
+          highlightView.showNote()
       else
         highlightView.hideNote()
 
@@ -344,15 +349,15 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
     @timeRangeView.values @_clippingHighlight.values()
     @timeRangeView.$el.show()
-    # @remixMediaView.progressBarView.$el.hide()
     @mediaView.$('.clip-group-view').addClass('clipping')
+    @mediaView.options.popupHighlights = false
 
 
   onClipHighlightDone: =>
     @timeRangeView.$el.hide()
-    # @remixMediaView.progressBarView.$el.show()
     @mediaView.highlightsGroupView.softRender()
     @mediaView.$('.clip-group-view').removeClass('clipping')
+    @mediaView.options.popupHighlights = true
 
     @_clippingHighlight.clipping false
     @_clippingHighlight = undefined
