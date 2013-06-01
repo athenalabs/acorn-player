@@ -73,10 +73,8 @@ Run a server with the following command:
 See it at [http://localhost:8000/static/player.html](http://localhost:8000/static/player.html)
 
 Note: Node v.0.10.4 gives errors when used with our version of grunt. The
-highest supported version of Node we currently support is 0.8.16. To see
-instructions on installing older versions of Node via ``brew'', see 
-[this
-post](http://stackoverflow.com/questions/3987683/homebrew-install-specific-version-of-formula).
+highest supported version of Node is 0.8.16. Instructions on installing older
+versions of Node via ``brew`` are available [here](http://stackoverflow.com/questions/3987683/homebrew-install-specific-version-of-formula).
 
 ## Usage
 
