@@ -26,7 +26,7 @@ class acorn.player.EditableClipView extends acorn.player.ClipView
     toolbarButtons: [
       {
         id:'Clip',
-        icon: 'icon-cut',
+        icon: 'icon-resize-horizontal',
         tooltip: 'Clip Time'
         className: 'btn-small btn-inverse'
       },
@@ -38,7 +38,7 @@ class acorn.player.EditableClipView extends acorn.player.ClipView
       },
       {
         id:'Edit',
-        icon: 'icon-edit',
+        icon: 'icon-comment',
         tooltip: 'Edit Note'
         className: 'btn-small btn-inverse'
       },
