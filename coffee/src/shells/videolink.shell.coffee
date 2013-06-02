@@ -184,12 +184,21 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
   className: @classNameExtend 'video-link-shell'
 
 
-  template: _.template '''
-    <div class='video-player'></div>
-    <div class='time-controls'>
-      <div class="time-input"></div>
+  controlsTemplate: _.template '''
+    <div class="highlight-button right-control">
+      <button class="btn btn-small add-highlight">
+        <i class="icon-plus"></i> Highlight</button>
+    </div>
+    <div class="clip-time-button right-control">
+      <button class="btn btn-small active clip-time">
+        <i class="icon-resize-horizontal"></i> Clip</button>
     </div>
     '''
+
+
+  events: => _.extend super,
+    'click button.add-highlight': => @onAddHighlight()
+
 
 
   initialize: =>
@@ -274,8 +283,10 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     @$el.append @remixMediaView.render().el
 
     @remixMediaView.progressBarView.$el.hide()
-    @$('.time-controls').first().prepend @timeRangeView.render().el
-    @$('.time-controls').first().append @loopsButtonView.render().el
+    @remixMediaView.controlsView.$el.prepend @timeRangeView.render().el
+    @remixMediaView.controlsView.$el.append @loopsButtonView.render().el
+    @remixMediaView.controlsView.$el.append @controlsTemplate()
+    @$('#add-highlight').first().tooltip()
     @
 
 
@@ -323,6 +334,10 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     # restart player loops
     if @mediaView.isPlaying()
       @mediaView.seek 0
+
+
+  onAddHighlight: =>
+    # wrap shell in a HighlightsShell.
 
 
 
