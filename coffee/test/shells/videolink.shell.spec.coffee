@@ -2,6 +2,7 @@ goog.provide 'acorn.specs.shells.VideoLinkShell'
 
 goog.require 'acorn.shells.VideoLinkShell'
 goog.require 'acorn.shells.LinkShell'
+goog.require 'acorn.player.TimedMediaRemixView'
 goog.require 'acorn.player.TimeRangeInputView'
 goog.require 'acorn.player.CycleButtonView'
 goog.require 'acorn.util.test'
@@ -61,7 +62,7 @@ describe 'acorn.shells.VideoLinkShell', ->
         options = modelOptions()
         delete options.timeTotal
         model = new Model options
-        expect(model.timeTotal()).toBe Infinity
+        expect(model.timeTotal()).toBe undefined
         expect(model.timeTotal(1)).toBe 1
         expect(model.timeTotal()).toBe 1
 
@@ -303,7 +304,7 @@ describe 'acorn.shells.VideoLinkShell', ->
         it 'should create a timeRangeInputView', ->
           rv = new RemixView viewOptions()
           TimeRangeInputView = acorn.player.TimeRangeInputView
-          expect(rv._timeRangeInputView instanceof TimeRangeInputView).toBe true
+          expect(rv.timeRangeView instanceof TimeRangeInputView).toBe true
 
         it 'should initialize timeRangeInputView with start and end times', ->
           times = [
@@ -321,7 +322,7 @@ describe 'acorn.shells.VideoLinkShell', ->
 
             rv = new RemixView options
             rv.render()
-            triv = rv._timeRangeInputView
+            triv = rv.timeRangeView
 
             expect(triv.values().start).toBe t.start
             expect(triv.values().end).toBe t.end
@@ -334,7 +335,7 @@ describe 'acorn.shells.VideoLinkShell', ->
           rv = new RemixView options
           rv.render()
 
-          triv = rv._timeRangeInputView
+          triv = rv.timeRangeView
           inputs =
             timeStart: triv.startInputView
             timeEnd: triv.endInputView
@@ -355,26 +356,26 @@ describe 'acorn.shells.VideoLinkShell', ->
         it 'should reset player elapsed loop count when start time changes', ->
           rv = new RemixView viewOptions()
           rv.render()
-          triv = rv._timeRangeInputView
-          rv._playerView.elapsedLoops 2
+          triv = rv.timeRangeView
+          rv.mediaView.playerView.elapsedLoops 2
 
           # confirm background expectations
-          expect(rv._playerView.elapsedLoops()).toBe 2
+          expect(rv.mediaView.playerView.elapsedLoops()).toBe 2
 
           triv.values start: 20
-          expect(rv._playerView.elapsedLoops()).toBe 0
+          expect(rv.mediaView.playerView.elapsedLoops()).toBe 0
 
         it 'should reset player elapsed loop count when end time changes', ->
           rv = new RemixView viewOptions()
           rv.render()
-          triv = rv._timeRangeInputView
-          rv._playerView.elapsedLoops 2
+          triv = rv.timeRangeView
+          rv.mediaView.playerView.elapsedLoops 2
 
           # confirm background expectations
-          expect(rv._playerView.elapsedLoops()).toBe 2
+          expect(rv.mediaView.playerView.elapsedLoops()).toBe 2
 
           triv.values end: 20
-          expect(rv._playerView.elapsedLoops()).toBe 0
+          expect(rv.mediaView.playerView.elapsedLoops()).toBe 0
 
 
       describe 'looping: RemixView', ->
@@ -382,12 +383,12 @@ describe 'acorn.shells.VideoLinkShell', ->
         it 'should build a loops button from a CycleButtonView', ->
           rv = new RemixView viewOptions()
           CycleButtonView = acorn.player.CycleButtonView
-          expect(rv._loopsButtonView instanceof CycleButtonView).toBe true
+          expect(rv.loopsButtonView instanceof CycleButtonView).toBe true
 
         it 'should initialize loops button with correct elements', ->
           rv = new RemixView viewOptions()
           rv.render()
-          views = rv._loopsButtonView.views
+          views = rv.loopsButtonView.views
 
           # 3 views
           expect(views.length).toBe 3
@@ -419,7 +420,7 @@ describe 'acorn.shells.VideoLinkShell', ->
 
             rv = new RemixView options
             rv.render()
-            lbv = rv._loopsButtonView
+            lbv = rv.loopsButtonView
             lbvState = lbv.currentState()
 
             expect(lbvState.view).toBe lbv.views[state.view]
@@ -429,7 +430,7 @@ describe 'acorn.shells.VideoLinkShell', ->
         it 'should update model values when loops button cycles', ->
           rv = new RemixView viewOptions()
           rv.render()
-          lbv = rv._loopsButtonView
+          lbv = rv.loopsButtonView
 
           lbv.showView 0
           expect(rv.model.get 'loops').toBe 'one'
@@ -443,7 +444,7 @@ describe 'acorn.shells.VideoLinkShell', ->
         it 'should update model values when loops input button changes', ->
           rv = new RemixView viewOptions()
           rv.render()
-          lbv = rv._loopsButtonView
+          lbv = rv.loopsButtonView
           input = lbv.views[2].find 'input'
 
           # confirm background expectations
@@ -465,133 +466,133 @@ describe 'acorn.shells.VideoLinkShell', ->
         it 'should reset player elapsed loop count when loops value changes', ->
           rv = new RemixView viewOptions()
           rv.render()
-          lbv = rv._loopsButtonView
+          lbv = rv.loopsButtonView
           lbv.showView 0
-          rv._playerView.elapsedLoops 2
+          rv.mediaView.playerView.elapsedLoops 2
 
           # confirm background expectations
-          expect(rv._playerView.elapsedLoops()).toBe 2
+          expect(rv.mediaView.playerView.elapsedLoops()).toBe 2
           expect(rv.model.get 'loops').toBe 'one'
 
           lbv.showView 2
-          expect(rv._playerView.elapsedLoops()).toBe 0
+          expect(rv.mediaView.playerView.elapsedLoops()).toBe 0
 
 
-      describe 'RemixView::_controlsView', ->
+      describe 'RemixView::remixMediaView.controlsView', ->
 
         it 'should have a play button', ->
           view = new RemixView viewOptions()
-          view._controlsView.render()
+          view.remixMediaView.controlsView.render()
           view.render()
-          playControl = view._controlsView.$ '.control-view.play'
+          playControl = view.remixMediaView.controlsView.$ '.control-view.play'
           expect(playControl.length).toBe 1
 
         it 'should have a play button that is initially hidden', ->
           view = new RemixView viewOptions()
-          view._controlsView.render()
+          view.remixMediaView.controlsView.render()
           view.render()
-          view._playerView.play()
-          playControl = view._controlsView.$ '.control-view.play'
+          view.mediaView.playerView.play()
+          playControl = view.remixMediaView.controlsView.$ '.control-view.play'
           expect(playControl.length).toBe 1
           expect(playControl.hasClass 'hidden').toBe true
 
         it 'should have a pause button', ->
           view = new RemixView viewOptions()
-          view._controlsView.render()
+          view.remixMediaView.controlsView.render()
           view.render()
-          view._playerView.play()
-          pauseControl = view._controlsView.$ '.control-view.pause'
+          view.mediaView.playerView.play()
+          pauseControl = view.remixMediaView.controlsView.$ '.control-view.pause'
           expect(pauseControl.length).toBe 1
 
         it 'should have a pause button that is not initially hidden', ->
           view = new RemixView viewOptions()
-          view._controlsView.render()
+          view.remixMediaView.controlsView.render()
           view.render()
-          view._playerView.play()
-          pauseControl = view._controlsView.$ '.control-view.pause'
+          view.mediaView.playerView.play()
+          pauseControl = view.remixMediaView.controlsView.$ '.control-view.pause'
           expect(pauseControl.length).toBe 1
           expect(pauseControl.hasClass 'hidden').toBe false
 
         it 'should show play button when paused', ->
           view = new RemixView viewOptions()
-          view._controlsView.render()
+          view.remixMediaView.controlsView.render()
           view.render()
-          view._playerView.play()
-          view._playerView.pause()
-          expect(view._playerView.isPaused()).toBe true
+          view.mediaView.playerView.play()
+          view.mediaView.playerView.pause()
+          expect(view.mediaView.playerView.isPaused()).toBe true
 
-          playControl = view._controlsView.$ '.control-view.play'
+          playControl = view.remixMediaView.controlsView.$ '.control-view.play'
           expect(playControl.hasClass 'hidden').toBe false
 
         it 'should hide pause button when paused', ->
           view = new RemixView viewOptions()
-          view._controlsView.render()
+          view.remixMediaView.controlsView.render()
           view.render()
-          view._playerView.play()
-          view._playerView.pause()
-          expect(view._playerView.isPaused()).toBe true
+          view.mediaView.playerView.play()
+          view.mediaView.playerView.pause()
+          expect(view.mediaView.playerView.isPaused()).toBe true
 
-          pauseControl = view._controlsView.$ '.control-view.pause'
+          pauseControl = view.remixMediaView.controlsView.$ '.control-view.pause'
           expect(pauseControl.hasClass 'hidden').toBe true
 
         it 'should hide play button when playing', ->
           view = new RemixView viewOptions()
-          view._controlsView.render()
+          view.remixMediaView.controlsView.render()
           view.render()
-          view._playerView.play()
-          expect(view._playerView.isPlaying()).toBe true
+          view.mediaView.playerView.play()
+          expect(view.mediaView.playerView.isPlaying()).toBe true
 
-          playControl = view._controlsView.$ '.control-view.play'
+          playControl = view.remixMediaView.controlsView.$ '.control-view.play'
           expect(playControl.hasClass 'hidden').toBe true
 
         it 'should show pause button when playing', ->
           view = new RemixView viewOptions()
-          view._controlsView.render()
+          view.remixMediaView.controlsView.render()
           view.render()
-          view._playerView.play()
-          expect(view._playerView.isPlaying()).toBe true
+          view.mediaView.playerView.play()
+          expect(view.mediaView.playerView.isPlaying()).toBe true
 
-          pauseControl = view._controlsView.$ '.control-view.pause'
+          pauseControl = view.remixMediaView.controlsView.$ '.control-view.pause'
           expect(pauseControl.hasClass 'hidden').toBe false
 
         it 'should play when play button is clicked', ->
           view = new RemixView viewOptions()
-          view._controlsView.render()
+          view.remixMediaView.controlsView.render()
           view.render()
-          view._playerView.play()
-          playControl = view._controlsView.$ '.control-view.play'
-          view._playerView.pause()
+          view.mediaView.playerView.play()
+          playControl = view.remixMediaView.controlsView.$ '.control-view.play'
+          view.mediaView.playerView.pause()
 
-          spyOn view._playerView, 'play'
+          spyOn view.mediaView, 'play'
           playControl.click()
-          expect(view._playerView.play).toHaveBeenCalled()
+          expect(view.mediaView.play).toHaveBeenCalled()
 
         it 'should pause when pause button is clicked', ->
           view = new RemixView viewOptions()
-          view._controlsView.render()
+          view.remixMediaView.controlsView.render()
           view.render()
-          view._playerView.play()
-          pauseControl = view._controlsView.$ '.control-view.pause'
+          view.mediaView.playerView.play()
+          pauseControl = view.remixMediaView.controlsView.$ '.control-view.pause'
 
-          spyOn view._playerView, 'pause'
+          spyOn view.mediaView, 'pause'
           pauseControl.click()
-          expect(view._playerView.pause).toHaveBeenCalled()
+          expect(view.mediaView.pause).toHaveBeenCalled()
 
         it 'should have an elapsed time control', ->
           view = new RemixView viewOptions()
-          view._controlsView.render()
+          view.remixMediaView.controlsView.render()
           view.render()
-          view._playerView.play()
-          elapsedTimeControl = view._controlsView.$ '.elapsed-time-control-view'
+          view.mediaView.playerView.play()
+          elapsedTimeControl = view.remixMediaView.controlsView.$ '.elapsed-time-control-view'
           expect(elapsedTimeControl.length).toBe 1
 
         it 'should call seek when elapsed time control seeks', ->
           spyOn PlayerView::, 'seek'
           view = new RemixView viewOptions()
-          view._controlsView.render()
+          view.remixMediaView.controlsView.render()
           view.render()
-          view._playerView.play()
-          elapsedTimeControl = view._controlsView.$ '.elapsed-time-control-view'
+          view.mediaView.playerView.play()
+          elapsedTimeControl = view.remixMediaView.controlsView.$ '.elapsed-time-control-view'
           seekField = elapsedTimeControl.find 'input'
 
           expect(PlayerView::seek).not.toHaveBeenCalled()

@@ -99,17 +99,17 @@ class acorn.player.EditorView extends athena.lib.View
     # update acornModel with edited shellModel data
     @model.shellData @shellEditorView.shell().attributes
 
-    @$('#editor-save-btn').attr 'disabled', 'disabled'
-    @$('#editor-save-btn').text 'Saving...'
+    @$('#editor-save-btn').first().attr 'disabled', 'disabled'
+    @$('#editor-save-btn').first().text 'Saving...'
 
     @model.save {},
       success: =>
-        @$('#editor-save-btn').text 'Saved!'
+        @$('#editor-save-btn').first().text 'Saved!'
         @eventhub.trigger 'Editor:Saved', @
 
       error: =>
-        @$('#editor-save-btn').text 'Error Saving. Click to try again.'
-        @$('#editor-save-btn').removeAttr 'disabled'
+        @$('#editor-save-btn').first().text 'Error Saving. Click to try again.'
+        @$('#editor-save-btn').first().removeAttr 'disabled'
 
     @
 
@@ -141,6 +141,6 @@ class acorn.player.EditorView extends athena.lib.View
 
   _updateSaveButton: =>
     if @canBeSaved()
-      @$('#editor-save-btn').removeAttr 'disabled'
+      @$('#editor-save-btn').first().removeAttr 'disabled'
     else
-      @$('#editor-save-btn').attr 'disabled', 'disabled'
+      @$('#editor-save-btn').first().attr 'disabled', 'disabled'

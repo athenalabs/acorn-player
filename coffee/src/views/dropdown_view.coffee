@@ -64,8 +64,8 @@ class acorn.player.DropdownView extends athena.lib.View
       items: @items
 
     if @_disabled
-      @$('.dropdown-toggle').attr 'disabled', 'disabled'
-      @$('.dropdown-toggle').addClass 'btn-disabled'
+      @$('.dropdown-toggle').first().attr 'disabled', 'disabled'
+      @$('.dropdown-toggle').first().addClass 'btn-disabled'
 
     @
 

@@ -48,7 +48,6 @@ class Shell.Model extends athena.lib.Model
   description: @property 'description'
   thumbnail: @property 'thumbnail'
   sources: @property('sources', default: [])
-  timeTotal: @property('timeTotal', default: Infinity)
 
 
   defaultAttributes: =>
@@ -151,7 +150,7 @@ class Shell.MediaView extends athena.lib.View
 
   # Returns the view's total duration in seconds
   duration: =>
-    @model.timeTotal()
+    Infinity
 
 
   # Returns the current state that the progress bar should be in

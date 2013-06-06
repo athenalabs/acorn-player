@@ -17,6 +17,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     max: Infinity
     start: undefined # defaults to min
     end: undefined # defaults to max
+    progress: undefined # defaults to start
     bounceOffset: 10
     SliderView: acorn.player.ProgressRangeSliderView
 
@@ -119,11 +120,17 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @$el.empty()
     @$el.append @template()
 
-    @$('.time-range-slider').append @rangeSliderView.render().el
-    @$('.start-time-view').append @startInputView.render().el
-    @$('.total-time-view').append @totalInputView.render().el
-    @$('.end-time-view').append @endInputView.render().el
+    @$('.time-range-slider').first().append @rangeSliderView.render().el
+    @$('.start-time-view').first().append @startInputView.render().el
+    @$('.total-time-view').first().append @totalInputView.render().el
+    @$('.end-time-view').first().append @endInputView.render().el
+    @reposition()
+    @
 
+
+  reposition: =>
+    @_setStartInput()
+    @_setEndInput()
     @
 
 
@@ -172,7 +179,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
       # change if appropriate
       if changed.progress
-        @_change changed
+        @_change changed, options
 
     @_progress
 
@@ -249,31 +256,35 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
   # focal point for all changes. direct and announce changes to start and/or
   # end times as appropriate
-  _change: (changed) =>
+  _change: (changed, options={}) =>
     @_setSlider changed
 
     if changed.start
       @_setStartInput()
       @_setTotalInput()
-      @trigger 'TimeRangeInputView:DidChangeStart', @_start
+      unless options.silent
+        @trigger 'TimeRangeInputView:DidChangeStart', @_start
 
     if changed.end
       @_setEndInput()
       @_setTotalInput()
-      @trigger 'TimeRangeInputView:DidChangeEnd', @_end
+      unless options.silent
+        @trigger 'TimeRangeInputView:DidChangeEnd', @_end
 
     if changed.start or changed.end
-      @trigger 'TimeRangeInputView:DidChangeTimes', {start: @_start, end: @_end}
+      unless options.silent
+        @trigger 'TimeRangeInputView:DidChangeTimes', {start: @_start, end: @_end}
 
     if changed.progress
-      @trigger 'TimeRangeInputView:DidChangeProgress', @_progress
+      unless options.silent
+        @trigger 'TimeRangeInputView:DidChangeProgress', @_progress
 
 
   _setStartInput: =>
     @startInputView.value @_start
     percent = Math.max(@_percentValues().start - 12, 0)
     percent = Math.min(percent, 64)
-    @$('.form-inline').css 'left', percent + '%'
+    @$('.form-inline').first().css 'left', percent + '%'
 
 
   _setTotalInput: =>
@@ -283,7 +294,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
   _setEndInput: =>
     @endInputView.value @_end
     percent = Math.max((100 - @_percentValues().end) - 12, 0)
-    @$('.form-inline').css 'right', percent + '%'
+    @$('.form-inline').first().css 'right', percent + '%'
 
 
   _setSlider: (changed) =>
@@ -299,8 +310,7 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
     @rangeSliderView.values percentValues
 
     # always update progress since the percent is a function of start and end
-    @rangeSliderView.progress?(@_percentProgress())
-
+    @rangeSliderView.progress?(@_percentProgress(), {silent: true})
 
 
   _bound: (val) =>
@@ -311,10 +321,12 @@ class acorn.player.TimeRangeInputView extends athena.lib.View
 
   _onRangeSliderLowValueDidChange: (percentValue) =>
     @_percentValues start: percentValue
+    @startInputView.$('input').first().focus()
 
 
   _onRangeSliderHighValueDidChange: (percentValue) =>
     @_percentValues end: percentValue
+    @endInputView.$('input').first().focus()
 
 
   _onRangeSliderProgressDidChange: (percentValue) =>

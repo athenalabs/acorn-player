@@ -13,6 +13,7 @@ goog.require 'acorn.player.SlidingObjectView'
 goog.require 'acorn.player.SlidingBarView'
 goog.require 'acorn.player.ValueSliderView'
 goog.require 'acorn.player.RangeSliderView'
+goog.require 'acorn.player.TimedMediaRemixView'
 goog.require 'acorn.player.ProgressRangeSliderView'
 
 

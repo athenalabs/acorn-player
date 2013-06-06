@@ -3,15 +3,37 @@
 /* variables */
 // all heights and widths include border, padding, etc.
 
-@main-control-height: 29px;
-@main-control-font-size: 22px;
-@main-control-icon-size: 17px;
-@main-control-padding: 4px 9px;
+@main-control-height: 40px;
+@main-control-font-size: 20px;
+@main-control-icon-size: 20px;
+@main-control-padding: 9px 10px;
+@main-control-background: rgba(30, 30, 30, 0.85);
 
 @sliding-object-width: 15px;
 @sliding-object-height: 15px;
 @slider-height: 8px;
 @slider-handle-radius: 7px;
+@slider-background: rgba(0, 0, 0, 0.8);
+@slider-background2: rgba(150, 150, 150, 0.8);
+@slider-foreground: white;
+
+.controls-gradient() {
+  .gradient(#ffffff, #e6e6e6, #ffffff);
+}
+
+.controls() {
+  margin: 0 auto;
+  background: @main-control-background;
+  font-family: "Helvetica Neue", Helvetica;
+  .transition(0.35s, ease);
+  font-size: @main-control-font-size;
+  line-height: @main-control-font-size;
+  color: rgba(255, 255, 255, 1.0);
+
+  &[disabled="disabled"] {
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
 
 /* less functions */
 
@@ -79,8 +101,8 @@
   .opacity(0.6);
 }
 
-.opaque {
-  .opacity(1);
+.opaque (@opacity:1.0) {
+  .opacity(@opacity);
 }
 
 
@@ -147,13 +169,6 @@ input {
 }
 
 
-.toolbar-view.btn-group {
-  > button:not(:first-child) {
-    border-left-width: 0;
-  }
-}
-
-
 .editor-view {
   padding: 20px;
   width: 540px;
@@ -212,11 +227,11 @@ input {
   width: 100%;
 
   > .progress-bar-view.hidden~.shell-media-view {
-    .position-absolutely(0px, 0px, @main-control-height);
+    .position-absolutely();
   }
 
   > .shell-media-view {
-    .position-absolutely(0px, 0px, @main-control-height + @slider-height);
+    .position-absolutely();
     z-index: 0;
 
     // nested media-views should expand to full height
@@ -248,9 +263,10 @@ input {
   }
 
   > .progress-bar-view {
+    .transition(0.2s, ease);
     position: absolute;
     z-index: 1;
-    bottom: @main-control-height;
+    bottom: 30px;
   }
 
   > .control-toolbar-view {
@@ -259,34 +275,23 @@ input {
     top: auto;
 
     display: block;
-    border-top: 1px solid #cccccc;
     padding: 0px;
-    height: @main-control-height - 1; // subtract one for border-top
-
-    .gradient(#ffffff, #e6e6e6, #ffffff);
-    .transition(0.35s, ease);
+    height: auto;
+    .controls();
   }
 
   > .summary-view {
+    .controls();
     .position-absolutely(0px, 0px, auto);
     z-index: 1;
     width: auto;
     height: auto;
     padding: 10px 30px;
-    background: rgba(85, 85, 85, 0.7);
-    font-family: "Helvetica Neue", Helvetica;
-    color: white;
     .transition(0.5s, ease);
 
-    /*top: -100%;*/
     .transparent;
 
-    &.opaque, // enforce precedence of opaque class when added to element
-    &.opaque-lock {
-      .opaque;
-    }
-
-    > .summary-view {
+    .summary-view {
       margin-top: 20px;
       margin-left: 30px;
     }
@@ -299,7 +304,64 @@ input {
       line-height: 0.8;
     }
   }
+
+  > .autohides {
+    .transition(0.2s, ease);
+
+    &:hover, &.opaque, &.opaque-lock {
+      .opaque;
+      .transition(0.5s, ease);
+    }
+  }
+
+  &.playing > .autohides {
+    .transparent;
+  }
+
+  &:not(.playing) > .autohides {
+    .opaque;
+  }
+
+  &.mouse-moving > .autohides {
+    .opaque;
+    .transition(0.5s, ease);
+  }
+
+  // Progress bar
+
+  &.playing {
+    .progress-bar-view {
+      bottom: 0px;
+      height: 4px;
+    }
+  }
+
+  &:not(.playing), &.mouse-moving {
+    .progress-bar-view {
+      bottom: 40px;
+      height: 8px;
+    }
+  }
+
+
+  // Highlights
+
+  &.playing {
+    .highlights-shell .clip-group-view {
+      bottom: 5px;
+    }
+  }
+
+  &:not(.playing), &.mouse-moving {
+    .highlights-shell .clip-group-view {
+      bottom: 52px;
+    }
+  }
+
 }
+
+
+
 
 .summary-view {
   height: 44px;
@@ -477,34 +539,16 @@ input {
 
   &.left {
     float: left;
-
-    &,
-    .control-toolbar-view {
-      > .control-view {
-        border-left: 0px;
-        border-right: 1px solid rgba(204, 204, 204, 0.5);
-      }
-    }
   }
 
   &.right {
     float: right;
-
-    &,
-    .control-toolbar-view {
-      > .control-view {
-        border-right: 0px;
-        border-left: 1px solid rgba(204, 204, 204, 0.5);
-      }
-    }
   }
 
   > .control-view {
     display: inline-block;
     position: relative;
-    font-size: @main-control-font-size;
-    line-height: @main-control-font-size;
-    width: (@main-control-height * 1.2);
+    width: (@main-control-height * 0.9);
     height: @main-control-height;
     padding: 0px;
     margin: 0px;
@@ -516,7 +560,6 @@ input {
     }
 
     > img {
-      margin-top: 2px;
       width: @main-control-icon-size;
       height: @main-control-icon-size;
     }
@@ -527,10 +570,14 @@ input {
     }
 
     &:hover:not([disabled="disabled"]) {
-      background: rgba(204, 204, 204, 0.2);
-
       > * {
         .opacity(1.0);
+      }
+    }
+
+    &:active:not([disabled="disabled"]) {
+      > * {
+        .opacity(0.7);
       }
     }
 
@@ -556,20 +603,6 @@ input {
         }
       }
     }
-
-    &:active:not([disabled="disabled"]) {
-      background: rgba(204, 204, 204, 0.1);
-
-      > * {
-        .opacity(0.7);
-        /*
-        margin-left: -1px;
-        font-size: @main-control-font-size + 2;
-        width: @main-control-icon-size + 1;
-        height: @main-control-icon-size + 1;
-        */
-      }
-    }
   }
 }
 
@@ -577,8 +610,19 @@ input {
   .hidden;
 }
 
+
+.control-toolbar-view .text-control-view,
 .control-toolbar-view .elapsed-time-control-view {
   font-size: 12px;
+  line-height: 12px;
+  width: 45px;
+  text-align: center;
+  > * {
+    padding: 12px 0px;
+  }
+}
+
+.control-toolbar-view .elapsed-time-control-view {
   width: 120px;
   height: 100%;
   overflow: hidden;
@@ -605,7 +649,6 @@ input {
     }
   }
 }
-
 
 .thumbnail-view {
   display: inline-block;
@@ -695,11 +738,11 @@ input {
       @btnWidth: 36; // incremental button width
 
       #link {
-        min-width: 490px - (@btnWidth * @count) - @btnMargin;
+        min-width: 480px - (@btnWidth * @count) - @btnMargin;
       }
 
       span#link {
-        min-width: 478px - (@btnWidth * @count) - @btnMargin;
+        min-width: 468px - (@btnWidth * @count) - @btnMargin;
       }
     }
 
@@ -831,44 +874,80 @@ input {
 .highlights-shell.shell-remix-view {
   .time-controls {
     position: relative;
-    height: 50px;
-    .gradient(#ffffff, #e6e6e6, #ffffff);
+    .controls-gradient();
 
     .shell-controls {
-      position: absolute;
-      top: 15px;
+      height: 40px;
+      width: 100%;
+
+      .icon-control-view {
+        font-size: 20px;
+      }
 
       .elapsed-time-control-view {
         text-align: left;
       }
     }
 
-    .loops-button {
-      position: absolute;
-      top: 15px;
-      right: 6px;
 
-      button {
-        padding: 4px 9px;
-      }
-
-      // match bootstrap add-ons
-      input {
-        margin: 0px -1px;
-        padding: 4px 5px;
-      }
+    .right-control {
+      float: right;
+      padding: 6px 5px;
+      display: inline-block;
     }
   }
+
 
   .video-player,
   .media-view {
     height: 404px;
     width: 538px;
 
-    .video-player-view {
+    .video-player-view,
+    .shell-media-view {
       height: 100%;
       width: 100%;
       position: relative;
+    }
+  }
+}
+
+.video-link-shell.shell-remix-view {
+  .loops-button {
+    float: right;
+    padding: 6px 5px;
+
+    span {
+      padding: 2px 5px;
+    }
+
+    // match bootstrap add-ons
+    input {
+      margin: 0px -1px;
+      padding: 2px 5px;
+    }
+  }
+}
+
+.highlights-shell.shell-remix-view {
+
+  .clip-group-view {
+    bottom: 2px;
+
+    &.clipping {
+      bottom: 55px;
+    }
+  }
+
+  .time-range-input-view {
+    float: left;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+
+    &.highlights-time-range-input-view {
+      .sliding-object-view .sliding-object.sliding-bar {
+        background-color: #ffff00;
+      }
     }
   }
 }
@@ -909,7 +988,7 @@ input {
 
     &.sliding-bar {
       width: auto;
-      background-color: rgba(33, 33, 33, 0.65);
+      background-color: @slider-foreground;
     }
   }
 }
@@ -923,7 +1002,12 @@ input {
   .range-slider {
     height: 100%;
     width: 100%;
-    background-color: #DDDDDD;
+    background-color: @slider-background;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1.0;
+    }
 
     .sliding-bar {
       height: @slider-height;
@@ -949,8 +1033,15 @@ input {
 .progress-range-slider-view {
   .value-slider-view.progress-bar-view {
     .value-slider {
-      background-color: #AAAAAA;
+      background: @slider-background2;
     }
+  }
+}
+
+.time-controls {
+  .time-range-input-view {
+    position: relative;
+    background: @slider-background;
   }
 }
 
@@ -963,9 +1054,9 @@ input {
     position: absolute;
     left: 0px;
     right: 0px;
-    bottom: 5px;
+    bottom: 10px;
     margin: 0px;
-    min-width: 196px;
+    min-width: 198px;
     vertical-align: bottom;
     text-align: center;
     clear: both;
@@ -988,6 +1079,7 @@ input {
     }
 
     .time-input-view {
+      color: #000;
       .control-group.time {
         .transition(0.5s, ease);
         margin: 0px;
@@ -998,6 +1090,10 @@ input {
       width: 50px;
       text-align: center;
     }
+  }
+
+  .range-slider {
+    background-color: rgba(0, 0, 0, 0);
   }
 }
 
@@ -1023,53 +1119,111 @@ input {
 
 }
 
-.clip-view {
-  .position-absolutely();
-  background: rgba(0, 0, 255, 0.5);
-  height: 8px;
+.highlights-shell .clip-group-view {
+  .transition(0.2s, ease);
+  position: absolute;
+  left: 0px;
+  right: 0px;
 
-  &:hover {
-    background: rgba(0, 0, 255, 0.7);
+  .clip-view,
+  .clip-highlight-view {
+    height: 2px;
   }
 }
 
 
-.clip-select-view {
-  .position-absolutely();
-  height: 10px;
+.clip-view,
+.clip-highlight-view {
+  position: absolute;
+/*  background: rgba(130, 0, 172, 0.7);*/
+  background: rgba(255, 255, 0, 0.7);
 
-  .clip-highlight-view {
-    .position-absolutely();
-    background: rgba(0, 0, 50, 0.3);
+  &.active,
+  &:hover {
+    background: rgba(255, 179, 119, 0.7);
+  }
+}
 
-    &:hover {
-      background: rgba(0, 0, 50, 0.5);
+.clip-view {
+
+  .clip-note {
+    width: auto;
+    position: absolute;
+    left: 0px;
+    bottom: 7px;
+    border: 1px solid #ffff00;
+    padding-bottom: 10px;
+    background-color: rgb(0, 0, 0);
+    font-size: 12px;
+    .transition(0.2s, ease);
+    .transparent();
+    z-index: 1;
+  }
+
+  textarea.clip-note {
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+/*    bottom: 37px;*/
+  }
+
+  .toolbar-view {
+    position: absolute;
+    left: 0px;
+    bottom: 7px;
+    .transition(0.2s, ease);
+    .transparent();
+    z-index: 1;
+  }
+
+  &.editing .clip-note,
+  &.popup-note .clip-note,
+  &.show-note .clip-note,
+  &:hover .clip-note {
+    .opaque();
+    z-index: 100;
+
+    + .toolbar-view {
+      .opaque(1.0);
+      z-index: 100;
     }
   }
 
+  &.active .clip-note,
+  .clip-note:hover {
+    border: 1px solid rgba(255, 179, 119, 0.7);
+  }
+
+  .clip-note:focus,
+  .clip-note:hover {
+    .opaque();
+
+    + .toolbar-view {
+      .opaque(1.0);
+    }
+  }
+}
+
+.clip-select-view {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  height: 10px;
+
+  .clip-highlight-view,
   .time-range-input-view {
     .position-absolutely();
   }
 
-  &.clip-select-active {
-    .clip-highlight-view {
-      display: none;
-    }
-
-    .time-range-input-view {
-      display: block;
-    }
+  &.clip-select-active .clip-highlight-view,
+  &:not(.clip-select-active) .time-range-input-view {
+    display: none;
   }
 
-  &:not(.clip-select-active) {
-    .clip-highlight-view {
-      display: block;
-    }
-
-    .time-range-input-view {
-      display: none;
-    }
+  &.clip-select-active .time-range-input-view,
+  &:not(.clip-select-active) .clip-highlight-view {
+    display: block;
   }
+
 }
 
 
