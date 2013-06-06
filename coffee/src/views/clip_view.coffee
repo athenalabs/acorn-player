@@ -77,6 +77,9 @@ class acorn.player.ClipView extends athena.lib.View
     @model.timeStart = newValues.start if newValues?.start?
     @model.timeEnd = newValues.end if newValues?.end?
 
+    if @rendering
+      @reposition()
+
     start: @model.timeStart
     end: @model.timeEnd
 
