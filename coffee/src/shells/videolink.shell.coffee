@@ -337,6 +337,9 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
 
 
   onAddHighlight: =>
+    # reset loops to one. cant highlight those unfortunately yet :(
+    @model.loops('one')
+
     # wrap shell in a HighlightsShell.
     newShell = new acorn.shells.HighlightsShell.Model
     newShell.shell _.clone @model.attributes

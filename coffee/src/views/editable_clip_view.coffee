@@ -17,8 +17,10 @@ class acorn.player.EditableClipView extends acorn.player.ClipView
       @toolbarView.$('#Edit').hide()
       @toolbarView.$('#Edit-Save').show()
     'blur textarea': =>
-      @toolbarView.$('#Edit').hide()
-      @toolbarView.$('#Edit-Save').show()
+      @toolbarView.$('#Edit').show()
+      @toolbarView.$('#Edit-Save').hide()
+    'keydown textarea': =>
+      @setActive true
 
 
   defaults: => _.extend super,
@@ -63,9 +65,17 @@ class acorn.player.EditableClipView extends acorn.player.ClipView
     @
 
 
+  cancel: =>
+    @$('textarea').first().val @model.title
+    @toolbarView.$('#Edit').show()
+    @toolbarView.$('#Edit-Save').hide()
+
+
   save: =>
     @model.title = @$('textarea').first().val().trim()
-    @render()
+    @toolbarView.$('#Edit').show()
+    @toolbarView.$('#Edit-Save').hide()
+
 
 
   clipping: (isClipping) =>

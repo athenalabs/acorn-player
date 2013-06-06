@@ -45,6 +45,10 @@ class HighlightsShell.Model extends Shell.Model
     @shellModel().duration()
 
 
+  link: =>
+    @shellModel().link?()
+
+
 
 class HighlightsShell.MediaView extends Shell.MediaView
 
@@ -229,6 +233,9 @@ class HighlightsShell.RemixView extends Shell.RemixView
   className: @classNameExtend 'highlights-shell'
 
 
+  @activeLinkInput: true
+
+
   controlsTemplate: _.template '''
     <div class="highlight-button right-control">
       <button class="btn btn-small add-highlight">
@@ -244,12 +251,14 @@ class HighlightsShell.RemixView extends Shell.RemixView
     'click': => @inactivateHighlights()
     'click button.clip-time': => @onClickClipTime()
     'click button.add-highlight': => @onAddHighlight()
-    'keyup textarea.clip-note': (event) =>
+    'keydown textarea.clip-note': (event) =>
       switch event.keyCode
         when athena.lib.util.keys.ENTER
           @onSaveHighlight @activeHighlight()
+          @$('textarea.clip-note').blur()
         when athena.lib.util.keys.ESCAPE
           @onCancelEditHighlight @activeHighlight()
+          @$('textarea.clip-note').blur()
 
 
   initialize: =>
@@ -464,14 +473,15 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
 
   onSaveHighlight: (highlightView) =>
-    @inactivateHighlights() # saves
-    highlightView.render()
+    @inactivateHighlights [highlightView] # saves
+    highlightView.save()
     highlightView.setActive false
 
 
   onCancelEditHighlight: (highlightView) =>
-    highlightView?.render() # clears edits
-    @inactivateHighlights()
+    @inactivateHighlights [highlightView]
+    highlightView.cancel()
+    highlightView.setActive false
 
 
   onDeleteHighlight: (highlightView) =>
