@@ -214,7 +214,10 @@ class YouTubeShell.PlayerView extends VideoLinkShell.PlayerView
         if seconds - 1 >= 0 then 0 else seconds
       @player?.seekTo?(wrongPlace, true)
 
-    @player?.seekTo?(seconds, true)
+    try
+      @player?.seekTo?(seconds, true)
+    catch error
+      console.log error
 
 
   duration: =>

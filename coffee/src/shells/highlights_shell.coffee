@@ -230,14 +230,19 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
 
   controlsTemplate: _.template '''
-    <div class="highlight-button">
+    <div class="highlight-button right-control">
       <button class="btn btn-small add-highlight">
         <i class="icon-plus"></i> Highlight</button>
+    </div>
+    <div class="clip-time-button right-control">
+      <button class="btn btn-small clip-time">
+        <i class="icon-resize-horizontal"></i> Clip</button>
     </div>
     '''
 
   events: => _.extend super,
     'click': => @inactivateHighlights()
+    'click button.clip-time': => @onClickClipTime()
     'click button.add-highlight': => @onAddHighlight()
     'keyup textarea.clip-note': (event) =>
       switch event.keyCode
@@ -256,6 +261,7 @@ class HighlightsShell.RemixView extends Shell.RemixView
     @initializeHighlightViews()
     @initializeRemixMediaView()
     @initializeTimeRangeView()
+    @initializeTimeClipViews()
 
 
   initializeRemixMediaView: =>
@@ -286,6 +292,61 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
     @timeRangeView.on 'TimeRangeInputView:DidChangeProgress', (progress) =>
       @mediaView.seek progress
+
+
+  initializeTimeClipViews: =>
+    # this is a total hack to allow "clipping" from the remix media view.
+    # it's an artifact of "clipping" being something done to video directly
+    # rather than as a wrapper (like highlights). This basically needs to be
+    # it's GROSS. should be replaced by a better way to handle wrapping shells.
+
+    model = @model.shellModel()
+    @subRemixView = new model.module.RemixView
+      eventhub: @eventhub
+      model: model
+
+    # monkey-patch the methods that toggle between.
+    @onClickClipTime = =>
+      @$el.empty()
+      @subRemixView.render()
+      @$el.append @subRemixView.el
+
+      @_oldClipTimes =
+        start: model.timeStart()
+        end: model.timeEnd()
+
+
+    @subRemixView.onAddHighlight = =>
+      highlights = @model.highlights()
+      highlights_copy = highlights.slice(0)
+
+      for index in _.range highlights_copy.length
+        highlight = highlights_copy[index]
+
+        startDiff = @_oldClipTimes.start - model.timeStart()
+        endDiff =  @_oldClipTimes.end - model.timeEnd()
+
+        # shift the highlights using new start time
+        highlight.timeStart += startDiff
+        highlight.timeEnd += startDiff
+
+        # bound with new limits
+        highlight.timeStart = Math.max(highlight.timeStart, 0)
+        highlight.timeEnd = Math.min(highlight.timeEnd, model.timeEnd())
+
+        # remove if need be
+        if highlight.timeStart >= model.timeEnd() or highlight.timeEnd <= 0
+          highlights.splice(index, 1)
+          @highlightViews.splice(index, 1)
+
+
+      # reinitialize the views.
+      @initializeHighlightViews()
+      @initializeRemixMediaView()
+      @initializeTimeRangeView()
+
+      @render()
+      @_oldClipTimes = undefined
 
 
   initializeHighlightViews: =>
@@ -320,7 +381,6 @@ class HighlightsShell.RemixView extends Shell.RemixView
     @remixMediaView.controlsView.$el.prepend @timeRangeView.render().el
     @timeRangeView.$el.hide()
 
-    # @inactivateHighlights()
     @
 
 
@@ -441,6 +501,8 @@ class HighlightsShell.RemixView extends Shell.RemixView
       seekOffset = Math.max(values.start, seekOffset)
       @mediaView.seek seekOffset
 
+
+  onClickClipTime: =>
 
 
 # Register the shell with the acorn object.
