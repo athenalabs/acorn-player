@@ -139,6 +139,7 @@ class acorn.player.RemixerView extends athena.lib.View
       @swapShell newShell
 
 
+
   render: =>
     super
     @$el.empty()
@@ -226,6 +227,8 @@ class acorn.player.RemixerView extends athena.lib.View
     @renderRemixSubview()
 
     @trigger 'Remixer:SwapShell', @, oldShell, newShell
+    @remixSubview.trigger 'Remix:SwappedShell', oldShell, newShell
+
     @
 
 

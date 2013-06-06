@@ -263,6 +263,11 @@ class HighlightsShell.RemixView extends Shell.RemixView
     @initializeTimeRangeView()
     @initializeTimeClipViews()
 
+    @on 'Remix:SwappedShell', (oldShell, newShell) =>
+      # for now only way to swap into this shell is via the + Highlight btn.
+      if newShell is @model
+        _.defer @onAddHighlight
+
 
   initializeRemixMediaView: =>
     @mediaView = new @model.module.MediaView
@@ -293,6 +298,8 @@ class HighlightsShell.RemixView extends Shell.RemixView
     @timeRangeView.on 'TimeRangeInputView:DidChangeProgress', (progress) =>
       @mediaView.seek progress
 
+    @timeRangeView.$el.addClass 'highlights-time-range-input-view'
+
 
   initializeTimeClipViews: =>
     # this is a total hack to allow "clipping" from the remix media view.
@@ -301,22 +308,51 @@ class HighlightsShell.RemixView extends Shell.RemixView
     # it's GROSS. should be replaced by a better way to handle wrapping shells.
 
     model = @model.shellModel()
-    @subRemixView = new model.module.RemixView
+
+    @clipTimeRangeView = new acorn.player.TimeRangeInputView
       eventhub: @eventhub
-      model: model
+      min: 0
+      max: model.duration()
+
+    # taken from videolinkshell
+    @clipTimeRangeView.on 'TimeRangeInputView:DidChangeTimes', (changed) =>
+      changes = {}
+      changes.timeStart = changed.start if _.isNumber changed?.start
+      changes.timeEnd = changed.end if _.isNumber changed?.end
+
+      # calculate seekOffset before changes take place.
+      seekOffset = 0 if changes.timeStart isnt model.timeStart()
+      seekOffset = Infinity if changes.timeEnd isnt model.timeEnd()
+
+      model.set changes
+
+      # unless user paused the video, make sure it is playing
+      unless @mediaView.isInState 'pause'
+        @mediaView.play()
+
+      if seekOffset?
+        seekOffset = Math.min(seekOffset, model.timeEnd() - 2)
+        seekOffset = Math.max(model.timeStart(), seekOffset)
+        @mediaView.seek seekOffset
+
+
+    @clipTimeRangeView.on 'TimeRangeInputView:DidChangeProgress', (progress) =>
+      @mediaView.seek progress
+
 
     # monkey-patch the methods that toggle between.
-    @onClickClipTime = =>
-      @$el.empty()
-      @subRemixView.render()
-      @$el.append @subRemixView.el
+    @onClipTimeStart = =>
+      @mediaView.highlightsGroupView.$el.hide()
+      @timeRangeView.$el.hide()
+      @clipTimeRangeView.render().$el.show()
+      @$('button.clip-time').addClass 'active btn-success'
 
       @_oldClipTimes =
         start: model.timeStart()
         end: model.timeEnd()
 
 
-    @subRemixView.onAddHighlight = =>
+    @onClipTimeEnd = =>
       highlights = @model.highlights()
       highlights_copy = highlights.slice(0)
 
@@ -378,8 +414,12 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
     @remixMediaView.controlsView.$el.append @controlsTemplate()
 
-    @remixMediaView.controlsView.$el.prepend @timeRangeView.render().el
+    @remixMediaView.$('.time-controls').first()
+      .prepend(@clipTimeRangeView.render().el)
+      .prepend(@timeRangeView.render().el)
+
     @timeRangeView.$el.hide()
+    @clipTimeRangeView.$el.hide()
 
     @
 
@@ -454,6 +494,9 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
 
   onAddHighlight: =>
+    if @_oldClipTimes
+      @onClipTimeEnd()
+
     if @_clippingHighlight
       @onClipHighlightDone()
 
@@ -503,6 +546,10 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
 
   onClickClipTime: =>
+    if @_oldClipTimes
+      @onClipTimeEnd()
+    else
+      @onClipTimeStart()
 
 
 # Register the shell with the acorn object.
