@@ -394,7 +394,8 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
 
   onAddHighlight: =>
-    @onClipHighlightDone()
+    if @_clippingHighlight
+      @onClipHighlightDone()
 
     highlight =
       timeStart: 0
