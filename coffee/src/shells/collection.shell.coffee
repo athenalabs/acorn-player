@@ -346,7 +346,7 @@ class CollectionShell.MediaView extends Shell.MediaView
     if @isPlaying() and not view.isPlaying() and view.canPlay()
       view.play()
 
-    @offsetControl.model.set
+    @offsetControl?.model.set
       text: "#{@currentIndex + 1} / #{@model.shells().length}"
 
     delete @_switchingShell
