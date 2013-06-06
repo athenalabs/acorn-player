@@ -317,7 +317,7 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
     @remixMediaView.controlsView.$el.append @controlsTemplate()
 
-    @$('.time-controls').prepend @timeRangeView.render().el
+    @remixMediaView.controlsView.$el.prepend @timeRangeView.render().el
     @timeRangeView.$el.hide()
 
     # @inactivateHighlights()
