@@ -492,8 +492,8 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
 
   onCancelEditHighlight: (highlightView) =>
-    @inactivateHighlights [highlightView]
     highlightView.cancel()
+    @inactivateHighlights [highlightView]
     highlightView.setActive false
 
 

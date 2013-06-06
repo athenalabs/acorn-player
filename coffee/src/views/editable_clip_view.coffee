@@ -17,8 +17,7 @@ class acorn.player.EditableClipView extends acorn.player.ClipView
       @toolbarView.$('#Edit').hide()
       @toolbarView.$('#Edit-Save').show()
     'blur textarea': =>
-      @toolbarView.$('#Edit').show()
-      @toolbarView.$('#Edit-Save').hide()
+      @save()
     'keydown textarea': =>
       @setActive true
 
