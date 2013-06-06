@@ -343,6 +343,12 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     # wrap shell in a HighlightsShell.
     newShell = new acorn.shells.HighlightsShell.Model
     newShell.shell _.clone @model.attributes
+
+    # pass on title/desc/thumbnail
+    newShell.title @model.title()
+    newShell.description @model.description()
+    newShell.thumbnail @model.thumbnail()
+
     @trigger 'Remix:SwapShell', @model, newShell
 
 

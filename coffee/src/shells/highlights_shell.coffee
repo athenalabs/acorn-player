@@ -50,17 +50,6 @@ class HighlightsShell.Model extends Shell.Model
     @shellModel().link?()
 
 
-  title: =>
-    @shellModel().title arguments...
-
-
-  description: =>
-    @shellModel().description arguments...
-
-
-  thumbnail: =>
-    @shellModel().thumbnail arguments...
-
 
 
 class HighlightsShell.MediaView extends Shell.MediaView
