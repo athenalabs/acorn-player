@@ -407,7 +407,7 @@ class HighlightsShell.RemixView extends Shell.RemixView
     @inactivateHighlights()
     @highlightViews.push view
     @mediaView.highlightsGroupView.softRender()
-    view.setActive true
+    @onClipHighlight view
 
 
   activeHighlight: =>
