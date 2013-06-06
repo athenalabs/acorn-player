@@ -17,7 +17,7 @@ class acorn.player.CycleButtonView extends athena.lib.View
   staticButtonTemplate: _.template '''
     <div class="input-prepend input-append cycle-button static-button
         cycle-index-<%= index %>">
-      <button class="btn" type="button"><%= buttonName %></button>
+      <button class="btn btn-small" type="button"><%= buttonName %></button>
       <span class="add-on static-value"><%= value %></span>
     </div>
     '''
@@ -26,7 +26,7 @@ class acorn.player.CycleButtonView extends athena.lib.View
   inputButtonTemplate: _.template '''
     <div class="input-prepend cycle-button input-button
         cycle-index-<%= index %>">
-      <button class="btn" type="button"><%= buttonName %></button>
+      <button class="btn btn-small" type="button"><%= buttonName %></button>
       <input size="16" type="text">
     </div>
     '''

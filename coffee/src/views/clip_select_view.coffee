@@ -31,6 +31,8 @@ class acorn.player.ClipSelectView extends athena.lib.View
   initialize: =>
     super
 
+    @clip = @options.clip
+
     @inputView = new acorn.player.TimeRangeInputView
       eventhub: @eventhub
       min: @options.min
@@ -44,8 +46,6 @@ class acorn.player.ClipSelectView extends athena.lib.View
     @listenTo @inputView, 'all', => @trigger arguments
 
 
-  # @listenTo @inputView, 'TimeRangeInputView:DidChangeTimes', @_adjustHighlight
-
   destroy: =>
     @inputView.destroy()
     super
@@ -58,7 +58,7 @@ class acorn.player.ClipSelectView extends athena.lib.View
     @$el.append @inputView.render().el
     @toggleActive false
 
-    @$('.clip-highlight-view').tooltip
+    @$('.clip-highlight-view').first().tooltip
       trigger: 'hover'
       title: 'Edit Clip'
 
@@ -68,13 +68,17 @@ class acorn.player.ClipSelectView extends athena.lib.View
   _activeClass: 'clip-select-active'
 
 
+  isActive: =>
+    @$el.hasClass @_activeClass
+
+
   # when active, time input show, highlighted section hides
   toggleActive: (active) =>
-    active ?= !@$el.hasClass @_activeClass
+    active ?= !@isActive()
     @_adjustSize active
     if active
       @$el.addClass @_activeClass
-      @$('.clip-highlight-view').tooltip 'hide'
+      @$('.clip-highlight-view').first().tooltip 'hide'
       @trigger 'ClipSelect:Active', @
     else
       @$el.removeClass @_activeClass
@@ -84,6 +88,7 @@ class acorn.player.ClipSelectView extends athena.lib.View
   # use the clip sizes to adjust the highlighted section size
   _adjustSize: (active) =>
     if active
+      @inputView.reposition()
       @$el.css 'left', 0
       @$el.css 'right', 0
     else

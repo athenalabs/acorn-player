@@ -47,8 +47,7 @@ class acorn.player.ContentView extends athena.lib.View
 
   events: => _.extend super,
     'mousemove': @onMouseMoved
-    'mouseenter .summary-view': @onMouseenterSummaryView
-    'mouseleave .summary-view': @onMouseleaveSummaryView
+    'mouseleave': @onMouseStoppedMoving
 
 
   initialize: =>
@@ -87,9 +86,11 @@ class acorn.player.ContentView extends athena.lib.View
 
     # grab shellView summaryView
     @summaryView = @shellView.summaryView
+    @summaryView.$el.addClass 'autohides'
 
     # construct main ControlToolbar
     @controlsView = new ControlToolbarView
+      extraClasses: ['autohides']
       buttons: [@acornControlsView, @shellControlsView]
       eventhub: @eventhub
 
@@ -104,6 +105,7 @@ class acorn.player.ContentView extends athena.lib.View
     @shellView.on 'Shell:UpdateProgressBar', @_onUpdateProgressBar
     @eventhub.on 'Keypress:SPACEBAR', => @shellView.togglePlayPause()
     @eventhub.on 'show:editor', => @shellView.pause()
+    @shellView.on 'Media:StateChange', @onMediaStateChange
 
 
   render: =>
@@ -130,23 +132,9 @@ class acorn.player.ContentView extends athena.lib.View
   _onUpdateProgressBar: (visible, percentProgress) =>
     if visible
       @progressBarView.$el.removeClass 'hidden'
-      @progressBarView.value percentProgress
+      @progressBarView.value percentProgress, {silent: true}
     else
       @progressBarView.$el.addClass 'hidden'
-
-
-  onMouseenterSummaryView: =>
-    clearTimeout @_summaryHoverTimeout
-    @summaryView.$el.addClass 'opaque opaque-lock'
-
-    # lock opaque for 2 seconds
-    @_summaryHoverTimeout = setTimeout (=>
-      @summaryView.$el.removeClass 'opaque-lock'
-    ), 1500
-
-
-  onMouseleaveSummaryView: =>
-    @summaryView.$el.removeClass 'opaque'
 
 
   onMouseMoved: (event) =>
@@ -161,3 +149,10 @@ class acorn.player.ContentView extends athena.lib.View
 
   onMouseStoppedMoving: =>
     @$el.removeClass 'mouse-moving'
+
+
+  onMediaStateChange: =>
+    if @shellView.isPlaying()
+      @$el.addClass 'playing'
+    else
+      @$el.removeClass 'playing'

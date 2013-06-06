@@ -240,7 +240,7 @@ class IconControlView extends ControlView
 class FullscreenControlView extends IconControlView
   controlName: => 'FullscreenControl'
   className: @classNameExtend 'fullscreen'
-  tooltip: => title: 'Fullscreen', delay: show: 500
+  tooltip: => title: 'Fullscreen', delay: show: 300
   defaults: => _.extend super,
     icon: 'fullscreen'
 
@@ -249,7 +249,7 @@ class FullscreenControlView extends IconControlView
 class EditControlView extends IconControlView
   controlName: => 'EditControl'
   className: @classNameExtend 'edit'
-  tooltip: => title: 'Edit', delay: show: 500
+  tooltip: => title: 'Edit', delay: show: 300
   defaults: => _.extend super,
     icon: 'edit'
 
@@ -258,7 +258,7 @@ class EditControlView extends IconControlView
 class SourcesControlView extends IconControlView
   controlName: => 'SourcesControl'
   className: @classNameExtend 'sources'
-  tooltip: => title: 'Sources', delay: show: 500
+  tooltip: => title: 'Sources', delay: show: 300
   defaults: => _.extend super,
     icon: 'globe'
 
@@ -267,7 +267,7 @@ class SourcesControlView extends IconControlView
 class PreviousControlView extends IconControlView
   controlName: => 'PreviousControl'
   className: @classNameExtend 'previous'
-  tooltip: => title: 'Previous', delay: show: 500
+  tooltip: => title: 'Previous', delay: show: 300
   defaults: => _.extend super,
     icon: 'arrow-left'
 
@@ -276,7 +276,7 @@ class PreviousControlView extends IconControlView
 class NextControlView extends IconControlView
   controlName: => 'NextControl'
   className: @classNameExtend 'next'
-  tooltip: => title: 'Next', delay: show: 500
+  tooltip: => title: 'Next', delay: show: 300
   defaults: => _.extend super,
     icon: 'arrow-right'
 
@@ -285,7 +285,7 @@ class NextControlView extends IconControlView
 class GridControlView extends IconControlView
   controlName: => 'GridControl'
   className: @classNameExtend 'grid'
-  tooltip: => title: 'Grid', delay: show: 500
+  tooltip: => title: 'Grid', delay: show: 300
   defaults: => _.extend super,
     icon: 'th'
 
@@ -294,7 +294,7 @@ class GridControlView extends IconControlView
 class PlayControlView extends IconControlView
   controlName: => 'PlayControl'
   className: @classNameExtend 'play'
-  tooltip: => title: 'Play', delay: show: 500
+  tooltip: => title: 'Play', delay: show: 300
   defaults: => _.extend super,
     icon: 'play'
 
@@ -303,7 +303,7 @@ class PlayControlView extends IconControlView
 class PauseControlView extends IconControlView
   controlName: => 'PauseControl'
   className: @classNameExtend 'pause'
-  tooltip: => title: 'Pause', delay: show: 500
+  tooltip: => title: 'Pause', delay: show: 300
   defaults: => _.extend super,
     icon: 'pause'
 
@@ -312,7 +312,7 @@ class PauseControlView extends IconControlView
 class RandomControlView extends IconControlView
   controlName: => 'RandomControl'
   className: @classNameExtend 'random'
-  tooltip: => title: 'Random', delay: show: 500
+  tooltip: => title: 'Random', delay: show: 300
   defaults: => _.extend super,
     icon: 'magic'
 
@@ -329,7 +329,7 @@ class ImageControlView extends ControlView
 
   initialize: =>
     super
-    @url = @options.url ? acorn.config.img.acorn
+    @url = @options.url ? acorn.config.img.acorn_inverse
 
 
   render: =>
@@ -349,9 +349,34 @@ class ImageControlView extends ControlView
 class AcornControlView extends ImageControlView
   controlName: => 'AcornControl'
   className: @classNameExtend 'acorn'
-  tooltip: => title: 'Website', delay: show: 500
+  tooltip: => title: 'Website', delay: show: 300
   defaults: => _.extend super,
-    image: acorn.config.img.acorn
+    image: acorn.config.img.acorn_inverse
+
+
+
+class TextControlView extends ControlView
+
+  controlName: => 'TextControlView'
+  tooltip: => title: @model.get('tooltip'), delay: show: 300
+  className: @classNameExtend 'text-control-view'
+
+
+  template: _.template '''
+    <span><%= text %></span>
+    '''
+
+
+  initialize: =>
+    super
+    @listenTo @model, 'change', @softRender
+
+
+  render: =>
+    super
+    @$el.empty()
+    @$el.append @template @model.attributes
+    @
 
 
 
@@ -359,7 +384,7 @@ class ElapsedTimeControlView extends ControlView
 
   controlName: => 'ElapsedTimeControl'
 
-  tooltip: => title: 'Elapsed Time', delay: show: 500
+  tooltip: => title: 'Elapsed Time', delay: show: 300
   className: @classNameExtend 'elapsed-time-control-view'
 
 
@@ -407,22 +432,22 @@ class ElapsedTimeControlView extends ControlView
 
 
   refreshValues: =>
-    @$('.elapsed-value').text @formatTime @model.get 'elapsed'
-    @$('.total').text @formatTime @model.get 'total'
+    @$('.elapsed-value').first().text @formatTime @model.get 'elapsed'
+    @$('.total').first().text @formatTime @model.get 'total'
 
 
   showSeekField: =>
     @$el.addClass 'active'
-    @$('input').focus()
+    @$('input').first().focus()
 
 
   hideSeekField: =>
     @$el.removeClass 'active'
-    @$('input').val ''
+    @$('input').first().val ''
 
 
   _seek: =>
-    timestring = @$('input').val()
+    timestring = @$('input').first().val()
 
     if parseFloat(timestring) >= 0
       seconds = acorn.util.Time.timestringToSeconds timestring
@@ -463,3 +488,4 @@ acorn.player.controls.ImageControlView = ImageControlView
 acorn.player.controls.AcornControlView = AcornControlView
 
 acorn.player.controls.ElapsedTimeControlView = ElapsedTimeControlView
+acorn.player.controls.TextControlView = TextControlView

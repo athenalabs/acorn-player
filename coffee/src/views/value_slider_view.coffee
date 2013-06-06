@@ -22,6 +22,8 @@ class acorn.player.ValueSliderView extends acorn.player.MouseTrackingView
     value: 100
     handle: true
     draggable: true
+    min: 0
+    max: 100
 
 
   template: _.template '''
@@ -39,8 +41,8 @@ class acorn.player.ValueSliderView extends acorn.player.MouseTrackingView
 
     # initialize value bar
     options =
-      low: 0
-      high: @_value
+      low: @options.min
+      high: @options.max
       draggable: false # make all value adjustments in-house
       extraClasses: 'value-bar-view'
     @_valueBar = new acorn.player.SlidingBarView options
@@ -68,7 +70,7 @@ class acorn.player.ValueSliderView extends acorn.player.MouseTrackingView
     @$el.empty()
     @$el.append @template targetClassName: @_targetClassName()
 
-    @$('.slider-elements')
+    @$('.slider-elements').first()
       .append(@_valueBar.render().el)
       .append(@_handle.render().el)
 
@@ -76,14 +78,15 @@ class acorn.player.ValueSliderView extends acorn.player.MouseTrackingView
 
 
   # get or set value
-  value: (value) =>
+  value: (value, options={}) =>
     if value?
       util.bound value
       unless _.isNaN(value) or value == @_value
         @_value = value
         @_valueBar.values low: 0, high: @_value
         @_handle.location @_value
-        @trigger 'ValueSliderView:ValueDidChange', @_value
+        unless options.silent
+          @trigger 'ValueSliderView:ValueDidChange', @_value
 
     @_value
 

@@ -95,7 +95,9 @@ class acorn.player.TimeInputView extends athena.lib.View
   # handle DOM and programatic inputs
   _handleInput: (time) =>
     invalidInput = _.isNaN parseFloat time
-    seconds = acorn.util.Time.timestringToSeconds time
+    seconds = time
+    if _.isString seconds
+      seconds = acorn.util.Time.timestringToSeconds seconds
     seconds = @_bound seconds
 
     # if input is invalid or hasn't changed, reset input and return

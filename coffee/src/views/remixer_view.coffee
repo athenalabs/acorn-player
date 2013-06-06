@@ -139,6 +139,7 @@ class acorn.player.RemixerView extends athena.lib.View
       @swapShell newShell
 
 
+
   render: =>
     super
     @$el.empty()
@@ -150,7 +151,7 @@ class acorn.player.RemixerView extends athena.lib.View
     # disambiguate between that of nested remixers
     @$linkContainer = @$el.children('.remixer-header').children '.input-append'
 
-    @dropdownView.setElement(@$('.dropdown-view')).render()
+    @dropdownView.setElement(@$('.dropdown-view').first()).render()
 
     @renderToolbarView()
     @renderInputField()
@@ -163,8 +164,8 @@ class acorn.player.RemixerView extends athena.lib.View
   renderToolbarView: =>
     buttonCount = @toolbarButtons.length
     if buttonCount > 0
-      @$('.toolbar').append @toolbarView.render().el
-    @$('.remixer-header').attr 'data-button-count', buttonCount
+      @$('.toolbar').first().append @toolbarView.render().el
+    @$('.remixer-header').first().attr 'data-button-count', buttonCount
 
 
   renderInputField: =>
@@ -194,8 +195,8 @@ class acorn.player.RemixerView extends athena.lib.View
       @summarySubview.setModel @model
 
     if @rendering
-      @$('.remixer-summary').empty()
-      @$('.remixer-summary').append @summarySubview.render().el
+      @$('.remixer-summary').first().empty()
+      @$('.remixer-summary').first().append @summarySubview.render().el
 
     @
 
@@ -206,8 +207,8 @@ class acorn.player.RemixerView extends athena.lib.View
       @_initializeRemixSubview()
 
     if @rendering
-      @$('.remixer-content').empty()
-      @$('.remixer-content').append @remixSubview.render().el
+      @$('.remixer-content').first().empty()
+      @$('.remixer-content').first().append @remixSubview.render().el
 
     @$el.removeClass 'empty'
     if @model.module is EmptyShell
@@ -226,6 +227,8 @@ class acorn.player.RemixerView extends athena.lib.View
     @renderRemixSubview()
 
     @trigger 'Remixer:SwapShell', @, oldShell, newShell
+    @remixSubview.trigger 'Remix:SwappedShell', oldShell, newShell
+
     @
 
 
@@ -243,17 +246,17 @@ class acorn.player.RemixerView extends athena.lib.View
 
 
   alert: (text, className='error') =>
-    alert = @$('.alert')
+    alert = @$('.alert').first()
     alert.text(text)
     alert.removeClass('alert-error')
     alert.removeClass('alert-success')
-    @$('.remixer-header').removeClass 'error'
-    @$('.remixer-header').removeClass 'success'
+    @$('.remixer-header').first().removeClass 'error'
+    @$('.remixer-header').first().removeClass 'success'
     unless text
       alert.hide()
       return
 
-    @$('.remixer-header').addClass className
+    @$('.remixer-header').first().addClass className
     alert.addClass("alert-#{className}")
     alert.show()
 

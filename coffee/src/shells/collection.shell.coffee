@@ -262,10 +262,17 @@ class CollectionShell.MediaView extends Shell.MediaView
 
 
   initializeControlsView: =>
+
+    @offsetControl = new acorn.player.controls.TextControlView
+      eventhub: @eventhub
+      model: new Backbone.Model
+        tooltip: 'Playlist Items'
+        text: "1 / #{@model.shells().length}"
+
     # construct a ControlToolbar for the acorn controls
     @controlsView = new ControlToolbarView
       extraClasses: ['shell-controls']
-      buttons: ['Previous', 'Next']
+      buttons: ['Previous', @offsetControl, 'Next']
       eventhub: @eventhub
 
     @controlsView.on 'PreviousControl:Click', @showPrevious
@@ -338,6 +345,9 @@ class CollectionShell.MediaView extends Shell.MediaView
 
     if @isPlaying() and not view.isPlaying() and view.canPlay()
       view.play()
+
+    @offsetControl?.model.set
+      text: "#{@currentIndex + 1} / #{@model.shells().length}"
 
     delete @_switchingShell
 

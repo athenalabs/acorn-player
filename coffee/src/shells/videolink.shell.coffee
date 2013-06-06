@@ -24,6 +24,7 @@ VideoLinkShell = acorn.shells.VideoLinkShell =
 class VideoLinkShell.Model extends LinkShell.Model
 
 
+  timeTotal: @property 'timeTotal'
   timeStart: @property 'timeStart'
   timeEnd: @property 'timeEnd'
   loops: @property 'loops'
@@ -152,11 +153,7 @@ class VideoLinkShell.MediaView extends LinkShell.MediaView
 
 
   _onProgressBarDidProgress: (percentProgress) =>
-    progress = @progressFromPercent percentProgress
-
-    # if slider progress differs from player progress, seek to new position
-    unless progress.toFixed(5) == @seekOffset().toFixed(5)
-      @seek progress
+    @seek @progressFromPercent percentProgress
 
 
   # forward state transitions
@@ -187,73 +184,61 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
   className: @classNameExtend 'video-link-shell'
 
 
-  template: _.template '''
-    <div class='video-player'></div>
-    <div class='time-controls'></div>
+  controlsTemplate: _.template '''
+    <div class="highlight-button right-control">
+      <button class="btn btn-small add-highlight">
+        <i class="icon-plus"></i> Highlight</button>
+    </div>
+    <div class="clip-time-button right-control">
+      <button class="btn btn-small active clip-time">
+        <i class="icon-resize-horizontal"></i> Clip</button>
+    </div>
     '''
+
+
+  events: => _.extend super,
+    'click button.add-highlight': => @onAddHighlight()
+
 
 
   initialize: =>
     super
 
-    @_playerView = new @module.PlayerView
+    @initializeRemixMediaView()
+    @initializeLoopsButton()
+    @initializeTimeRangeView()
+
+
+  initializeRemixMediaView: =>
+    @mediaView = new @model.module.MediaView
       model: @model
       eventhub: @eventhub
-      noControls: true
+      playOnReady: false
 
-    @_initializePlayPauseToggleView()
-    @_initializeElapsedTimeView()
-
-    @_controlsView = new ControlToolbarView
-      extraClasses: ['shell-controls']
-      buttons: [@_playPauseToggleView, @_elapsedTimeView]
+    @remixMediaView = new acorn.player.TimedMediaRemixView
       eventhub: @eventhub
+      mediaView: @mediaView
+      model: @model
 
-    @_timeRangeInputView = new acorn.player.TimeRangeInputView
+    @listenTo @mediaView, 'Media:Progress', (view, elapsed, total) =>
+      elapsed += @model.timeStart()
+      @timeRangeView.progress elapsed, {silent: true}
+
+
+  initializeTimeRangeView: =>
+
+    @timeRangeView = new acorn.player.TimeRangeInputView
       eventhub: @eventhub
       start: @model.timeStart()
       end: @model.timeEnd()
       min: 0
       max: @model.timeTotal()
 
-    @_initializeLoopsButton()
-
-    @_playerView.on 'Media:StateChange', => @_playPauseToggleView.refreshToggle()
-    @_playerView.on 'Media:Progress', @_onMediaProgress
-    @_controlsView.on 'PlayControl:Click', => @_playerView.play()
-    @_controlsView.on 'PauseControl:Click', => @_playerView.pause()
-    @_controlsView.on 'ElapsedTimeControl:Seek', @_playerView.seek
-    @_timeRangeInputView.on 'TimeRangeInputView:DidChangeTimes', @_onChangeTimes
-    @_timeRangeInputView.on 'TimeRangeInputView:DidChangeProgress',
-        @_onChangeProgress
-    @_loopsButtonView.on 'CycleButtonView:ValueDidChange', @_onChangeLoops
+    @timeRangeView.on 'TimeRangeInputView:DidChangeTimes', @onChangeTimes
+    @timeRangeView.on 'TimeRangeInputView:DidChangeProgress', @onChangeProgress
 
 
-  _initializePlayPauseToggleView: =>
-    model = new Backbone.Model
-    model.isPlaying = => @_playerView.isPlaying()
-
-    @_playPauseToggleView = new acorn.player.controls.PlayPauseControlToggleView
-      eventhub: @eventhub
-      model: model
-
-
-  _initializeElapsedTimeView: =>
-
-    tvModel = new Backbone.Model
-      elapsed: 0
-      total: @_duration() or 0
-
-    @_elapsedTimeView = new acorn.player.controls.ElapsedTimeControlView
-      eventhub: @eventhub
-      model: tvModel
-
-    tvModel.listenTo @_playerView, 'Media:Progress', (view, elapsed, total) =>
-      tvModel.set 'elapsed', elapsed
-      tvModel.set 'total', total
-
-
-  _initializeLoopsButton: =>
+  initializeLoopsButton: =>
     loops = @model.loops()
 
     # ensure loops property is set
@@ -281,43 +266,36 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
       {type: 'input', name: 'n', value: nLoops.value, validate: nLoops.validate}
     ]
 
-    @_loopsButtonView = new acorn.player.CycleButtonView
+    @loopsButtonView = new acorn.player.CycleButtonView
       eventhub: @eventhub
       buttonName: 'loops:'
       data: loopsButtonData
       initialView: initialView
       extraClasses: ['loops-button']
 
+    @loopsButtonView.on 'CycleButtonView:ValueDidChange', @onChangeLoops
+
 
   render: =>
     super
     @$el.empty()
 
-    @$el.append @template()
-    @$('.video-player').append @_playerView.render().el
-    @$('.time-controls').append @_timeRangeInputView.render().el
-    @$('.time-controls').append @_loopsButtonView.render().el
-    @$('.time-controls').append @_controlsView.render().el
+    @$el.append @remixMediaView.render().el
 
+    @remixMediaView.progressBarView.$el.hide()
+    @remixMediaView.controlsView.$el.prepend @timeRangeView.render().el
+    @remixMediaView.controlsView.$el.append @loopsButtonView.render().el
+    @remixMediaView.controlsView.$el.append @controlsTemplate()
+    @$('#add-highlight').first().tooltip()
     @
 
 
-  # duration of video given current splicing and looping - get from model
-  _duration: =>
-    @playerView?.duration() or @model.duration() or 0
-
-
+  # called by subclasses
   _setTimeInputMax: =>
-    @_timeRangeInputView.setMax @model.timeTotal()
+    @timeRangeView.setMax @model.timeTotal()
 
 
-  _onMediaProgress: (view, elapsed, total) =>
-    # keep progress bar in sync
-    @_progress = @model.timeStart() + elapsed
-    @_timeRangeInputView.progress @_progress
-
-
-  _onChangeTimes: (changed) =>
+  onChangeTimes: (changed) =>
     changes = {}
     changes.timeStart = changed.start if _.isNumber changed?.start
     changes.timeEnd = changed.end if _.isNumber changed?.end
@@ -327,38 +305,45 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
     if changes.timeStart? and changes.timeStart isnt @model.timeStart()
       seekOffset = 0
     else if changes.timeEnd? and changes.timeEnd isnt @model.timeEnd()
-      seekOffset = Infinity # will be bounded to duration after changes
+      seekOffset = Infinity
 
     @model.set changes
 
     # unless user paused the video, make sure it is playing
-    unless @_playerView.isInState 'pause'
-      @_playerView.play()
+    unless @mediaView.isInState 'pause'
+      @mediaView.play()
 
     if seekOffset?
-      # bound between 0 <= seekOffset <= @duration() -2
-      seekOffset = Math.max(0, Math.min(seekOffset, @model.duration() - 2))
-      @_playerView.seek seekOffset
-      @_playerView.elapsedLoops 0
+      seekOffset = Math.min(seekOffset, @model.timeEnd() - 2)
+      seekOffset = Math.max(@model.timeStart(), seekOffset)
+      @mediaView.seek seekOffset
 
     @eventhub.trigger 'change:shell', @model, @
 
 
-  _onChangeProgress: (progress) =>
+  onChangeProgress: (progress) =>
     # if slider progress differs from player progress, seek to new position
-    unless progress.toFixed(5) == @_progress?.toFixed(5)
-      @_progress = progress
-      @_playerView.seek progress
+    progress = progress - @model.timeStart()
+    @mediaView.seek progress
 
 
-  _onChangeLoops: (changed) =>
+  onChangeLoops: (changed) =>
     loops = if changed.name == 'n' then changed.value else changed.name
     @model.loops(loops)
 
     # restart player loops
-    @_playerView.elapsedLoops 0
-    if @_playerView.isPlaying()
-      @_playerView.seek 0
+    if @mediaView.isPlaying()
+      @mediaView.seek 0
+
+
+  onAddHighlight: =>
+    # reset loops to one. cant highlight those unfortunately yet :(
+    @model.loops('one')
+
+    # wrap shell in a HighlightsShell.
+    newShell = new acorn.shells.HighlightsShell.Model
+    newShell.shell _.clone @model.attributes
+    @trigger 'Remix:SwapShell', @model, newShell
 
 
 
