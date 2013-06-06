@@ -39,6 +39,7 @@ class HighlightsShell.Model extends Shell.Model
 
   shellModel: =>
     @_shellModel ?= new Shell.Model.withData @shell()
+    @_shellModel
 
 
   duration: =>
@@ -47,6 +48,18 @@ class HighlightsShell.Model extends Shell.Model
 
   link: =>
     @shellModel().link?()
+
+
+  title: =>
+    @shellModel().title arguments...
+
+
+  description: =>
+    @shellModel().description arguments...
+
+
+  thumbnail: =>
+    @shellModel().thumbnail arguments...
 
 
 
