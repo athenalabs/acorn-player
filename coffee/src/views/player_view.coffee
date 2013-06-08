@@ -38,6 +38,10 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
       return event
 
 
+  defaults: => _.extend super,
+    autoplay: true
+
+
   initialize: =>
     super
 
@@ -91,6 +95,7 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     @_contentView ?= new acorn.player.ContentView
       eventhub: @eventhub
       model: @model
+      playOnReady: @options.autoplay
     @_contentView
 
 

@@ -20,6 +20,7 @@ class acorn.player.Player
 
   defaults: =>
     show: 'splash'
+    autoplay: true
 
 
   initialize: =>
@@ -42,11 +43,13 @@ class acorn.player.Player
     @eventhub = @
 
     @options.editable = @options.editable or @acornModel.isNew()
+    @options.autoplay = !_.contains ['false', '0'], @options.autoplay
 
     @view = new acorn.player.PlayerView
       model: @acornModel,
       eventhub: @eventhub
       editable: @options.editable
+      autoplay: @options.autoplay
 
 
   destroy: =>
@@ -83,9 +86,15 @@ class acorn.player.Player
       @eventhub.trigger 'show:editor', options
 
     else if @options.show.slice(0,7) == 'content'
+
       # content-<n> shows content after showing splash page for n milliseconds
-      delay = parseInt @options.show.slice 8
-      if delay > 0
+      rest = @options.show.slice 8
+      delay = parseInt rest
+
+      if rest == 'paused'
+        @view.options.autoplay = false
+        @eventhub.trigger 'show:content'
+      else if delay > 0
         @eventhub.trigger 'show:splash'
         setTimeout (=> @eventhub.trigger 'show:content'), delay
       else

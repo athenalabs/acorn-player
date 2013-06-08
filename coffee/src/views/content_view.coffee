@@ -50,6 +50,10 @@ class acorn.player.ContentView extends athena.lib.View
     'mouseleave': @onMouseStoppedMoving
 
 
+  defaults: => _.extend super,
+    playOnReady: false
+
+
   initialize: =>
     super
     # should these go here?
@@ -61,7 +65,7 @@ class acorn.player.ContentView extends athena.lib.View
     @shellView = new shellModel.module.MediaView
       model: shellModel
       eventhub: @eventhub
-      playOnReady: true
+      playOnReady: @options.playOnReady
 
     # grab custom progressBarView, or construct one
     @progressBarView = @shellView.progressBarView
