@@ -3,19 +3,20 @@
 /* variables */
 // all heights and widths include border, padding, etc.
 
-@main-control-height: 40px;
-@main-control-font-size: 20px;
-@main-control-icon-size: 20px;
+@main-control-height: 30px;
+@main-control-font-size: 18px;
+@main-control-line-height: 14px;
+@main-control-icon-size: 18px;
 @main-control-padding: 9px 10px;
-@main-control-background: rgba(30, 30, 30, 0.85);
+@main-control-background: rgba(60, 60, 60, 0.7);
 
 @sliding-object-width: 15px;
 @sliding-object-height: 15px;
-@slider-height: 8px;
+@slider-height: 10px;
 @slider-handle-radius: 7px;
-@slider-background: rgba(0, 0, 0, 0.8);
+@slider-background: #aaa;
 @slider-background2: rgba(150, 150, 150, 0.8);
-@slider-foreground: white;
+@slider-foreground: #eee;
 
 .controls-gradient() {
   .gradient(#ffffff, #e6e6e6, #ffffff);
@@ -27,7 +28,7 @@
   font-family: "Helvetica Neue", Helvetica;
   .transition(0.35s, ease);
   font-size: @main-control-font-size;
-  line-height: @main-control-font-size;
+  line-height: @main-control-line-height;
   color: rgba(255, 255, 255, 1.0);
 
   &[disabled="disabled"] {
@@ -266,7 +267,7 @@ input {
     .transition(0.2s, ease);
     position: absolute;
     z-index: 1;
-    bottom: 30px;
+    bottom: @main-control-height;
 
     .value-slider .sliding-bar {
       .transition(0.2s, ease);
@@ -346,7 +347,7 @@ input {
 
   &:not(.playing), &.mouse-moving {
     .progress-bar-view {
-      bottom: 40px;
+      bottom: @main-control-height;
       height: @slider-height;
 
       .value-slider .sliding-bar {
@@ -560,7 +561,7 @@ input {
   > .control-view {
     display: inline-block;
     position: relative;
-    width: (@main-control-height * 0.9);
+    width: (@main-control-height * 1.1);
     height: @main-control-height;
     padding: 0px;
     margin: 0px;
@@ -568,12 +569,13 @@ input {
     > * {
       .position-absolutely;
       padding: @main-control-padding;
-      .opacity(0.65);
+      .opacity(0.8);
     }
 
     > img {
       width: @main-control-icon-size;
       height: @main-control-icon-size;
+      margin-top: -3px;
     }
 
     &[disabled="disabled"] > * {
@@ -599,11 +601,13 @@ input {
     }
 
     &.elapsed-time-control-view {
+      font-weight: bold;
+
       &:hover {
         background: none;
 
         > * {
-          .opacity(0.65);
+          .opacity(0.8);
         }
       }
 
@@ -626,7 +630,7 @@ input {
 .control-toolbar-view .text-control-view,
 .control-toolbar-view .elapsed-time-control-view {
   font-size: 12px;
-  line-height: 12px;
+  line-height: 8px;
   width: 45px;
   text-align: center;
   > * {
@@ -643,7 +647,7 @@ input {
   .seek-field {
     width: 35px;
     height: 14px;
-    margin-top: -1px;
+    margin-top: -6px;
     padding-left: 3px;
     font-size: 12px;
     line-height: 14px;
@@ -889,7 +893,7 @@ input {
     .controls-gradient();
 
     .shell-controls {
-      height: 40px;
+      height: @main-control-height;
       width: 100%;
 
       .icon-control-view {
@@ -1015,7 +1019,6 @@ input {
     height: 100%;
     width: 100%;
     background-color: @slider-background;
-    opacity: 0.7;
 
     &:hover {
       opacity: 1.0;
