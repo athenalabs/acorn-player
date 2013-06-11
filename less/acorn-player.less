@@ -365,15 +365,20 @@ input {
 
   // Highlights
 
+  .highlights-shell .clip-group-view {
+    width: 340px;
+    margin-left: 33px;
+  }
+
   &.playing {
     .highlights-shell .clip-group-view {
-      bottom: 5px;
+      bottom: -2px;
     }
   }
 
   &:not(.playing), &.mouse-moving {
     .highlights-shell .clip-group-view {
-      bottom: 52px;
+      bottom: @main-control-height;
     }
   }
 
