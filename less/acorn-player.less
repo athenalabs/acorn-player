@@ -267,6 +267,10 @@ input {
     position: absolute;
     z-index: 1;
     bottom: 30px;
+
+    .value-slider .sliding-bar {
+      .transition(0.2s, ease);
+    }
   }
 
   > .control-toolbar-view {
@@ -333,13 +337,21 @@ input {
     .progress-bar-view {
       bottom: 0px;
       height: 4px;
+
+      .value-slider .sliding-bar {
+        height: 4px;
+      }
     }
   }
 
   &:not(.playing), &.mouse-moving {
     .progress-bar-view {
       bottom: 40px;
-      height: 8px;
+      height: @slider-height;
+
+      .value-slider .sliding-bar {
+        height: @slider-height;
+      }
     }
   }
 
