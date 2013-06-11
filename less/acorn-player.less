@@ -263,17 +263,6 @@ input {
     }
   }
 
-  > .progress-bar-view {
-    .transition(0.2s, ease);
-    position: absolute;
-    z-index: 1;
-    bottom: @main-control-height;
-
-    .value-slider .sliding-bar {
-      .transition(0.2s, ease);
-    }
-  }
-
   > .control-toolbar-view {
     .position-absolutely;
     z-index: 1;
@@ -283,6 +272,19 @@ input {
     padding: 0px;
     height: auto;
     .controls();
+
+    .shell-controls {
+      > .progress-bar-view {
+        bottom: 10px;
+        height: @slider-height;
+        width: 340px;
+        display: inline-block;
+
+        .value-slider .sliding-bar {
+          height: @slider-height;
+        }
+      }
+    }
   }
 
   > .summary-view {
@@ -332,8 +334,8 @@ input {
     .transition(0.5s, ease);
   }
 
-  // Progress bar
-
+  // Progress bar - hide with control toolbar for facebook demo
+  /*
   &.playing {
     .progress-bar-view {
       bottom: 0px;
@@ -355,6 +357,7 @@ input {
       }
     }
   }
+  */
 
 
   // Highlights
