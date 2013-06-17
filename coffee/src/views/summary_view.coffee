@@ -62,7 +62,12 @@ class acorn.player.SummaryView extends athena.lib.View
     icon = $('<i>').addClass @model.module.icon
     icon.tooltip title: @model.module.description, placement: 'right'
 
-    @$('.title').first().text(@model.title()).append icon
+    # must be split, as `.text` will return '', not the selector if
+    # @model.title() returns falsy. (will be taken as a getter, not setter)
+    title = @$('.title').first()
+    title.text(@model.title())
+    title.append(icon)
+
     @$('.description').first().text @model.description()
     @$('.thumbnail-view img').first().attr 'src', @model.thumbnail()
     @
