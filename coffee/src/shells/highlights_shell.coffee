@@ -444,6 +444,16 @@ class HighlightsShell.RemixView extends Shell.RemixView
     @timeRangeView.setMax @duration()
 
 
+  _removeHighlightView: (highlightView) =>
+    # remove from model
+    highlights = @model.highlights()
+    highlights.splice(highlights.indexOf(highlightView.model), 1)
+
+    # remove from views
+    @highlightViews.splice(@highlightViews.indexOf(highlightView), 1)
+
+
+
   onEditHighlight: (highlightView) =>
     @inactivateHighlights [highlightView]
     highlightView.setActive true
@@ -495,13 +505,7 @@ class HighlightsShell.RemixView extends Shell.RemixView
 
     @inactivateHighlights()
 
-    # remove from model
-    highlights = @model.highlights()
-    highlights.splice(highlights.indexOf(highlightView.clip), 1)
-
-    # remove from views
-    @highlightViews.splice(@highlightViews.indexOf(highlightView), 1)
-
+    @_removeHighlightView(highlightView)
     @mediaView.highlightsGroupView.softRender()
 
 
