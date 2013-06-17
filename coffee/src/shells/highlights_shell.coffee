@@ -517,8 +517,8 @@ class HighlightsShell.RemixView extends Shell.RemixView
       @onClipHighlightDone()
 
     highlight =
-      timeStart: 0
-      timeEnd: @duration()
+      timeStart: @mediaView.seekOffset()
+      timeEnd: Math.min(@mediaView.seekOffset() + 10, @duration())
       title: ''
 
     @model.highlights().push highlight
