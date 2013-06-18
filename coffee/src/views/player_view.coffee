@@ -95,7 +95,8 @@ class acorn.player.PlayerView extends athena.lib.ContainerView
     @_contentView ?= new acorn.player.ContentView
       eventhub: @eventhub
       model: @model
-      playOnReady: @options.autoplay
+      playOnReady: @options.autoplay # NOTE: remove this opt. use playerOptions
+      playerOptions: @options.playerOptions
     @_contentView
 
 

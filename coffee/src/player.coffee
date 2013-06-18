@@ -19,8 +19,14 @@ class acorn.player.Player
 
 
   defaults: =>
+    # what screen to show first (splash/content/edit)
     show: 'splash'
+
+    # whether to start playing automatically
     autoplay: true
+
+    # chromeless shows no controls
+    chromeless: false
 
 
   initialize: =>
@@ -48,8 +54,9 @@ class acorn.player.Player
     @view = new acorn.player.PlayerView
       model: @acornModel,
       eventhub: @eventhub
-      editable: @options.editable
-      autoplay: @options.autoplay
+      editable: @options.editable # TODO: remove this opt. use playerOptions
+      autoplay: @options.autoplay # TODO: remove this opt. use playerOptions
+      playerOptions: @options
 
 
   destroy: =>
