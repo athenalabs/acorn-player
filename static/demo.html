@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <title>acorn-player</title>
+  <link rel="shortcut icon" href="/static/img/favicon.ico">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <script src="/node_modules/jquery-browser/lib/jquery.js"></script>
+  <script src="/node_modules/underscore/underscore.js"></script>
+  <script src="/node_modules/backbone/backbone.js"></script>
+  <script src="/node_modules/marked/lib/marked.js"></script>
+  <script src="/lib/jquery/jquery.object-fit.js"></script>
+  <script src="/lib/jquery/jquery.fullscreen.js"></script>
+  <script src="/lib/bootstrap/bootstrap.noicons.min.js"></script>
+
+  <link rel="stylesheet" href="/lib/bootstrap/bootstrap.noicons.min.css" />
+  <link rel="stylesheet" href="/lib/fontawesome/css/font-awesome.css">
+
+  <!-- font awesome cdn
+  <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-icons.min.css" rel="stylesheet">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css" rel="stylesheet">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome-ie7.css" rel="stylesheet">
+  -->
+
+  <link rel="stylesheet" href="/build/css/acorn.player.css" />
+
+  <script src="/lib/athena.lib.min.js"></script>
+  <script src="/build/acorn.player.min.js"></script>
+
+  <script type="text/javascript">
+
+  acorn.config.img.acorn = "/static/img/acorn.png"
+  acorn.config.img.acorn_inverse = "/static/img/acorn-inverse.png"
+
+  var player, container, linkField, currentLink;
+
+  var showAcorn = function(acornModel) {
+    var shellId, delay;
+
+    if (player && player.view)
+      player.view.destroy();
+
+    container.empty();
+
+    player = new acorn.player.Player({acornModel: acornModel, editable: true});
+    player.appendTo(container);
+
+    shellId = acornModel.attributes.shell.shellid;
+
+    if (shellId == 'acorn.YouTubeShell' || shellId == 'acorn.VimeoShell') {
+      $('body').addClass('loading');
+      player.trigger('show:editor');
+      player.on('show:content', function() {
+        // give the 3rd-party player 0.6 seconds to get it's shit together
+        setTimeout(function() {
+          $('body').removeClass('minimized').removeClass('loading');
+        }, 600);
+      });
+
+      // wait a little while for metadata to arrive
+      delay = shellId == 'acorn.VimeoShell' ? 500 : 200;
+      setTimeout(function(){player.view.$('#editor-save-btn').click();}, delay);
+
+    } else {
+      player.trigger('show:content');
+      $('body').removeClass('minimized');
+    };
+  };
+
+  var loadAcornWithLink = function() {
+    var link, shell, acornModel;
+
+    link = linkField.val();
+    if (link == currentLink)
+      return;
+
+    currentLink = link;
+    shell = acorn.shellWithLink(link);
+    acornModel = acorn();
+    acornModel.shellData(shell.attributes);
+    showAcorn(acornModel);
+  };
+
+  $(document).ready(function() {
+    var hash = window.location.hash;
+    container = $('.acorn-player-container');
+    linkField = $('input#linkField');
+
+    if (hash) {
+      hash = hash.substr(1);
+      linkField.val(hash);
+      loadAcornWithLink();
+    }
+
+    linkField.blur(function() { loadAcornWithLink(); });
+  });
+
+  </script>
+
+
+  <style>
+    body {
+      text-align: center;
+    }
+
+    input#linkField {
+      margin-top: 80px;
+      margin-bottom: 50px;
+      width: 400px;
+      text-align: center;
+      font-weight: bold;
+      transition: all 0.5s ease;
+    }
+
+    .acorn-player-container {
+      margin: 0 auto;
+      width: 720px;
+      min-height: 408px;
+    }
+
+    body.minimized input#linkField {
+      margin-top: 269px;
+    }
+
+    body.minimized .acorn-player-container,
+    body.loading .acorn-player-container {
+      display: none;
+    }
+
+    .loading-indicator {
+      height: 60px;
+      display: block;
+      margin: auto;
+    }
+
+    body:not(.loading) .loading-indicator {
+      display: none;
+    }
+
+    .acorn-player,
+    .acorn-player .content-view,
+    .acorn-player .splash-view {
+      min-height: 408px;
+      height: auto;
+    }
+
+    .acorn-player .content-view > .control-toolbar-view .shell-controls >
+        .progress-bar-view {
+      width: 450px;
+      margin-left: 10px;
+    }
+
+    .acorn-player .content-view .highlights-shell .clip-group-view {
+      width: 450px;
+      margin-left: 43px;
+    }
+  </style>
+
+</head>
+<body class="minimized">
+  <input type="text" id="linkField" placeholder="enter a link" value="" />
+  <img class="loading-indicator"
+      src='http://www.sinap.cas.cn/images/loading.gif'>
+  <div class="acorn-player-container"></div>
+</body>
+</html>
