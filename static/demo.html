@@ -79,6 +79,9 @@
     if (link == currentLink)
       return;
 
+    if (!acorn.util.isUrl(link))
+      return;
+
     currentLink = link;
     shell = acorn.shellWithLink(link);
     acornModel = acorn();
@@ -87,17 +90,18 @@
   };
 
   $(document).ready(function() {
-    var hash = window.location.hash;
+    var hash = window.location.hash.substr(1);
     container = $('.acorn-player-container');
     linkField = $('input#linkField');
 
     if (hash) {
-      hash = hash.substr(1);
       linkField.val(hash);
       loadAcornWithLink();
     }
 
     linkField.blur(function() { loadAcornWithLink(); });
+    linkField.keyup(function() { loadAcornWithLink(); });
+
   });
 
   </script>
