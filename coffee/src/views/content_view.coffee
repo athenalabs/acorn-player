@@ -38,9 +38,6 @@ class acorn.player.ContentView extends athena.lib.View
 
 
   acornControls: [
-    'Sources',
-    'Edit',
-    'Acorn',
     'Fullscreen',
   ]
 
