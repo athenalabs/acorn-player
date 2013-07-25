@@ -1,5 +1,4 @@
-goog.provide 'acorn.shells.DocShell'
-goog.require 'acorn.shells.TextShell'
+`import "text.shell.js"`
 
 
 TextShell  = acorn.shells.TextShell

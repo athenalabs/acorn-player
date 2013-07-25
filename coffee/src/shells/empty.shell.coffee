@@ -1,8 +1,6 @@
-goog.provide 'acorn.shells.EmptyShell'
-
-goog.require 'acorn.shells.Shell'
-goog.require 'acorn.player.ShellSelectorView'
-goog.require 'acorn.config'
+`import "shell"`
+`import "../views/shell_selector_view"`
+`import "../config"`
 
 
 

@@ -1,7 +1,6 @@
-goog.provide 'acorn.player.ShellSelectorView'
-goog.require 'acorn.shells.Registry'
-goog.require 'acorn.shells.DocShell'
-goog.require 'acorn.shells.TextShell'
+`import "../shells/registry"`
+`import "../shells/doc.shell.js"`
+`import "../shells/text.shell.js"`
 
 TextShell = acorn.shells.TextShell
 DocShell = acorn.shells.DocShell

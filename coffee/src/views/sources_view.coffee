@@ -1,7 +1,4 @@
-goog.provide 'acorn.player.SourcesView'
-
-goog.require 'acorn.player.OverlayView'
-
+`import "overlay_view"`
 
 
 # a view to display all sources

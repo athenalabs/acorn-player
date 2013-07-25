@@ -1,9 +1,6 @@
-goog.provide 'acorn.player.EditImageView'
-
-goog.require 'acorn.shells.Registry'
-goog.require 'acorn.shells.ImageLinkShell'
-goog.require 'acorn.player.RemixerView'
-
+`import "../shells/registry"`
+`import "../shells/imagelink.shell.js"`
+`import "remixer_view"`
 
 
 # acorn player EditImageView:

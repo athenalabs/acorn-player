@@ -1,7 +1,5 @@
-goog.provide 'acorn.player.MediaPlayerView'
-goog.require 'acorn.MediaInterface'
-goog.require 'acorn.util'
-
+`import "../media"`
+`import "../util/"`
 
 
 class acorn.player.MediaPlayerView extends athena.lib.View

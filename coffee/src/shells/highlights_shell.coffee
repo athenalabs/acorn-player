@@ -1,11 +1,9 @@
-goog.provide 'acorn.shells.HighlightsShell'
-
-goog.require 'acorn.shells.Shell'
-goog.require 'acorn.shells.Registry'
-goog.require 'acorn.player.HighlightsSliderView'
-goog.require 'acorn.player.ClipSelectView'
-goog.require 'acorn.errors'
-goog.require 'acorn.util'
+`import "shell"`
+`import "registry"`
+`import "../views/highlights_slider_view"`
+`import "../views/clip_select_view"`
+`import "../errors"`
+`import "../util/"`
 
 
 Shell = acorn.shells.Shell

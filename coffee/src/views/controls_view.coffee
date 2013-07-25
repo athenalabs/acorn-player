@@ -1,13 +1,4 @@
-goog.provide 'acorn.player.controls.ControlToolbarView'
-goog.provide 'acorn.player.controls.ControlToggleView'
-goog.provide 'acorn.player.controls.PlayPauseControlToggleView'
-goog.provide 'acorn.player.controls.ControlView'
-goog.provide 'acorn.player.controls.IconControlView'
-goog.provide 'acorn.player.controls.ImageControlView'
-goog.provide 'acorn.player.controls.ElapsedTimeControlView'
-
-goog.require 'acorn.config'
-
+`import "../config"`
 
 
 # view with media control buttons

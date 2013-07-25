@@ -1,5 +1,3 @@
-goog.provide 'acorn.player.SummaryView'
-
 
 # uniform view to summarize an acorn or shell.
 #

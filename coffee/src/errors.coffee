@@ -1,6 +1,5 @@
-goog.provide 'acorn.errors'
 
-
+acorn.errors = {}
 
 APIError = acorn.errors.APIError = (description) ->
   throw new Error "Acorn API Error: #{description}"

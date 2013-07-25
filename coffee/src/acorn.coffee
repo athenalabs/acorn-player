@@ -6,14 +6,9 @@
 #  For all details and documentation:
 #  http://github.com/athenalabs/acorn-player
 
-goog.provide 'acorn'
-
-goog.require 'acorn.Model'
-
-
-acorn_ = (data) ->
+acorn = (data) ->
   acorn.Model.withData data
 
-# patch the global `acorn` object as this function
-_.extend acorn_, acorn
-acorn = acorn_
+acorn.shells = {}
+acorn.player = {}
+acorn.player.controls = {}

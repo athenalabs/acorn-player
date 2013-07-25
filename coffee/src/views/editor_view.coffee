@@ -1,6 +1,4 @@
-goog.provide 'acorn.player.EditorView'
-goog.require 'acorn.player.CollectionShellEditorView'
-
+`import "collection_shell_editor_view"`
 
 
 # acorn player EditorView:

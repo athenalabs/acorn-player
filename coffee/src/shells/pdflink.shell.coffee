@@ -1,6 +1,4 @@
-goog.provide 'acorn.shells.PDFLinkShell'
-
-goog.require 'acorn.shells.LinkShell'
+`import "link.shell.js"`
 
 
 

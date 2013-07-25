@@ -1,9 +1,6 @@
-goog.provide 'acorn.player.TimeRangeInputView'
-
-goog.require 'acorn.player.RangeSliderView'
-goog.require 'acorn.player.ProgressRangeSliderView'
-goog.require 'acorn.player.TimeInputView'
-
+`import "range_slider_view"`
+`import "progress_range_slider_view"`
+`import "time_input_view"`
 
 
 class acorn.player.TimeRangeInputView extends athena.lib.View

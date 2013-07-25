@@ -1,7 +1,6 @@
-goog.provide 'acorn.player.EditSummaryView'
-goog.require 'acorn.player.SummaryView'
-goog.require 'acorn.player.EditImageView'
-goog.require 'acorn.shells.ImageLinkShell'
+`import "summary_view"`
+`import "edit_image_view"`
+`import "../shells/imagelink.shell.js"`
 
 
 class acorn.player.EditSummaryView extends acorn.player.SummaryView

@@ -1,5 +1,4 @@
-goog.provide 'acorn.player.EditableClipView'
-goog.require 'acorn.player.ClipView'
+`import "clip_view"`
 
 
 class acorn.player.EditableClipView extends acorn.player.ClipView

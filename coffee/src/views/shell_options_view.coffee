@@ -1,10 +1,7 @@
-goog.provide 'acorn.player.ShellOptionsView'
-
-goog.require 'acorn.shells.Registry'
-goog.require 'acorn.shells.Shell'
-goog.require 'acorn.player.DropdownView'
-goog.require 'acorn.player.EditSummaryView'
-
+`import "../shells/shell"`
+`import "../shells/shell"`
+`import "dropdown_view"`
+`import "edit_summary_view"`
 
 # acorn player ShellOptionsView:
 #

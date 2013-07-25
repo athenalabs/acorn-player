@@ -1,11 +1,7 @@
-goog.provide 'acorn.shells.SlideshowShell'
-
-goog.require 'acorn.shells.CollectionShell'
-
+`import "collection.shell.js"`
 
 
 CollectionShell = acorn.shells.CollectionShell
-
 
 SlideshowShell = acorn.shells.SlideshowShell =
 

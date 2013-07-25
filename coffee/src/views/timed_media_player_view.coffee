@@ -1,5 +1,4 @@
-goog.provide 'acorn.player.TimedMediaPlayerView'
-goog.require 'acorn.player.MediaPlayerView'
+`import "media_player_view"`
 
 
 class acorn.player.TimedMediaPlayerView extends acorn.player.MediaPlayerView

@@ -1,9 +1,5 @@
-goog.provide 'acorn.player.RemixerView'
-
-goog.require 'acorn.player.DropdownView'
-goog.require 'acorn.shells.LinkShell'
-
-
+`import "dropdown_view"`
+`import "../shells/shell"`
 
 TextShell = acorn.shells.TextShell
 EmptyShell = acorn.shells.EmptyShell
