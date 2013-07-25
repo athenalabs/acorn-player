@@ -50,10 +50,20 @@ Download the source:
 
     git clone git@github.com:athenalabs/acorn-player.git
 
-Build it
+Initialize the Closure submodule:
+
+    git submodule update
+    git submodule init
+
+Create the necessary symlinks:
+
+    ln -s Gruntfile.coffee Grunt.js
+    ln -s <path to compiler.jar> lib/closure/
+
+Build it:
 
     npm install
-    grunt compile
+    node_modules/grunt-exec/bin/grunt-exec compile
 
 Run a server with the following command:
 
@@ -62,7 +72,10 @@ Run a server with the following command:
 
 See it at [http://localhost:8000/static/player.html](http://localhost:8000/static/player.html)
 
-
+Note: Node v0.10.4 gives errors when used with our version of Grunt. The
+highest supported version of Node is 0.8.16. Instructions on installing older
+versions of Node via ``brew`` are available
+[here](http://stackoverflow.com/a/9832084).
 
 ## Usage
 
