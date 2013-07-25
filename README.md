@@ -53,12 +53,12 @@ Download the source:
 Build it
 
     npm install
-    grunt compile
+    make
 
 Run a server with the following command:
 
     cd acorn-player
-    python -m  SimpleHTTPServer
+    make watch
 
 See it at [http://localhost:8000/static/player.html](http://localhost:8000/static/player.html)
 
