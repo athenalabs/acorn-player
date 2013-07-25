@@ -43,7 +43,8 @@
     "backbone": "~0.9.9",
     "grunt-exec": "~0.3.0",
     "grunt-cli": "~0.1.2",
-    "marked": "~0.2.7"
+    "marked": "~0.2.7",
+    "smash": "0.0.11"
   },
   "readmeFilename": "README.md"
 }
