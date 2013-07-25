@@ -1,9 +1,6 @@
-goog.provide 'acorn.player.ShellEditorView'
-
-goog.require 'acorn.shells.Shell'
-goog.require 'acorn.shells.EmptyShell'
-goog.require 'acorn.player.RemixerView'
-
+`import "../shells/shell"`
+`import "../shells/empty.shell.js"`
+`import "remixer_view"`
 
 Shell = acorn.shells.Shell
 EmptyShell = acorn.shells.EmptyShell

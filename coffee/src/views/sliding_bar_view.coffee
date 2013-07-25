@@ -1,7 +1,4 @@
-goog.provide 'acorn.player.SlidingBarView'
-
-goog.require 'acorn.player.SlidingObjectView'
-
+`import "sliding_object_view"`
 
 
 class acorn.player.SlidingBarView extends acorn.player.SlidingObjectView

@@ -1,8 +1,5 @@
-goog.provide 'acorn.player.HighlightsSliderView'
-
-goog.require 'acorn.player.ValueSliderView'
-goog.require 'acorn.player.ClipGroupView'
-
+`import "value_slider_view"`
+`import "clip_group_view"`
 
 class acorn.player.HighlightsSliderView extends acorn.player.ValueSliderView
 

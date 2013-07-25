@@ -1,10 +1,7 @@
-goog.provide 'acorn.util'
-
-goog.require 'acorn.config'
+`import "../config"`
 
 
-
-util = acorn.util
+util = acorn.util ?= {}
 
 
 util.assert = (condition, description) ->

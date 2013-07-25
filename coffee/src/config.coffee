@@ -1,9 +1,7 @@
 if typeof acorn is 'undefined'
   acorn = {}
 
-goog.provide 'acorn.config'
-
-_.extend acorn.config,
+acorn.config =
   version: '0.0.0'
   url:
     base: 'https://acorn.athena.ai'

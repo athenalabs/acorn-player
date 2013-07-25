@@ -1,5 +1,4 @@
-goog.provide 'acorn.player.TimedMediaRemixView'
-goog.require 'acorn.player.TimedMediaPlayerView'
+`import "timed_media_player_view"`
 
 
 class acorn.player.TimedMediaRemixView extends athena.lib.View

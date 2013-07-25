@@ -1,9 +1,6 @@
-goog.provide 'acorn.player.ContentView'
-
-goog.require 'acorn.player.ValueSliderView'
-goog.require 'acorn.player.controls.ControlToolbarView'
-goog.require 'acorn.shells.Shell'
-
+`import "value_slider_view"`
+`import "controls_view"`
+`import "../shells/shell"`
 
 
 ControlToolbarView = acorn.player.controls.ControlToolbarView

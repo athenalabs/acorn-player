@@ -1,12 +1,10 @@
-goog.provide 'acorn.shells.Shell'
-
-goog.require 'acorn.MediaInterface'
-goog.require 'acorn.shells.Registry'
-goog.require 'acorn.player.SummaryView'
-goog.require 'acorn.Model'
-goog.require 'acorn.util'
-goog.require 'acorn.errors'
-
+`import "../media"`
+`import "../model"`
+`import "../util/"`
+`import "../errors"`
+`import "../views/summary_view"`
+`import "shell"`
+`import "registry"`
 
 
 Shell = acorn.shells.Shell =

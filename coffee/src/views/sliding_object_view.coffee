@@ -1,6 +1,4 @@
-goog.provide 'acorn.player.SlidingObjectView'
-
-goog.require 'acorn.player.MouseTrackingView'
+`import "mouseTrackingView"`
 
 
 

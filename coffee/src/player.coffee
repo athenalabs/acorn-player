@@ -1,8 +1,5 @@
-goog.provide 'acorn.player.Player'
-
-goog.require 'acorn.player.PlayerView'
-goog.require 'acorn.shells.Shell'
-
+`import "views/player_view"`
+`import "shells/shell"`
 
 
 # The main class, represents the entire player object.

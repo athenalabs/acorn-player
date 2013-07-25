@@ -1,8 +1,7 @@
-goog.provide 'acorn.util.test'
+`import "util"`
 
-goog.require 'acorn.util'
 
-test = acorn.util.test
+test = acorn.util.test = {}
 
 
 # call pattern: Module [, modelOptions] [, tests]

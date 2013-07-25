@@ -1,5 +1,3 @@
-goog.provide 'acorn.player.MouseTrackingView'
-
 
 # Adapted from jQueryUI's $.ui.mouse widget - thanks jQuery!
 

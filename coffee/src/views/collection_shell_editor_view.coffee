@@ -1,9 +1,6 @@
-goog.provide 'acorn.player.CollectionShellEditorView'
-
-goog.require 'acorn.shells.CollectionShell'
-goog.require 'acorn.player.ShellOptionsView'
-goog.require 'acorn.player.ShellEditorView'
-
+`import "../shells/collection.shell.js"`
+`import "shell_options_view"`
+`import "shell_editor_view"`
 
 CollectionShell = acorn.shells.CollectionShell
 ShellOptionsView = acorn.player.ShellOptionsView

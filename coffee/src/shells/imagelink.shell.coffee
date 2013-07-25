@@ -1,9 +1,5 @@
-goog.provide 'acorn.shells.ImageLinkShell'
-
-goog.require 'acorn.shells.LinkShell'
-goog.require 'acorn.util'
-
-
+`import "link.shell.js"`
+`import "../util/"`
 
 LinkShell = acorn.shells.LinkShell
 

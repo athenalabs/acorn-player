@@ -1,7 +1,4 @@
-goog.provide 'acorn.shells.GalleryShell'
-
-goog.require 'acorn.shells.CollectionShell'
-
+`import "collection.shell.js"`
 
 
 CollectionShell = acorn.shells.CollectionShell

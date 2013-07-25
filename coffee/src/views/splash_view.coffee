@@ -1,4 +1,4 @@
-goog.provide 'acorn.player.SplashView'
+`import "splash_view"`
 
 
 

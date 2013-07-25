@@ -1,7 +1,4 @@
-goog.provide 'acorn.shells.RandomShell'
-
-goog.require 'acorn.shells.CollectionShell'
-
+`import "collection.shell.js"`
 
 
 CollectionShell = acorn.shells.CollectionShell

@@ -1,9 +1,6 @@
-goog.provide 'acorn.player.ValueSliderView'
-
-goog.require 'acorn.player.MouseTrackingView'
-goog.require 'acorn.player.SlidingObjectView'
-goog.require 'acorn.player.SlidingBarView'
-
+`import "mouseTrackingView"`
+`import "sliding_object_view"`
+`import "sliding_bar_view"`
 
 # TODO: abstract most functionality in ValueSliderView and RangeSliderView into
 # a shared parent view

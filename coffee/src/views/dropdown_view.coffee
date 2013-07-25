@@ -1,6 +1,3 @@
-goog.provide 'acorn.player.DropdownView'
-
-
 
 # View to select options.
 class acorn.player.DropdownView extends athena.lib.View

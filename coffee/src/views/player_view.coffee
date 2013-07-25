@@ -1,21 +1,18 @@
-goog.provide 'acorn.player.PlayerView'
-
-goog.require 'acorn.player.EditorView'
-goog.require 'acorn.player.SplashView'
-goog.require 'acorn.player.ContentView'
-goog.require 'acorn.player.OverlayView'
-goog.require 'acorn.player.SourcesView'
-goog.require 'acorn.player.TimeInputView'
-goog.require 'acorn.player.TimeRangeInputView'
-goog.require 'acorn.player.CycleButtonView'
-goog.require 'acorn.player.MouseTrackingView'
-goog.require 'acorn.player.SlidingObjectView'
-goog.require 'acorn.player.SlidingBarView'
-goog.require 'acorn.player.ValueSliderView'
-goog.require 'acorn.player.RangeSliderView'
-goog.require 'acorn.player.TimedMediaRemixView'
-goog.require 'acorn.player.ProgressRangeSliderView'
-
+`import "editor_view"`
+`import "splash_view"`
+`import "content_view"`
+`import "overlay_view"`
+`import "sources_view"`
+`import "time_input_view"`
+`import "time_range_input_view"`
+`import "cycle_button_view"`
+`import "mouseTrackingView"`
+`import "sliding_object_view"`
+`import "sliding_bar_view"`
+`import "value_slider_view"`
+`import "range_slider_view"`
+`import "timed_media_remix_view"`
+`import "progress_range_slider_view"`
 
 
 # Main view. Container for the other three main views.
