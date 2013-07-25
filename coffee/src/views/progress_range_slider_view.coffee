@@ -1,8 +1,5 @@
-goog.provide 'acorn.player.ProgressRangeSliderView'
-
-goog.require 'acorn.player.RangeSliderView'
-goog.require 'acorn.player.SlidingBarView'
-
+`import "range_slider_view"`
+`import "sliding_bar_view"`
 
 
 class acorn.player.ProgressRangeSliderView extends acorn.player.RangeSliderView

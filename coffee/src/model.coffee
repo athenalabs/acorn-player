@@ -1,6 +1,4 @@
-goog.provide 'acorn.Model'
-
-goog.require 'acorn.util'
+`import "util/"`
 
 
 

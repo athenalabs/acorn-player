@@ -1,4 +1,3 @@
-goog.provide 'acorn.MediaInterface'
 
 
 ###

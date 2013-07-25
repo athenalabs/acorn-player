@@ -1,6 +1,4 @@
-goog.provide 'acorn.player.ClipSelectView'
-
-goog.require 'acorn.player.TimeRangeInputView'
+`import "time_range_input_view"`
 
 
 class acorn.player.ClipSelectView extends athena.lib.View

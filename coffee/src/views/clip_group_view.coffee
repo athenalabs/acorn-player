@@ -1,6 +1,4 @@
-goog.provide 'acorn.player.ClipGroupView'
-
-goog.require 'acorn.player.ClipView'
+`import "clip_view"`
 
 
 class acorn.player.ClipGroupView extends athena.lib.View

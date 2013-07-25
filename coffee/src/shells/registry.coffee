@@ -1,7 +1,5 @@
-goog.provide 'acorn.shells.Registry'
-
-goog.require 'acorn'
-goog.require 'acorn.errors'
+`import "../acorn"`
+`import "../errors"`
 
 
 class acorn.shells.Registry

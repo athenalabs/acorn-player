@@ -1,4 +1,3 @@
-goog.provide 'acorn.player.ClipView'
 
 
 class acorn.player.ClipView extends athena.lib.View

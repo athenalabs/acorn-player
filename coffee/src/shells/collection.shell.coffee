@@ -1,7 +1,4 @@
-goog.provide 'acorn.shells.CollectionShell'
-
-goog.require 'acorn.shells.Shell'
-
+`import "shell"`
 
 
 Shell = acorn.shells.Shell

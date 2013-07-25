@@ -1,6 +1,3 @@
-goog.provide 'acorn.player.OverlayView'
-
-
 
 # view with media control buttons
 class acorn.player.OverlayView extends athena.lib.View

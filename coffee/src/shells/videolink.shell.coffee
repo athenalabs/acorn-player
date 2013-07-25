@@ -1,13 +1,10 @@
-goog.provide 'acorn.shells.VideoLinkShell'
-
-goog.require 'acorn.shells.LinkShell'
-goog.require 'acorn.shells.Registry'
-goog.require 'acorn.player.TimeRangeInputView'
-goog.require 'acorn.player.CycleButtonView'
-goog.require 'acorn.player.TimedMediaPlayerView'
-goog.require 'acorn.errors'
-goog.require 'acorn.util'
-
+`import "link.shell.js"`
+`import "registry"`
+`import "../views/time_range_input_view"`
+`import "../views/cycle_button_view"`
+`import "../views/timed_media_player_view"`
+`import "../errors"`
+`import "../util/"`
 
 
 LinkShell = acorn.shells.LinkShell

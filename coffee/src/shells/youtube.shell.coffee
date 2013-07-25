@@ -1,10 +1,7 @@
-goog.provide 'acorn.shells.YouTubeShell'
-
-goog.require 'acorn.shells.VideoLinkShell'
-goog.require 'acorn.shells.Registry'
-goog.require 'acorn.errors'
-goog.require 'acorn.util'
-
+`import "videolink.shell.js"`
+`import "registry"`
+`import "../errors"`
+`import "../util/"`
 
 
 VideoLinkShell = acorn.shells.VideoLinkShell

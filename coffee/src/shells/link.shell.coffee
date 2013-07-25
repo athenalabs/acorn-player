@@ -1,11 +1,8 @@
-goog.provide 'acorn.shells.LinkShell'
-
-goog.require 'acorn.Model'
-goog.require 'acorn.shells.Shell'
-goog.require 'acorn.shells.Registry'
-goog.require 'acorn.errors'
-goog.require 'acorn.util'
-
+`import "shell"`
+`import "registry"`
+`import "../model"`
+`import "../errors"`
+`import "../util/"`
 
 
 Shell = acorn.shells.Shell
