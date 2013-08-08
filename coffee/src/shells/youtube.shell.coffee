@@ -107,16 +107,10 @@ class YouTubeShell.RemixView extends VideoLinkShell.RemixView
     super
     @metaData().sync success: @onMetaDataSync
 
-
-  onMetaDataSync: (data) =>
-    @model._fetchedDefaults ?= {}
-    @model._fetchedDefaults = title: data.data.title
-    @model.timeTotal data.data.duration
-
-    @model._updateAttributesWithDefaults()
-    start = acorn.util.fetchParameters this.model.link(), ["t", "start"]
-    # take the first possible valid parameter
-
+  # Default start/end can only be set once player metadata
+  # is avaiilable and initialized. Otherwise, default values
+  # will override the start/end times.
+  initializeDefaultClip: =>
     start = @model.timeStart()
     unless _.isNumber start
       start = acorn.util.fetchParameters this.model.link(), ["t", "start"]
@@ -131,12 +125,20 @@ class YouTubeShell.RemixView extends VideoLinkShell.RemixView
     unless _.isNumber end
       end = @model.timeTotal()
 
+    end = if end >= start then end else @model.timeTotal()
+    # Clip range must be set before progress bar is initialized
     @model.timeStart(start)
     @model.timeEnd(end)
-    
-    @_setTimeInputMin()
-    @_setTimeInputMax()
+    @_setClipRange()
 
+  onMetaDataSync: (data) =>
+    @model._fetchedDefaults ?= {}
+    @model._fetchedDefaults = title: data.data.title
+    @model._updateAttributesWithDefaults()
+    @model.timeTotal data.data.duration
+
+    @initializeDefaultClip()
+    @_setTimeInputMax()
 
   metaData: =>
     if @model.metaDataUrl() and not @_metaData

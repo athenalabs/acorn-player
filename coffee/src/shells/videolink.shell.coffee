@@ -291,6 +291,12 @@ class VideoLinkShell.RemixView extends LinkShell.RemixView
   _setTimeInputMax: =>
     @timeRangeView.setMax @model.timeTotal()
 
+  _setClipRange: =>
+    @timeRangeView.values {
+      start: @model.timeStart()
+      end: @model.timeEnd()
+    }
+
 
   onChangeTimes: (changed) =>
     changes = {}
