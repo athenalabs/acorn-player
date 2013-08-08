@@ -21,7 +21,6 @@ YouTubeShell = acorn.shells.YouTubeShell =
   ]
 
 
-
 class YouTubeShell.Model extends VideoLinkShell.Model
 
 
@@ -57,6 +56,19 @@ class YouTubeShell.Model extends VideoLinkShell.Model
 
     pattern.exec(link)[3]
 
+  parseTime: (time) =>
+    validTimePatterns = [
+      /(\d+)/
+      /(\d+)m(\d+)s/
+    ]
+
+    # the second one is more general, work backwards
+    if validTimePatterns[1].test time
+      return 60 * parseInt(validTimePatterns[1].exec(time)[1]) + parseInt(validTimePatterns[1].exec(time)[2])
+    else if validTimePatterns[0].test time
+      return parseInt(validTimePatterns[0].exec(time)[0])
+    else
+      return undefined
 
   embedLink: (options) =>
     # see https://developers.google.com/youtube/player_parameters for options
@@ -102,6 +114,27 @@ class YouTubeShell.RemixView extends VideoLinkShell.RemixView
     @model.timeTotal data.data.duration
 
     @model._updateAttributesWithDefaults()
+    start = acorn.util.fetchParameters this.model.link(), ["t", "start"]
+    # take the first possible valid parameter
+
+    start = @model.timeStart()
+    unless _.isNumber start
+      start = acorn.util.fetchParameters this.model.link(), ["t", "start"]
+      start = @model.parseTime _.values(start)[0]
+    unless _.isNumber start
+      start = 0
+
+    end = @model.timeEnd()
+    unless _.isNumber end
+      end = acorn.util.fetchParameters this.model.link(), ["end"]
+      end = @model.parseTime _.values(end)[0]
+    unless _.isNumber end
+      end = @model.timeTotal()
+
+    @model.timeStart(start)
+    @model.timeEnd(end)
+    
+    @_setTimeInputMin()
     @_setTimeInputMax()
 
 

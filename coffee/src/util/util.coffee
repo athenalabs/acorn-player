@@ -274,7 +274,26 @@ util.parseUrl = (url) ->
 
   result
 
+# function takes a URL and an array of parameters
+# returns JSON object with matching parameters and values, if any
+# otherwise, returns empty object
+# http://stackoverflow.com/a/8649003
+util.fetchParameters = (url, params) ->
+  url = $.trim url
+  url = "http://#{url}" unless /^([a-z0-9]+:)?\/\//i.test url  
+  anchor = document.createElement 'a'
+  anchor.href = url
 
+  search = anchor.search.substring(1)
+  search = '{"' + search.replace(/&/g, '","').replace(/\=/g, '":"') + '"}'
+  
+  parameters = if search is "" then {} else JSON.parse search, (key, value) -> 
+      if key is "" then value else decodeURIComponent value
+  
+
+  console.log(parameters)
+  _.pick parameters, params
+  
 
 # track mouse location at all times
 util.mouseLocationTracker = (->
