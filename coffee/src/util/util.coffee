@@ -290,8 +290,6 @@ util.fetchParameters = (url, params) ->
   parameters = if search is "" then {} else JSON.parse search, (key, value) -> 
       if key is "" then value else decodeURIComponent value
   
-
-  console.log(parameters)
   _.pick parameters, params
   
 
