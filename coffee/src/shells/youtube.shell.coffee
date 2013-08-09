@@ -63,12 +63,13 @@ class YouTubeShell.Model extends VideoLinkShell.Model
     ]
 
     # the second one is more general, work backwards
-    if validTimePatterns[1].test time
-      return 60 * parseInt(validTimePatterns[1].exec(time)[1]) + parseInt(validTimePatterns[1].exec(time)[2])
-    else if validTimePatterns[0].test time
-      return parseInt(validTimePatterns[0].exec(time)[0])
-    else
-      return undefined
+    match = validTimePatterns[1].exec time
+    if match
+      return 60 * parseInt(match[1]) + parseInt(match[2])
+    match = validTimePatterns[0].exec time
+    if validTimePatterns[0].test time
+      return parseInt(match[1])
+    return undefined
 
   embedLink: (options) =>
     # see https://developers.google.com/youtube/player_parameters for options
@@ -107,23 +108,30 @@ class YouTubeShell.RemixView extends VideoLinkShell.RemixView
     super
     @metaData().sync success: @onMetaDataSync
 
+  _timeLinkParam: (keys) =>
+    unless _.isArray keys
+      keys = [keys]
+    param = acorn.util.fetchParameters this.model.link(), keys
+    return @model.parseTime _.values(param)[0]
+
   # Default start/end can only be set once player metadata
   # is avaiilable and initialized. Otherwise, default values
   # will override the start/end times.
   initializeDefaultClip: =>
-    start = @model.timeStart()
-    unless _.isNumber start
-      start = acorn.util.fetchParameters this.model.link(), ["t", "start"]
-      start = @model.parseTime _.values(start)[0]
-    unless _.isNumber start
-      start = 0
+    firstNumber = (args) ->
+      _.find args, _.isNumber
 
-    end = @model.timeEnd()
-    unless _.isNumber end
-      end = acorn.util.fetchParameters this.model.link(), ["end"]
-      end = @model.parseTime _.values(end)[0]
-    unless _.isNumber end
-      end = @model.timeTotal()
+    start = firstNumber [
+      @model.timeStart()
+      @_timeLinkParam ["t", "start"]
+      0
+    ]
+
+    end = firstNumber [
+      @model.timeEnd()
+      @_timeLinkParam ["end"]
+      @model.timeTotal()
+    ]
 
     end = if end >= start then end else @model.timeTotal()
     # Clip range must be set before progress bar is initialized

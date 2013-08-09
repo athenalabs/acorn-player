@@ -287,7 +287,7 @@ util.fetchParameters = (url, params) ->
   search = anchor.search.substring(1)
   search = '{"' + search.replace(/&/g, '","').replace(/\=/g, '":"') + '"}'
   
-  parameters = if search is "" then {} else JSON.parse search, (key, value) -> 
+  parameters = JSON.parse search, (key, value) -> 
       if key is "" then value else decodeURIComponent value
   
   _.pick parameters, params
