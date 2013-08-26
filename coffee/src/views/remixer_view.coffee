@@ -282,6 +282,7 @@ class acorn.player.RemixerView extends athena.lib.View
     @alert() # hide
     link = @$linkContainer.children('input#link').val().trim()
     link = acorn.util.urlFix link
+    encodedLink = encodeURI(link)
 
     # idempotent
     if link is @model.link?()
@@ -296,8 +297,8 @@ class acorn.player.RemixerView extends athena.lib.View
       @model.link link
       @renderRemixSubview()
 
-    else if acorn.util.isUrl link
-      shell = LinkShell.Model.withLink link
+    else if acorn.util.isUrl encodedLink
+      shell = LinkShell.Model.withLink encodedLink
 
       unless @shellIsValid shell
         console.log 'invalid shell'
