@@ -21,7 +21,6 @@
 `import "shell_editor_view"`
 `import "shell_options_view"`
 `import "shell_selector_view"`
-`import "slider_handle_view"`
 `import "sliding_bar_view"`
 `import "sliding_object_view"`
 `import "sources_view"`
