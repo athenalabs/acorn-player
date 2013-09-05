@@ -32,7 +32,18 @@ class DocShell.MediaView extends TextShell.MediaView
 
     render = (doc) -> doc
     if @model.language() is 'markdown'
-      render = athena.lib.DocView.renderMarkdown
+      #render = athena.lib.DocView.renderMarkdown
+      render = () =>
+        $.ajax({
+          type: "POST"
+          url: 'https://api.github.com/markdown/raw'
+          contentType: "text/plain"
+          context: @
+          data: @model.text()
+          success: (data) ->
+            @$el.append data
+            @
+        })
 
     @docView = new athena.lib.DocView
       eventhub: @eventhub
@@ -42,7 +53,7 @@ class DocShell.MediaView extends TextShell.MediaView
   render: =>
     super
     @$el.empty()
-    @$el.append @docView.render().el
+    @docView.render()
     @
 
 
