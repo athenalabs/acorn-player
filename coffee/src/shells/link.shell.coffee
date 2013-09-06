@@ -127,7 +127,9 @@ class LinkShell.MediaView extends Shell.MediaView
   render: =>
     super
     @$el.empty()
-    @$el.append acorn.util.iframe @model.get('link')
+    iframe = acorn.util.iframe @model.get('link')
+    iframe.attr 'sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms'
+    @$el.append iframe
     @
 
 
@@ -143,6 +145,7 @@ class LinkShell.RemixView extends Shell.RemixView
     @$el.empty()
     iframe = acorn.util.iframe @model.get('link')
     iframe.attr 'scrolling', 'no'
+    iframe.attr 'sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms'
     @$el.append iframe
     @
 
