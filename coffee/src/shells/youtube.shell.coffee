@@ -21,7 +21,6 @@ YouTubeShell = acorn.shells.YouTubeShell =
   ]
 
 
-
 class YouTubeShell.Model extends VideoLinkShell.Model
 
 
@@ -57,6 +56,20 @@ class YouTubeShell.Model extends VideoLinkShell.Model
 
     pattern.exec(link)[3]
 
+  parseTime: (time) =>
+    validTimePatterns = [
+      /(\d+)/
+      /(\d+)m(\d+)s/
+    ]
+
+    # the second one is more general, work backwards
+    match = validTimePatterns[1].exec time
+    if match
+      return 60 * parseInt(match[1]) + parseInt(match[2])
+    match = validTimePatterns[0].exec time
+    if validTimePatterns[0].test time
+      return parseInt(match[1])
+    return undefined
 
   embedLink: (options) =>
     # see https://developers.google.com/youtube/player_parameters for options
@@ -95,15 +108,45 @@ class YouTubeShell.RemixView extends VideoLinkShell.RemixView
     super
     @metaData().sync success: @onMetaDataSync
 
+  _timeLinkParam: (keys) =>
+    unless _.isArray keys
+      keys = [keys]
+    param = acorn.util.fetchParameters this.model.link(), keys
+    return @model.parseTime _.values(param)[0]
+
+  # Default start/end can only be set once player metadata
+  # is avaiilable and initialized. Otherwise, default values
+  # will override the start/end times.
+  initializeDefaultClip: =>
+    firstNumber = (args) ->
+      _.find args, _.isNumber
+
+    start = firstNumber [
+      @model.timeStart()
+      @_timeLinkParam ["t", "start"]
+      0
+    ]
+
+    end = firstNumber [
+      @model.timeEnd()
+      @_timeLinkParam ["end"]
+      @model.timeTotal()
+    ]
+
+    end = if end >= start then end else @model.timeTotal()
+    # Clip range must be set before progress bar is initialized
+    @model.timeStart(start)
+    @model.timeEnd(end)
+    @_setClipRange()
 
   onMetaDataSync: (data) =>
     @model._fetchedDefaults ?= {}
     @model._fetchedDefaults = title: data.data.title
+    @model._updateAttributesWithDefaults()
     @model.timeTotal data.data.duration
 
-    @model._updateAttributesWithDefaults()
+    @initializeDefaultClip()
     @_setTimeInputMax()
-
 
   metaData: =>
     if @model.metaDataUrl() and not @_metaData
